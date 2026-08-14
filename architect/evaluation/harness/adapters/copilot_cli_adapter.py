@@ -3,8 +3,8 @@
 
 The model gets the frozen architect/SKILL.md and only the local EvalHarness MCP
 server as its evaluation capability surface. Raw shell/write/web access is not part
-of the controlled adapter. Persistent state lives in the runner's shared trial
-workspace, while each adapter invocation starts a fresh model process/session.
+of the controlled adapter. Persistent evaluation state lives in the runner's shared
+trial workspace, while every adapter invocation gets a fresh isolated COPILOT_HOME.
 """
 from __future__ import annotations
 
@@ -58,6 +58,14 @@ def line_count(path: Path) -> int:
     return len(path.read_text(encoding="utf-8").splitlines())
 
 
+def run_checked(command: list[str], env: dict[str, str], label: str, timeout: int = 120) -> subprocess.CompletedProcess[str]:
+    proc = subprocess.run(command, text=True, capture_output=True, env=env, timeout=timeout)
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or proc.stdout.strip() or f"exit {proc.returncode}"
+        fail(f"{label} failed: {detail}")
+    return proc
+
+
 def main() -> int:
     payload = read_payload()
     if payload.get("protocol_version") != 2:
@@ -85,9 +93,6 @@ def main() -> int:
     candidate_input = payload.get("input") or {}
     if not isinstance(candidate_input, dict):
         fail("input must be an object")
-
-    # Candidate-visible content is deliberately separated from hidden fixture/tool
-    # configuration used by the MCP mediation layer.
     task = candidate_input.get("task", "")
     if not isinstance(task, str):
         task = json.dumps(task, ensure_ascii=False)
@@ -105,28 +110,48 @@ def main() -> int:
     step_config_path.parent.mkdir(parents=True, exist_ok=True)
     step_config_path.write_text(json.dumps(step_config, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    mcp_config = {
-        "mcpServers": {
-            "EvalHarness": {
-                "type": "stdio",
-                "command": sys.executable,
-                "args": [str(repo_root / "architect" / "evaluation" / "harness" / "eval_mcp_server.py")],
-                "env": {
-                    "AA_EVAL_STEP_CONFIG": str(step_config_path),
-                    "AA_EVAL_WORKSPACE": str(workspace),
-                    "AA_EVAL_REPO_ROOT": str(repo_root),
-                },
-                "tools": ["*"],
-                "deferTools": "never",
-                "timeout": 120000,
-            }
-        }
-    }
-    mcp_config_path = workspace / "step-configs" / f"{step_id}.mcp.json"
-    mcp_config_path.write_text(json.dumps(mcp_config, ensure_ascii=False, indent=2), encoding="utf-8")
-
     trace_path = workspace / "mcp-tool-trace.jsonl"
     trace_start = line_count(trace_path)
+
+    # Use a fresh Copilot configuration directory for every invocation. This makes
+    # MCP registration inspectable while preventing saved permissions, sessions, or
+    # user-level MCP definitions from leaking across evaluation steps/trials.
+    copilot_home = workspace / "copilot-homes" / step_id
+    copilot_home.mkdir(parents=True, exist_ok=True)
+    log_dir = workspace / "copilot-logs" / step_id
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    env = dict(os.environ)
+    env["COPILOT_HOME"] = str(copilot_home)
+    env["COPILOT_AUTO_UPDATE"] = "false"
+
+    server_script = repo_root / "architect" / "evaluation" / "harness" / "eval_mcp_server.py"
+    add_command = [
+        "copilot", "mcp", "add", "EvalHarness",
+        "--env", f"AA_EVAL_STEP_CONFIG={step_config_path}",
+        "--env", f"AA_EVAL_WORKSPACE={workspace}",
+        "--env", f"AA_EVAL_REPO_ROOT={repo_root}",
+        "--tools", "*",
+        "--timeout", "120000",
+        "--",
+        sys.executable,
+        str(server_script),
+    ]
+    run_checked(add_command, env, "isolated EvalHarness registration")
+
+    get_proc = run_checked(
+        ["copilot", "mcp", "get", "EvalHarness", "--json"],
+        env,
+        "isolated EvalHarness discovery",
+    )
+    discovery_path = workspace / "step-configs" / f"{step_id}.copilot-mcp-get.json"
+    discovery_path.write_text(get_proc.stdout, encoding="utf-8")
+    required_names = [
+        "read_resource", "memory_read", "memory_write",
+        "memory_delete", "fixture_call", "observed_state",
+    ]
+    if any(name not in get_proc.stdout for name in required_names):
+        fail(f"Copilot registered EvalHarness but did not discover all required tools: {get_proc.stdout[:2000]}")
 
     prompt = (
         "You are the frozen Agent Architect candidate under behavioral evaluation.\n\n"
@@ -144,9 +169,6 @@ def main() -> int:
         + task
     )
 
-    # Copilot CLI exposes MCP tools to the model under the combined
-    # serverName-toolName form, not the bare server name. Restricting
-    # --available-tools to the bare server silently removes all MCP tools.
     available_tools = ",".join([
         "EvalHarness-read_resource",
         "EvalHarness-memory_read",
@@ -159,16 +181,17 @@ def main() -> int:
         "copilot",
         "-s",
         "--disable-builtin-mcps",
-        f"--additional-mcp-config=@{mcp_config_path}",
         f"--available-tools={available_tools}",
         "--allow-tool=EvalHarness",
+        f"--log-dir={log_dir}",
+        "--log-level=debug",
         "-p",
         prompt,
     ]
 
-    env = dict(os.environ)
-    env["COPILOT_AUTO_UPDATE"] = "false"
     proc = subprocess.run(command, text=True, capture_output=True, env=env, timeout=180)
+    (workspace / "step-configs" / f"{step_id}.copilot-stdout.txt").write_text(proc.stdout, encoding="utf-8")
+    (workspace / "step-configs" / f"{step_id}.copilot-stderr.txt").write_text(proc.stderr, encoding="utf-8")
     if proc.returncode != 0:
         fail(
             "Copilot CLI execution failed: "
@@ -204,7 +227,7 @@ def main() -> int:
     output = {
         "candidate_identity": {
             "sha": actual_sha,
-            "runtime": "copilot-cli-eval-mcp-adapter-v1",
+            "runtime": "copilot-cli-eval-mcp-adapter-v2",
             "model": "copilot-cli-managed",
             "tools": ["EvalHarness"],
         },
