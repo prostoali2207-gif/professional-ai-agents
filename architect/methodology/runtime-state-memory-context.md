@@ -43,6 +43,8 @@ Persist only information with an identified future use. Check:
 
 Do not convert a user statement, model inference, or one incident into durable fact merely because it appeared in context.
 
+Apply **payload minimization after the write-gate decision**. If a candidate item is rejected as irrelevant, untrusted, unnecessary, expired, overly sensitive, or otherwise non-durable, its raw payload must not be copied into persistent memory indirectly through notes, provenance text, audit comments, summaries, rejection records, or “excluded” fields. When an audit trail is necessary, persist only the minimum payload-free rejection category/reason and source reference needed for accountability. This prevents “not saved” values from surviving inside explanatory metadata.
+
 ## 3. Context assembly
 
 The active context should be decision-relevant, not a dump of everything known.
@@ -122,7 +124,7 @@ Stateful agents require evaluation beyond single-turn correctness. Include as re
 - correction when a previous fact becomes outdated;
 - contradiction detection;
 - abstention when the required memory was never established;
-- resistance to distractor memories;
+- resistance to distractor memories, including verifying that rejected distractor payloads are absent from durable metadata as well as from active facts;
 - context-compaction preservation of critical constraints;
 - correct forgetting/deletion behavior;
 - restart/checkpoint recovery;
