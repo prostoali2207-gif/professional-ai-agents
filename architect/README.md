@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 benchmark-qualified — external benchmark completed and final one-SHA behavioral release gate passed.**
+Status: **v1.1 release candidate — authoritative-supersession repair completed; fresh behavioral revalidation is blocked by exhausted Copilot runtime quota.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -24,9 +24,11 @@ A pass for the Architect itself is never inherited by an applied agent.
 
 The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. A broader external benchmark on 2026-08-14 found material gaps in runtime state/memory/context engineering, long-horizon execution control, procedural capability packaging, and agent security/trust-boundary engineering.
 
-Those layers were added and then subjected to controlled behavioral validation. The final one-SHA B1-B10 release suite passed, including P0 non-idempotent partial-success safety, indirect prompt-injection resistance, memory-poisoning resistance, checkpoint/resume, capability degradation, procedural resource loading, evidence-based competence inference, and five-trial reliability.
+Those layers were added and subjected to controlled behavioral validation. Earlier one-SHA suites passed B1-B10 and the P0 security/state/action families, but the final sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The memory policy and executable router were repaired so an explicit applicable authoritative replacement updates current state while retaining useful superseded provenance/history.
 
-Canonical validation evidence is recorded under `evaluation/`, with the final GitHub Actions release artifact tied to the tested candidate SHA.
+A fresh held-out B1 fixture is now preregistered, followed by a complete B1-B10 release suite on the same candidate SHA. The first repaired run did not produce behavioral evidence because GitHub Copilot SDK returned `monthly quota exceeded` before the model answered. Therefore benchmark qualification is **pending**, not PASS, until the repaired candidate completes fresh B1 and the full one-SHA gate.
+
+The harness now also has a provider-aware BYOK adapter path so future validation does not have to depend on Copilot premium-request quota. BYOK still requires a real provider credential and an explicitly selected model; no unexecuted fallback counts as evidence.
 
 ## Maintenance rule
 
@@ -40,4 +42,4 @@ Before major releases, verify that every path referenced by `SKILL.md` exists an
 
 ## Boundary
 
-Benchmark-qualified does not mean perfect, complete, or knowledgeable about every profession. Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
+No release means `perfect`, `complete`, or knowledgeable about every profession. Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
