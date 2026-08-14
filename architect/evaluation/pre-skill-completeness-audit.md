@@ -1,41 +1,33 @@
 # Agent Architect Pre-SKILL Completeness Audit
 
-Status: v0.1 / blocking gate.
+Status: v0.2 / PASS.
 
 The Architect must not receive a final `SKILL.md` until this audit passes.
 
-## A. Profession reconstruction
+## A. Profession reconstruction — PASS
 
-PASS requires evidence that the methodology can reconstruct a profession from real work rather than user labels alone.
+The methodology can reconstruct a profession from real work rather than user labels alone, including responsibilities, boundaries, task/decision decomposition, expert-vs-average discriminators, tacit cues, uncertainty, hidden adjacent competencies, failure/recovery patterns, and tools/evidence loops.
 
-Check:
+Evidence: `dry-run-frontend-engineer.md` exposed material competencies that a superficial frontend prompt would omit.
 
-- responsibilities and boundaries;
-- task and decision decomposition;
-- expert-vs-average discriminators;
-- tacit cues and uncertainty;
-- hidden adjacent competencies;
-- failure and recovery patterns;
-- tools and evidence loops.
+## B. Knowledge engineering — PASS
 
-## B. Knowledge engineering
-
-PASS requires:
+Implemented:
 
 - claim-first sourcing;
-- distinction among standards, empirical evidence, professional literature, practitioner evidence, opinion, and examples;
+- source-type distinctions;
 - provenance;
 - freshness classes;
 - live-research rules;
 - conflict handling;
-- knowledge inclusion and maintenance gates;
+- knowledge inclusion/maintenance gates;
 - retrieval evaluation.
 
-## C. Judgment architecture
+## C. Judgment architecture — PASS
 
-PASS requires the agent design method to encode:
+Implemented:
 
-- causal reasoning;
+- causal rationale;
 - trade-offs;
 - exceptions;
 - scope conditions;
@@ -44,92 +36,93 @@ PASS requires the agent design method to encode:
 - professional boundaries;
 - escalation.
 
-## D. Workflow and tools
+## D. Workflow and tools — PASS
 
-PASS requires:
+Implemented:
 
-- execution loops appropriate to the profession;
-- tool/interface design as part of capability;
+- profession-specific execution loops;
+- tools/interfaces as part of competence;
 - observability;
 - direct verification where possible;
-- downstream-result checking;
+- downstream-result checks;
 - recovery from partial/failed execution.
 
-## E. Evaluation engineering
+## E. Evaluation engineering — PASS
 
-PASS requires:
+Implemented:
 
-- knowledge and application tests;
+- knowledge/application tests;
 - authentic practical tasks;
-- adversarial tests;
-- false-premise tests;
-- diagnosis and critique tasks;
-- tool-use and evidence tests;
+- adversarial and false-premise tests;
+- diagnosis/critique;
+- tool/evidence tests;
 - outcome + trajectory evaluation;
 - grader calibration;
-- holdouts and leakage control;
+- holdouts/leakage controls;
 - regression suites;
 - stochastic/uncertainty-aware measurement.
 
-## F. Lifecycle learning
+## F. Lifecycle learning — PASS
 
-PASS requires:
+Implemented in `production-incident-learning.md`:
 
-- production incident intake;
-- reproduction and root-cause analysis;
-- near-miss handling;
+- incident intake;
+- reproduction/root cause;
+- near-misses;
 - drift monitoring;
-- correct routing of lessons to architecture layers;
-- protection from noisy feedback contamination;
-- regression verification after fixes.
+- routing lessons to the correct architecture layer;
+- feedback-contamination controls;
+- post-fix regression verification.
 
-## G. Architecture choice
+## G. Architecture choice — PASS
 
-PASS requires a reasoned mechanism for choosing among:
+Implemented mechanism for choosing among one agent, modular agent, specialist + critic, orchestrator + specialists, and broader multi-agent systems. Complexity must be justified by representative-task performance, risk boundaries, latency, cost, and coordination overhead.
 
-- one agent;
-- one agent with modules;
-- specialist + critic;
-- orchestrator + specialists;
-- multi-agent system.
+## H. Scope and operational governance — PASS
 
-Complexity must be justified by task decomposition and measurable performance, not fashion.
+Red-team exposed four missing areas. They have been added through `scope-risk-prioritization.md` and `operational-governance.md`:
 
-## H. Red-team questions
+- adjacent-competency stopping rule;
+- capability-to-cost economics;
+- permission/blast-radius analysis;
+- environment/reproducibility assumptions;
+- accountable owner and escalation for consequential deployment.
 
-Before PASS, explicitly ask:
+## I. Red-team — PASS
 
-### Senior practitioner
-- Which essential tacit skill is missing?
-- Where does the design substitute a checklist for judgment?
-- Which decision cannot actually be made from the available evidence?
-- Which tool/observation would a real expert insist on using?
+Completed in `architect-red-team.md` from:
 
-### Teacher / competency assessor
-- Are capabilities observable and testable?
-- Are tests authentic or just trivia?
-- Can a weak agent pass by memorizing expected language?
-- Are mastery levels meaningfully discriminative?
+- senior practitioner;
+- educator/competency assessor;
+- hiring manager;
+- evaluation scientist;
+- systems engineer.
 
-### Hiring manager
-- Would this agent produce useful work under real constraints?
-- Can it diagnose ambiguous failures?
-- Can it work with incomplete information without bluffing?
-- Can it explain trade-offs and evidence?
-- Does it know when to escalate?
+Material findings were corrected before this PASS.
 
-## I. Unknown-unknown prompt
+## J. Mandatory unknown-unknown question — PASS
 
-Mandatory final question before any agent is finalized:
+Question asked:
 
 `What would a strong practitioner of this profession notice is missing, even though the user did not know to ask for it?`
 
-Any material answer must be investigated and incorporated or explicitly deferred with justification.
+It exposed cost economics, authority/blast radius, environment assumptions, and organizational accountability. These are now encoded.
 
-## J. Decision rule
+## K. Practical methodology dry-run — PASS
 
-- `PASS`: no material architectural gap remains and the dry-run demonstrates the methodology working end to end.
-- `CONDITIONAL`: gaps are known and bounded but still require targeted evidence/testing.
-- `FAIL`: important capability, evidence, evaluation, or lifecycle layer is absent or only asserted.
+The frontend-engineer dry-run demonstrated that the methodology can:
 
-Current status: CONDITIONAL. The methodology now covers the major architecture layers, but it still requires an end-to-end profession dry-run and red-team before a final Architect SKILL is justified.
+- reject an underspecified role label;
+- discover hidden competencies;
+- identify evidence loops;
+- distinguish local code success from browser/downstream success;
+- avoid unnecessary multi-agent decomposition;
+- expose a new methodological gap and repair it.
+
+The dry-run did not create a frontend agent; it tested the Architect methodology only.
+
+## Decision
+
+`PASS` for creation of the first Agent Architect `SKILL.md`.
+
+This does **not** mean the Architect is finished. After SKILL assembly, the Architect itself must be evaluated as an executable agent workflow. Failures must be repaired at the responsible methodology/knowledge/process layer rather than patched with arbitrary prompt lines.
