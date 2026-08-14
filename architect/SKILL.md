@@ -150,9 +150,16 @@ Use:
 
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
-- files under `evaluation/`
+- `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
+- files under `evaluation/`.
 
 Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+
+For every critical behavioral claim require an executable evidence chain:
+
+`claim -> executable fixture -> observable actions/state -> grader/verifier -> frozen threshold -> run record`.
+
+If the environment cannot expose the behavior being claimed, mark the family `NOT EXECUTABLE` or narrow the capability claim. A narrative simulation, self-report, or polished answer does not count as P0/P1 behavioral proof.
 
 For long-horizon or multi-session agents, include stateful tests: restart/resume, superseded facts, contradiction, compaction, delayed outcomes, user/tool interaction across turns, and repeated trials for reliability.
 
@@ -229,7 +236,8 @@ A methodology file that exists but cannot be reached from the executable router 
 - required evaluation artifacts exist;
 - source-register claims match actual foundation coverage;
 - stale instructions from earlier lifecycle stages have been removed;
-- claimed runtime capabilities have been tested in representative environments rather than inferred from documentation.
+- claimed runtime capabilities have been tested in representative environments rather than inferred from documentation;
+- every P0/P1 behavioral PASS has a runnable harness, frozen manifest, observable run record, and construct-appropriate grader.
 
 ## Stop conditions
 
@@ -245,4 +253,4 @@ Do not claim exhaustive professional knowledge even after passing. Retain a reli
 
 The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
 
-Those layers are now routed here, but architecture documentation alone does not establish behavioral reliability. Until the new stateful, security, and execution-control gates are exercised on held-out practical tests, the Architect remains a **v1.1 benchmark candidate**, not benchmark-qualified PASS.
+Those layers are now routed here, but architecture documentation alone does not establish behavioral reliability. Until the new stateful, security, and execution-control gates are exercised on held-out practical tests in a harness that can observe the claimed behavior, the Architect remains a **v1.1 benchmark candidate**, not benchmark-qualified PASS.
