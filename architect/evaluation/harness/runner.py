@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Vendor-neutral runner for Agent Architect behavioral validation.
 
-The runner does not know how a specific model/runtime works. It invokes a candidate
-adapter command using a small JSON protocol, verifies frozen fixture hashes, isolates
-trials, and writes observable run records. Hidden grader material is never passed to
-the candidate adapter.
+Protocol v2 adds multi-step/session orchestration and mechanical inspection of
+workspace artifacts. The runner never treats a candidate's prose claim about state
+or side effects as mechanical proof.
 """
 
 from __future__ import annotations
@@ -20,6 +19,9 @@ import sys
 import tempfile
 import time
 from typing import Any
+
+
+RUNNER_VERSION = "2"
 
 
 class HarnessError(RuntimeError):
@@ -58,6 +60,10 @@ def validate_manifest(manifest: dict[str, Any]) -> None:
     missing = [key for key in required if key not in manifest]
     if missing:
         raise HarnessError(f"manifest missing required fields: {', '.join(missing)}")
+    if str(manifest["runner_version"]) != RUNNER_VERSION:
+        raise HarnessError(
+            f"manifest runner_version={manifest['runner_version']} does not match runner {RUNNER_VERSION}"
+        )
     if not isinstance(manifest["trial_count"], int) or manifest["trial_count"] < 1:
         raise HarnessError("trial_count must be a positive integer")
     if not isinstance(manifest["fixtures"], list) or not manifest["fixtures"]:
@@ -91,46 +97,149 @@ def invoke_candidate(command: str, payload: dict[str, Any], timeout_s: int) -> d
     return result
 
 
-def mechanical_grade(fixture: dict[str, Any], result: dict[str, Any]) -> dict[str, Any]:
-    """Grade only public mechanically-checkable invariants.
+def deep_get(value: Any, dotted_path: str) -> tuple[bool, Any]:
+    current = value
+    for part in dotted_path.split(".") if dotted_path else []:
+        if isinstance(current, dict) and part in current:
+            current = current[part]
+        elif isinstance(current, list) and part.isdigit() and int(part) < len(current):
+            current = current[int(part)]
+        else:
+            return False, None
+    return True, current
 
-    Judgment-heavy or hidden-key grading must be performed by an external grader and
-    merged into the run record later. The runner intentionally refuses to invent an
-    LLM self-grade.
+
+def normalized_steps(fixture: dict[str, Any]) -> list[dict[str, Any]]:
+    if "steps" in fixture:
+        steps = fixture["steps"]
+        if not isinstance(steps, list) or not steps:
+            raise HarnessError("fixture steps must be a non-empty list")
+        seen: set[str] = set()
+        for index, step in enumerate(steps, 1):
+            if not isinstance(step, dict):
+                raise HarnessError("each fixture step must be an object")
+            step_id = step.get("id", f"step-{index}")
+            if step_id in seen:
+                raise HarnessError(f"duplicate step id: {step_id}")
+            seen.add(step_id)
+            step.setdefault("id", step_id)
+            if "input" not in step:
+                raise HarnessError(f"step {step_id} has no input")
+        return steps
+    if "candidate_input" in fixture:
+        return [{"id": "main", "session_id": "session-1", "input": fixture["candidate_input"]}]
+    raise HarnessError("fixture has neither steps nor candidate_input")
+
+
+def merge_capabilities(base: dict[str, Any], override: Any) -> dict[str, Any]:
+    merged = dict(base)
+    if override is not None:
+        if not isinstance(override, dict):
+            raise HarnessError("step capability_profile must be an object")
+        merged.update(override)
+    return merged
+
+
+def artifact_json_get(workspace: Path, relative_path: str, json_path: str) -> tuple[bool, Any]:
+    target = (workspace / relative_path).resolve()
+    root = workspace.resolve()
+    if root not in target.parents and target != root:
+        raise HarnessError("artifact grader path escapes workspace")
+    if not target.exists() or not target.is_file():
+        return False, None
+    try:
+        data = read_json(target)
+    except (json.JSONDecodeError, OSError):
+        return False, None
+    return deep_get(data, json_path)
+
+
+def mechanical_grade(
+    fixture: dict[str, Any], step_results: dict[str, Any], workspace: Path
+) -> dict[str, Any]:
+    """Grade public mechanically checkable invariants only.
+
+    Hidden-key or professional-judgment grading remains external. For state/side-effect
+    claims, prefer artifact checks over candidate-reported fields.
     """
     grader = fixture.get("mechanical_grader")
     if grader is None:
         return {"status": "PENDING_EXTERNAL_GRADER", "checks": []}
 
-    checks = []
+    context = {"steps": step_results}
+    checks: list[dict[str, Any]] = []
+
     for check in grader.get("required_equals", []):
         field = check["field"]
         expected = check["value"]
-        observed = result.get(field)
+        exists, observed = deep_get(context, field)
         checks.append(
             {
                 "type": "required_equals",
                 "field": field,
                 "expected": expected,
-                "observed": observed,
-                "pass": observed == expected,
+                "observed": observed if exists else None,
+                "pass": exists and observed == expected,
             }
         )
 
     for check in grader.get("required_absent", []):
         field = check["field"]
+        exists, observed = deep_get(context, field)
         checks.append(
             {
                 "type": "required_absent",
                 "field": field,
-                "pass": field not in result,
+                "observed": observed if exists else None,
+                "pass": not exists,
             }
         )
 
-    status = "PASS" if checks and all(c["pass"] for c in checks) else "FAIL"
+    for check in grader.get("required_contains", []):
+        field = check["field"]
+        needle = check["value"]
+        exists, observed = deep_get(context, field)
+        passed = False
+        if exists and isinstance(observed, (list, str, dict)):
+            passed = needle in observed
+        checks.append(
+            {
+                "type": "required_contains",
+                "field": field,
+                "expected_member": needle,
+                "observed": observed if exists else None,
+                "pass": passed,
+            }
+        )
+
+    for check in grader.get("artifact_exists", []):
+        rel = check["path"]
+        target = (workspace / rel).resolve()
+        root = workspace.resolve()
+        if root not in target.parents and target != root:
+            raise HarnessError("artifact_exists path escapes workspace")
+        passed = target.exists()
+        checks.append({"type": "artifact_exists", "path": rel, "pass": passed})
+
+    for check in grader.get("artifact_json_equals", []):
+        rel = check["path"]
+        jpath = check.get("json_path", "")
+        expected = check["value"]
+        exists, observed = artifact_json_get(workspace, rel, jpath)
+        checks.append(
+            {
+                "type": "artifact_json_equals",
+                "path": rel,
+                "json_path": jpath,
+                "expected": expected,
+                "observed": observed if exists else None,
+                "pass": exists and observed == expected,
+            }
+        )
+
     if not checks:
-        status = "PENDING_EXTERNAL_GRADER"
-    return {"status": status, "checks": checks}
+        return {"status": "PENDING_EXTERNAL_GRADER", "checks": []}
+    return {"status": "PASS" if all(c["pass"] for c in checks) else "FAIL", "checks": checks}
 
 
 def run(manifest_path: Path, candidate_command: str, out_dir: Path, timeout_s: int) -> int:
@@ -153,39 +262,58 @@ def run(manifest_path: Path, candidate_command: str, out_dir: Path, timeout_s: i
                 f"expected {fixture_meta['sha256']}, got {observed_hash}"
             )
         fixture = read_json(fixture_path)
-        candidate_input = fixture.get("candidate_input")
-        if candidate_input is None:
-            raise HarnessError(f"fixture {fixture_meta['id']} has no candidate_input")
+        steps = normalized_steps(fixture)
 
-        for trial in range(1, manifest["trial_count"] + 1):
+        per_fixture_trials = int(fixture_meta.get("trial_count", manifest["trial_count"]))
+        if per_fixture_trials < 1:
+            raise HarnessError("fixture trial_count must be positive")
+
+        for trial in range(1, per_fixture_trials + 1):
             run_id = f"{fixture_meta['id']}-t{trial}"
             started = time.time()
+            error = None
+            step_results: dict[str, Any] = {}
+
             with tempfile.TemporaryDirectory(prefix=f"aa-eval-{run_id}-") as tmp:
-                run_dir = Path(tmp)
-                payload = {
-                    "protocol_version": 1,
-                    "run_id": run_id,
-                    "candidate_sha": manifest["candidate_sha"],
-                    "family": fixture_meta["family"],
-                    "priority": fixture_meta["priority"],
-                    "trial": trial,
-                    "capability_profile": manifest["capability_profile"],
-                    "input": candidate_input,
-                    "workspace": str(run_dir),
-                }
-                error = None
-                result: dict[str, Any] = {}
-                grade: dict[str, Any]
+                workspace = Path(tmp)
                 try:
-                    result = invoke_candidate(candidate_command, payload, timeout_s)
-                    grade = mechanical_grade(fixture, result)
+                    for step_index, step in enumerate(steps, 1):
+                        step_id = step["id"]
+                        session_id = step.get("session_id", f"session-{step_index}")
+                        payload = {
+                            "protocol_version": 2,
+                            "operation": step.get("operation", "run"),
+                            "run_id": run_id,
+                            "step_id": step_id,
+                            "candidate_sha": manifest["candidate_sha"],
+                            "family": fixture_meta["family"],
+                            "priority": fixture_meta["priority"],
+                            "trial": trial,
+                            "session_id": session_id,
+                            "reset_session": bool(step.get("reset_session", False)),
+                            "capability_profile": merge_capabilities(
+                                manifest["capability_profile"], step.get("capability_profile")
+                            ),
+                            "input": step["input"],
+                            "workspace": str(workspace),
+                        }
+                        result = invoke_candidate(candidate_command, payload, timeout_s)
+                        identity = result.get("candidate_identity", {})
+                        if identity.get("sha") != manifest["candidate_sha"]:
+                            raise HarnessError(
+                                f"step {step_id} did not verify candidate SHA: "
+                                f"expected {manifest['candidate_sha']}, observed {identity.get('sha')}"
+                            )
+                        step_results[step_id] = result
+
+                    grade = mechanical_grade(fixture, step_results, workspace)
                 except (HarnessError, subprocess.TimeoutExpired) as exc:
                     error = str(exc)
                     grade = {"status": "HARNESS_OR_EXECUTION_ERROR", "checks": []}
 
                 artifact_dir = out_dir / "artifacts" / run_id
                 artifact_dir.mkdir(parents=True, exist_ok=True)
-                for child in run_dir.iterdir():
+                for child in workspace.iterdir():
                     target = artifact_dir / child.name
                     if child.is_dir():
                         shutil.copytree(child, target)
@@ -204,7 +332,7 @@ def run(manifest_path: Path, candidate_command: str, out_dir: Path, timeout_s: i
                     "evaluator_class": manifest["evaluator_class"],
                     "started_unix": started,
                     "duration_s": round(time.time() - started, 6),
-                    "result": result,
+                    "steps": step_results,
                     "grade": grade,
                     "error": error,
                     "artifact_dir": str(artifact_dir),
@@ -217,7 +345,12 @@ def run(manifest_path: Path, candidate_command: str, out_dir: Path, timeout_s: i
         json.dump(summary, f, ensure_ascii=False, indent=2, sort_keys=True)
 
     any_error = any(r["grade"]["status"] == "HARNESS_OR_EXECUTION_ERROR" for r in summary)
-    return 2 if any_error else 0
+    any_fail = any(r["grade"]["status"] == "FAIL" for r in summary)
+    if any_error:
+        return 2
+    if any_fail:
+        return 1
+    return 0
 
 
 def main() -> int:
