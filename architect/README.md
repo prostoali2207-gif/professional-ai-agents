@@ -1,14 +1,14 @@
 # Agent Architect
 
-Status: **v1.0 — release-qualified for controlled construction of applied professional agents.**
+Status: **v1.1 benchmark candidate — externally benchmarked and revised; additional behavioral validation required.**
 
-Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/tool/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
+Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
 It is not a prompt template and does not make future agents competent automatically.
 
 ## Core architecture
 
-The executable router is `SKILL.md`. Supporting methodology covers:
+The executable router is `SKILL.md`. Supporting methodology now covers:
 
 1. profession discovery and cognitive task analysis;
 2. competency engineering and scope/risk prioritization;
@@ -16,35 +16,45 @@ The executable router is `SKILL.md`. Supporting methodology covers:
 4. evidence validity and comparator compatibility;
 5. professional judgment and uncertainty/escalation;
 6. creative-profession exploration, taste and critique;
-7. workflow, tools, observability and downstream verification;
-8. single-vs-multi-agent boundaries and coordination;
-9. permissions, blast radius and operational governance;
-10. high-stakes authority and independent reviewability;
-11. evaluation, grader calibration, holdouts and regression integrity;
-12. production incidents, drift and failure-driven learning.
+7. procedural skill/capability packaging and progressive disclosure;
+8. workflow, tools, agent-computer-interface quality and downstream verification;
+9. runtime state, memory, context assembly/compaction and checkpoint/resume;
+10. execution control, progress detection, bounded remediation and termination;
+11. single-vs-multi-agent boundaries and coordination;
+12. security/trust boundaries, prompt-injection resistance and capability supply chain;
+13. permissions, blast radius and operational governance;
+14. high-stakes authority and independent reviewability;
+15. evaluation, grader calibration, holdouts and regression integrity;
+16. production incidents, drift and failure-driven learning.
 
 ## Applied-agent gate
 
-Applied agents may now be constructed, but **never by writing their `SKILL.md` first**.
+Applied agents must never be created by writing their `SKILL.md` first.
 
 Every new agent must independently pass the Agent Architect workflow:
 
-`profession reconstruction -> competency map -> authoritative evidence -> hidden-gap discovery -> judgment/workflow/tools -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
+`profession reconstruction -> competency/evidence model -> authoritative evidence -> hidden-gap discovery -> judgment/procedural/workflow/tools -> state/control/security architecture where material -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
 
-A pass for Agent Architect v1.0 is not inherited by an applied agent.
+A pass for the Architect itself is never inherited by an applied agent.
 
-## Evidence behind v1.0
+## Benchmark history
 
-The methodology was tested across qualitatively different regimes:
+The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. Those tests exposed and repaired important gaps in evidence comparability, creative judgment, high-stakes authority/reviewability, and release routing.
 
-- frontend/software engineering;
-- market research / empirical analysis;
-- graphic design / creative judgment;
-- high-stakes professional decision support.
+A broader external benchmark on 2026-08-14 compared the Architect with current Anthropic, OpenAI, Google/DeepMind, Microsoft, academic, open-source agent, memory, evaluation, and professional-assessment work. It found four material layers that v1.0 modeled only implicitly or incompletely:
 
-Those tests exposed material weaknesses in evidence comparability, creative-profession architecture, high-stakes authority/reviewability, and finally release routing/documentation integrity. The responsible architecture layers were repaired and retested.
+- runtime state/memory/context engineering;
+- long-horizon execution control and evidence-driven remediation;
+- procedural capability/skill packaging and progressive disclosure;
+- agent security/trust-boundary engineering.
 
-See `evaluation/` for the audit trail.
+These layers are now part of the v1.1 candidate architecture. See `evaluation/external-benchmark-2026-08.md`.
+
+## Why status is candidate, not PASS
+
+Documentation coverage is not behavioral evidence. The new architecture must still be exercised with held-out practical tests that require multi-session state, checkpoint/resume, context compaction, stall/replanning, prompt-injection resistance, memory poisoning resistance, capability loading, and bounded recovery.
+
+Until those gates run, the correct benchmark status is REVISE rather than an inflated PASS claim.
 
 ## Maintenance rule
 
@@ -58,6 +68,6 @@ Before major releases, verify that every path referenced by `SKILL.md` exists an
 
 ## Boundary
 
-v1.0 means **ready for controlled use**, not `perfect`, `complete`, or `knows every profession`.
+No release means `perfect`, `complete`, or `knows every profession`.
 
-Unknown, volatile, jurisdiction-specific, disputed, high-stakes, or versioned knowledge must still be researched live and escalated when evidence or authority is insufficient.
+Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
