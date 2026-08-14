@@ -1,35 +1,63 @@
 # Agent Architect
 
-Status: methodology construction phase. No applied agent should be created from this repository until the foundation quality gates are satisfied.
+Status: **v1.0 — release-qualified for controlled construction of applied professional agents.**
 
-The Agent Architect is the meta-role responsible for reconstructing a real profession, engineering the competence/knowledge/judgment/tool/evaluation system for that profession, and proving that the resulting agent can perform under realistic and adversarial conditions.
+Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/tool/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
-## Current foundation
+It is not a prompt template and does not make future agents competent automatically.
 
-The methodology is being built in layers:
+## Core architecture
 
-1. Profession discovery and work decomposition.
-2. Cognitive task and decision analysis.
-3. Competency engineering.
-4. Source and knowledge engineering.
-5. Professional judgment modeling.
-6. Workflow, tool, and evidence architecture.
-7. Evaluation engineering.
-8. Failure-driven improvement and regression control.
+The executable router is `SKILL.md`. Supporting methodology covers:
 
-## Pre-SKILL gate
+1. profession discovery and cognitive task analysis;
+2. competency engineering and scope/risk prioritization;
+3. source, provenance, freshness and retrieval discipline;
+4. evidence validity and comparator compatibility;
+5. professional judgment and uncertainty/escalation;
+6. creative-profession exploration, taste and critique;
+7. workflow, tools, observability and downstream verification;
+8. single-vs-multi-agent boundaries and coordination;
+9. permissions, blast radius and operational governance;
+10. high-stakes authority and independent reviewability;
+11. evaluation, grader calibration, holdouts and regression integrity;
+12. production incidents, drift and failure-driven learning.
 
-Do not add `architect/SKILL.md` yet. A SKILL will be written only after the methodology itself has a sufficiently complete evidence base, explicit quality gates, and an evaluation plan.
+## Applied-agent gate
 
-## Core design distinction
+Applied agents may now be constructed, but **never by writing their `SKILL.md` first**.
 
-A professional agent is treated as a cognitive system, not as a long prompt. Its quality depends on the interaction of:
+Every new agent must independently pass the Agent Architect workflow:
 
-- role boundaries;
-- observable competencies;
-- knowledge dependencies;
-- retrieval/freshness policy;
-- professional judgment;
-- workflow and tools;
-- direct evidence from the environment;
-- evaluation and recovery loops.
+`profession reconstruction -> competency map -> authoritative evidence -> hidden-gap discovery -> judgment/workflow/tools -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
+
+A pass for Agent Architect v1.0 is not inherited by an applied agent.
+
+## Evidence behind v1.0
+
+The methodology was tested across qualitatively different regimes:
+
+- frontend/software engineering;
+- market research / empirical analysis;
+- graphic design / creative judgment;
+- high-stakes professional decision support.
+
+Those tests exposed material weaknesses in evidence comparability, creative-profession architecture, high-stakes authority/reviewability, and finally release routing/documentation integrity. The responsible architecture layers were repaired and retested.
+
+See `evaluation/` for the audit trail.
+
+## Maintenance rule
+
+Agent Architect remains versioned and falsifiable. Production failures or new evidence do not become permanent rules automatically.
+
+Use:
+
+`failure/evidence -> validate -> root cause -> repair responsible layer -> regression test -> adversarial retest`.
+
+Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register claims agree with the repository's actual state.
+
+## Boundary
+
+v1.0 means **ready for controlled use**, not `perfect`, `complete`, or `knows every profession`.
+
+Unknown, volatile, jurisdiction-specific, disputed, high-stakes, or versioned knowledge must still be researched live and escalated when evidence or authority is insufficient.
