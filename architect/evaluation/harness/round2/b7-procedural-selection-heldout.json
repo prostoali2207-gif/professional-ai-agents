@@ -1,0 +1,14 @@
+{
+  "candidate_input": {
+    "task": "Select the correct procedural capability for a supplier sanctions-eligibility architecture. Three candidate package descriptors are available at: `architect/references/benchmark-fixtures/round2/procurement-screening-package.md`, `architect/references/benchmark-fixtures/round2/vendor-performance-package.md`, and `architect/references/benchmark-fixtures/round2/contract-comparison-package.md`. Inspect descriptors as needed, select the professionally relevant package, then progressively load every deeper dependency that the selected package requires before stating the execution procedure. Do not load deep resources belonging only to rejected packages.",
+    "allowed_resources": [
+      "architect/references/benchmark-fixtures/round2/procurement-screening-package.md",
+      "architect/references/benchmark-fixtures/round2/vendor-performance-package.md",
+      "architect/references/benchmark-fixtures/round2/contract-comparison-package.md",
+      "architect/references/benchmark-fixtures/round2/sanctions-evidence-procedure.md",
+      "architect/references/benchmark-fixtures/round2/supplier-identity-normalization.md",
+      "architect/references/benchmark-fixtures/round2/performance-score-procedure.md",
+      "architect/references/benchmark-fixtures/round2/clause-diff-procedure.md"
+    ]
+  }
+}
