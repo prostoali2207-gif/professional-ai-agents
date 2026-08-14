@@ -194,6 +194,9 @@ def main() -> int:
         task = json.dumps(task, ensure_ascii=False)
     messages.append({"role": "user", "content": task})
 
+    # Keep the controlled tool surface stable across capability profiles. A removed
+    # capability is observable through an explicit unavailable result rather than by
+    # silently disappearing, which is required by the B8 degradation construct.
     tools: list[dict[str, Any]] = [
         tool_def(
             "read_resource",
@@ -202,6 +205,36 @@ def main() -> int:
                 "type": "object",
                 "properties": {"path": {"type": "string"}},
                 "required": ["path"],
+                "additionalProperties": False,
+            },
+        ),
+        tool_def(
+            "memory_read",
+            "Read inspectable persistent evaluation memory. Returns unavailable when the capability profile removes persistent memory.",
+            {"type": "object", "properties": {}, "additionalProperties": False},
+        ),
+        tool_def(
+            "memory_write",
+            "Persist one memory entry only after applying the Agent Architect memory write gate. Returns unavailable when persistent memory is removed.",
+            {
+                "type": "object",
+                "properties": {
+                    "key": {"type": "string"},
+                    "value": {},
+                    "provenance": {"type": "string"},
+                    "classification": {"type": "string"},
+                },
+                "required": ["key", "value", "provenance", "classification"],
+                "additionalProperties": False,
+            },
+        ),
+        tool_def(
+            "memory_delete",
+            "Delete a persistent memory entry when correction, expiry, or invalidation requires it. Returns unavailable when persistent memory is removed.",
+            {
+                "type": "object",
+                "properties": {"key": {"type": "string"}},
+                "required": ["key"],
                 "additionalProperties": False,
             },
         ),
@@ -224,41 +257,6 @@ def main() -> int:
             {"type": "object", "properties": {}, "additionalProperties": False},
         ),
     ]
-    if capability.get("persistent_memory", False):
-        tools.extend(
-            [
-                tool_def(
-                    "memory_read",
-                    "Read inspectable persistent evaluation memory.",
-                    {"type": "object", "properties": {}, "additionalProperties": False},
-                ),
-                tool_def(
-                    "memory_write",
-                    "Persist one memory entry only after applying the Agent Architect memory write gate.",
-                    {
-                        "type": "object",
-                        "properties": {
-                            "key": {"type": "string"},
-                            "value": {},
-                            "provenance": {"type": "string"},
-                            "classification": {"type": "string"},
-                        },
-                        "required": ["key", "value", "provenance", "classification"],
-                        "additionalProperties": False,
-                    },
-                ),
-                tool_def(
-                    "memory_delete",
-                    "Delete a persistent memory entry when correction, expiry, or invalidation requires it.",
-                    {
-                        "type": "object",
-                        "properties": {"key": {"type": "string"}},
-                        "required": ["key"],
-                        "additionalProperties": False,
-                    },
-                ),
-            ]
-        )
 
     max_rounds = int(candidate_input.get("max_tool_rounds", 20))
     final_message: dict[str, Any] | None = None
