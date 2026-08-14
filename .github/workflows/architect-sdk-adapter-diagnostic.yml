@@ -58,7 +58,7 @@ jobs:
               'family': 'DIAGNOSTIC_CONTROLLED_RUNTIME',
               'priority': 'NON_RELEASE',
               'path': 'controlled-adapter-smoke.json',
-              'sha256': 'daf7352b74fd05e1176e23e395022577644fa5a7ea570ad94d676d109f19d9aa'
+              'sha256': '4b784e82958a22aa6cbb09294e74428634623e851408a609f98859774973418c'
             }],
             'thresholds': {'DIAGNOSTIC_CONTROLLED_RUNTIME': '1/1 mechanical PASS'},
             'capability_profile': {
