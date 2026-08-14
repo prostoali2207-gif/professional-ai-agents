@@ -33,6 +33,7 @@ jobs:
         run: |
           python -m py_compile architect/evaluation/harness/runner.py
           python -m py_compile architect/evaluation/harness/adapters/github_models_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/diagnostic_wrapper.py
           python -m py_compile architect/evaluation/harness/adapters/openai_responses_adapter.py
 
       - name: Build diagnostic manifest for exact SHA
@@ -74,7 +75,7 @@ jobs:
           rm -rf .tmp/architect-real-candidate-diagnostic
           python architect/evaluation/harness/runner.py \
             --manifest architect/evaluation/harness/diagnostic/manifest.generated.json \
-            --candidate-command "python architect/evaluation/harness/adapters/github_models_adapter.py" \
+            --candidate-command "python architect/evaluation/harness/adapters/diagnostic_wrapper.py" \
             --out .tmp/architect-real-candidate-diagnostic \
             --timeout 180
 
