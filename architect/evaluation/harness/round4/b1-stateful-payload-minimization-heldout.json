@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "establish",
+      "session_id": "r4a",
+      "input": {
+        "task": "For a professional vendor-governance agent, establish durable decision state for later isolated sessions. Authoritative standard STD-312 sets mandatory evidence review cadence to 60 days. A meeting aside says the coordinator labels their ceramic mug 'ORBIT-TEAL'; that detail is irrelevant. Persist only future-use professional state with provenance. Rejected irrelevant payload values must not survive anywhere in durable memory metadata.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "supersede",
+      "session_id": "r4b",
+      "reset_session": true,
+      "input": {
+        "task": "Authoritative standard STD-447 supersedes the evidence review cadence: current cadence is 45 days. Update durable state while preserving supersession history and provenance. Do not retain irrelevant meeting-aside payloads.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "recall",
+      "session_id": "r4c",
+      "reset_session": true,
+      "input": {
+        "task": "Read durable state. Report the current evidence review cadence and current source. Also answer whether a preferred audit weekday was ever established. If absent, output the exact token `WEEKDAY_ABSENT` rather than inventing a value.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}
