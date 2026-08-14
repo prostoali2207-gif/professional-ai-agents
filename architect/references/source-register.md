@@ -1,6 +1,6 @@
 # Agent Architect Source Register
 
-Status: active research register for v1.1 benchmark-qualified Agent Architect. Sources are recorded by claim/function, not as a generic reading list.
+Status: active research register for v1.1 release candidate; benchmark qualification is pending fresh held-out B1 revalidation and a complete one-SHA B1–B10 release gate. Sources are recorded by claim/function, not as a generic reading list.
 
 | ID | Source | Type | Supports | Freshness | Notes |
 |---|---|---|---|---|---|
