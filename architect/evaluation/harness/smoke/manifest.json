@@ -1,6 +1,6 @@
 {
   "candidate_sha": "SMOKE-NOT-RELEASE-EVIDENCE",
-  "runner_version": "1",
+  "runner_version": "2",
   "trial_count": 2,
   "fixtures": [
     {
@@ -8,7 +8,7 @@
       "family": "HARNESS_SMOKE",
       "priority": "NON_RELEASE",
       "path": "fixture.json",
-      "sha256": "de137c8b85c551ecd43314deacb8015aa51fa086567ea87bbdfabc3a5a760844"
+      "sha256": "9dc98d5e998be48dbc97e8b437f8b9c7c7b0981480387bcd3c5cf23cb2585853"
     }
   ],
   "thresholds": {
