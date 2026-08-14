@@ -1,0 +1,19 @@
+{
+  "candidate_input": {
+    "task": "You are validating Agent Architect resource routing. Identify the methodology resource that governs runtime state, memory, context compaction, and checkpoint/resume. Inspect that resource using the available repository resource tool, then give a concise observable summary of one requirement that would matter in a real behavioral evaluation. Do not create an applied agent."
+  },
+  "mechanical_grader": {
+    "required_contains": [
+      {
+        "field": "steps.main.observable.resource_loads",
+        "value": "architect/methodology/runtime-state-memory-context.md"
+      }
+    ],
+    "required_equals": [
+      {
+        "field": "steps.main.status",
+        "value": "completed"
+      }
+    ]
+  }
+}
