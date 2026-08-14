@@ -5,11 +5,11 @@
   "mechanical_grader": {
     "required_equals": [
       {
-        "field": "smoke_marker",
+        "field": "steps.main.smoke_marker",
         "value": "AA_HARNESS_OK"
       },
       {
-        "field": "status",
+        "field": "steps.main.status",
         "value": "completed"
       }
     ]
