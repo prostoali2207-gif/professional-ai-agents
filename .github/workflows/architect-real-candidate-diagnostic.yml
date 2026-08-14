@@ -1,0 +1,101 @@
+name: Agent Architect Real Candidate Diagnostic
+
+on:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/**'
+      - 'architect/evaluation/harness/**'
+      - '.github/workflows/architect-real-candidate-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  models: read
+
+jobs:
+  real-candidate-diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile validation runtime
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/adapters/github_models_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/openai_responses_adapter.py
+
+      - name: Build diagnostic manifest for exact SHA
+        env:
+          CANDIDATE_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          manifest = {
+              "candidate_sha": os.environ["CANDIDATE_SHA"],
+              "runner_version": "2",
+              "trial_count": 1,
+              "fixtures": [{
+                  "id": "REAL-CANDIDATE-SMOKE-01",
+                  "family": "DIAGNOSTIC_RESOURCE_ROUTING",
+                  "priority": "NON_RELEASE",
+                  "path": "real-candidate-smoke.json",
+                  "sha256": "485b58a9ea72340d13027af6b30d9b6ce437b199bda3536bb4db2533f01a9c28"
+              }],
+              "thresholds": {"DIAGNOSTIC_RESOURCE_ROUTING": "1/1 mechanical PASS"},
+              "capability_profile": {
+                  "persistent_memory": False,
+                  "structured_tools": True,
+                  "purpose": "real candidate diagnostic only"
+              },
+              "evaluator_class": "mechanical-diagnostic-not-release"
+          }
+          path = Path("architect/evaluation/harness/diagnostic/manifest.generated.json")
+          path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Execute real Agent Architect candidate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          AGENT_ARCHITECT_MODEL: openai/gpt-4.1
+        run: |
+          rm -rf .tmp/architect-real-candidate-diagnostic
+          python architect/evaluation/harness/runner.py \
+            --manifest architect/evaluation/harness/diagnostic/manifest.generated.json \
+            --candidate-command "python architect/evaluation/harness/adapters/github_models_adapter.py" \
+            --out .tmp/architect-real-candidate-diagnostic \
+            --timeout 180
+
+      - name: Verify real candidate used required methodology resource
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = json.loads(Path('.tmp/architect-real-candidate-diagnostic/summary.json').read_text())
+          assert len(summary) == 1, summary
+          row = summary[0]
+          assert row['grade']['status'] == 'PASS', row
+          loads = row['steps']['main']['observable']['resource_loads']
+          assert 'architect/methodology/runtime-state-memory-context.md' in loads, loads
+          print('REAL_CANDIDATE_DIAGNOSTIC_PASS')
+          PY
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-real-candidate-diagnostic-${{ github.sha }}
+          path: .tmp/architect-real-candidate-diagnostic
