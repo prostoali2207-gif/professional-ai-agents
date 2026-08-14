@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v0.4 executable skill.
+Status: v1.0 — release-qualified professional-agent architecture methodology.
 
 ## Mission
 
@@ -35,95 +35,44 @@ Read and follow:
 
 Start from the actual goal and work, not the user's title.
 
-Identify:
+Identify real profession(s), responsibilities/outputs, boundaries, recurring work, difficult decisions, cues/misleading cues, uncertainty/trade-offs, failure/recovery patterns, tools, and verification evidence.
 
-- real profession or combination of professions;
-- responsibilities and outputs;
-- boundaries and exclusions;
-- recurring work;
-- difficult decisions;
-- cues and misleading cues;
-- uncertainty and trade-offs;
-- failure/recovery patterns;
-- tools and verification evidence.
-
-Use the reasoning discipline in:
+Use:
 
 - `methodology/agent-architect-methodology.md`
 - `methodology/cognitive-task-analysis.md`
 
 When tacit expertise matters, use Cognitive Task Analysis / Critical Decision Method logic and triangulate expert reports with artifacts, outcomes, observation, or multiple cases when possible.
 
-When the work is high-stakes or high-consequence, apply `methodology/high-stakes-profession-architecture.md` from the beginning of profession reconstruction. Map credible harms, reversibility, jurisdiction, accountable decision-maker, nondelegable judgment, human oversight, and autonomy boundaries before designing capabilities.
-
 ### Phase 2 — Discover hidden competencies
 
-Do not accept the user's list of requested skills as complete.
+Do not accept the user's list as complete. Ask what a strong practitioner notices that an average one misses, which adjacent discipline protects the decision, what failure occurs if it is absent, and whether the competence is CORE, BOUNDARY-CRITICAL, ESCALATION, CONTEXTUAL, or OUT-OF-SCOPE.
 
-For every meaningful area ask:
+Use `methodology/scope-risk-prioritization.md`.
 
-- What does a strong practitioner notice that an average one misses?
-- Which adjacent discipline protects this decision?
-- What professional failure occurs if this competence is absent?
-- Is this CORE, BOUNDARY-CRITICAL, ESCALATION, CONTEXTUAL, or OUT-OF-SCOPE?
-
-Use:
-
-- `methodology/scope-risk-prioritization.md`
-
-Depth should scale with consequence, coupling, reversibility, frequency, volatility, and difficulty of detecting mistakes.
+Depth scales with consequence, coupling, reversibility, frequency, volatility, and difficulty of detecting mistakes.
 
 ### Phase 3 — Build the competency model
 
-Each material competency must be observable and testable.
-
-Include as relevant:
-
-- purpose;
-- professional situation;
-- required knowledge;
-- observable capability;
-- inputs/cues;
-- decision model;
-- trade-offs;
-- failure modes;
-- expert-vs-average discriminator;
-- tools;
-- evidence;
-- boundary/escalation;
-- evaluation;
-- adversarial evaluation.
+Each material competency must be observable and testable. Include as relevant: purpose, professional situation, required knowledge, observable capability, cues, decision model, trade-offs, failure modes, expert-vs-average discriminator, tools, evidence, boundary/escalation, evaluation, and adversarial evaluation.
 
 Do not use labels such as `knows research`, `has taste`, or `uses best practices` as competence definitions.
 
-### Phase 4 — Engineer the knowledge and evidence system
+Use `methodology/competency-assessment.md`.
 
-For each competency, identify the knowledge dependencies required to make the professional decisions.
+### Phase 4 — Engineer knowledge and evidence
 
-Separate:
-
-- foundations;
-- standards/specifications;
-- empirical evidence;
-- current professional practice;
-- heuristics;
-- cases/examples;
-- failure patterns;
-- volatile/current knowledge.
+Separate foundations, standards/specifications, empirical evidence, current professional practice, heuristics, cases/examples, failure patterns, and volatile/current knowledge.
 
 Do not copy protected books into the repository. Extract copyright-safe principles from accessible evidence and record provenance.
 
 Every material knowledge unit must answer which competency/decision consumes it and whether it should be stored or retrieved live.
 
-For professions that consume empirical observations, source authority and retrieval are not enough. Map the evidence-generating process and test construct validity, population/condition compatibility, units/denominators, selection/coverage, measurement/classification error, time regime, and comparator compatibility before aggregation or inference.
+For empirical observations, authority and retrieval are not enough. Map the evidence-generating process and test construct validity, population/condition compatibility, units/denominators, selection/coverage, measurement/classification error, time regime, and comparator compatibility before aggregation or inference.
 
-Use:
+Use `methodology/evidence-validity-comparability.md`.
 
-- `methodology/evidence-validity-comparability.md`
-
-Do not average or synthesize heterogeneous observations merely because they share a label. Prefer `classify -> validate -> segment -> compare -> quantify uncertainty -> synthesize only where justified`.
-
-For high-stakes professions, governing rules/guidelines/standards must be current and applicable to the exact jurisdiction, population, context, and version. Missing decisive information is an escalation condition, not permission to fill gaps with model priors.
+Prefer `classify -> validate -> segment -> compare -> quantify uncertainty -> synthesize only where justified`.
 
 ### Phase 5 — Encode professional judgment
 
@@ -133,31 +82,21 @@ For a material principle encode:
 
 `principle -> causal rationale -> applicability conditions -> exceptions -> trade-offs -> evidence required -> justified violation conditions`.
 
-The agent must distinguish facts, assumptions, estimates, unresolved uncertainty, and alternative professional judgments.
+Distinguish facts, assumptions, estimates, unresolved uncertainty, and alternative professional judgments.
 
-Use `methodology/uncertainty-escalation.md` for uncertainty and escalation design.
+Use `methodology/uncertainty-escalation.md`.
 
 For creative professions also use `methodology/creative-profession-architecture.md`. Separate hard constraints, communication/function constraints, contextual conventions, aesthetic preferences, and open creative space. Do not treat taste as unexplained preference or references as style templates.
 
-For high-stakes professions also use `methodology/high-stakes-profession-architecture.md`. Explicitly separate information support, analytical support, recommendation support, and decision/execution authority. Competence does not imply delegable authority.
-
 ### Phase 6 — Design workflow, tools, and evidence
 
-Map the actual professional process.
-
-A generic loop may be:
+Map the actual professional process rather than forcing a universal sequence. A generic loop may be:
 
 `understand -> diagnose -> identify uncertainty -> research/retrieve -> generate alternatives -> decide -> execute -> observe -> critique -> revise`.
 
-Do not force this sequence when the profession differs.
+For creative work with meaningful open solution space, preserve divergence before convergence unless the brief is already tightly constrained.
 
-For creative work with meaningful open solution space, preserve divergence before convergence: explore genuinely different concepts or solution families before polishing one direction, unless the brief is already tightly constrained.
-
-For each claim of success ask what direct evidence would prove it. If the result can be observed or tested, direct observation/test is required.
-
-Tools must expose enough state to diagnose partial success and failure. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in their rendered/produced form when that form exists; source files or descriptions are not substitutes for perceptual evidence.
-
-For high-stakes recommendations, evidence must be presented so an accountable professional can independently review the basis rather than merely approve an opaque conclusion. Human oversight must specify reviewer competence/authority, evidence available, override ability, escalation path, and review conditions.
+For every success claim ask what direct evidence would prove it. If a result can be observed or tested, direct observation/test is required. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in rendered/produced form when available.
 
 Use:
 
@@ -166,78 +105,39 @@ Use:
 
 ### Phase 7 — Choose agent architecture
 
-Default to the least complex architecture that can meet the task.
+Default to the least complex architecture that can meet the task: one agent, modular agent, deterministic workflow around an agent, specialist + critic, specialist handoff, orchestrator + specialists, or broader multi-agent system.
 
-Consider:
+Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, or information partitioning. Account for latency, token/tool cost, human review burden, coordination overhead, and context-loss risk.
 
-- one agent;
-- one agent with modular knowledge/workflows;
-- deterministic workflow around an agent;
-- specialist + critic;
-- specialist handoff;
-- orchestrator + specialists;
-- broader multi-agent system.
-
-Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, or information partitioning.
-
-Account for latency, token/tool cost, human review burden, coordination overhead, and context-loss risk.
-
-In high-stakes workflows, separation may be justified for evidence retrieval, domain analysis, deterministic validation, independent verification, or bounded permissions. Do not assume that more agents automatically create independent checks.
-
-Use `methodology/agent-boundary-coordination.md`.
+Use `methodology/agent-boundary-and-coordination.md`.
 
 ### Phase 8 — Design operational governance
 
 Capability is not authority.
 
-For tool-capable agents define:
-
-- read/write/publish/delete/deploy/spend/approve scope;
-- least-required permissions;
-- reversibility and blast radius;
-- confirmation and escalation gates;
-- rollback/recovery;
-- auditability;
-- runtime/model/tool/version assumptions;
-- accountable human owner where consequential.
-
-For high-stakes systems, explicitly define nondelegable decisions, current-authority gates, confidentiality/data-handling constraints, and hard-stop conditions. Do not replace these with a generic disclaimer to consult a professional.
+For tool-capable agents define read/write/publish/delete/deploy/spend/approve scope, least-required permissions, reversibility/blast radius, confirmation/escalation gates, rollback/recovery, auditability, runtime/model/tool/version assumptions, and accountable human ownership where consequential.
 
 Use `methodology/operational-governance.md`.
 
+For high-stakes roles also use `methodology/high-stakes-profession-architecture.md`. Explicitly determine whether the agent provides information support, analytical support, recommendation support, or decision/execution authority. Do not use ceremonial human approval as a substitute for independently reviewable evidence and accountable professional judgment.
+
 ### Phase 9 — Build evaluation before declaring readiness
 
-Use `methodology/evaluation-grader-calibration.md`, `methodology/eval-integrity-regression.md`, and the files under `evaluation/`.
+Use:
 
-Evaluation should cover as appropriate:
+- `methodology/evaluation-calibration.md`
+- `methodology/eval-integrity-and-regression.md`
+- files under `evaluation/`
 
-- fundamentals;
-- application;
-- diagnosis;
-- practical execution;
-- bad user assumptions;
-- conflicting requirements;
-- insufficient information;
-- source/retrieval quality;
-- empirical construct validity and comparator compatibility;
-- tool use;
-- direct evidence;
-- edge cases;
-- critique;
-- self-critique;
-- recovery;
-- permissions/authority;
-- cost/latency where material.
+Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, edge cases, critique, self-critique, recovery, permissions/authority, and material cost/latency.
 
-For analytical professions, include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units or denominators, proxy/construct mismatch, large biased samples, and user pressure to pool heterogeneous data.
+For analytical professions include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units/denominators, proxy mismatch, large biased samples, and pressure to pool heterogeneous data.
 
-For creative professions, separately evaluate hard-constraint correctness, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, and user aesthetic preferences presented as universal rules.
+For creative professions separately evaluate hard constraints, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, and user aesthetic preferences presented as universal rules.
 
-For high-stakes professions, include explicit critical-gate tests for wrong jurisdiction, superseded authority, missing decisive inputs, unverifiable/fabricated authority, confidentiality/tool mismatch, attempts to remove mandatory review, opaque recommendations that invite rubber-stamping, execution beyond authorized scope, and cases where mathematically correct work is professionally inapplicable. Critical failures must not be averaged away by strong aggregate performance.
+For high-stakes professions include hard-fail cases for fabricated authority, wrong jurisdiction/applicability, missing decision-critical inputs, confidentiality/tool incompatibility, non-reviewable recommendations, and actions beyond delegated authority.
 
-Prefer authentic work samples over trivia.
-
-Use outcome grading and trajectory/tool-use grading where both matter. Calibrate model graders against professional reference judgments. Use deterministic/environment graders when ground truth is mechanically observable. Use domain-expert review for high-consequence or irreducibly judgment-heavy work. For subjective creative quality, prefer calibrated comparative or multi-judge review over one unvalidated scalar LLM score.
+Prefer authentic work samples over trivia. Use outcome and trajectory/tool-use grading where both matter. Calibrate model graders against professional reference judgments. Use deterministic/environment graders when ground truth is mechanically observable and domain-expert review for high-consequence or irreducibly judgment-heavy work. For subjective creative quality prefer calibrated comparative or multi-judge review over one unvalidated scalar LLM score.
 
 Separate development, regression, holdout, and practical evals. Protect against benchmark leakage and overfitting.
 
@@ -247,21 +147,13 @@ Before finalizing any applied agent, ask exactly:
 
 `What would a strong practitioner of this profession notice is missing, even though the user does not know to ask for it?`
 
-Then red-team from at least:
-
-- senior practitioner;
-- educator/competency assessor;
-- hiring manager.
-
-Add evaluation-scientist and systems/operations perspectives when material. Add an accountable licensed/authorized practitioner perspective when the domain is high-stakes or regulated.
+Then red-team from at least senior-practitioner, educator/competency-assessor, and hiring-manager perspectives. Add evaluation-scientist and systems/operations perspectives when material.
 
 Do not merely list criticisms. Repair material gaps before release.
 
 ### Phase 11 — Only now assemble the applied SKILL
 
-The applied `SKILL.md` should orchestrate the professional system, not duplicate the entire profession.
-
-It should route to the necessary knowledge, workflows, tools, evidence checks, decision frameworks, evaluation gates, escalation rules, and governance constraints.
+The applied `SKILL.md` orchestrates the professional system rather than duplicating the entire profession. Route to necessary knowledge, workflows, tools, evidence checks, decision frameworks, evaluation gates, escalation rules, and governance constraints.
 
 ### Phase 12 — Evaluate the assembled agent
 
@@ -281,61 +173,40 @@ Production feedback is evidence, not automatic truth. Incidents, near-misses, dr
 
 ## Source discipline
 
-Never claim that an agent has studied a source that has not actually been obtained and reviewed.
+Never claim that an agent studied a source that was not actually obtained and reviewed.
 
-When sources conflict, inspect scope, date/version, jurisdiction, population, methodology, and authority. Preserve unresolved uncertainty when the evidence does not support a single conclusion.
+When sources conflict, inspect scope, date/version, jurisdiction, population, methodology, and authority. Preserve unresolved uncertainty when evidence does not support a single conclusion.
 
-Examples and attractive work are useful for reference literacy and creativity but do not become rules merely because they look strong.
+Examples and attractive work support reference literacy and creativity but do not become rules merely because they look strong.
 
 ## Creativity rule
 
-For creative professions distinguish:
-
-- fundamentals/craft;
-- problem framing;
-- taste/reference literacy;
-- divergent exploration;
-- concept formation;
-- contextual judgment;
-- execution;
-- critique/revision;
-- production verification.
+For creative professions distinguish fundamentals/craft, problem framing, taste/reference literacy, divergent exploration, concept formation, contextual judgment, execution, critique/revision, and production verification.
 
 References must be deconstructed for underlying decisions and constraints, not copied as surface style. Taste must be operationalized through observable comparative and diagnostic behavior, not adjectives such as `premium`, `clean`, or `beautiful`.
 
-The agent may intentionally violate a rule only when it can identify the rule, causal purpose of the violation, intended effect, resulting risk, and how the effect will be verified.
+An agent may intentionally violate a rule only when it can identify the rule, causal purpose of the violation, intended effect, resulting risk, and how the effect will be verified.
 
-Read and follow `methodology/creative-profession-architecture.md` when the target role is substantially creative.
+## Release integrity rule
 
-## High-stakes rule
+A methodology file that exists but cannot be reached from the executable router is operationally missing. Before release or major revision, verify:
 
-For high-stakes work, optimize for justified professional assistance and controlled authority, not maximum autonomy.
-
-A nominal human approval step is insufficient if the reviewer cannot independently evaluate the basis of the recommendation. Define consequence, governing authority, required inputs, reviewer role, nondelegable judgment, verification, escalation, confidentiality constraints, and hard-fail evals.
-
-Read and follow `methodology/high-stakes-profession-architecture.md` whenever material error can plausibly cause serious health, legal, financial, safety, rights, confidentiality, or critical-infrastructure harm.
+- every file path referenced by this SKILL exists;
+- top-level README/status agrees with executable state;
+- required evaluation artifacts exist;
+- source-register claims match actual foundation coverage;
+- stale instructions from earlier lifecycle stages have been removed.
 
 ## Stop conditions
 
-Do not finalize an applied agent when any material item is missing:
+Do not finalize an applied agent when any material item is missing: profession model, competency map, authoritative knowledge/evidence, hidden-gap analysis, professional judgment, tools/evidence loop, scope/escalation boundaries, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
 
-- profession model;
-- competency map;
-- authoritative knowledge/evidence;
-- hidden-gap analysis;
-- professional judgment layer;
-- tools/evidence loop;
-- scope and escalation boundaries;
-- operational authority/governance;
-- evaluation plan;
-- adversarial coverage;
-- practical test;
-- red-team correction.
-
-For high-stakes agents, also stop when governing authority/jurisdiction is unresolved, decisive inputs are unavailable, professional ownership is undefined, independent review is ineffective, or critical hard-fail evals remain.
-
-Do not claim exhaustive professional knowledge even after passing. The agent must retain a reliable process for unknowns, live research, and escalation.
+Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, and escalation.
 
 ## Definition of done
 
-`profession mapped -> competencies mapped -> authoritative knowledge assembled -> evidence validity/comparability checked where empirical -> creative exploration/judgment architecture defined where relevant -> high-stakes authority/oversight boundaries defined where relevant -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> competencies mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative exploration/judgment architecture defined where relevant -> high-stakes authority/reviewability defined where relevant -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+
+## v1.0 qualification
+
+v1.0 was release-qualified after methodology construction, pre-SKILL audit/red-team, a frontend-engineering dry-run, cross-domain analytical evaluation, creative-profession evaluation, high-stakes evaluation, and a final release-integrity audit. v1.0 readiness is evidence that the architecture is suitable for controlled applied-agent construction; it is not evidence that future applied agents are automatically competent or that the methodology is permanently complete.
