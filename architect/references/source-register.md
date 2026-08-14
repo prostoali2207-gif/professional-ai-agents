@@ -39,6 +39,12 @@ Status: active research register. Sources are recorded by claim/function, not as
 | SRC-033 | AAPOR, *Best Practices for Survey Research* | professional best-practice guidance | survey method choice, sampling, weighting, transparency, nonresponse, limits of sample size | stable/current practice | Supports adversarial tests involving large-but-biased evidence and proxy quality. https://aapor.org/standards-and-ethics/best-practices/ |
 | SRC-034 | Anthropic, *AuditBench* (2026) | empirical agent-evaluation research | tool-to-agent gap; tool evidence can fail to improve end-agent performance; repeated runs and realistic agentic success metrics | current research | Reinforces evaluating whether agents actually use and verify tool evidence, not tools in isolation. https://alignment.anthropic.com/2026/auditbench/ |
 | SRC-035 | NIST CAISI, *Analyzing Transcripts from AI Agent Evaluations* (2026) | official evaluation-science guidance/research blog | transcript/trajectory review; detection of evaluation artifacts and cheating in long-horizon agents | current | Useful for eval-integrity review; not a universal scoring rubric. https://www.nist.gov/blogs/caisi-research-blog/analyzing-transcripts-ai-agent-evaluations |
+| SRC-036 | U.S. BLS, *Graphic Designers* Occupational Outlook Handbook | authoritative occupational description | creative cross-domain profession baseline; layout, typography, imagery, concept presentation, revision, originality/portfolio | slow/current occupational data | Baseline duties and qualities, not a senior-art-direction curriculum. https://www.bls.gov/ooh/arts-and-design/graphic-designers.htm |
+| SRC-037 | O*NET 27-1024.00, *Graphic Designers* | authoritative occupational/task database | current graphic-design tasks, layout/type decisions, review/improvement, commercial communication | slow/current | Updated 2026; task evidence, not proof of taste. https://www.onetonline.org/link/summary/27-1024.00 |
+| SRC-038 | Design Council, *The Double Diamond* / Framework for Innovation | authoritative professional framework | divergent/convergent design process; discover/define/develop/deliver; multiple solutions, testing, rejection, iteration | stable/current practice | Treat as a simplified process framework, not a rigid instruction manual. https://www.designcouncil.org.uk/resources/the-double-diamond/ |
+| SRC-039 | AIGA Design Educators Community, *Designer 2025* | professional competency/education framework | communication-design competency framing and changing professional context | slow/historical-current relevance | Published 2017; useful as profession/education evidence, but not current-tech guidance. https://educators.aiga.org/aiga-designer-2025/ |
+| SRC-040 | Frontiers in Psychology, CAT-based creativity evaluation research | peer-reviewed creativity-assessment research | domain-expert consensual judgment for creative products; limits of fixed objective rubrics in subjective creative domains | stable/current research | Use to justify calibrated expert/independent creative judging, not to claim universal taste metrics. https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2019.00032/full |
+| SRC-041 | Frontiers in Psychology, 2026 product-design divergent-thinking study | peer-reviewed current research | CAT expert creativity assessment plus fluency/flexibility/originality/elaboration in design ideation | current research | Supports separating divergent-process dimensions from final-product expert judgment. https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2026.1839565/full |
 
 ## Source discipline
 
@@ -54,18 +60,19 @@ The Agent Architect foundation now has explicit coverage for:
 - retrieval evaluation;
 - evidence-generating-process, construct-validity, and comparator-compatibility checks;
 - professional judgment and uncertainty;
+- creative-profession architecture: fundamentals, framing, reference literacy, divergence/convergence, taste, critique, rule-breaking, artifact-first review, and expert-calibrated subjective evaluation;
 - tools, observability, downstream verification, and tool-to-agent gap awareness;
 - single-vs-multi-agent architecture selection;
 - permissions, blast radius, environment assumptions, and accountable ownership;
 - evaluator calibration, holdouts, regression, transcript review, and benchmark contamination;
 - production incident learning, drift, near-misses, and knowledge-lifecycle governance;
 - pre-SKILL completeness audit and methodology red-team;
-- practical profession-model dry-runs across software and analytical domains.
+- practical profession-model dry-runs across software, analytical, and creative domains.
 
 ## Current state
 
-`architect/SKILL.md` is now v0.2.
+`architect/SKILL.md` is now v0.3.
 
-The executable Architect passed a cross-domain Market Research / Market Intelligence evaluation only after exposing and repairing a material evidence-comparability blind spot. This is positive evidence for the failure-driven architecture, not proof of universal generalization.
+The executable Architect has exposed and repaired two material cross-domain blind spots during testing: empirical evidence comparability and creative-profession over-formalization/reference-imitation risk. The creative cross-domain gate passed after adding a dedicated creative-profession architecture and eight adversarial tests.
 
-Before v1.0 readiness, the next strongest test should stress a qualitatively different profession where success depends heavily on taste, divergent exploration, critique, and contextual judgment rather than primarily empirical/technical correctness. A creative-profession evaluation should attempt to reveal whether the current methodology over-formalizes craft or mistakes reference literacy for professional taste.
+This is still not proof of universal generalization. Before v1.0 readiness, the strongest remaining stress test is a high-stakes profession in which correct architecture should include strict competence boundaries, live authoritative research, uncertainty management, human escalation, and refusal to automate decisions beyond justified authority.
