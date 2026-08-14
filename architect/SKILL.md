@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v0.1 executable skill.
+Status: v0.2 executable skill.
 
 ## Mission
 
@@ -94,7 +94,7 @@ Include as relevant:
 
 Do not use labels such as `knows research`, `has taste`, or `uses best practices` as competence definitions.
 
-### Phase 4 — Engineer the knowledge system
+### Phase 4 — Engineer the knowledge and evidence system
 
 For each competency, identify the knowledge dependencies required to make the professional decisions.
 
@@ -112,6 +112,14 @@ Separate:
 Do not copy protected books into the repository. Extract copyright-safe principles from accessible evidence and record provenance.
 
 Every material knowledge unit must answer which competency/decision consumes it and whether it should be stored or retrieved live.
+
+For professions that consume empirical observations, source authority and retrieval are not enough. Map the evidence-generating process and test construct validity, population/condition compatibility, units/denominators, selection/coverage, measurement/classification error, time regime, and comparator compatibility before aggregation or inference.
+
+Use:
+
+- `methodology/evidence-validity-comparability.md`
+
+Do not average or synthesize heterogeneous observations merely because they share a label. Prefer `classify -> validate -> segment -> compare -> quantify uncertainty -> synthesize only where justified`.
 
 ### Phase 5 — Encode professional judgment
 
@@ -195,6 +203,7 @@ Evaluation should cover as appropriate:
 - conflicting requirements;
 - insufficient information;
 - source/retrieval quality;
+- empirical construct validity and comparator compatibility;
 - tool use;
 - direct evidence;
 - edge cases;
@@ -203,6 +212,8 @@ Evaluation should cover as appropriate:
 - recovery;
 - permissions/authority;
 - cost/latency where material.
+
+For analytical professions, include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units or denominators, proxy/construct mismatch, large biased samples, and user pressure to pool heterogeneous data.
 
 Prefer authentic work samples over trivia.
 
@@ -290,4 +301,4 @@ Do not claim exhaustive professional knowledge even after passing. The agent mus
 
 ## Definition of done
 
-`profession mapped -> competencies mapped -> authoritative knowledge assembled -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> competencies mapped -> authoritative knowledge assembled -> evidence validity/comparability checked where empirical -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
