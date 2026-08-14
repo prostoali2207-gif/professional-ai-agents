@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 benchmark-qualified — behavioral release gate PASS on 2026-08-14.**
+Status: **v1.1 benchmark-qualified — external benchmark completed and final one-SHA behavioral release gate passed.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -8,24 +8,7 @@ It is not a prompt template and does not make future agents competent automatica
 
 ## Core architecture
 
-The executable router is `SKILL.md`. Supporting methodology now covers:
-
-1. profession discovery and cognitive task analysis;
-2. competency engineering and scope/risk prioritization;
-3. source, provenance, freshness and retrieval discipline;
-4. evidence validity and comparator compatibility;
-5. professional judgment and uncertainty/escalation;
-6. creative-profession exploration, taste and critique;
-7. procedural skill/capability packaging and progressive disclosure;
-8. workflow, tools, agent-computer-interface quality and downstream verification;
-9. runtime state, memory, context assembly/compaction and checkpoint/resume;
-10. execution control, progress detection, bounded remediation and termination;
-11. single-vs-multi-agent boundaries and coordination;
-12. security/trust boundaries, prompt-injection resistance and capability supply chain;
-13. permissions, blast radius and operational governance;
-14. high-stakes authority and independent reviewability;
-15. evaluation, grader calibration, holdouts and regression integrity;
-16. production incidents, drift and failure-driven learning.
+The executable router is `SKILL.md`. Supporting methodology covers profession discovery, competency/evidence engineering, source/provenance/freshness, evidence comparability, judgment/uncertainty, procedural packaging, tools and downstream verification, runtime state/memory/context, execution control, agent boundaries, security/trust, governance, high-stakes authority, evaluation integrity, and production learning.
 
 ## Applied-agent gate
 
@@ -39,24 +22,11 @@ A pass for the Architect itself is never inherited by an applied agent.
 
 ## Benchmark history
 
-The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. Those tests exposed and repaired important gaps in evidence comparability, creative judgment, high-stakes authority/reviewability, and release routing.
+The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. A broader external benchmark on 2026-08-14 found material gaps in runtime state/memory/context engineering, long-horizon execution control, procedural capability packaging, and agent security/trust-boundary engineering.
 
-A broader external benchmark on 2026-08-14 compared the Architect with current Anthropic, OpenAI, Google/DeepMind, Microsoft, academic, open-source agent, memory, evaluation, and professional-assessment work. It found four material layers that v1.0 modeled only implicitly or incompletely:
+Those layers were added and then subjected to controlled behavioral validation. The final one-SHA B1-B10 release suite passed, including P0 non-idempotent partial-success safety, indirect prompt-injection resistance, memory-poisoning resistance, checkpoint/resume, capability degradation, procedural resource loading, evidence-based competence inference, and five-trial reliability.
 
-- runtime state/memory/context engineering;
-- long-horizon execution control and evidence-driven remediation;
-- procedural capability/skill packaging and progressive disclosure;
-- agent security/trust-boundary engineering.
-
-Those layers became the v1.1 architecture. Behavioral qualification is recorded in `evaluation/v1.1-behavioral-validation-report.md`.
-
-## v1.1 qualification
-
-The final controlled one-SHA release round passed B1–B10 under a preregistered manifest and mechanically observable harness. This included stateful multi-session reasoning, checkpoint/resume, bounded replanning, non-idempotent partial-success recovery, indirect prompt-injection resistance with useful task completion, memory-poisoning resistance, procedural capability loading, capability degradation, repeated interactive reliability, and evidence-centered competence inference.
-
-All P0 families passed. B9 achieved 5/5 critical-invariant PASS and 5/5 complete-task PASS.
-
-This benchmark PASS is evidence for the Agent Architect v1.1 architecture under the tested runtime and cases; it is not a claim of perfection, exhaustive professional knowledge, or automatic competence transfer to applied agents.
+Canonical validation evidence is recorded under `evaluation/`, with the final GitHub Actions release artifact tied to the tested candidate SHA.
 
 ## Maintenance rule
 
@@ -70,6 +40,4 @@ Before major releases, verify that every path referenced by `SKILL.md` exists an
 
 ## Boundary
 
-No release means `perfect`, `complete`, or `knows every profession`.
-
-Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
+Benchmark-qualified does not mean perfect, complete, or knowledgeable about every profession. Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
