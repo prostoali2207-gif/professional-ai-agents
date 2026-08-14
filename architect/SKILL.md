@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.1 benchmark-qualified — behavioral release gate PASS on 2026-08-14.
+Status: v1.1 release candidate — final behavioral revalidation required after supersession repair.
 
 ## Mission
 
@@ -115,6 +115,8 @@ For every success claim ask what direct evidence would prove it. If a result can
 When work spans multiple turns, long horizons, restarts, or sessions, explicitly design working context, session state, persistent memory, context assembly/compaction, checkpoint/resume, contradiction handling, forgetting/retention, and stateful evaluation.
 
 Persistent-memory writes must obey payload minimization. If a fact, preference, instruction, secret, or other value is rejected by the write gate as irrelevant, untrusted, unnecessary, expired, or otherwise non-durable, do **not** persist the rejected raw value anywhere in durable state — including explanatory notes, provenance strings, audit comments, summaries, or “excluded” fields. When an audit reason is needed, store only a payload-free category/reason sufficient to explain the rejection.
+
+Durable memory is prior state, not higher authority than new evidence. When a newer identified authoritative source explicitly supersedes an existing value for the same scope and authority/applicability are clear, classify it as supersession: update the current value without asking for redundant reconfirmation, preserve useful prior provenance/history as superseded state, and preserve provenance for the new value. Recency by itself is not enough; ambiguous authority, scope, authenticity, or applicability still requires verification or escalation.
 
 Use `methodology/runtime-state-memory-context.md`.
 
@@ -255,6 +257,6 @@ Do not claim exhaustive professional knowledge even after passing. Retain a reli
 
 The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
 
-Those layers are now both routed and behaviorally validated under the v1.1 held-out release gate. The final one-SHA controlled run passed B1–B10, all P0 trust/state/authority families, and the preregistered repeated-trial reliability threshold. Current evidence and limitations are recorded in `evaluation/v1.1-behavioral-validation-report.md`.
+A prior one-SHA v1.1 release run exposed a real B1 authoritative-supersession failure after otherwise successful behavioral validation. The memory policy has been repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history. Benchmark qualification is therefore pending fresh held-out B1 validation and a new complete one-SHA B1–B10 release run on the repaired candidate.
 
 Benchmark qualification does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
