@@ -77,6 +77,20 @@ Track when material:
 
 If two memories conflict, do not silently select the most recent text. Determine whether the conflict is supersession, scope difference, bad evidence, or unresolved disagreement.
 
+### Authoritative supersession
+
+Do not let durable memory outrank newer authoritative evidence merely because the older value is already stored.
+
+When a new observation explicitly states that an identified authoritative source supersedes or replaces an existing value for the same scope, and there is no material ambiguity about source identity, applicability, or authority:
+
+- treat the event as **supersession**, not unresolved contradiction;
+- make the superseding value the current state without asking the user to repeat or reconfirm information already supplied;
+- preserve the prior value and its provenance as historical/superseded state when that history has future professional or audit value;
+- preserve provenance for the new current value and, where available, the supersession relationship;
+- do not discard a valid newer authoritative update merely because it conflicts with remembered state.
+
+Recency alone is not sufficient. If authority, scope, applicability, authenticity, or the claimed supersession relationship is unclear, verify or escalate rather than overwriting. The purpose of this rule is to distinguish explicit authoritative replacement from an ordinary unresolved conflict.
+
 ## 5. Checkpoint and resume
 
 For interruptible or long-horizon work, define a resumable checkpoint containing enough information to continue safely without replaying hidden assumptions.
@@ -120,9 +134,9 @@ Stateful agents require evaluation beyond single-turn correctness. Include as re
 
 - extraction of a decision-relevant fact from an earlier interaction;
 - multi-session reasoning over several compatible observations;
-- temporal reasoning and supersession;
+- temporal reasoning and authoritative supersession, including replacing current state while retaining useful provenance/history;
 - correction when a previous fact becomes outdated;
-- contradiction detection;
+- contradiction detection, including distinguishing explicit supersession from unresolved disagreement;
 - abstention when the required memory was never established;
 - resistance to distractor memories, including verifying that rejected distractor payloads are absent from durable metadata as well as from active facts;
 - context-compaction preservation of critical constraints;
@@ -154,7 +168,7 @@ Runtime state/memory architecture passes only when a reviewer can answer:
 1. What state exists and why?
 2. What may become durable, under what write gate?
 3. What enters the active context for each decision?
-4. How are contradictions, staleness, and compaction handled?
+4. How are contradictions, authoritative supersession, staleness, and compaction handled?
 5. How does the agent safely resume after interruption?
 6. How are privacy, poisoning, and deletion handled?
 7. Which stateful/multi-session eval proves the design works?
