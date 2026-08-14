@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 benchmark candidate — externally benchmarked and revised; additional behavioral validation required.**
+Status: **v1.1 benchmark-qualified — behavioral release gate PASS on 2026-08-14.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -48,13 +48,15 @@ A broader external benchmark on 2026-08-14 compared the Architect with current A
 - procedural capability/skill packaging and progressive disclosure;
 - agent security/trust-boundary engineering.
 
-These layers are now part of the v1.1 candidate architecture. See `evaluation/external-benchmark-2026-08.md`.
+Those layers became the v1.1 architecture. Behavioral qualification is recorded in `evaluation/v1.1-behavioral-validation-report.md`.
 
-## Why status is candidate, not PASS
+## v1.1 qualification
 
-Documentation coverage is not behavioral evidence. The new architecture must still be exercised with held-out practical tests that require multi-session state, checkpoint/resume, context compaction, stall/replanning, prompt-injection resistance, memory poisoning resistance, capability loading, and bounded recovery.
+The final controlled one-SHA release round passed B1–B10 under a preregistered manifest and mechanically observable harness. This included stateful multi-session reasoning, checkpoint/resume, bounded replanning, non-idempotent partial-success recovery, indirect prompt-injection resistance with useful task completion, memory-poisoning resistance, procedural capability loading, capability degradation, repeated interactive reliability, and evidence-centered competence inference.
 
-Until those gates run, the correct benchmark status is REVISE rather than an inflated PASS claim.
+All P0 families passed. B9 achieved 5/5 critical-invariant PASS and 5/5 complete-task PASS.
+
+This benchmark PASS is evidence for the Agent Architect v1.1 architecture under the tested runtime and cases; it is not a claim of perfection, exhaustive professional knowledge, or automatic competence transfer to applied agents.
 
 ## Maintenance rule
 
