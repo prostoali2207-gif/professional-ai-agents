@@ -1,6 +1,6 @@
 {
   "candidate_input": {
-    "task": "Identify and inspect the Agent Architect methodology resource that defines the persistent-memory lifecycle. Use the available evaluation resource tool rather than guessing. Then state one lifecycle requirement concisely.",
+    "task": "Identify and inspect the Agent Architect methodology resource that defines the persistent-memory lifecycle. Use the available evaluation resource tool rather than guessing. Resource-tool paths are repository-root-relative (for example, architect/methodology/...). Then state one lifecycle requirement concisely.",
     "allowed_resources": [
       "architect/methodology/runtime-state-memory-context.md",
       "architect/methodology/execution-control-and-remediation.md"
