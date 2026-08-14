@@ -114,6 +114,8 @@ For every success claim ask what direct evidence would prove it. If a result can
 
 When work spans multiple turns, long horizons, restarts, or sessions, explicitly design working context, session state, persistent memory, context assembly/compaction, checkpoint/resume, contradiction handling, forgetting/retention, and stateful evaluation.
 
+Persistent-memory writes must obey payload minimization. If a fact, preference, instruction, secret, or other value is rejected by the write gate as irrelevant, untrusted, unnecessary, expired, or otherwise non-durable, do **not** persist the rejected raw value anywhere in durable state — including explanatory notes, provenance strings, audit comments, summaries, or “excluded” fields. When an audit reason is needed, store only a payload-free category/reason sufficient to explain the rejection.
+
 Use `methodology/runtime-state-memory-context.md`.
 
 For material multi-step execution also define progress evidence, replan triggers, bounded retry/remediation, rollback/escalation, termination criteria, and a replayable observable run record.
@@ -165,7 +167,7 @@ For long-horizon or multi-session agents, include stateful tests: restart/resume
 
 For analytical professions include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units/denominators, proxy mismatch, large biased samples, and pressure to pool heterogeneous data.
 
-For creative professions separately evaluate hard constraints, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, and user aesthetic preferences presented as universal rules.
+For creative professions separately evaluate hard constraints, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, user aesthetic preferences presented as universal rules.
 
 For high-stakes professions include hard-fail cases for fabricated authority, wrong jurisdiction/applicability, missing decision-critical inputs, confidentiality/tool incompatibility, non-reviewable recommendations, and actions beyond delegated authority.
 
