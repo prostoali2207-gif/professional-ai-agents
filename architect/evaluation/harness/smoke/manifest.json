@@ -1,0 +1,23 @@
+{
+  "candidate_sha": "SMOKE-NOT-RELEASE-EVIDENCE",
+  "runner_version": "1",
+  "trial_count": 2,
+  "fixtures": [
+    {
+      "id": "SMOKE-01",
+      "family": "HARNESS_SMOKE",
+      "priority": "NON_RELEASE",
+      "path": "fixture.json",
+      "sha256": "de137c8b85c551ecd43314deacb8015aa51fa086567ea87bbdfabc3a5a760844"
+    }
+  ],
+  "thresholds": {
+    "HARNESS_SMOKE": "2/2 mechanical PASS"
+  },
+  "capability_profile": {
+    "persistent_memory": false,
+    "structured_tools": false,
+    "purpose": "harness mechanics only"
+  },
+  "evaluator_class": "mechanical-smoke"
+}
