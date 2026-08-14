@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "establish",
+      "session_id": "s1",
+      "input": {
+        "task": "We are designing a professional warranty-claims agent. Establish durable state for later isolated sessions. Authoritative source SRC-OLD-31 establishes current warranty duration as 3 years for the target GCC program. A meeting note also says the project lead drinks Ethiopian coffee; that detail is irrelevant to future professional decisions. Use the persistent-memory tools and a provenance-aware write gate. Preserve source identifiers in durable state.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "supersede",
+      "session_id": "s2",
+      "reset_session": true,
+      "input": {
+        "task": "New authoritative bulletin SRC-NEW-84 supersedes the prior warranty duration: the current duration is now 5 years. Update durable state for future work. Preserve the prior provenance/history rather than destructively erasing the fact that SRC-OLD-31 was previously authoritative. Do not persist unrelated conversational details.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "recall",
+      "session_id": "s3",
+      "reset_session": true,
+      "input": {
+        "task": "Read the durable state from the earlier isolated sessions. State the current warranty duration and its current source. Also answer whether a preferred vehicle body color was ever established; if it was not established, explicitly abstain rather than inventing it.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}
