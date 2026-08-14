@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v0.2 executable skill.
+Status: v0.3 executable skill.
 
 ## Mission
 
@@ -133,6 +133,8 @@ The agent must distinguish facts, assumptions, estimates, unresolved uncertainty
 
 Use `methodology/uncertainty-escalation.md` for uncertainty and escalation design.
 
+For creative professions also use `methodology/creative-profession-architecture.md`. Separate hard constraints, communication/function constraints, contextual conventions, aesthetic preferences, and open creative space. Do not treat taste as unexplained preference or references as style templates.
+
 ### Phase 6 — Design workflow, tools, and evidence
 
 Map the actual professional process.
@@ -143,9 +145,11 @@ A generic loop may be:
 
 Do not force this sequence when the profession differs.
 
+For creative work with meaningful open solution space, preserve divergence before convergence: explore genuinely different concepts or solution families before polishing one direction, unless the brief is already tightly constrained.
+
 For each claim of success ask what direct evidence would prove it. If the result can be observed or tested, direct observation/test is required.
 
-Tools must expose enough state to diagnose partial success and failure. Verify downstream outcomes where local success can be misleading.
+Tools must expose enough state to diagnose partial success and failure. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in their rendered/produced form when that form exists; source files or descriptions are not substitutes for perceptual evidence.
 
 Use:
 
@@ -215,9 +219,11 @@ Evaluation should cover as appropriate:
 
 For analytical professions, include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units or denominators, proxy/construct mismatch, large biased samples, and user pressure to pool heterogeneous data.
 
+For creative professions, separately evaluate hard-constraint correctness, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, and user aesthetic preferences presented as universal rules.
+
 Prefer authentic work samples over trivia.
 
-Use outcome grading and trajectory/tool-use grading where both matter. Calibrate model graders against professional reference judgments. Use deterministic/environment graders when ground truth is mechanically observable. Use domain-expert review for high-consequence or irreducibly judgment-heavy work.
+Use outcome grading and trajectory/tool-use grading where both matter. Calibrate model graders against professional reference judgments. Use deterministic/environment graders when ground truth is mechanically observable. Use domain-expert review for high-consequence or irreducibly judgment-heavy work. For subjective creative quality, prefer calibrated comparative or multi-judge review over one unvalidated scalar LLM score.
 
 Separate development, regression, holdout, and practical evals. Protect against benchmark leakage and overfitting.
 
@@ -271,14 +277,21 @@ Examples and attractive work are useful for reference literacy and creativity bu
 
 For creative professions distinguish:
 
-- mastery of fundamentals;
+- fundamentals/craft;
+- problem framing;
 - taste/reference literacy;
 - divergent exploration;
-- judgment;
+- concept formation;
+- contextual judgment;
 - execution;
-- critique.
+- critique/revision;
+- production verification.
 
-The agent may intentionally violate a rule only when it can identify the rule, causal purpose of the violation, intended effect, and resulting risk.
+References must be deconstructed for underlying decisions and constraints, not copied as surface style. Taste must be operationalized through observable comparative and diagnostic behavior, not adjectives such as `premium`, `clean`, or `beautiful`.
+
+The agent may intentionally violate a rule only when it can identify the rule, causal purpose of the violation, intended effect, resulting risk, and how the effect will be verified.
+
+Read and follow `methodology/creative-profession-architecture.md` when the target role is substantially creative.
 
 ## Stop conditions
 
@@ -301,4 +314,4 @@ Do not claim exhaustive professional knowledge even after passing. The agent mus
 
 ## Definition of done
 
-`profession mapped -> competencies mapped -> authoritative knowledge assembled -> evidence validity/comparability checked where empirical -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> competencies mapped -> authoritative knowledge assembled -> evidence validity/comparability checked where empirical -> creative exploration/judgment architecture defined where relevant -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
