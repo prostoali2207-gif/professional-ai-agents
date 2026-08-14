@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 release candidate — authoritative-supersession repair completed; fresh behavioral revalidation is blocked by exhausted Copilot runtime quota.**
+Status: **v1.1 release candidate — authoritative-supersession repair completed; fresh behavioral revalidation is pending a usable model runtime.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -26,9 +26,11 @@ The original v1.0 foundation was stress-tested across software engineering, empi
 
 Those layers were added and subjected to controlled behavioral validation. Earlier one-SHA suites passed B1-B10 and the P0 security/state/action families, but the final sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The memory policy and executable router were repaired so an explicit applicable authoritative replacement updates current state while retaining useful superseded provenance/history.
 
-A fresh held-out B1 fixture is now preregistered, followed by a complete B1-B10 release suite on the same candidate SHA. The first repaired run did not produce behavioral evidence because GitHub Copilot SDK returned `monthly quota exceeded` before the model answered. Therefore benchmark qualification is **pending**, not PASS, until the repaired candidate completes fresh B1 and the full one-SHA gate.
+A fresh held-out B1 fixture remains preregistered, followed by a complete B1-B10 release suite on the same candidate SHA. The first repaired run did not produce behavioral evidence because GitHub Copilot SDK returned `monthly quota exceeded` before the model answered. A later GitHub Models fallback also produced no behavioral evidence: deterministic checks passed, but the inference endpoint returned HTTP 410 because GitHub Models had been retired. Neither runtime failure is B1 PASS or B1 FAIL.
 
-The harness now also has a provider-aware BYOK adapter path so future validation does not have to depend on Copilot premium-request quota. BYOK still requires a real provider credential and an explicitly selected model; no unexecuted fallback counts as evidence.
+Therefore benchmark qualification is **pending**, not PASS, until the repaired candidate completes fresh B1 and the full one-SHA gate.
+
+The harness has a provider-neutral protocol-v2 boundary and a contract-aligned OpenAI Responses BYOK adapter. BYOK still requires a real provider credential; no credential is assumed, and no unexecuted fallback counts as evidence. The obsolete GitHub Models adapter/workflow has been removed from the current release path.
 
 ## Maintenance rule
 
@@ -38,7 +40,7 @@ Use:
 
 `failure/evidence -> validate -> root cause -> repair responsible layer -> regression test -> adversarial retest`.
 
-Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register claims agree with the repository's actual state.
+Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register/evaluation claims agree with the repository's actual state.
 
 ## Boundary
 
