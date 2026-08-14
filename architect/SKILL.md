@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.1 benchmark candidate — architecture revised after external benchmark; stateful/security/control-loop validation remains required before benchmark PASS.
+Status: v1.1 benchmark-qualified — behavioral release gate PASS on 2026-08-14.
 
 ## Mission
 
@@ -255,4 +255,6 @@ Do not claim exhaustive professional knowledge even after passing. Retain a reli
 
 The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
 
-Those layers are now routed here, but architecture documentation alone does not establish behavioral reliability. Until the new stateful, security, and execution-control gates are exercised on held-out practical tests in a harness that can observe the claimed behavior, the Architect remains a **v1.1 benchmark candidate**, not benchmark-qualified PASS.
+Those layers are now both routed and behaviorally validated under the v1.1 held-out release gate. The final one-SHA controlled run passed B1–B10, all P0 trust/state/authority families, and the preregistered repeated-trial reliability threshold. Current evidence and limitations are recorded in `evaluation/v1.1-behavioral-validation-report.md`.
+
+Benchmark qualification does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
