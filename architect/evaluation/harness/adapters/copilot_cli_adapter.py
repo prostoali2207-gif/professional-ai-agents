@@ -144,12 +144,23 @@ def main() -> int:
         + task
     )
 
+    # Copilot CLI exposes MCP tools to the model under the combined
+    # serverName-toolName form, not the bare server name. Restricting
+    # --available-tools to the bare server silently removes all MCP tools.
+    available_tools = ",".join([
+        "EvalHarness-read_resource",
+        "EvalHarness-memory_read",
+        "EvalHarness-memory_write",
+        "EvalHarness-memory_delete",
+        "EvalHarness-fixture_call",
+        "EvalHarness-observed_state",
+    ])
     command = [
         "copilot",
         "-s",
         "--disable-builtin-mcps",
         f"--additional-mcp-config=@{mcp_config_path}",
-        "--available-tools=EvalHarness",
+        f"--available-tools={available_tools}",
         "--allow-tool=EvalHarness",
         "-p",
         prompt,
