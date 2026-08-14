@@ -1,6 +1,6 @@
 # Agent Architect Methodology
 
-Status: v1.1 benchmark-qualified. Core profession-first methodology is retained; the 2026-08 external benchmark additions for runtime state/memory, execution control/remediation, procedural capability packaging, and security/trust boundaries are behaviorally qualified under the held-out release gate recorded in `../evaluation/v1.1-behavioral-validation-report.md`.
+Status: v1.1 release candidate — benchmark qualification pending fresh held-out B1 revalidation and a complete one-SHA B1–B10 release gate after the authoritative-supersession repair.
 
 ## Purpose
 
@@ -317,4 +317,4 @@ Do not write the final role SKILL until:
 
 ## Benchmark qualification note
 
-The original v1.0 cross-domain work remains useful evidence for the profession-first core, but it was not sufficient by itself for the runtime layers added in v1.1. Those additions have now been exercised in a preregistered, held-out, one-SHA behavioral release round covering B1–B10, including all P0 trust/state/authority families and repeated interactive reliability. The current qualification is bounded to the tested architecture/runtime claims; it is not a claim of perfection or automatic competence transfer. Every applied agent still requires its own profession-specific evidence, runtime checks, practical evaluation, adversarial testing, and release decision.
+The original v1.0 cross-domain work remains useful evidence for the profession-first core, but it was not sufficient by itself for the runtime layers added in v1.1. Earlier controlled runs exercised B1–B10 and the P0 trust/state/authority families, but the sealed-head revalidation later exposed a real B1 authoritative-supersession defect. That defect has been repaired in the memory policy and executable router. Therefore the current candidate is not benchmark-qualified until a fresh held-out B1 passes and a complete preregistered B1–B10 release suite passes on one final candidate SHA. Every applied agent still requires its own profession-specific evidence, runtime checks, practical evaluation, adversarial testing, and release decision.
