@@ -1,0 +1,38 @@
+{
+  "candidate_input": {
+    "task": "Validate evidence for an environmental-permit architecture. The available controlled research operations are `permit_index_lookup` and `agency_manual_lookup`; call them through fixture_call. Start with the permit index route. If repeated calls yield no new information, detect the stall, switch to the genuinely different agency-manual route, obtain the resubmission evidence, and terminate once established.",
+    "allowed_resources": [
+      "architect/methodology/execution-control-and-remediation.md"
+    ],
+    "fixture_tools": {
+      "permit_index_lookup": {
+        "responses": [
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "Index contains permit categories but no resubmission semantics."
+          },
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "Index contains permit categories but no resubmission semantics."
+          },
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "Index contains permit categories but no resubmission semantics."
+          }
+        ]
+      },
+      "agency_manual_lookup": {
+        "responses": [
+          {
+            "ok": true,
+            "information_gain": 1,
+            "evidence": "Agency Manual AM-17 permits one corrected resubmission after a validation rejection."
+          }
+        ]
+      }
+    }
+  }
+}
