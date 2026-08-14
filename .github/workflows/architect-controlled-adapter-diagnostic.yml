@@ -38,60 +38,15 @@ jobs:
         run: |
           python -m py_compile architect/evaluation/harness/runner.py
           python -m py_compile architect/evaluation/harness/eval_mcp_server.py
+          python -m py_compile architect/evaluation/harness/mcp_stdio_preflight.py
           python -m py_compile architect/evaluation/harness/adapters/copilot_cli_adapter.py
 
-      - name: Build MCP control-plane preflight
+      - name: Mechanically prove EvalHarness stdio MCP handshake
         run: |
-          mkdir -p .tmp/mcp-preflight
-          python - <<'PY'
-          import json, os, sys
-          from pathlib import Path
-          root = Path.cwd().resolve()
-          work = root / '.tmp' / 'mcp-preflight'
-          step = work / 'step.json'
-          step.write_text(json.dumps({
-            'capability_profile': {'persistent_memory': False},
-            'allowed_resources': ['architect/methodology/runtime-state-memory-context.md'],
-            'fixture_tools': {},
-            'observed_state': None
-          }, indent=2) + '\n', encoding='utf-8')
-          config = {
-            'mcpServers': {
-              'EvalHarness': {
-                'type': 'stdio',
-                'command': sys.executable,
-                'args': [str(root / 'architect/evaluation/harness/eval_mcp_server.py')],
-                'env': {
-                  'AA_EVAL_STEP_CONFIG': str(step),
-                  'AA_EVAL_WORKSPACE': str(work),
-                  'AA_EVAL_REPO_ROOT': str(root)
-                },
-                'tools': ['*'],
-                'deferTools': 'never',
-                'timeout': 120000
-              }
-            }
-          }
-          (work / 'mcp.json').write_text(json.dumps(config, indent=2) + '\n', encoding='utf-8')
-          PY
-
-      - name: Prove Copilot can load EvalHarness tools
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          copilot --additional-mcp-config=@.tmp/mcp-preflight/mcp.json mcp get EvalHarness --json > .tmp/mcp-preflight/copilot-mcp-get.json
-          cat .tmp/mcp-preflight/copilot-mcp-get.json
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          raw = Path('.tmp/mcp-preflight/copilot-mcp-get.json').read_text(encoding='utf-8')
-          data = json.loads(raw)
-          text = json.dumps(data)
-          required = ['read_resource', 'memory_read', 'memory_write', 'memory_delete', 'fixture_call', 'observed_state']
-          missing = [name for name in required if name not in text]
-          assert not missing, {'missing_tools': missing, 'mcp_get': data}
-          print('MCP_CONTROL_PLANE_PREFLIGHT_PASS')
-          PY
+          rm -rf .tmp/mcp-preflight
+          python architect/evaluation/harness/mcp_stdio_preflight.py \
+            --repo-root . \
+            --workspace .tmp/mcp-preflight
 
       - name: Build exact-SHA diagnostic manifest
         env:
