@@ -1,0 +1,59 @@
+name: Agent Architect v1.1 Final Behavioral Release Gate BYOK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  final-release-gate-byok:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install OpenAI runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install openai
+
+      - name: Deterministic compile checks
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/adapters/openai_responses_adapter_v2.py
+          python -m py_compile architect/evaluation/harness/run_v1_1_release_v5.py
+
+      - name: Require configured BYOK credential
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          test -n "$OPENAI_API_KEY" || (echo 'OPENAI_API_KEY repository secret is not configured; no model run attempted.' >&2; exit 2)
+
+      - name: Run cost-gated fresh B1 then complete release suite
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gpt-5-mini
+        run: |
+          rm -rf .tmp/architect-v1_1-release-v5
+          python architect/evaluation/harness/run_v1_1_release_v5.py \
+            --out-root .tmp/architect-v1_1-release-v5 \
+            --model gpt-5-mini \
+            --timeout 300
+
+      - name: Upload canonical BYOK release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-v1_1-release-byok-${{ github.sha }}
+          path: |
+            .tmp/architect-v1_1-release-v5
+            architect/evaluation/harness/release/v1.1-b1-fresh-v5.manifest.generated.json
+            architect/evaluation/harness/release/v1.1-final-v5.manifest.generated.json
