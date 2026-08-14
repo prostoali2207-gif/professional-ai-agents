@@ -32,6 +32,13 @@ Status: active research register. Sources are recorded by claim/function, not as
 | SRC-026 | W3C WebDriver | web standard | direct browser automation/observation as execution evidence | slow/versioned | Supports direct browser verification. https://www.w3.org/TR/webdriver/ |
 | SRC-027 | Google web.dev, Web Vitals | first-party platform/performance guidance | field-vs-lab performance measurement; LCP/INP/CLS | current/versioned | Metrics evolve; retrieve current guidance when used. https://web.dev/articles/vitals |
 | SRC-028 | OWASP Content Security Policy Cheat Sheet | authoritative security practice guidance | frontend security boundary and defense-in-depth example in dry-run | current practice | CSP is not a substitute for safe coding; use current OWASP guidance. https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html |
+| SRC-029 | U.S. BLS, *Market Research Analysts* Occupational Outlook Handbook | authoritative occupational description | cross-domain profession reconstruction; competitor/price research; collection methods; statistics; interpretation/reporting | slow/current occupational data | Occupational baseline, not a complete senior-practitioner competency model. https://www.bls.gov/ooh/business-and-financial/market-research-analysts.htm |
+| SRC-030 | O*NET 13-1161.00, *Market Research Analysts and Marketing Specialists* | authoritative occupational/task database | tasks, market/competitor/price research, analytical work and outputs | slow/current | Updated 2026; use as task evidence, not proof of expert-level judgment. https://www.onetonline.org/link/summary/13-1161.00 |
+| SRC-031 | ISO 20252:2019 and Edition 4 project status | international standard/current revision metadata | market/opinion/social research and data-analytics service requirements; standard-version freshness | versioned/current transition | Edition 4 is under publication in 2026, demonstrating why normative claims need live version checks. https://www.iso.org/standard/73671.html and https://www.iso.org/standard/88881.html |
+| SRC-032 | AAPOR, *Standard Definitions* | professional standards/methodology guidance | total survey error: coverage, measurement, nonresponse; outcome-rate interpretation | stable/current practice | Supports evidence-validity discipline; survey-specific details should not be overgeneralized. https://aapor.org/standards-and-ethics/standard-definitions/ |
+| SRC-033 | AAPOR, *Best Practices for Survey Research* | professional best-practice guidance | survey method choice, sampling, weighting, transparency, nonresponse, limits of sample size | stable/current practice | Supports adversarial tests involving large-but-biased evidence and proxy quality. https://aapor.org/standards-and-ethics/best-practices/ |
+| SRC-034 | Anthropic, *AuditBench* (2026) | empirical agent-evaluation research | tool-to-agent gap; tool evidence can fail to improve end-agent performance; repeated runs and realistic agentic success metrics | current research | Reinforces evaluating whether agents actually use and verify tool evidence, not tools in isolation. https://alignment.anthropic.com/2026/auditbench/ |
+| SRC-035 | NIST CAISI, *Analyzing Transcripts from AI Agent Evaluations* (2026) | official evaluation-science guidance/research blog | transcript/trajectory review; detection of evaluation artifacts and cheating in long-horizon agents | current | Useful for eval-integrity review; not a universal scoring rubric. https://www.nist.gov/blogs/caisi-research-blog/analyzing-transcripts-ai-agent-evaluations |
 
 ## Source discipline
 
@@ -45,17 +52,20 @@ The Agent Architect foundation now has explicit coverage for:
 - competency modeling and authentic assessment;
 - source/provenance/freshness discipline;
 - retrieval evaluation;
+- evidence-generating-process, construct-validity, and comparator-compatibility checks;
 - professional judgment and uncertainty;
-- tools, observability, and downstream verification;
+- tools, observability, downstream verification, and tool-to-agent gap awareness;
 - single-vs-multi-agent architecture selection;
 - permissions, blast radius, environment assumptions, and accountable ownership;
-- evaluator calibration, holdouts, regression, and benchmark contamination;
+- evaluator calibration, holdouts, regression, transcript review, and benchmark contamination;
 - production incident learning, drift, near-misses, and knowledge-lifecycle governance;
 - pre-SKILL completeness audit and methodology red-team;
-- practical profession-model dry-run.
+- practical profession-model dry-runs across software and analytical domains.
 
 ## Current state
 
-The pre-SKILL gate has passed and `architect/SKILL.md` v0.1 has been assembled.
+`architect/SKILL.md` is now v0.2.
 
-The next requirement is evaluation of the **executable Agent Architect itself**. The Architect must now be run against at least one additional profession/problem not used to construct the first dry-run, with adversarial conditions and explicit scoring. Failures should update the responsible methodology/knowledge/process layer before v1.0 readiness is claimed.
+The executable Architect passed a cross-domain Market Research / Market Intelligence evaluation only after exposing and repairing a material evidence-comparability blind spot. This is positive evidence for the failure-driven architecture, not proof of universal generalization.
+
+Before v1.0 readiness, the next strongest test should stress a qualitatively different profession where success depends heavily on taste, divergent exploration, critique, and contextual judgment rather than primarily empirical/technical correctness. A creative-profession evaluation should attempt to reveal whether the current methodology over-formalizes craft or mistakes reference literacy for professional taste.
