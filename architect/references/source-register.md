@@ -24,31 +24,38 @@ Status: active research register. Sources are recorded by claim/function, not as
 | SRC-018 | Xu et al., *Benchmark Data Contamination of Large Language Models: A Survey* (2024) | research survey | benchmark contamination threat model and mitigation landscape | current research | Use to justify contamination controls; implementation requires task-specific design. https://arxiv.org/abs/2406.04244 |
 | SRC-019 | Xu et al., *Benchmarking Benchmark Leakage in Large Language Models* (2024) | empirical research | evidence of benchmark leakage and transparency requirements | current research | Supports treating exposed benchmarks as weaker independent evidence. https://arxiv.org/abs/2404.18824 |
 | SRC-020 | Gao et al., *Single-agent or Multi-agent Systems? Why Not Both?* (2025) | empirical systems research | SAS/MAS trade-offs; benefits can shrink with stronger models; hybrid routing; coordination/cost considerations | current research | One study, not a universal decomposition law. Requires representative evaluation for each architecture. https://arxiv.org/abs/2505.18286 |
+| SRC-021 | NIST AI 800-4, *Challenges to the Monitoring of Deployed AI Systems* (2026) | official measurement/monitoring report | post-deployment monitoring; drift; incident and feedback monitoring; field-vs-controlled evaluation gap | current | Monitoring methods are still evolving; use as lifecycle discipline rather than fixed universal metric set. https://www.nist.gov/publications/challenges-monitoring-deployed-ai-systems-center-ai-standards-and-innovation |
+| SRC-022 | NIST AI RMF Playbook, Manage | official implementation guidance | incident response, recovery, change management, near-miss/error sharing, continual improvement | slow/current | Supports production-learning and monitoring architecture. https://airc.nist.gov/airmf-resources/playbook/manage/ |
+| SRC-023 | OpenAI, *Improving support with every interaction* | first-party production case | converting real interactions into evals; human feedback feeding knowledge, automation, and product improvements | current practice | Case evidence, not universal law. https://openai.com/index/openai-support-model/ |
+| SRC-024 | W3C WAI frontend/accessibility resources + WCAG 2 | standards/official role guidance | dry-run profession reconstruction; semantic UI, accessible interaction, developer responsibilities | stable/versioned | Used as evidence in methodology dry-run. https://www.w3.org/WAI/standards-guidelines/wcag/ |
+| SRC-025 | WHATWG HTML Living Standard | living web standard | browser/HTML semantics and forms used in frontend dry-run | versioned/live | Must be checked live when exact browser/platform behavior matters. https://html.spec.whatwg.org/ |
+| SRC-026 | W3C WebDriver | web standard | direct browser automation/observation as execution evidence | slow/versioned | Supports direct browser verification. https://www.w3.org/TR/webdriver/ |
+| SRC-027 | Google web.dev, Web Vitals | first-party platform/performance guidance | field-vs-lab performance measurement; LCP/INP/CLS | current/versioned | Metrics evolve; retrieve current guidance when used. https://web.dev/articles/vitals |
+| SRC-028 | OWASP Content Security Policy Cheat Sheet | authoritative security practice guidance | frontend security boundary and defense-in-depth example in dry-run | current practice | CSP is not a substitute for safe coding; use current OWASP guidance. https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html |
 
 ## Source discipline
 
 The presence of a source in this register does not make every statement from it authoritative for every profession. Each applied agent must maintain its own claim-dependent source map.
 
-## Foundation coverage after this pass
+## Foundation coverage
 
-Materially strengthened:
+The Agent Architect foundation now has explicit coverage for:
 
-- cognitive task analysis and tacit-knowledge elicitation;
-- authentic competency assessment;
-- evaluator/grader calibration;
-- uncertainty, oversight, escalation, and go/no-go reasoning;
-- retrieval evaluation and reasoning-intensive retrieval;
-- human factors for tool/interface observability and recovery;
-- single-vs-multi-agent architecture trade-offs and handoff discipline;
-- benchmark contamination, leakage, holdouts, and regression integrity.
+- profession reconstruction and tacit-knowledge elicitation;
+- competency modeling and authentic assessment;
+- source/provenance/freshness discipline;
+- retrieval evaluation;
+- professional judgment and uncertainty;
+- tools, observability, and downstream verification;
+- single-vs-multi-agent architecture selection;
+- permissions, blast radius, environment assumptions, and accountable ownership;
+- evaluator calibration, holdouts, regression, and benchmark contamination;
+- production incident learning, drift, near-misses, and knowledge-lifecycle governance;
+- pre-SKILL completeness audit and methodology red-team;
+- practical profession-model dry-run.
 
-## Remaining gaps before final Agent Architect skill
+## Current state
 
-The remaining blockers are now narrower:
+The pre-SKILL gate has passed and `architect/SKILL.md` v0.1 has been assembled.
 
-- production-incident learning and knowledge lifecycle governance without contaminating stable professional knowledge;
-- a formal pre-SKILL completeness audit tying every methodology layer into one executable architect workflow;
-- adversarial red-team of the Agent Architect methodology itself from senior-practitioner, educator, hiring-manager, evaluation-scientist, and systems-engineer perspectives;
-- practical dry-run: use the methodology to model one profession without yet publishing its applied agent, and measure where the architecture fails.
-
-`architect/SKILL.md` should not be finalized until these are completed.
+The next requirement is evaluation of the **executable Agent Architect itself**. The Architect must now be run against at least one additional profession/problem not used to construct the first dry-run, with adversarial conditions and explicit scoring. Failures should update the responsible methodology/knowledge/process layer before v1.0 readiness is claimed.
