@@ -1,6 +1,6 @@
 # Agent Architect Methodology
 
-Status: v1.1 benchmark candidate. Core profession-first methodology is retained; 2026-08 external benchmark added first-class runtime state/memory, execution control/remediation, procedural capability packaging, and security/trust-boundary layers. Behavioral validation of those new layers remains pending.
+Status: v1.1 benchmark-qualified. Core profession-first methodology is retained; the 2026-08 external benchmark additions for runtime state/memory, execution control/remediation, procedural capability packaging, and security/trust boundaries are behaviorally qualified under the held-out release gate recorded in `../evaluation/v1.1-behavioral-validation-report.md`.
 
 ## Purpose
 
@@ -317,4 +317,4 @@ Do not write the final role SKILL until:
 
 ## Benchmark qualification note
 
-The original v1.0 cross-domain work remains useful evidence for the profession-first core. It is not sufficient evidence for the newly added runtime layers. v1.1 must remain a benchmark candidate until held-out practical evaluations exercise stateful memory/context, checkpoint/restart, progress/replanning, security/trust boundaries, and procedural capability loading.
+The original v1.0 cross-domain work remains useful evidence for the profession-first core, but it was not sufficient by itself for the runtime layers added in v1.1. Those additions have now been exercised in a preregistered, held-out, one-SHA behavioral release round covering B1–B10, including all P0 trust/state/authority families and repeated interactive reliability. The current qualification is bounded to the tested architecture/runtime claims; it is not a claim of perfection or automatic competence transfer. Every applied agent still requires its own profession-specific evidence, runtime checks, practical evaluation, adversarial testing, and release decision.
