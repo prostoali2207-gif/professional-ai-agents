@@ -11,6 +11,7 @@ on:
       - 'architect/references/benchmark-fixtures/round2/**'
       - 'architect/evaluation/harness/runner.py'
       - 'architect/evaluation/harness/adapters/copilot_sdk_adapter.py'
+      - 'architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py'
       - 'architect/evaluation/harness/round2/**'
       - '.github/workflows/architect-benchmark-round2.yml'
 
@@ -42,6 +43,7 @@ jobs:
         run: |
           python -m py_compile architect/evaluation/harness/runner.py
           python -m py_compile architect/evaluation/harness/adapters/copilot_sdk_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py
 
       - name: Freeze Round 2 manifest
         env:
@@ -84,7 +86,7 @@ jobs:
           rm -rf .tmp/architect-round2
           python architect/evaluation/harness/runner.py \
             --manifest architect/evaluation/harness/round2/round2.manifest.generated.json \
-            --candidate-command "python architect/evaluation/harness/adapters/copilot_sdk_adapter.py" \
+            --candidate-command "python architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py" \
             --out .tmp/architect-round2 \
             --timeout 300
 
