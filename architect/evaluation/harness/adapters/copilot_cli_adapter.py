@@ -17,7 +17,9 @@ from typing import Any
 
 
 def fail(message: str, code: int = 2) -> None:
-    print(json.dumps({"status": "failed", "error": message}, ensure_ascii=False))
+    record = json.dumps({"status": "failed", "error": message}, ensure_ascii=False)
+    print(record)
+    print(record, file=sys.stderr)
     raise SystemExit(code)
 
 
@@ -146,12 +148,18 @@ def main() -> int:
     )
     discovery_path = workspace / "step-configs" / f"{step_id}.copilot-mcp-get.json"
     discovery_path.write_text(get_proc.stdout, encoding="utf-8")
-    required_names = [
-        "read_resource", "memory_read", "memory_write",
-        "memory_delete", "fixture_call", "observed_state",
-    ]
-    if any(name not in get_proc.stdout for name in required_names):
-        fail(f"Copilot registered EvalHarness but did not discover all required tools: {get_proc.stdout[:2000]}")
+    try:
+        discovery = json.loads(get_proc.stdout)
+    except json.JSONDecodeError:
+        fail(f"Copilot MCP discovery returned invalid JSON: {get_proc.stdout[:2000]}")
+    server = discovery.get("EvalHarness") if isinstance(discovery, dict) else None
+    if not isinstance(server, dict) or server.get("enabled") is not True:
+        fail(f"EvalHarness was not registered as an enabled isolated MCP server: {get_proc.stdout[:2000]}")
+    # mcp get reports the configured tool filter, not the server's live tools/list.
+    # The separate MCP stdio preflight proves the six actual tool definitions.
+    configured_tools = server.get("tools")
+    if configured_tools != ["*"] and configured_tools != "*":
+        fail(f"EvalHarness registration does not expose the full configured tool set: {get_proc.stdout[:2000]}")
 
     prompt = (
         "You are the frozen Agent Architect candidate under behavioral evaluation.\n\n"
