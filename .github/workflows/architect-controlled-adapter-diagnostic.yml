@@ -99,7 +99,7 @@ jobs:
           assert len(summary) == 1, summary
           row = summary[0]
           assert row['grade']['status'] == 'PASS', row
-          assert row['steps']['main']['candidate_identity']['runtime'] == 'copilot-cli-eval-mcp-adapter-v1', row
+          assert row['steps']['main']['candidate_identity']['runtime'] == 'copilot-cli-eval-mcp-adapter-v2', row
           loads = row['steps']['main']['observable']['resource_loads']
           assert 'architect/methodology/runtime-state-memory-context.md' in loads, loads
           print('CONTROLLED_ADAPTER_DIAGNOSTIC_PASS')
