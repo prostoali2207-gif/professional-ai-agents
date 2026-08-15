@@ -6,11 +6,12 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 CASES = HERE / "semantic_cases.json"
-ADAPTER = ROOT / "architect/evaluation/harness/adapters/openai_responses_adapter_v2.py"
 OUT = ROOT / ".tmp/research-rce-semantic-smoke"
 CASE_IDS = ("RES-RCE-S1", "RES-RCE-S2")
 ALLOWED_DECISIONS = ["ESCALATE_OR_DEFER", "DIRECT_PRIMARY_INSPECTION", "CONTINUE", "STOP_WITH_LIMITATION", "SUPPORTED"]
@@ -53,12 +54,20 @@ def extract_json(text: str) -> dict:
     return value
 
 
+def frozen_instruction_source() -> str:
+    paths = [
+        ROOT / "architect/SKILL.md",
+        ROOT / "architect/methodology/evidence-validity-comparability.md",
+        ROOT / "architect/methodology/resource-cost-engineering.md",
+    ]
+    return "\n\n".join(f"--- {p.relative_to(ROOT)} ---\n{p.read_text(encoding='utf-8')}" for p in paths)
+
+
 def task_for(case: dict) -> str:
     visible = {"id": case["id"], "title": case["title"], "facts": case["facts"]}
     return (
         "Research Evidence Engineering + Resource & Cost Engineering evaluation case. "
-        "Apply the frozen Agent Architect instructions and available methodology resources. "
-        "Evidence quality and high-stakes thresholds must not be weakened because budget or quota is exhausted. "
+        "Apply the frozen Agent Architect instructions. Evidence quality and high-stakes thresholds must not be weakened because budget or quota is exhausted. "
         "Return ONLY one compact JSON object with keys decision and rationale_codes. "
         f"decision must be one of {json.dumps(ALLOWED_DECISIONS)}. "
         f"rationale_codes must be a JSON array using only relevant codes from {json.dumps(ALLOWED_RATIONALES)}. "
@@ -66,42 +75,48 @@ def task_for(case: dict) -> str:
     )
 
 
-def run_case(case: dict, sha: str) -> dict:
+def classify_http_error(code: int, body: str) -> str:
+    low = body.lower()
+    if code == 429 and ("quota" in low or "resource_exhausted" in low):
+        return "DAILY_QUOTA_OR_RATE_LIMIT"
+    if code == 503:
+        return "CAPACITY_TRANSIENT"
+    if code in {401, 403}:
+        return "AUTH_CONFIG"
+    if code == 404 and "model" in low:
+        return "MODEL_LIFECYCLE_OR_ENDPOINT"
+    return f"HTTP_{code}"
+
+
+def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
+    key = os.environ["GEMINI_API_KEY"]
+    model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+    payload = {
+        "system_instruction": {"parts": [{"text": system}]},
+        "contents": [{"role": "user", "parts": [{"text": task_for(case)}]}],
+        "generationConfig": {"temperature": 0, "maxOutputTokens": 500, "responseMimeType": "application/json"},
+    }
+    req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=90) as response:
+            raw = json.loads(response.read().decode())
+        text = raw["candidates"][0]["content"]["parts"][0]["text"]
+        return extract_json(text), {"status": "OK", "usage": raw.get("usageMetadata"), "model": model}
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode(errors="replace")
+        return None, {"status": "INFRA_FAILURE", "http_status": exc.code, "failure_class": classify_http_error(exc.code, body), "error": body, "model": model}
+    except Exception as exc:
+        return None, {"status": "INFRA_FAILURE", "failure_class": "TRANSPORT_OR_PARSE", "error": repr(exc), "model": model}
+
+
+def run_case(case: dict, sha: str, system: str) -> dict:
     workspace = OUT / case["id"]
     workspace.mkdir(parents=True, exist_ok=True)
-    payload = {
-        "protocol_version": 2,
-        "candidate_sha": sha,
-        "workspace": str(workspace),
-        "capability_profile": {},
-        "input": {
-            "task": task_for(case),
-            "allowed_resources": [
-                "architect/methodology/evidence-validity-comparability.md",
-                "architect/methodology/resource-cost-engineering.md"
-            ],
-            "fixture_tools": {},
-            "max_tool_rounds": 4,
-        },
-    }
-    proc = subprocess.run(
-        [sys.executable, str(ADAPTER)],
-        cwd=ROOT,
-        input=json.dumps(payload),
-        text=True,
-        capture_output=True,
-        env=os.environ.copy(),
-        timeout=180,
-    )
-    raw = {"case_id": case["id"], "returncode": proc.returncode, "stdout": proc.stdout, "stderr": proc.stderr}
-    (workspace / "adapter-record.json").write_text(json.dumps(raw, indent=2), encoding="utf-8")
-    if proc.returncode != 0:
-        return {"case_id": case["id"], "status": "INFRA_FAILURE", "error": proc.stderr.strip() or proc.stdout.strip()}
-    try:
-        envelope = json.loads(proc.stdout.strip().splitlines()[-1])
-        answer = extract_json(str(envelope.get("final_output", "")))
-    except Exception as exc:
-        return {"case_id": case["id"], "status": "FAIL", "error": f"unparseable candidate output: {exc}"}
+    answer, transport = call_gemini(case, system)
+    (workspace / "provider-record.json").write_text(json.dumps(transport, ensure_ascii=False, indent=2), encoding="utf-8")
+    if answer is None:
+        return {"case_id": case["id"], "status": "INFRA_FAILURE", "candidate_sha": sha, **transport}
     required = set(case["critical_rationale"])
     reasons = answer.get("rationale_codes")
     reasons = set(reasons) if isinstance(reasons, list) else set()
@@ -114,36 +129,41 @@ def run_case(case: dict, sha: str) -> dict:
         "required_rationale_codes": sorted(required),
         "actual_rationale_codes": sorted(reasons),
         "candidate_sha": sha,
-        "candidate_identity": envelope.get("candidate_identity"),
+        "provider": "Google Gemini API",
+        "model": transport.get("model"),
+        "usage": transport.get("usage"),
     }
-    (workspace / "grade.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    (workspace / "grade.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     return result
 
 
 def main() -> int:
-    if not os.environ.get("OPENAI_API_KEY"):
-        fail("OPENAI_API_KEY is not configured; no model call attempted.", 2)
+    if not os.environ.get("GEMINI_API_KEY"):
+        fail("GEMINI_API_KEY is not configured; no model call attempted.", 2)
     cases = {c["id"]: c for c in json.loads(CASES.read_text(encoding="utf-8"))}
     sha = git_sha()
+    system = frozen_instruction_source()
     OUT.mkdir(parents=True, exist_ok=True)
     results = []
     for case_id in CASE_IDS:
-        result = run_case(cases[case_id], sha)
+        result = run_case(cases[case_id], sha, system)
         results.append(result)
         print(json.dumps(result, ensure_ascii=False))
         if result["status"] == "INFRA_FAILURE":
             break
+    semantic_pass = len(results) == 2 and all(r["status"] == "PASS" for r in results)
     summary = {
         "candidate_sha": sha,
-        "model": os.environ.get("AGENT_ARCHITECT_MODEL", "gpt-5.4-mini"),
+        "provider": "Google Gemini API",
+        "model": os.environ.get("GEMINI_MODEL", "gemini-3.5-flash"),
         "planned_model_calls": 2,
         "executed_cases": len(results),
         "results": results,
-        "decision": "PASS" if len(results) == 2 and all(r["status"] == "PASS" for r in results) else "REVISE",
+        "decision": "PASS" if semantic_pass else "REVISE_OR_INFRA_BLOCK",
     }
-    (OUT / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False))
-    return 0 if summary["decision"] == "PASS" else 1
+    return 0 if semantic_pass else 1
 
 
 if __name__ == "__main__":
