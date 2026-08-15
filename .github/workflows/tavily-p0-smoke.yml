@@ -1,0 +1,31 @@
+name: Tavily P0 Smoke
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/tavily-p0-smoke.py'
+      - '.github/workflows/tavily-p0-smoke.yml'
+
+jobs:
+  tavily-smoke:
+    runs-on: ubuntu-latest
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify secret presence
+        run: |
+          test -n "$TAVILY_API_KEY" || (echo 'TAVILY_API_KEY secret missing' && exit 1)
+      - name: Run Tavily P0 smoke
+        run: python architect/research/benchmark/tavily-p0-smoke.py
+      - name: Upload Tavily record
+        uses: actions/upload-artifact@v4
+        with:
+          name: tavily-p0-smoke-record
+          path: architect/research/benchmark/runs/tavily-p0-smoke.json
+          retention-days: 90
