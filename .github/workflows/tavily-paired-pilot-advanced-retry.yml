@@ -1,0 +1,32 @@
+name: Tavily Paired Pilot Advanced Retry
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/tavily-paired-pilot-advanced-retry.py'
+      - '.github/workflows/tavily-paired-pilot-advanced-retry.yml'
+  workflow_dispatch:
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify secret presence
+        run: test -n "$TAVILY_API_KEY"
+      - name: Run advanced retries
+        run: python architect/research/benchmark/tavily-paired-pilot-advanced-retry.py
+      - name: Upload retry record
+        uses: actions/upload-artifact@v4
+        with:
+          name: tavily-paired-pilot-advanced-retry-record
+          path: architect/research/benchmark/runs/tavily-paired-pilot-advanced-retry.json
+          retention-days: 90
