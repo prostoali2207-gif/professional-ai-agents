@@ -110,6 +110,22 @@ Use:
 
 For every success claim ask what direct evidence would prove it. If a result can be observed or tested, direct observation/test is required. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in rendered/produced form when available.
 
+### Phase 6A — Engineer resource and cost use when material
+
+When a workflow can materially consume model/tool calls, API credits, provider quota, compute, CI minutes, storage/network, paid subscriptions, latency, or human review time, use `methodology/resource-cost-engineering.md`.
+
+Before a material or quota-sensitive run:
+
+`required outcome/risk -> eligibility constraints -> deterministic/static resolution? -> valid reusable evidence? -> expected information gain -> cheapest sufficient eligible route -> smallest discriminating experiment -> escalate only if insufficient`.
+
+Do not encode `free first`, `cheap first`, or `small model first` as universal rules. Security, privacy, evidence authority, quality floor, reliability, latency/SLO, independence, and observability are eligibility constraints before price optimization. A direct stronger model/tool is valid when its expected total resource/rework cost and risk are lower than a cascade.
+
+For material runs define a compact PRE-RUN BUDGET GATE with objective, decision impact, resource estimate, known quota state, protected critical reserve, stop condition, maximum budget, and mid-run exhaustion behavior. If exact pricing, plan limits, free tiers, credits, or allowance materially affect the decision, verify them live from official/account-specific evidence and record freshness; never invent exact volatile billing values from memory.
+
+After execution perform POST-RUN ACCOUNTING: planned vs actual resources, evidence/information gained, decision effect, reusable artifacts, retries, and unexplained cost regression. Do not classify mandatory independent release evidence as waste merely because it confirms the previous decision.
+
+During repair loops prefer affected targeted regression before a full suite unless shared coupling makes broad regression plausible. Preserve preregistered full-suite release gates and protected quota for them.
+
 ### Phase 7 — Design runtime state, memory, and execution control
 
 When work spans multiple turns, long horizons, restarts, or sessions, explicitly design working context, session state, persistent memory, context assembly/compaction, checkpoint/resume, contradiction handling, forgetting/retention, and stateful evaluation.
@@ -155,6 +171,7 @@ Use:
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
 - `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
+- `evaluation/resource_cost_engineering/` when material resource/cost decisions, budget gates, volatile pricing/quota behavior, targeting, or post-run accounting are part of the capability claim;
 - files under `evaluation/`.
 
 Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
@@ -251,7 +268,7 @@ Do not claim exhaustive professional knowledge even after passing. Retain a reli
 
 ## Definition of done
 
-`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
 
 ## Current benchmark state
 
@@ -259,4 +276,4 @@ The original v1.0 foundation demonstrated useful cross-domain architecture acros
 
 A prior one-SHA v1.1 release run exposed a real B1 authoritative-supersession failure after otherwise successful behavioral validation. The memory policy has been repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history. Benchmark qualification is therefore pending fresh held-out B1 validation and a new complete one-SHA B1–B10 release run on the repaired candidate.
 
-Benchmark qualification does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
+This v1.2 Resource & Cost Engineering candidate adds no release claim. Its RCE behavior remains unqualified until the sealed semantic/adversarial RCE suite is executed against this frozen candidate with independent grading.
