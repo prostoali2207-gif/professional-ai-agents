@@ -1,0 +1,1 @@
+Purpose: trigger same-repo pull_request workflow only. Candidate checkout is pull_request.base.sha; this file is not part of the tested candidate.
