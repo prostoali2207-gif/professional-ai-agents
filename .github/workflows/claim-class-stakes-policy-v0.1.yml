@@ -1,12 +1,6 @@
 name: Claim Class Stakes Policy v0.1
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - 'architect/research/benchmark/claim-class-stakes-policy-v0.1.py'
-      - '.github/workflows/claim-class-stakes-policy-v0.1.yml'
   workflow_dispatch:
 
 permissions:
