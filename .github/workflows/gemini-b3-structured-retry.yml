@@ -1,0 +1,34 @@
+name: Gemini B3 Structured Retry
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/gemini-b3-structured-retry.py
+      - .github/workflows/gemini-b3-structured-retry.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run B3 structured retry
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
+        run: python architect/research/benchmark/gemini-b3-structured-retry.py
+      - name: Upload retry record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-b3-structured-retry-record
+          path: architect/research/benchmark/runs/gemini-b3-structured-retry.json
+          if-no-files-found: ignore
