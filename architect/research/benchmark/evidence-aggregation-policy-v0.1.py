@@ -75,10 +75,27 @@ CASES = [
 ]
 
 INVALID_STATUSES = {"RETRACTED", "SUPERSEDED", "WITHDRAWN"}
+HARD_LINEAGE_INVALIDATORS = {"RETRACTED", "WITHDRAWN"}
 
 
 def aggregate(evidence):
-    live = [e for e in evidence if e.get("status") == "VALID"]
+    invalidated_support_lineages = {
+        e.get("lineage")
+        for e in evidence
+        if e.get("stance") == "SUPPORT"
+        and e.get("authority") == "PRIMARY"
+        and e.get("status") in HARD_LINEAGE_INVALIDATORS
+        and e.get("lineage") not in {None, "UNKNOWN"}
+    }
+
+    live = [
+        e for e in evidence
+        if e.get("status") == "VALID"
+        and not (
+            e.get("stance") == "SUPPORT"
+            and e.get("lineage") in invalidated_support_lineages
+        )
+    ]
     invalid_support = [e for e in evidence if e.get("stance") == "SUPPORT" and e.get("status") in INVALID_STATUSES]
 
     support = [e for e in live if e.get("stance") == "SUPPORT"]
@@ -138,7 +155,8 @@ def main():
                 "Count independent evidentiary roots, not URLs.",
                 "Do not treat dependent republishing as replication.",
                 "Do not combine live contradictory primary evidence into a single consensus claim.",
-                "Retracted/withdrawn/superseded evidence cannot independently support a current claim.",
+                "Retracted/withdrawn primary support invalidates dependent supporting descendants in the same lineage.",
+                "Superseded evidence is excluded from current support but does not automatically invalidate historical descendants outside the current-claim context.",
                 "Unknown lineage or methodological metadata cannot be promoted to independence.",
                 "Secondary-only support is PARTIAL when primary verification is required.",
                 "No synthetic probability or pseudo-precision is produced by this gate."
