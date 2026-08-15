@@ -1,12 +1,6 @@
 name: Decomposition Query Budget Policy v0.1
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - 'architect/research/benchmark/decomposition-query-budget-policy-v0.1.py'
-      - '.github/workflows/decomposition-query-budget-policy-v0.1.yml'
   workflow_dispatch:
 
 permissions:
