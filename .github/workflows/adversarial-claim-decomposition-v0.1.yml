@@ -1,12 +1,6 @@
 name: Adversarial Claim Decomposition v0.1
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - 'architect/research/benchmark/adversarial-claim-decomposition-v0.1.py'
-      - '.github/workflows/adversarial-claim-decomposition-v0.1.yml'
   workflow_dispatch:
 
 permissions:
