@@ -1,0 +1,35 @@
+name: Paired Retrieval Pilot v0.1
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/paired-pilot-v0.1.py'
+      - '.github/workflows/paired-pilot-v0.1.yml'
+  workflow_dispatch:
+
+jobs:
+  paired-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Tavily secret presence
+        run: |
+          test -n "$TAVILY_API_KEY"
+      - name: Install MCP client
+        run: python -m pip install --disable-pip-version-check 'mcp>=2,<3'
+      - name: Run paired pilot
+        run: python architect/research/benchmark/paired-pilot-v0.1.py
+      - name: Upload paired raw record
+        uses: actions/upload-artifact@v4
+        with:
+          name: paired-pilot-v0.1-record
+          path: architect/research/benchmark/runs/paired-pilot-v0.1.json
+          retention-days: 90
