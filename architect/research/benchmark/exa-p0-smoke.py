@@ -8,7 +8,41 @@ from mcp import Client
 
 OUT = "architect/research/benchmark/runs/exa-p0-smoke.json"
 URL = "https://mcp.exa.ai/mcp"
-QUERY = "Model Context Protocol 2026-07-28 specification final release official"
+
+CASES = [
+    {
+        "case_id": "P0-1-AUTH-FRESH",
+        "tool": "web_search_exa",
+        "args": {
+            "query": "Model Context Protocol 2026-07-28 specification final stable release official",
+            "numResults": 5,
+        },
+    },
+    {
+        "case_id": "P0-2-SCHOLAR",
+        "tool": "web_search_exa",
+        "args": {
+            "query": "BERT Devlin Chang Lee Toutanova 2018 arXiv preprint 2019 NAACL version of record DOI",
+            "numResults": 8,
+        },
+    },
+    {
+        "case_id": "P0-3-EXTRACT",
+        "tool": "web_fetch_exa",
+        "args": {
+            "urls": ["https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf"],
+            "maxCharacters": 16000,
+        },
+    },
+    {
+        "case_id": "P0-4-HOP",
+        "tool": "web_search_exa",
+        "args": {
+            "query": "Why can a search system miss a document that is relevant in meaning when the query and the document use different words? Information retrieval research terminology and methods.",
+            "numResults": 8,
+        },
+    },
+]
 
 
 def serializable(obj):
@@ -30,43 +64,46 @@ async def main():
         "endpoint": URL,
         "mode": "hosted MCP anonymous",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "case_id": "P0-1-AUTH-FRESH-CONNECTIVITY-SHAKEOUT",
-        "query": QUERY,
         "status": "STARTED",
+        "cases": [],
+        "security_note": (
+            "P0-5 prompt-injection compliance is not scored on raw Exa search/fetch primitives. "
+            "The exposed tools are read-only retrieval primitives; injection compliance belongs to the consuming agent/synthesis layer."
+        ),
     }
     started = time.perf_counter()
     try:
         async with Client(URL) as client:
             tools = await client.list_tools()
-            record["tools"] = serializable(tools)
-
             tool_list = getattr(tools, "tools", None)
             if tool_list is None and isinstance(tools, list):
                 tool_list = tools
             tool_list = tool_list or []
-
             names = [getattr(t, "name", None) for t in tool_list]
             record["tool_names"] = names
-            if "web_search_exa" not in names:
-                raise RuntimeError(f"web_search_exa unavailable; tools={names}")
+            record["tools"] = serializable(tools)
 
-            selected = next(t for t in tool_list if getattr(t, "name", None) == "web_search_exa")
-            schema = getattr(selected, "input_schema", None) or getattr(selected, "inputSchema", None) or {}
-            record["web_search_exa_schema"] = serializable(schema)
+            for case in CASES:
+                case_record = {
+                    "case_id": case["case_id"],
+                    "tool": case["tool"],
+                    "args": case["args"],
+                    "status": "STARTED",
+                }
+                call_started = time.perf_counter()
+                try:
+                    result = await client.call_tool(case["tool"], case["args"])
+                    case_record["latency_seconds"] = round(time.perf_counter() - call_started, 3)
+                    case_record["result"] = serializable(result)
+                    case_record["status"] = "COMPLETED"
+                except Exception as exc:
+                    case_record["latency_seconds"] = round(time.perf_counter() - call_started, 3)
+                    case_record["status"] = "ERROR"
+                    case_record["error_type"] = type(exc).__name__
+                    case_record["error"] = str(exc)
+                record["cases"].append(case_record)
 
-            properties = schema.get("properties", {}) if isinstance(schema, dict) else {}
-            args = {"query": QUERY}
-            if "numResults" in properties:
-                args["numResults"] = 5
-            elif "num_results" in properties:
-                args["num_results"] = 5
-
-            record["call_args"] = args
-            call_started = time.perf_counter()
-            result = await client.call_tool("web_search_exa", args)
-            record["search_latency_seconds"] = round(time.perf_counter() - call_started, 3)
-            record["result"] = serializable(result)
-            record["status"] = "PASS_CONNECTIVITY"
+            record["status"] = "COMPLETED"
     except Exception as exc:
         record["status"] = "ERROR"
         record["error_type"] = type(exc).__name__
