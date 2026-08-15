@@ -1,0 +1,31 @@
+name: Gemini Semantic Claim Decomposition v0.1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  semantic-decomposition:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run batched semantic decomposition gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
+        run: python architect/research/benchmark/gemini-semantic-claim-decomposition-v0.1.py
+      - name: Upload raw record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-semantic-claim-decomposition-v0.1-record
+          path: architect/research/benchmark/runs/gemini-semantic-claim-decomposition-v0.1.json
+          if-no-files-found: error
