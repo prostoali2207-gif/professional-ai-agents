@@ -1,0 +1,32 @@
+name: GitHub Models Behavioral Smoke
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/github-models-behavioral-smoke.py
+      - .github/workflows/github-models-behavioral-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  models: read
+
+jobs:
+  behavioral-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run one GitHub Models behavioral smoke case
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python architect/research/benchmark/github-models-behavioral-smoke.py
+      - name: Upload raw behavioral record
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-models-behavioral-smoke-record
+          path: architect/research/benchmark/runs/github-models-behavioral-smoke.json
