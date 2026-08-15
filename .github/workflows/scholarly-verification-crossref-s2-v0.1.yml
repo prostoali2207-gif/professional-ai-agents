@@ -1,12 +1,6 @@
 name: Scholarly Verification Crossref S2 v0.1
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - 'architect/research/benchmark/scholarly-verification-crossref-s2-v0.1.py'
-      - '.github/workflows/scholarly-verification-crossref-s2-v0.1.yml'
   workflow_dispatch:
 
 permissions:
