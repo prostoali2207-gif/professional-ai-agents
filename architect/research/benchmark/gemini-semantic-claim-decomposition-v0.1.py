@@ -71,10 +71,11 @@ def normalize(s):
     return ''.join(ch.lower() if ch.isalnum() else ' ' for ch in s)
 
 def semantic_hit(tag, claims_text):
-    # Frozen deterministic vocabulary aliases; deliberately broad enough to grade meaning, not exact wording.
+    # Frozen deterministic vocabulary aliases. Keep aliases broad enough to grade semantic paraphrases,
+    # but do not use this lexical layer as a substitute for semantic adjudication of raw model output.
     aliases={
       'current_medication_use':['take medicine','daily medication','medicine x'],
-      'stop_or_replace_medication_action':['stop x','stop medicine','replace medication','use y instead','switch'],
+      'stop_or_replace_medication_action':['stop x','stop medicine','stopping prescription medicine','stopping medicine','replace medication','substitute it','substitute','medication substitution','use y instead','switch'],
       'supplement_safety_or_interaction':['supplement safety','interaction','safe','supplement y'],
       'current_product_price':['cost','price'],
       'current_plan_feature':['plan','feature','cheap plan'],
