@@ -1,0 +1,30 @@
+name: Tavily P0 Advanced Retry
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/tavily-p0-advanced-retry.py'
+      - '.github/workflows/tavily-p0-advanced-retry.yml'
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    env:
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify secret presence
+        run: test -n "$TAVILY_API_KEY"
+      - name: Run narrow Tavily advanced retries
+        run: python architect/research/benchmark/tavily-p0-advanced-retry.py
+      - name: Upload retry record
+        uses: actions/upload-artifact@v4
+        with:
+          name: tavily-p0-advanced-retry-record
+          path: architect/research/benchmark/runs/tavily-p0-advanced-retry.json
+          retention-days: 90
