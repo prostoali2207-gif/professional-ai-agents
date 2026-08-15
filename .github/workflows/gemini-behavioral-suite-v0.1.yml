@@ -1,0 +1,39 @@
+name: Gemini Behavioral Suite v0.1
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/gemini-behavioral-suite-v0.1.py
+      - .github/workflows/gemini-behavioral-suite-v0.1.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  behavioral-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Gemini secret presence
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo 'GEMINI_API_KEY repository secret is not configured'; exit 78; }
+      - name: Run five-case behavioral suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
+        run: python architect/research/benchmark/gemini-behavioral-suite-v0.1.py
+      - name: Upload raw behavioral record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-behavioral-suite-v0.1-record
+          path: architect/research/benchmark/runs/gemini-behavioral-suite-v0.1.json
+          if-no-files-found: ignore
