@@ -16,11 +16,24 @@ jobs:
   sandbox:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    env:
+      ACTIONS_STEP_DEBUG: 'false'
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Assert checkout credentials are not persisted
+        shell: bash
+        run: |
+          if git config --local --get-regexp '^http\..*\.extraheader$' >/tmp/git-extraheaders.txt 2>/dev/null; then
+            echo 'Unexpected persisted git HTTP credential header:'
+            cat /tmp/git-extraheaders.txt
+            exit 2
+          fi
+          echo 'No persisted git HTTP credential header.'
       - name: Run deterministic real-tool security preflight
         run: python architect/research/benchmark/real-tool-security-sandbox-v0.1.py
       - name: Upload audit record
