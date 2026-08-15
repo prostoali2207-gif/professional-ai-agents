@@ -1,11 +1,9 @@
 name: Agent Architect RCE Semantic Smoke
 
 on:
-  push:
+  pull_request:
     branches:
       - candidate/architect-rce-v1.2
-    paths:
-      - .github/workflows/architect-rce-semantic-smoke.yml
 
 permissions:
   contents: read
@@ -14,10 +12,10 @@ jobs:
   rce-semantic-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact candidate
+      - name: Checkout frozen base candidate
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.base.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,6 +51,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rce-semantic-smoke-${{ github.sha }}
+          name: rce-semantic-smoke-${{ github.event.pull_request.base.sha }}
           path: .tmp/rce-semantic-smoke
           if-no-files-found: ignore
