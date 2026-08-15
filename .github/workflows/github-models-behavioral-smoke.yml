@@ -1,12 +1,6 @@
-name: GitHub Models Behavioral Smoke
+name: GitHub Models Behavioral Smoke (retired provider record)
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - architect/research/benchmark/github-models-behavioral-smoke.py
-      - .github/workflows/github-models-behavioral-smoke.yml
   workflow_dispatch:
 
 permissions:
@@ -14,19 +8,9 @@ permissions:
   models: read
 
 jobs:
-  behavioral-smoke:
+  retired-provider-record:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Run one GitHub Models behavioral smoke case
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python architect/research/benchmark/github-models-behavioral-smoke.py
-      - name: Upload raw behavioral record
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-models-behavioral-smoke-record
-          path: architect/research/benchmark/runs/github-models-behavioral-smoke.json
+      - run: |
+          echo 'GitHub Models was fully retired on 2026-07-30.'
+          echo 'Do not rerun this workflow except for explicit historical reproduction.'
