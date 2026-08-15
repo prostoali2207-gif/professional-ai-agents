@@ -8,11 +8,11 @@ Release claim is intentionally narrow: Agent Architect should treat professional
 
 ## Deterministic evidence
 
-GitHub Actions exact-head preflight completed successfully on the current candidate line:
+GitHub Actions exact-head preflight completed successfully on the candidate line:
 
 - research policy + semantic fixture contract: 22/22 PASS;
 - existing RCE deterministic + semantic fixture contract: 16/16 PASS;
-- final automatic PR gate after retry-storm prevention: SUCCESS, with semantic provider calls explicitly skipped.
+- automatic PR gate after retry-storm prevention: SUCCESS, with semantic provider calls explicitly skipped.
 
 Earlier local reconstruction from exact branch files also produced research policy 19/19 PASS and RCE policy 12/12 PASS.
 
