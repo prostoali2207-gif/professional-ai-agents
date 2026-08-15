@@ -28,7 +28,7 @@ jobs:
       - name: Run one Gemini behavioral smoke case
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: gemini-2.5-flash
+          GEMINI_MODEL: gemini-3.5-flash
         run: python architect/research/benchmark/gemini-behavioral-smoke.py
       - name: Upload raw behavioral record
         if: always()
