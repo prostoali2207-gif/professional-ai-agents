@@ -1,12 +1,6 @@
 name: Trusted Claim Stakes Classification v0.1
 
 on:
-  push:
-    branches:
-      - research/research-architecture-benchmark-2026-08
-    paths:
-      - 'architect/research/benchmark/trusted-claim-stakes-classification-v0.1.py'
-      - '.github/workflows/trusted-claim-stakes-classification-v0.1.yml'
   workflow_dispatch:
 
 permissions:
