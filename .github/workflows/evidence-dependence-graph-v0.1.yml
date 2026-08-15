@@ -1,0 +1,34 @@
+name: Evidence Dependence Graph v0.1
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/evidence-dependence-graph-v0.1.py'
+      - '.github/workflows/evidence-dependence-graph-v0.1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependence-graph:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run evidence dependence graph gate
+        run: python architect/research/benchmark/evidence-dependence-graph-v0.1.py
+      - name: Upload audit record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-dependence-graph-v0.1-record
+          path: architect/research/benchmark/runs/evidence-dependence-graph-v0.1.json
+          if-no-files-found: error
