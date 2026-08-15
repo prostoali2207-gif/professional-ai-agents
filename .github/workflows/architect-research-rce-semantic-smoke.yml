@@ -27,26 +27,22 @@ jobs:
         run: |
           python -m py_compile architect/evaluation/research_evidence_engineering/research_policy.py
           python -m py_compile architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
-          python -m py_compile architect/evaluation/harness/adapters/openai_responses_adapter_v2.py
           python -m pip install --disable-pip-version-check -q pytest
           cd architect/evaluation/research_evidence_engineering
           pytest -q test_research_policy.py test_semantic_cases.py
           cd ../resource_cost_engineering
           python -m unittest -v test_rce.py test_semantic_cases.py
 
-      - name: Require existing BYOK credential
+      - name: Require existing Gemini credential
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          test -n "$OPENAI_API_KEY" || (echo 'OPENAI_API_KEY is not configured; semantic model calls were not attempted.' >&2; exit 2)
-
-      - name: Install OpenAI runtime
-        run: python -m pip install --disable-pip-version-check -q openai
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model calls were not attempted.' >&2; exit 2)
 
       - name: Run exactly two frozen cross-layer cases
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          AGENT_ARCHITECT_MODEL: gpt-5.4-mini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
         run: |
           rm -rf .tmp/research-rce-semantic-smoke
           python architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
