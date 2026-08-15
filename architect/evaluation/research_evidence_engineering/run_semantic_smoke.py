@@ -41,14 +41,7 @@ def git_sha() -> str:
 
 
 def extract_json(text: str) -> dict:
-    text = text.strip()
-    try:
-        value = json.loads(text)
-    except json.JSONDecodeError:
-        start, end = text.find("{"), text.rfind("}")
-        if start < 0 or end <= start:
-            raise
-        value = json.loads(text[start : end + 1])
+    value = json.loads(text.strip())
     if not isinstance(value, dict):
         raise ValueError("candidate output is not a JSON object")
     return value
@@ -68,10 +61,8 @@ def task_for(case: dict) -> str:
     return (
         "Research Evidence Engineering + Resource & Cost Engineering evaluation case. "
         "Apply the frozen Agent Architect instructions. Evidence quality and high-stakes thresholds must not be weakened because budget or quota is exhausted. "
-        "Return ONLY one compact JSON object with keys decision and rationale_codes. "
-        f"decision must be one of {json.dumps(ALLOWED_DECISIONS)}. "
-        f"rationale_codes must be a JSON array using only relevant codes from {json.dumps(ALLOWED_RATIONALES)}. "
-        "Do not mention hidden expectations. Case facts: " + json.dumps(visible, ensure_ascii=False)
+        "Return only the schema-defined decision object. Do not mention hidden expectations. Case facts: "
+        + json.dumps(visible, ensure_ascii=False)
     )
 
 
@@ -92,10 +83,26 @@ def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
     model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+    schema = {
+        "type": "OBJECT",
+        "properties": {
+            "decision": {"type": "STRING", "enum": ALLOWED_DECISIONS},
+            "rationale_codes": {
+                "type": "ARRAY",
+                "items": {"type": "STRING", "enum": ALLOWED_RATIONALES},
+            },
+        },
+        "required": ["decision", "rationale_codes"],
+    }
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": task_for(case)}]}],
-        "generationConfig": {"temperature": 0, "maxOutputTokens": 500, "responseMimeType": "application/json"},
+        "generationConfig": {
+            "temperature": 0,
+            "maxOutputTokens": 500,
+            "responseMimeType": "application/json",
+            "responseSchema": schema,
+        },
     }
     req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json"})
     try:
@@ -106,8 +113,10 @@ def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
     except urllib.error.HTTPError as exc:
         body = exc.read().decode(errors="replace")
         return None, {"status": "INFRA_FAILURE", "http_status": exc.code, "failure_class": classify_http_error(exc.code, body), "error": body, "model": model}
+    except json.JSONDecodeError as exc:
+        return None, {"status": "EVAL_OUTPUT_FAILURE", "failure_class": "SCHEMA_OUTPUT_PARSE", "error": repr(exc), "model": model}
     except Exception as exc:
-        return None, {"status": "INFRA_FAILURE", "failure_class": "TRANSPORT_OR_PARSE", "error": repr(exc), "model": model}
+        return None, {"status": "INFRA_FAILURE", "failure_class": "TRANSPORT_OR_PROVIDER_RESPONSE", "error": repr(exc), "model": model}
 
 
 def run_case(case: dict, sha: str, system: str) -> dict:
@@ -116,7 +125,8 @@ def run_case(case: dict, sha: str, system: str) -> dict:
     answer, transport = call_gemini(case, system)
     (workspace / "provider-record.json").write_text(json.dumps(transport, ensure_ascii=False, indent=2), encoding="utf-8")
     if answer is None:
-        return {"case_id": case["id"], "status": "INFRA_FAILURE", "candidate_sha": sha, **transport}
+        status = "FAIL" if transport.get("status") == "EVAL_OUTPUT_FAILURE" else "INFRA_FAILURE"
+        return {"case_id": case["id"], "status": status, "candidate_sha": sha, **transport}
     required = set(case["critical_rationale"])
     reasons = answer.get("rationale_codes")
     reasons = set(reasons) if isinstance(reasons, list) else set()
