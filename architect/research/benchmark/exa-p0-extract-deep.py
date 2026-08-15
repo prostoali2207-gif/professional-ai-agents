@@ -16,11 +16,11 @@ def ser(x):
 
 async def main():
     os.makedirs(os.path.dirname(OUT),exist_ok=True)
-    rec={'provider':'Exa','case_id':'P0-3-EXTRACT-DEEP','endpoint':URL,'timestamp_utc':datetime.now(timezone.utc).isoformat(),'url':PDF}
+    rec={'provider':'Exa','case_id':'P0-3-EXTRACT-DEEP','endpoint':URL,'timestamp_utc':datetime.now(timezone.utc).isoformat(),'url':PDF,'maxCharacters':120000}
     t=time.perf_counter()
     try:
         async with Client(URL) as c:
-            r=await c.call_tool('web_fetch_exa',{'urls':[PDF],'maxCharacters':50000})
+            r=await c.call_tool('web_fetch_exa',{'urls':[PDF],'maxCharacters':120000})
             rec['result']=ser(r); rec['status']='COMPLETED'
     except Exception as e:
         rec.update(status='ERROR',error_type=type(e).__name__,error=str(e)); raise
