@@ -1,0 +1,39 @@
+name: Gemini Behavioral Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/gemini-behavioral-smoke.py
+      - .github/workflows/gemini-behavioral-smoke.yml
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Gemini secret presence
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo 'GEMINI_API_KEY repository secret is not configured'; exit 78; }
+      - name: Run one Gemini behavioral smoke case
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-2.5-flash
+        run: python architect/research/benchmark/gemini-behavioral-smoke.py
+      - name: Upload raw behavioral record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-behavioral-smoke-record
+          path: architect/research/benchmark/runs/gemini-behavioral-smoke.json
+          if-no-files-found: ignore
