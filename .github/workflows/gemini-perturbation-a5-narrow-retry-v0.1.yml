@@ -1,0 +1,36 @@
+name: Gemini Perturbation A5 Narrow Retry
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/gemini-perturbation-a5-narrow-retry-v0.1.py
+      - .github/workflows/gemini-perturbation-a5-narrow-retry-v0.1.yml
+
+permissions:
+  contents: read
+
+jobs:
+  a5:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run only A5
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
+        run: python architect/research/benchmark/gemini-perturbation-a5-narrow-retry-v0.1.py
+      - name: Upload raw record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-perturbation-a5-narrow-retry-v0.1-record
+          path: architect/research/benchmark/runs/gemini-perturbation-a5-narrow-retry-v0.1.json
+          if-no-files-found: error
