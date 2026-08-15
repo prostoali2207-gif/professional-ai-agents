@@ -1,0 +1,27 @@
+name: Pipeline Integrity Deterministic
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - 'architect/research/benchmark/fixtures/pipeline-integrity-seeded-cases-v0.1.json'
+      - 'architect/research/benchmark/pipeline-integrity-deterministic-verifier.py'
+      - '.github/workflows/pipeline-integrity-deterministic.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run deterministic verifier
+        run: python architect/research/benchmark/pipeline-integrity-deterministic-verifier.py
+      - name: Upload verifier record
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-integrity-deterministic-record
+          path: architect/research/benchmark/runs/pipeline-integrity-deterministic-result.json
