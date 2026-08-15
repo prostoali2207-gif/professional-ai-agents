@@ -1,0 +1,32 @@
+name: Gemini Behavioral Perturbation A
+
+on:
+  push:
+    branches:
+      - research/research-architecture-benchmark-2026-08
+    paths:
+      - architect/research/benchmark/gemini-behavioral-perturbation-a-v0.1.py
+      - .github/workflows/gemini-behavioral-perturbation-a-v0.1.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  perturbation-a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run perturbation A
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.5-flash
+        run: python architect/research/benchmark/gemini-behavioral-perturbation-a-v0.1.py
+      - name: Upload raw record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-behavioral-perturbation-a-v0.1-record
+          path: architect/research/benchmark/runs/gemini-behavioral-perturbation-a-v0.1.json
+          if-no-files-found: ignore
