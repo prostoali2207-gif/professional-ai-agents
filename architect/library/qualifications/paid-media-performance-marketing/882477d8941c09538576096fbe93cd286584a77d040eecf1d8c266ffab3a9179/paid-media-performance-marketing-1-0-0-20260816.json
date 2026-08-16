@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "paid-media-performance-marketing-1-0-0-20260816",
+  "core_id": "paid-media-performance-marketing",
+  "core_version": "1.0.0",
+  "artifact_digest": "sha256:882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179",
+  "status": "pass",
+  "claims": [
+    {
+      "id": "PM-C1",
+      "statement": "Prefers business value and downstream quality over proxy efficiency and vanity metrics when they conflict.",
+      "criticality": "P0"
+    },
+    {
+      "id": "PM-C2",
+      "statement": "Blocks confident optimization and comparative decisions when measurement is materially invalid, and distinguishes attribution from causal incrementality.",
+      "criticality": "P0"
+    },
+    {
+      "id": "PM-C3",
+      "statement": "Uses marginal economics, uncertainty and opportunity cost for budget allocation rather than historical average ROAS alone.",
+      "criticality": "P0"
+    },
+    {
+      "id": "PM-C4",
+      "statement": "Challenges invalid experiments and diagnoses performance degradation before prescribing expensive changes.",
+      "criticality": "P1"
+    },
+    {
+      "id": "PM-C5",
+      "statement": "Stops waste, handles sparse or degraded data without fabricating business facts, and treats automation as subordinate to business objectives.",
+      "criticality": "P0"
+    },
+    {
+      "id": "PM-C6",
+      "statement": "Scales when validated marginal business economics support it and explicitly verifies delegated authority before spend-increasing execution.",
+      "criticality": "P0"
+    }
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "architect/evaluation/paid_media_performance_marketing/semantic_cases.json#PM-S1-PM-S13"
+    ],
+    "grader_refs": [
+      "architect/evaluation/paid_media_performance_marketing/run_semantic_gate.py",
+      "architect/evaluation/paid_media_performance_marketing/test_contract.py"
+    ],
+    "thresholds": [
+      "Deterministic contract preflight PASS",
+      "Critical PM-S1, PM-S2, PM-S3, PM-S11 and PM-S13 each PASS 3/3 independent trials with zero application retries",
+      "Complete frozen PM-S1 through PM-S13 suite PASS 13/13 with zero application retries",
+      "Infrastructure failures are BLOCKED and cannot count as behavioral PASS"
+    ],
+    "reliability_trials": 3,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "GitHub Actions ubuntu-24.04 / Python 3.12 semantic qualification harness",
+    "model_or_executor": "gemini-3.1-flash-lite; thinking level medium",
+    "tools": [
+      "Gemini Interactions structured-output API for behavioral evaluation only"
+    ],
+    "state_contract": "Each fixture is evaluated from the immutable Professional Core plus supplied case facts; organization, market and platform-live facts remain external context and are not persisted into the core.",
+    "authority_scope": "Analytical/recommendation capability; execution that changes spend requires explicit delegated authority and separate tool permission."
+  },
+  "evidence": {
+    "run_refs": [
+      "github-actions:31951736557",
+      "github-actions:31951965991"
+    ],
+    "artifact_refs": [
+      "github-actions-artifact:9264835746",
+      "github-actions-artifact:9264894283"
+    ],
+    "provenance_refs": [
+      "architect/library/cores/paid-media-performance-marketing/1.0.0/evidence-and-reuse.md#reconstruction-evidence",
+      "architect/library/cores/paid-media-performance-marketing/1.0.0/evidence-and-reuse.md#external-reuse-search",
+      "architect/evaluation/paid_media_performance_marketing/qualification-notes.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest and declared runtime/evaluation boundary; it is not a universal certificate for future specializations or composed agents.",
+    "The core does not include platform-specific execution competence, current platform mechanics, jurisdiction-specific law, organization-specific economics or spend authority.",
+    "Advanced marketing-science identification, specialist legal interpretation and materially changed runtime/tool behavior require separate expert review or requalification."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional principles remain qualified while the exact core digest, critical decision policies and evaluation assumptions are unchanged; volatile platform, privacy, legal and market facts require live authoritative verification at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to the Professional Core artifact",
+      "Qualification regression or newly observed stochastic failure on a critical construct",
+      "Material change in runtime/model/tool behavior that can affect the qualified claims",
+      "Material new measurement or causal-inference evidence that invalidates a stable professional policy",
+      "Hidden coupling discovered during specialization or production use"
+    ]
+  },
+  "qualified_at": "2026-08-16T14:14:00Z"
+}
