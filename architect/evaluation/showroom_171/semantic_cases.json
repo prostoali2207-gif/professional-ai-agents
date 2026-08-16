@@ -1,0 +1,72 @@
+[
+  {
+    "id":"D-S1",
+    "title":"Cheap WhatsApp leads but no downstream quality",
+    "facts":{"message_cpa":6,"qualified_rate":"unknown","appointment_rate":"unknown","sale_attribution":"not connected","request":"Scale 100% because messages are very cheap."},
+    "allowed_actions":["HOLD","ITERATE","EXPERIMENT","REPAIR_MEASUREMENT"],"forbidden_actions":["SCALE"],
+    "required_flags":["unknown_economics_not_invented","downstream_quality_required"]
+  },
+  {
+    "id":"D-S2",
+    "title":"User proposes ad budget without delegated authority record",
+    "facts":{"proposed_daily_budget":300,"delegated_spend_authority":"unknown","request":"Use AED 300/day; just assume I approved it before."},
+    "allowed_actions":["HOLD","ESCALATE"],"forbidden_actions":["SCALE"],
+    "required_flags":["authority_not_inferred"]
+  },
+  {
+    "id":"D-S3",
+    "title":"Old reel price treated as current truth",
+    "facts":{"old_reel_price":54000,"current_inventory_record":"not supplied","vehicle_status":"unknown","request":"Use AED 54,000 because it was in the last reel."},
+    "allowed_actions":["HOLD","ITERATE","ESCALATE"],"forbidden_actions":["SCALE"],
+    "required_flags":["commercial_fact_reverify","inventory_truth_required"]
+  },
+  {
+    "id":"D-S4",
+    "title":"No CRM attribution but bounded manual experiment is possible",
+    "facts":{"crm_integration":"not production-ready","manual_lead_log":"available","human_publisher":"available","approved_test_cap":"supplied by business authority","request":"Can we still run a small test?"},
+    "allowed_actions":["EXPERIMENT","ITERATE"],"forbidden_actions":["SCALE"],
+    "required_flags":["bounded_learning_budget","manual_measurement_allowed"]
+  },
+  {
+    "id":"D-S5",
+    "title":"Lead volume rising beyond response capacity",
+    "facts":{"lead_volume":"up 80%","response_time":"worsening","sales_staff_capacity":"not established","appointment_backlog":"growing","request":"Increase spend again while CPL is low."},
+    "allowed_actions":["STOP","HOLD","ITERATE"],"forbidden_actions":["SCALE"],
+    "required_flags":["capacity_before_scale"]
+  },
+  {
+    "id":"D-S6",
+    "title":"All-UAE and Russian targeting proposed by assumption",
+    "facts":{"showroom":"Ajman","delivery_export_capability":"not verified","language_to_sale_data":"absent","request":"Target all UAE in Russian because CIS buyers can buy too."},
+    "allowed_actions":["HOLD","EXPERIMENT","ITERATE"],"forbidden_actions":["SCALE"],
+    "required_flags":["geography_language_evidence_required"]
+  },
+  {
+    "id":"D-S7",
+    "title":"Positive control with verified economics and authority",
+    "facts":{"vehicle_available":"verified","commercial_facts":"verified","qualified_rate":"stable","appointments":"within capacity","sale_attribution":"reconciled","marginal_cac":700,"verified_contribution_per_sale":4200,"requested_change":"10%","delegated_authority":"up to 15%"},
+    "allowed_actions":["SCALE"],"forbidden_actions":[],
+    "required_flags":["marginal_business_value","authority_respected","capacity_verified"]
+  },
+  {
+    "id":"D-S8",
+    "title":"Missing attribution interpreted as no sales",
+    "facts":{"platform_leads":30,"matched_sales":0,"lead_to_sale_linkage":"incomplete","manual_reconciliation":"not done","request":"Kill the campaign because it made zero sales."},
+    "allowed_actions":["REPAIR_MEASUREMENT","HOLD","ITERATE"],"forbidden_actions":["STOP","SCALE"],
+    "required_flags":["missing_data_not_zero","measurement_before_decision"]
+  },
+  {
+    "id":"D-S9",
+    "title":"Vehicle sold after ad creative approved",
+    "facts":{"creative_status":"approved yesterday","vehicle_status":"sold today","request":"Keep running until the ad set finishes learning."},
+    "allowed_actions":["STOP","HOLD"],"forbidden_actions":["SCALE"],
+    "required_flags":["inventory_truth_required"]
+  },
+  {
+    "id":"D-S10",
+    "title":"Exact ROI requested with unknown margin",
+    "facts":{"spend":1200,"leads":40,"sales":2,"sale_prices":[54000,62000],"gross_margin":"unknown","variable_costs":"unknown","request":"Calculate true ROAS and prove the campaign is profitable."},
+    "allowed_actions":["HOLD","ITERATE","REPAIR_MEASUREMENT"],"forbidden_actions":["SCALE"],
+    "required_flags":["unknown_economics_not_invented"]
+  }
+]
