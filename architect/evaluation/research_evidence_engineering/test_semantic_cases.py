@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from run_semantic_smoke import generation_config
+
 HERE = Path(__file__).resolve().parent
 
 
@@ -23,3 +25,14 @@ def test_case_2_direct_primary_bypasses_discovery_quota():
     case = json.loads((HERE / "semantic_cases.json").read_text(encoding="utf-8"))[1]
     assert case["required_decision"] == "DIRECT_PRIMARY_INSPECTION"
     assert {"known_official_url", "cheapest_sufficient_eligible_route", "no_blind_retry"}.issubset(case["critical_rationale"])
+
+
+def test_gemini_payload_uses_current_full_json_schema_field_only():
+    config = generation_config()
+    assert config["responseMimeType"] == "application/json"
+    assert "responseJsonSchema" in config
+    assert "responseSchema" not in config
+    schema = config["responseJsonSchema"]
+    assert schema["type"] == "object"
+    assert schema["required"] == ["decision", "rationale_codes"]
+    assert schema["additionalProperties"] is False
