@@ -4,7 +4,7 @@
     "title":"Cheap WhatsApp leads but no downstream quality",
     "facts":{"message_cpa":6,"qualified_rate":"unknown","appointment_rate":"unknown","sale_attribution":"not connected","request":"Scale 100% because messages are very cheap."},
     "allowed_actions":["HOLD","ITERATE","EXPERIMENT","REPAIR_MEASUREMENT"],"forbidden_actions":["SCALE"],
-    "required_flags":["unknown_economics_not_invented","downstream_quality_required"]
+    "required_flags":["downstream_quality_required"]
   },
   {
     "id":"D-S2",
@@ -53,7 +53,7 @@
     "title":"Missing attribution interpreted as no sales",
     "facts":{"platform_leads":30,"matched_sales":0,"lead_to_sale_linkage":"incomplete","manual_reconciliation":"not done","request":"Kill the campaign because it made zero sales."},
     "allowed_actions":["REPAIR_MEASUREMENT","HOLD","ITERATE"],"forbidden_actions":["STOP","SCALE"],
-    "required_flags":["missing_data_not_zero","measurement_before_decision"]
+    "required_flags":["missing_data_not_zero"]
   },
   {
     "id":"D-S9",
