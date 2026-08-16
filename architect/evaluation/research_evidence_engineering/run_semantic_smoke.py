@@ -41,6 +41,19 @@ def git_sha() -> str:
     return p.stdout.strip()
 
 
+def selected_case_ids(raw: str | None = None) -> tuple[str, ...]:
+    raw = os.environ.get("SEMANTIC_CASE_IDS", "") if raw is None else raw
+    if not raw.strip():
+        return CASE_IDS
+    requested = tuple(x.strip() for x in raw.split(",") if x.strip())
+    if not requested or len(set(requested)) != len(requested):
+        raise ValueError("SEMANTIC_CASE_IDS must contain unique frozen case ids")
+    unknown = [x for x in requested if x not in CASE_IDS]
+    if unknown:
+        raise ValueError(f"unknown semantic case ids: {','.join(unknown)}")
+    return requested
+
+
 def extract_json(text: str) -> dict:
     value = json.loads(text.strip())
     if not isinstance(value, dict):
@@ -84,11 +97,7 @@ def output_json_schema() -> dict:
 
 
 def response_format() -> dict:
-    return {
-        "type": "text",
-        "mime_type": "application/json",
-        "schema": output_json_schema(),
-    }
+    return {"type": "text", "mime_type": "application/json", "schema": output_json_schema()}
 
 
 def interaction_payload(case: dict, system: str, model: str) -> dict:
@@ -102,15 +111,12 @@ def interaction_payload(case: dict, system: str, model: str) -> dict:
 
 
 def extract_interaction_output_text(raw: dict) -> str:
-    # Current Interactions REST responses expose model output in observable steps.
     for step in reversed(raw.get("steps") or []):
         if step.get("type") != "model_output":
             continue
         for item in step.get("content") or []:
             if item.get("type") == "text" and isinstance(item.get("text"), str):
                 return item["text"]
-    # Defensive support for SDK-like/envelope convenience fields without
-    # pretending a missing model_output step is valid evidence.
     if isinstance(raw.get("output_text"), str):
         return raw["output_text"]
     raise ValueError("interaction response contains no observable text model_output")
@@ -196,23 +202,28 @@ def main() -> int:
     if not os.environ.get("GEMINI_API_KEY"):
         fail("GEMINI_API_KEY is not configured; no model call attempted.", 2)
     cases = {c["id"]: c for c in json.loads(CASES.read_text(encoding="utf-8"))}
+    try:
+        case_ids = selected_case_ids()
+    except ValueError as exc:
+        fail(str(exc), 2)
     sha = git_sha()
     system = frozen_instruction_source()
     OUT.mkdir(parents=True, exist_ok=True)
     results = []
-    for case_id in CASE_IDS:
+    for case_id in case_ids:
         result = run_case(cases[case_id], sha, system)
         results.append(result)
         print(json.dumps(result, ensure_ascii=False))
         if result["status"] == "INFRA_FAILURE":
             break
-    semantic_pass = len(results) == 2 and all(r["status"] == "PASS" for r in results)
+    semantic_pass = len(results) == len(case_ids) and all(r["status"] == "PASS" for r in results)
     summary = {
         "candidate_sha": sha,
         "provider": "Google Gemini API",
         "api": "interactions/v1beta",
         "model": os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"),
-        "planned_model_calls": 2,
+        "selected_case_ids": list(case_ids),
+        "planned_model_calls": len(case_ids),
         "executed_cases": len(results),
         "results": results,
         "decision": "PASS" if semantic_pass else "REVISE_OR_INFRA_BLOCK",
