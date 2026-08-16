@@ -1,24 +1,7 @@
 name: Agent Architect v1.1 Gemini Behavioral Release Gate
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'architect/SKILL.md'
-      - 'architect/methodology/runtime-state-memory-context.md'
-      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter.py'
-      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py'
-      - 'architect/evaluation/harness/run_v1_1_release_gemini.py'
-      - 'architect/evaluation/harness/run_v1_1_release_v5.py'
-      - 'architect/evaluation/harness/runner.py'
-      - 'architect/evaluation/harness/round1/**'
-      - 'architect/evaluation/harness/round2/**'
-      - 'architect/evaluation/harness/round3/**'
-      - 'architect/evaluation/harness/round4/**'
-      - 'architect/evaluation/harness/round5/**'
-      - 'architect/evaluation/harness/round6/**'
-      - '.github/workflows/architect-v1_1-gemini-release.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -27,10 +10,10 @@ jobs:
   release-gate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact PR candidate
+      - name: Checkout exact candidate
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
 
       - name: Set up Python
@@ -103,7 +86,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: architect-v1_1-gemini-release-${{ github.event.pull_request.head.sha }}
+          name: architect-v1_1-gemini-release-${{ github.sha }}
           path: |
             .tmp/architect-v1_1-release-gemini
             .tmp/gemini-adapter-provider-block.json
