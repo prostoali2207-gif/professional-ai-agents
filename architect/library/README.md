@@ -1,6 +1,6 @@
 # Professional Core Library
 
-Status: architecture v0.1 — registry infrastructure only; no professional cores admitted yet.
+Status: active registry — first qualified Professional Core admitted on 2026-08-16.
 
 ## Purpose
 
@@ -79,7 +79,7 @@ architect/library/
         <qualification-id>.json
 ```
 
-No `cores/` artifact should be added merely to demonstrate the format. The first real core must pass the admission gate.
+No `cores/` artifact should be added merely to demonstrate the format. A real core must pass the admission gate before `qualified` lifecycle state is recorded.
 
 ## Admission gate
 
