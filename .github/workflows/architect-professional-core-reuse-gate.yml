@@ -42,11 +42,13 @@ jobs:
         run: |
           test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic calls were not attempted.' >&2; exit 2)
 
-      - name: Run frozen PCR-S1 through PCR-S6
+      - name: Run reliability-sensitive PCR-S2 and PCR-S6 three trials each
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
           GEMINI_THINKING_LEVEL: medium
+          PCR_CASE_IDS: PCR-S2,PCR-S6
+          PCR_TRIALS: '3'
         run: |
           rm -rf .tmp/professional-core-reuse
           python architect/evaluation/professional_core_reuse/run_semantic_gate.py
