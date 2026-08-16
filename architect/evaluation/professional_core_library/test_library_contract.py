@@ -15,6 +15,16 @@ class ProfessionalCoreLibraryContractTests(unittest.TestCase):
         self.assertIsInstance(catalog["entries"], list)
         self.assertEqual(catalog["entries"], [], "Infrastructure phase must not smuggle in unqualified example cores")
 
+    def test_catalog_schema_defines_discovery_not_trust(self):
+        schema = json.loads((LIB / "catalog.schema.json").read_text(encoding="utf-8"))
+        entry = schema["properties"]["entries"]["items"]
+        required = set(entry["required"])
+        self.assertTrue({"id", "version", "lifecycle", "artifact_digest", "manifest_path", "qualification_refs", "search_facets"}.issubset(required))
+        facets = set(entry["properties"]["search_facets"]["required"])
+        self.assertTrue({"responsibilities", "outputs", "competencies", "authority_levels", "runtime_features"}.issubset(facets))
+        self.assertNotIn("trust_score", entry["properties"])
+        self.assertNotIn("popularity", entry["properties"])
+
     def test_manifest_schema_has_non_negotiable_contract(self):
         schema = json.loads((LIB / "professional-core-manifest.schema.json").read_text(encoding="utf-8"))
         required = set(schema["required"])
