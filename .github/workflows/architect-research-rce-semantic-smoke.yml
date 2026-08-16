@@ -46,17 +46,19 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gemini-model-availability-${{ github.event.pull_request.head.sha }}
+          name: gemini-model-availability-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
           path: .tmp/research-rce-model-probe
           if-no-files-found: ignore
 
       - name: Require existing Gemini credential for semantic gate
+        if: github.event_name == 'workflow_dispatch'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model calls were not attempted.' >&2; exit 2)
 
       - name: Run exactly two frozen cross-layer semantic cases
+        if: github.event_name == 'workflow_dispatch'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-3.6-flash
@@ -65,9 +67,9 @@ jobs:
           python architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
 
       - name: Upload semantic evidence
-        if: always()
+        if: github.event_name == 'workflow_dispatch' && always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-rce-semantic-smoke-${{ github.event.pull_request.head.sha }}
+          name: research-rce-semantic-smoke-${{ github.sha }}
           path: .tmp/research-rce-semantic-smoke
           if-no-files-found: ignore
