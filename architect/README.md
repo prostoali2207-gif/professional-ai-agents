@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 — behavioral release gate PASS.**
+Status: **v1.1 — behavioral release gate PASS; Professional Core Reuse integration candidate in review.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -8,7 +8,9 @@ It is not a prompt template and does not make future agents competent automatica
 
 ## Core architecture
 
-The executable router is `SKILL.md`. Supporting methodology covers profession discovery, competency/evidence engineering, source/provenance/freshness, evidence comparability, judgment/uncertainty, procedural packaging, tools and downstream verification, runtime state/memory/context, execution control, agent boundaries, security/trust, governance, high-stakes authority, evaluation integrity, and production learning.
+The executable router is `SKILL.md`. Supporting methodology covers profession discovery, competency/evidence engineering, source/provenance/freshness, evidence comparability, judgment/uncertainty, professional-core reuse and specialization, procedural packaging, tools and downstream verification, runtime state/memory/context, execution control, agent boundaries, security/trust, governance, high-stakes authority, evaluation integrity, and production learning.
+
+Professional reuse is treated as an evidence decision. A matching role title does not justify inheritance. Reusable material must pass compatibility, provenance/freshness, runtime/dependency, authority, and evaluation-transfer checks before `REUSE`, `ADAPT`, `EXTEND`, or `FORK`; otherwise Architect must `BUILD NEW` or `REJECT` the candidate.
 
 ## Applied-agent gate
 
@@ -16,9 +18,14 @@ Applied agents must never be created by writing their `SKILL.md` first.
 
 Every new agent must independently pass the Agent Architect workflow:
 
-`profession reconstruction -> competency/evidence model -> authoritative evidence -> hidden-gap discovery -> judgment/procedural/workflow/tools -> state/control/security architecture where material -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
+`profession reconstruction -> reusable-core/capability inventory -> compatibility decision -> competency/evidence + delta model -> authoritative evidence/freshness checks -> hidden-gap discovery -> judgment/procedural/workflow/tools -> state/control/security architecture where material -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
 
-A pass for the Architect itself is never inherited by an applied agent.
+A pass for the Architect itself, or for an inherited professional core, is never automatically inherited by an applied agent.
+
+See:
+
+- `methodology/professional-core-reuse.md`
+- `evaluation/professional-core-reuse-gate.md`
 
 ## Benchmark history
 
@@ -51,8 +58,12 @@ Before major releases, verify that every path referenced by `SKILL.md` exists an
 
 Any behavior-relevant change after the qualifying candidate requires impact analysis and the appropriate affected regression. Historical PASS evidence must not be reused mechanically across executable changes.
 
+For reusable professional cores, changed domain assumptions, runtime/tool bindings, authority scope, volatile evidence, or composition boundaries trigger affected/new regression rather than automatic PASS inheritance.
+
 ## Boundary
 
-`v1.1 PASS` means the current Agent Architect architecture met its preregistered behavioral release gate. It does not mean `perfect`, `complete`, knowledgeable about every profession, or that an applied agent automatically passes because it was designed by this Architect.
+`v1.1 PASS` means the qualified Agent Architect architecture met its preregistered behavioral release gate. It does not mean `perfect`, `complete`, knowledgeable about every profession, or that an applied agent automatically passes because it was designed by this Architect.
+
+The Professional Core Reuse layer on `agent/professional-core-reuse` is an integration candidate until its router wiring and targeted validation gate are complete.
 
 Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
