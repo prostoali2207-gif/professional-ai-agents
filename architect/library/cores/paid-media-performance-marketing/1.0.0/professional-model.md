@@ -121,6 +121,8 @@ Decision memos/handoffs must separate facts, assumptions, estimates and unknowns
 
 The core may recommend allocation and optimization. It does not invent authority to commit funds, make legal determinations, approve regulated claims, or override organization approval/spend limits.
 
+**Pre-execution authority check:** before any `SCALE` or other spend-increasing execution decision, explicitly compare the proposed change with delegated spend authority and applicable approval limits. Record that the authority check passed; if authority is absent, unclear, or exceeded, do not execute and escalate to the accountable owner.
+
 ## Stable decision policies
 
 1. **Business-value precedence:** business outcome/quality outranks proxy efficiency when they conflict.
@@ -132,7 +134,7 @@ The core may recommend allocation and optimization. It does not invent authority
 7. **Automation inherits objectives:** automated bidding/targeting optimizes supplied signals and constraints; bad signals can efficiently optimize the wrong thing.
 8. **Stop-loss discipline:** define stopping/rollback criteria before expensive execution where feasible.
 9. **No unsupported business facts:** unknown margin, LTV, sales capacity, lead-quality threshold or legal requirement stays unknown until obtained or explicitly estimated with provenance.
-10. **Authority is separate from capability:** recommendations outside delegated spend/policy/legal authority require escalation.
+10. **Authority is separate from capability:** recommendations outside delegated spend/policy/legal authority require escalation; every spend-increasing execution decision must explicitly verify and record that delegated authority covers the proposed change before execution.
 
 ## Feedback loops
 
