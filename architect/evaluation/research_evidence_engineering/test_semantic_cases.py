@@ -32,6 +32,9 @@ def test_gemini_payload_uses_current_full_json_schema_field_only():
     assert config["responseMimeType"] == "application/json"
     assert "responseJsonSchema" in config
     assert "responseSchema" not in config
+    assert "temperature" not in config
+    assert "topP" not in config
+    assert "topK" not in config
     schema = config["responseJsonSchema"]
     assert schema["type"] == "object"
     assert schema["required"] == ["decision", "rationale_codes"]
