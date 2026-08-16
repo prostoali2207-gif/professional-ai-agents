@@ -8,12 +8,33 @@ METHODOLOGY = ROOT / "architect" / "methodology" / "professional-core-library.md
 
 
 class ProfessionalCoreLibraryContractTests(unittest.TestCase):
-    def test_catalog_is_valid_and_starts_empty(self):
+    def test_catalog_entries_are_evidence_linked_not_trust_by_presence(self):
         catalog = json.loads((LIB / "catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(catalog["schema_version"], "1.0.0")
         self.assertEqual(catalog["library_status"], "active")
         self.assertIsInstance(catalog["entries"], list)
-        self.assertEqual(catalog["entries"], [], "Infrastructure phase must not smuggle in unqualified example cores")
+
+        for entry in catalog["entries"]:
+            manifest_path = ROOT / entry["manifest_path"]
+            self.assertTrue(manifest_path.is_file(), f"catalog manifest missing: {entry['manifest_path']}")
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.assertEqual(entry["id"], manifest["id"])
+            self.assertEqual(entry["version"], manifest["version"])
+            self.assertEqual(entry["lifecycle"], manifest["lifecycle"])
+            self.assertEqual(entry["artifact_digest"], manifest["artifact"]["content_digest"])
+            self.assertEqual(entry["qualification_refs"], manifest["qualification_refs"])
+
+            if entry["lifecycle"] == "qualified":
+                self.assertTrue(entry["qualification_refs"], "qualified catalog entry requires qualification evidence")
+                for ref in entry["qualification_refs"]:
+                    qualification_path = ROOT / ref
+                    self.assertTrue(qualification_path.is_file(), f"qualification record missing: {ref}")
+                    qualification = json.loads(qualification_path.read_text(encoding="utf-8"))
+                    self.assertEqual(qualification["core_id"], entry["id"])
+                    self.assertEqual(qualification["core_version"], entry["version"])
+                    self.assertEqual(qualification["artifact_digest"], entry["artifact_digest"])
+                    self.assertEqual(qualification["status"], "pass")
+                    self.assertEqual(qualification["evaluation"]["result"], "PASS")
 
     def test_catalog_schema_defines_discovery_not_trust(self):
         schema = json.loads((LIB / "catalog.schema.json").read_text(encoding="utf-8"))
