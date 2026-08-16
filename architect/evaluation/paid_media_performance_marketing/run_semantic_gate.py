@@ -86,7 +86,7 @@ def extract_text(raw: dict) -> str:
 
 def call(cases: list[dict], system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
-    model = os.environ.get("PAID_MEDIA_MODEL", "gemini-2.5-flash-lite")
+    model = os.environ.get("PAID_MEDIA_MODEL", "gemini-3.1-flash-lite")
     ids = [c["id"] for c in cases]
     payload = {
         "model": model,
