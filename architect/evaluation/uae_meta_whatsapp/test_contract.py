@@ -30,6 +30,11 @@ class LiveContextContract(unittest.TestCase):
         self.assertTrue(any(c['allowed_actions']==['SCALE'] for c in self.cases))
         self.assertTrue(any('SCALE' in c['forbidden_actions'] for c in self.cases))
         for c in self.cases: self.assertTrue(c['required_flags'])
+    def test_construct_isolation_repairs(self):
+        by={c['id']:c for c in self.cases}
+        self.assertEqual(['data_use_lawful_basis'],by['LIVE-S3']['required_flags'])
+        self.assertIn('STOP',by['LIVE-S5']['allowed_actions'])
+        self.assertIn('SCALE',by['LIVE-S5']['forbidden_actions'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, agent, or professional artifact is imported',self.evidence)
     def test_whatsapp_volatile_rules_not_frozen(self):
