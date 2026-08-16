@@ -66,6 +66,17 @@ def selected_cases(all_cases: list[dict]) -> list[dict]:
     return [by_id[x] for x in wanted]
 
 
+def trial_count() -> int:
+    raw = os.environ.get("PCR_TRIALS", "1")
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise ValueError("PCR_TRIALS must be an integer") from exc
+    if value < 1 or value > 5:
+        raise ValueError("PCR_TRIALS must be between 1 and 5")
+    return value
+
+
 def task(case: dict) -> str:
     visible = {"id": case["id"], "title": case["title"], "facts": case["facts"]}
     return (
@@ -112,14 +123,14 @@ def call(case: dict, system: str) -> tuple[dict | None, dict]:
         return None, {"status": "EVAL_OUTPUT_FAILURE", "error": repr(exc), "model": model}
 
 
-def grade(case: dict, answer: dict | None, transport: dict, sha: str) -> dict:
+def grade(case: dict, answer: dict | None, transport: dict, sha: str, trial: int) -> dict:
     if answer is None:
-        return {"case_id": case["id"], "status": transport["status"], "candidate_sha": sha, **transport}
+        return {"case_id": case["id"], "trial": trial, "status": transport["status"], "candidate_sha": sha, **transport}
     decision = answer.get("decision")
     flags = set(answer.get("flags") or [])
     passed = decision in set(case["allowed_decisions"]) and decision not in set(case["forbidden_decisions"]) and set(case["required_flags"]).issubset(flags)
     return {
-        "case_id": case["id"], "status": "PASS" if passed else "FAIL", "actual_decision": decision,
+        "case_id": case["id"], "trial": trial, "status": "PASS" if passed else "FAIL", "actual_decision": decision,
         "allowed_decisions": case["allowed_decisions"], "forbidden_decisions": case["forbidden_decisions"],
         "required_flags": case["required_flags"], "actual_flags": sorted(flags), "candidate_sha": sha,
         "model": transport.get("model"), "interaction_id": transport.get("interaction_id"), "usage": transport.get("usage"),
@@ -133,6 +144,7 @@ def main() -> int:
     all_cases = json.loads(CASES.read_text(encoding="utf-8"))
     try:
         cases = selected_cases(all_cases)
+        trials = trial_count()
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
@@ -141,17 +153,36 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     results = []
     for case in cases:
-        answer, transport = call(case, system)
-        result = grade(case, answer, transport, sha)
-        results.append(result)
-        print(json.dumps(result, ensure_ascii=False))
-        if result["status"] in {"INFRA_FAILURE", "EVAL_OUTPUT_FAILURE"}:
+        for trial in range(1, trials + 1):
+            answer, transport = call(case, system)
+            result = grade(case, answer, transport, sha, trial)
+            results.append(result)
+            print(json.dumps(result, ensure_ascii=False))
+            if result["status"] in {"INFRA_FAILURE", "EVAL_OUTPUT_FAILURE"}:
+                break
+        if results and results[-1]["status"] in {"INFRA_FAILURE", "EVAL_OUTPUT_FAILURE"}:
             break
-    passed = len(results) == len(cases) and all(r["status"] == "PASS" for r in results)
+    planned = len(cases) * trials
+    passed = len(results) == planned and all(r["status"] == "PASS" for r in results)
+    per_case = {}
+    for case in cases:
+        case_results = [r for r in results if r["case_id"] == case["id"]]
+        per_case[case["id"]] = {
+            "passes": sum(r["status"] == "PASS" for r in case_results),
+            "trials": len(case_results),
+            "required_trials": trials,
+        }
     summary = {
-        "candidate_sha": sha, "case_ids": [c["id"] for c in cases], "planned_model_calls": len(cases),
-        "executed_cases": len(results), "application_retries": 0, "passes": sum(r["status"] == "PASS" for r in results),
-        "release_gate": "PASS" if passed else "REVISE_OR_INFRA_BLOCK", "results": results,
+        "candidate_sha": sha,
+        "case_ids": [c["id"] for c in cases],
+        "trials_per_case": trials,
+        "planned_model_calls": planned,
+        "executed_cases": len(results),
+        "application_retries": 0,
+        "passes": sum(r["status"] == "PASS" for r in results),
+        "per_case": per_case,
+        "release_gate": "PASS" if passed else "REVISE_OR_INFRA_BLOCK",
+        "results": results,
     }
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False))
