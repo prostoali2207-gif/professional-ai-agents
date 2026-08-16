@@ -1,11 +1,7 @@
 name: Agent Architect RCE Semantic Release Gate
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/architect-rce-semantic-release.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,10 +10,10 @@ jobs:
   rce-semantic-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact PR head
+      - name: Checkout exact candidate
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
 
       - name: Set up Python
@@ -84,9 +80,7 @@ jobs:
             echo "Running ${case_id} (one model call; no application retry)"
             RCE_SEMANTIC_CASE_IDS="$case_id" python architect/evaluation/resource_cost_engineering/run_semantic_smoke.py | tee ".tmp/rce-semantic-full/${case_id}.log"
             cp .tmp/rce-semantic-smoke/summary.json ".tmp/rce-semantic-full/${case_id}-summary.json"
-            if [ "$i" -lt 9 ]; then
-              sleep 13
-            fi
+            if [ "$i" -lt 9 ]; then sleep 13; fi
           done
 
       - name: Grade full 10-case release gate
@@ -98,14 +92,13 @@ jobs:
           expected = [f'RCE-S{i}' for i in range(1, 11)]
           results = []
           for case_id in expected:
-              p = root / f'{case_id}-summary.json'
-              value = json.loads(p.read_text())
-              assert value['selected_case_ids'] == [case_id], (case_id, value)
-              assert value['planned_model_calls'] == 1, (case_id, value)
-              assert value['executed_cases'] == 1, (case_id, value)
-              assert value['application_retries'] == 0, (case_id, value)
+              value = json.loads((root / f'{case_id}-summary.json').read_text())
+              assert value['selected_case_ids'] == [case_id]
+              assert value['planned_model_calls'] == 1
+              assert value['executed_cases'] == 1
+              assert value['application_retries'] == 0
               result = value['results'][0]
-              assert result['case_id'] == case_id, result
+              assert result['case_id'] == case_id
               assert result['status'] == 'PASS', result
               results.append(result)
           report = {
@@ -125,7 +118,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rce-semantic-release-${{ github.event.pull_request.head.sha }}
+          name: rce-semantic-release-${{ github.sha }}
           path: |
             .tmp/rce-semantic-full
             .tmp/rce-semantic-smoke
