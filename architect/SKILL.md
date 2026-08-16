@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.1 release candidate — final behavioral revalidation required after supersession repair.
+Status: v1.1 — behavioral release gate PASS; v1.2 Resource & Cost Engineering candidate under separate validation.
 
 ## Mission
 
@@ -274,6 +274,10 @@ Do not claim exhaustive professional knowledge even after passing. Retain a reli
 
 The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
 
-A prior one-SHA v1.1 release run exposed a real B1 authoritative-supersession failure after otherwise successful behavioral validation. The memory policy has been repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history. Benchmark qualification is therefore pending fresh held-out B1 validation and a new complete one-SHA B1–B10 release run on the repaired candidate.
+A later one-SHA v1.1 validation exposed a genuine B1 authoritative-supersession defect. The responsible memory policy was repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history.
+
+The repaired candidate then passed the preregistered fresh held-out B1 regression and the complete frozen B1–B10 one-SHA release suite on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`. The qualifying run was GitHub Actions `31943354354`; canonical evidence is recorded in `evaluation/v1.1-behavioral-validation-report.md`.
 
 This v1.2 Resource & Cost Engineering candidate adds no release claim. Its RCE behavior remains unqualified until the sealed semantic/adversarial RCE suite is executed against this frozen candidate with independent grading.
+
+Benchmark qualification for v1.1 does not transfer automatically to the RCE capability or to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
