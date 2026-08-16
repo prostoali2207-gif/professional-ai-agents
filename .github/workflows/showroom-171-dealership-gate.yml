@@ -1,16 +1,13 @@
 name: Showroom 171 Dealership Context Gate
 
 on:
-  push:
-    branches:
-      - agent/showroom-171-dealership-context
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  qualify-affected:
+  qualify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout candidate
@@ -26,15 +23,23 @@ jobs:
           python -m py_compile architect/evaluation/showroom_171/run_semantic_gate.py
           cd architect/evaluation/showroom_171
           python -m unittest -v test_contract.py
-      - name: Retain prior critical reliability evidence
-        run: |
-          echo 'Critical reliability is retained from run 31955503177: 18/18 PASS on SHA a171f7e275d3bb13fbd06f4ed462dcc1ef05421f.'
-          echo 'This affected run changes only D-S10 action semantics plus deterministic assertions; dealership professional policy is unchanged.'
       - name: Require Gemini credential
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: test -n "$GEMINI_API_KEY"
-      - name: Complete affected dealership release suite
+      - name: Critical dealership reliability trials
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEALER_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          DEALER_CASE_IDS: D-S1,D-S2,D-S3,D-S5,D-S7,D-S8
+          DEALER_TRIALS: '3'
+          DEALER_BATCH_SIZE: '6'
+        run: |
+          rm -rf .tmp/showroom-171
+          python architect/evaluation/showroom_171/run_semantic_gate.py
+          cp .tmp/showroom-171/summary.json /tmp/dealer-critical-summary.json
+      - name: Complete dealership release suite
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DEALER_MODEL: gemini-3.1-flash-lite
@@ -44,10 +49,11 @@ jobs:
         run: |
           rm -rf .tmp/showroom-171
           python architect/evaluation/showroom_171/run_semantic_gate.py
+          cp /tmp/dealer-critical-summary.json .tmp/showroom-171/critical-reliability-summary.json
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: showroom-171-affected-${{ github.sha }}
+          name: showroom-171-${{ github.sha }}
           path: .tmp/showroom-171
           if-no-files-found: ignore
