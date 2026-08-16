@@ -48,6 +48,16 @@ class ProfessionalCoreLibraryContractTests(unittest.TestCase):
         evaluation_required = set(schema["properties"]["evaluation"]["required"])
         self.assertTrue({"fixture_refs", "grader_refs", "thresholds", "reliability_trials", "result"}.issubset(evaluation_required))
 
+    def test_external_import_record_covers_rights_security_and_scope(self):
+        schema = json.loads((LIB / "external-import-record.schema.json").read_text(encoding="utf-8"))
+        required = set(schema["required"])
+        self.assertTrue({"source", "rights", "security_review", "provenance_evidence", "imported_scope", "local_transformations", "admission_disposition"}.issubset(required))
+        rights = set(schema["properties"]["rights"]["required"])
+        self.assertTrue({"license_or_terms", "reuse_allowed", "redistribution_allowed", "attribution_requirements", "unresolved_constraints"}.issubset(rights))
+        security = set(schema["properties"]["security_review"]["required"])
+        self.assertTrue({"untrusted_instructions_checked", "executable_content_checked", "secret_or_network_risk_checked", "findings"}.issubset(security))
+        self.assertNotIn("qualified", schema["properties"]["admission_disposition"]["enum"])
+
     def test_methodology_blocks_catalog_as_trust_signal(self):
         text = METHODOLOGY.read_text(encoding="utf-8")
         self.assertIn("Library presence is a discovery fact, not a trust verdict", text)
