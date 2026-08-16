@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.2 — v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS; Professional Core Reuse integration PASS.**
+Status: **v1.2 — v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS; Professional Core Reuse integration PASS with repeated-trial reliability evidence.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -10,7 +10,7 @@ It is not a prompt template and does not make future agents competent automatica
 
 The executable router is `SKILL.md`. Supporting methodology covers profession discovery, competency/evidence engineering, source/provenance/freshness, evidence comparability, judgment/uncertainty, professional-core reuse and specialization, procedural packaging, tools and downstream verification, runtime state/memory/context, execution control, agent boundaries, security/trust, governance, high-stakes authority, evaluation integrity, resource/cost engineering, and production learning.
 
-Professional reuse is treated as an evidence decision. A matching role title does not justify inheritance. Reusable material must pass compatibility, provenance/freshness, runtime/dependency, authority, and evaluation-transfer checks before `REUSE`, `ADAPT`, `EXTEND`, or `FORK`; otherwise Architect must `BUILD NEW` or `REJECT` the candidate.
+Professional reuse is an evidence decision. A matching role title does not justify inheritance. Reusable material must pass compatibility, provenance/freshness, runtime/dependency, authority, and evaluation-transfer checks before `REUSE`, `ADAPT`, `EXTEND`, or `FORK`; otherwise Architect must `BUILD NEW` or `REJECT` the candidate.
 
 ## Applied-agent gate
 
@@ -34,20 +34,13 @@ The original v1.0 foundation was stress-tested across software engineering, empi
 
 Those layers were added and subjected to controlled behavioral validation. A later sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The responsible memory policy and executable router were repaired generally rather than weakening the fixture.
 
-The repaired v1.1 candidate then passed the preregistered post-repair sequence on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`:
+The repaired v1.1 candidate passed the preregistered post-repair sequence on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`, including the fresh B1 regression and complete frozen B1–B10 one-SHA release suite. Canonical evidence is in `evaluation/v1.1-behavioral-validation-report.md`.
 
-- fresh held-out B1 authoritative-supersession regression: **PASS**;
-- complete frozen B1–B10 one-SHA release suite: **PASS**;
-- P0 B4/B5/B6 included in the complete mechanical PASS;
-- B9 repeated-trial reliability threshold included in the same release grade.
+Resource & Cost Engineering v1.2 later passed its deterministic and semantic/adversarial integration gates; canonical RCE evidence is under `evaluation/resource_cost_engineering/`.
 
-Qualifying runtime: provider-neutral protocol-v2 harness through Gemini Interactions using `gemini-3.5-flash-lite` with `medium` thinking. GitHub Actions run `31943354354`; evidence artifact ID `9262801768`, digest `sha256:7b20c3aec5afec403ed4f7861981336073d149cb8c7a02a455b55bb40efab763`.
+Professional Core Reuse was validated through an extended repair and reliability sequence. After single-run success was later falsified as insufficient reliability evidence, PCR-S2 and PCR-S6 were promoted to reliability-sensitive fixtures. They passed **3/3 independent trials each with zero application retries** on SHA `d8c7a72423fd63a36e09e0c36ad227057a457d4c` (run `31948837687`), followed by the complete frozen PCR-S1–S6 suite at **6/6 PASS** on behavior-equivalent SHA `f18751a69813f53414d2b9e2e29d707833ed6c54` (run `31948877370`). See `evaluation/professional-core-reuse-validation-report-2026-08-16.md` for full failure/repair history and evidence boundaries.
 
-Resource & Cost Engineering v1.2 later passed its deterministic and semantic/adversarial integration gates; see the canonical RCE evidence under `evaluation/resource_cost_engineering/`.
-
-Professional Core Reuse then passed its targeted repair regressions and complete PCR-S1–S6 release gate on candidate SHA `cd3f9ed36fb0fca97593585822931c6cc2c1e6b4`, GitHub Actions run `31948575248`, with 6/6 semantic PASS, zero application retries, and sealed artifact ID `9263994621` (`sha256:f106a591bc30e0875b4cb472fa6bfe3644e9b4259f843a3e1ce49f97bb909ff5`). On the same SHA, the Research+RCE and RCE Mechanical workflows also passed.
-
-See `evaluation/v1.1-behavioral-validation-report.md` and `evaluation/professional-core-reuse-validation-report-2026-08-16.md` for the evidence chain and release boundaries.
+After qualification, automatic model-consuming Professional Core Reuse release execution is disabled. Future PCR release runs must be invoked deliberately so documentation-only changes do not consume API quota.
 
 ## Maintenance rule
 
@@ -61,7 +54,7 @@ Before major releases, verify that every path referenced by `SKILL.md` exists an
 
 Any behavior-relevant change after a qualifying candidate requires impact analysis and the appropriate affected regression. Historical PASS evidence must not be reused mechanically across executable changes.
 
-For reusable professional cores, changed domain assumptions, runtime/tool bindings, authority scope, volatile evidence, or composition boundaries trigger affected/new regression rather than automatic PASS inheritance.
+For reusable professional cores, changed domain assumptions, runtime/tool bindings, authority scope, volatile evidence, or composition boundaries trigger affected/new regression rather than automatic PASS inheritance. Once stochastic instability is observed in a mandatory behavior, a single later PASS is not enough to restore a reliability claim; use repeated trials appropriate to consequence and cost.
 
 ## Boundary
 
