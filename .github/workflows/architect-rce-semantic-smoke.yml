@@ -1,0 +1,71 @@
+name: Agent Architect RCE Semantic Gate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rce-semantic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
+          cd architect/evaluation/resource_cost_engineering
+          python -m unittest -v test_rce.py test_semantic_cases.py
+
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic model calls were not attempted.' >&2; exit 2)
+
+      - name: Probe live Flash-Lite availability without generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          model = 'models/gemini-3.5-flash-lite'
+          req = urllib.request.Request(
+              'https://generativelanguage.googleapis.com/v1beta/models',
+              headers={'x-goog-api-key': os.environ['GEMINI_API_KEY']},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              raw = json.loads(r.read().decode())
+          matches = [m for m in raw.get('models', []) if m.get('name') == model]
+          if not matches or 'generateContent' not in matches[0].get('supportedGenerationMethods', []):
+              raise SystemExit(f'{model} is not currently eligible for generation on this project')
+          print(json.dumps({'status':'PASS','probe':'models.list','generation_calls':0,'model':model}))
+          PY
+
+      - name: Run selected frozen RCE semantic cases
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          RCE_SEMANTIC_CASE_IDS: ${{ vars.RCE_SEMANTIC_CASE_IDS }}
+        run: |
+          rm -rf .tmp/rce-semantic-smoke
+          python architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
+
+      - name: Upload semantic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rce-semantic-${{ github.sha }}
+          path: .tmp/rce-semantic-smoke
+          if-no-files-found: ignore

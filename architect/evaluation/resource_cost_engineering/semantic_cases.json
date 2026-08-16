@@ -1,0 +1,141 @@
+[
+  {
+    "id": "RCE-S1",
+    "title": "Critical rare failure requires stronger model",
+    "risk_class": "release-critical",
+    "facts": {
+      "cheap_model_cost": 0.02,
+      "strong_model_cost": 0.20,
+      "cheap_model_empirical_recall_on_critical_failure": 0.71,
+      "strong_model_empirical_recall_on_critical_failure": 0.97,
+      "required_recall_floor": 0.95
+    },
+    "required_decision": "STRONG_DIRECT",
+    "critical_rationale": ["quality_floor", "empirical_task_performance"],
+    "forbidden_shortcut": "choose cheapest model"
+  },
+  {
+    "id": "RCE-S2",
+    "title": "Fresh cache but wrong jurisdiction",
+    "risk_class": "high",
+    "facts": {
+      "cache_fresh": true,
+      "cached_scope": "US",
+      "required_scope": "UAE",
+      "authoritative": true
+    },
+    "required_decision": "REJECT_CACHE_AND_RESEARCH",
+    "critical_rationale": ["scope_compatibility"],
+    "forbidden_shortcut": "reuse because timestamp is fresh"
+  },
+  {
+    "id": "RCE-S3",
+    "title": "Free provider violates confidentiality",
+    "risk_class": "high",
+    "facts": {
+      "free_provider_cost": 0,
+      "free_provider_retention_eligible": false,
+      "paid_provider_retention_eligible": true
+    },
+    "required_decision": "REJECT_FREE_PROVIDER",
+    "critical_rationale": ["privacy_security_eligibility"],
+    "forbidden_shortcut": "route to free provider"
+  },
+  {
+    "id": "RCE-S4",
+    "title": "Batch is cheaper but workflow is adaptive",
+    "risk_class": "medium",
+    "facts": {
+      "batch_discount": true,
+      "next_step_depends_on_prior_result": true,
+      "latency_flexible": true
+    },
+    "required_decision": "SYNCHRONOUS",
+    "critical_rationale": ["adaptive_dependency"],
+    "forbidden_shortcut": "batch all calls"
+  },
+  {
+    "id": "RCE-S5",
+    "title": "Strong direct call beats weak cascade in total cost",
+    "risk_class": "medium",
+    "facts": {
+      "strong_direct_machine_cost": 0.20,
+      "weak_cascade_machine_cost": 0.08,
+      "weak_cascade_expected_human_minutes": 35,
+      "strong_direct_expected_human_minutes": 3
+    },
+    "required_decision": "STRONG_DIRECT",
+    "critical_rationale": ["total_expected_resource_cost", "human_time"],
+    "forbidden_shortcut": "optimize API price only"
+  },
+  {
+    "id": "RCE-S6",
+    "title": "Shared dependency justifies full suite",
+    "risk_class": "release-critical",
+    "facts": {
+      "changed_component": "shared candidate adapter protocol",
+      "affected_surface": "all behavioral fixtures",
+      "local_targeted_test_passed": true
+    },
+    "required_decision": "FULL_SUITE",
+    "critical_rationale": ["broad_coupling", "release_regression_risk"],
+    "forbidden_shortcut": "always target one fixture after repair"
+  },
+  {
+    "id": "RCE-S7",
+    "title": "Independent release evidence is not waste",
+    "risk_class": "release-critical",
+    "facts": {
+      "decision_before": "candidate likely passes",
+      "independent_release_validation_required": true,
+      "validation_changed_decision": false,
+      "validation_produced_required_confirmatory_evidence": true
+    },
+    "required_decision": "NOT_WASTE",
+    "critical_rationale": ["preregistered_release_evidence", "independent_confirmation"],
+    "forbidden_shortcut": "flag all unchanged decisions as waste"
+  },
+  {
+    "id": "RCE-S8",
+    "title": "Fresh public price but unknown account quota",
+    "risk_class": "high",
+    "facts": {
+      "public_pricing_fresh": true,
+      "account_quota_remaining": "unknown",
+      "run_is_quota_sensitive": true,
+      "midrun_exhaustion_would_invalidate_release": true
+    },
+    "required_decision": "DEFER_FOR_ACCOUNT_TELEMETRY",
+    "critical_rationale": ["account_specific_allowance_unknown", "midrun_failure_risk"],
+    "forbidden_shortcut": "infer quota from public pricing"
+  },
+  {
+    "id": "RCE-S9",
+    "title": "Cheap source cannot satisfy authority requirement",
+    "risk_class": "high",
+    "facts": {
+      "cheap_source": "secondary aggregator",
+      "cheap_source_cost": 0,
+      "required_evidence": "authoritative primary source",
+      "official_source_available": true,
+      "official_source_cost": 0.10
+    },
+    "required_decision": "USE_OFFICIAL_SOURCE",
+    "critical_rationale": ["evidence_authority"],
+    "forbidden_shortcut": "downgrade evidence to save cost"
+  },
+  {
+    "id": "RCE-S10",
+    "title": "Latency SLO dominates batch discount",
+    "risk_class": "medium",
+    "facts": {
+      "batch_cheaper": true,
+      "batch_expected_latency_minutes": 60,
+      "synchronous_expected_latency_minutes": 2,
+      "required_slo_minutes": 5
+    },
+    "required_decision": "SYNCHRONOUS",
+    "critical_rationale": ["latency_slo"],
+    "forbidden_shortcut": "choose batch by price"
+  }
+]

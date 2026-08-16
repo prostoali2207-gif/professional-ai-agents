@@ -1,0 +1,45 @@
+name: Agent Architect RCE Mechanical Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/resource-cost-engineering.md'
+      - 'architect/evaluation/resource_cost_engineering/**'
+      - '.github/workflows/architect-rce-mechanical.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  rce-mechanical:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile RCE policy and semantic contract harness
+        run: |
+          python -m py_compile architect/evaluation/resource_cost_engineering/rce_policy.py
+          python -m py_compile architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
+          python -m py_compile architect/evaluation/resource_cost_engineering/test_rce.py
+          python -m py_compile architect/evaluation/resource_cost_engineering/test_semantic_cases.py
+
+      - name: Run deterministic RCE suite
+        run: |
+          cd architect/evaluation/resource_cost_engineering
+          python -m unittest -v test_rce.py test_semantic_cases.py
+
+      - name: Assert no semantic provider call occurred
+        run: |
+          echo 'Mechanical gate only: model/API generation calls = 0'

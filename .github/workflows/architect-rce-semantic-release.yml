@@ -1,0 +1,125 @@
+name: Agent Architect RCE Semantic Release Gate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rce-semantic-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
+          cd architect/evaluation/resource_cost_engineering
+          python -m unittest -v test_rce.py test_semantic_cases.py
+          cd ../../..
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          p = Path('architect/evaluation/resource_cost_engineering/run_semantic_smoke.py')
+          spec = importlib.util.spec_from_file_location('rce_semantic', p)
+          m = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(m)
+          expected = tuple(f'RCE-S{i}' for i in range(1, 11))
+          actual = m.selected_case_ids(','.join(expected))
+          assert actual == expected, (actual, expected)
+          assert m.output_json_schema()['additionalProperties'] is False
+          print('full frozen case selection + structured schema: PASS')
+          PY
+
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic model calls were not attempted.' >&2; exit 2)
+
+      - name: Probe live Flash-Lite availability without generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          model = 'models/gemini-3.5-flash-lite'
+          req = urllib.request.Request(
+              'https://generativelanguage.googleapis.com/v1beta/models',
+              headers={'x-goog-api-key': os.environ['GEMINI_API_KEY']},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              raw = json.loads(r.read().decode())
+          matches = [m for m in raw.get('models', []) if m.get('name') == model]
+          if not matches or 'generateContent' not in matches[0].get('supportedGenerationMethods', []):
+              raise SystemExit(f'{model} is not currently eligible for generation on this project')
+          print(json.dumps({'status':'PASS','probe':'models.list','generation_calls':0,'model':model}))
+          PY
+
+      - name: Run frozen RCE-S1 through RCE-S10 with paced one-shot calls
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+        run: |
+          rm -rf .tmp/rce-semantic-smoke .tmp/rce-semantic-full
+          mkdir -p .tmp/rce-semantic-full
+          cases=(RCE-S1 RCE-S2 RCE-S3 RCE-S4 RCE-S5 RCE-S6 RCE-S7 RCE-S8 RCE-S9 RCE-S10)
+          for i in "${!cases[@]}"; do
+            case_id="${cases[$i]}"
+            echo "Running ${case_id} (one model call; no application retry)"
+            RCE_SEMANTIC_CASE_IDS="$case_id" python architect/evaluation/resource_cost_engineering/run_semantic_smoke.py | tee ".tmp/rce-semantic-full/${case_id}.log"
+            cp .tmp/rce-semantic-smoke/summary.json ".tmp/rce-semantic-full/${case_id}-summary.json"
+            if [ "$i" -lt 9 ]; then sleep 13; fi
+          done
+
+      - name: Grade full 10-case release gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.tmp/rce-semantic-full')
+          expected = [f'RCE-S{i}' for i in range(1, 11)]
+          results = []
+          for case_id in expected:
+              value = json.loads((root / f'{case_id}-summary.json').read_text())
+              assert value['selected_case_ids'] == [case_id]
+              assert value['planned_model_calls'] == 1
+              assert value['executed_cases'] == 1
+              assert value['application_retries'] == 0
+              result = value['results'][0]
+              assert result['case_id'] == case_id
+              assert result['status'] == 'PASS', result
+              results.append(result)
+          report = {
+              'candidate_sha': results[0]['candidate_sha'],
+              'case_ids': expected,
+              'passes': len(results),
+              'planned_model_calls': 10,
+              'application_retries': 0,
+              'release_gate': 'PASS',
+              'results': results,
+          }
+          (root / 'full-release-grade.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+          print(json.dumps({'release_gate':'PASS','passes':len(results),'planned_model_calls':10,'application_retries':0}))
+          PY
+
+      - name: Upload sealed RCE release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rce-semantic-release-${{ github.sha }}
+          path: |
+            .tmp/rce-semantic-full
+            .tmp/rce-semantic-smoke
+          if-no-files-found: ignore
