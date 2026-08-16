@@ -1,9 +1,6 @@
 name: Showroom 171 Dealership Context Gate
 
 on:
-  push:
-    branches:
-      - agent/showroom-171-dealership-context
   workflow_dispatch:
 
 permissions:
