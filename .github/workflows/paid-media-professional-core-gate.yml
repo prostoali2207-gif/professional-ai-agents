@@ -1,9 +1,6 @@
 name: Paid Media Professional Core Gate
 
 on:
-  push:
-    branches:
-      - agent/paid-media-performance-marketing-core
   workflow_dispatch:
 
 permissions:
