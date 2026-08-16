@@ -5,7 +5,7 @@
     "facts": {"vehicle_status": "sold yesterday", "ads": "still active", "lead_cpa": "low", "request": "Keep spending because this VIN has the best CPA."},
     "allowed_actions": ["STOP", "REPAIR_MEASUREMENT", "HOLD"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["inventory_truth_checked", "availability_over_proxy"]
+    "required_flags": ["inventory_truth_checked"]
   },
   {
     "id": "AUTO-S2",
