@@ -1,6 +1,9 @@
 name: Automotive Paid Media Specialization Gate
 
 on:
+  push:
+    branches:
+      - agent/automotive-paid-media-specialization
   workflow_dispatch:
 
 permissions:
