@@ -1,27 +1,19 @@
 name: Agent Architect Professional Core Reuse Gate
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'architect/SKILL.md'
-      - 'architect/methodology/professional-core-reuse.md'
-      - 'architect/evaluation/professional-core-reuse-gate.md'
-      - 'architect/evaluation/professional_core_reuse/**'
-      - '.github/workflows/architect-professional-core-reuse-gate.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   professional-core-reuse:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact PR head
+      - name: Checkout requested candidate
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
 
       - name: Set up Python
@@ -42,11 +34,12 @@ jobs:
         run: |
           test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic calls were not attempted.' >&2; exit 2)
 
-      - name: Run frozen PCR-S1 through PCR-S6
+      - name: Run complete frozen PCR-S1 through PCR-S6 release gate
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
           GEMINI_THINKING_LEVEL: medium
+          PCR_TRIALS: '1'
         run: |
           rm -rf .tmp/professional-core-reuse
           python architect/evaluation/professional_core_reuse/run_semantic_gate.py
@@ -55,6 +48,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: professional-core-reuse-${{ github.event.pull_request.head.sha }}
+          name: professional-core-reuse-${{ github.sha }}
           path: .tmp/professional-core-reuse
           if-no-files-found: ignore

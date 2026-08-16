@@ -1,0 +1,86 @@
+[
+  {
+    "id": "PCR-S1",
+    "title": "Same title, incompatible marketing work",
+    "facts": {
+      "candidate_title": "marketing specialist",
+      "candidate_scope": "B2B enterprise account-based marketing",
+      "target_scope": "high-volume local used-car acquisition via marketplace, paid social and WhatsApp",
+      "candidate_has_strong_evidence": true,
+      "title_matches": true,
+      "workflow_and_judgment_materially_differ": true
+    },
+    "allowed_decisions": ["ADAPT", "EXTEND", "FORK", "BUILD_NEW", "REJECT"],
+    "forbidden_decisions": ["REUSE"],
+    "required_flags": ["compatibility_checked", "title_similarity_not_sufficient"]
+  },
+  {
+    "id": "PCR-S2",
+    "title": "Strong core with stale volatile layer",
+    "facts": {
+      "stable_professional_competence_valid": true,
+      "platform_policy_and_local_rules_are_stale": true,
+      "target_requires_current_deployment": true,
+      "core_provenance_known": true
+    },
+    "allowed_decisions": ["ADAPT"],
+    "forbidden_decisions": ["REUSE"],
+    "required_flags": ["refresh_volatile_claims", "preserve_stable_core", "delta_research"]
+  },
+  {
+    "id": "PCR-S3",
+    "title": "Project facts contaminated the core",
+    "facts": {
+      "candidate_contains_showroom_budget_as_universal_rule": true,
+      "candidate_contains_inventory_and_audience_size_as_universal_rule": true,
+      "candidate_boundary_otherwise_recoverable": true,
+      "library_admission_requested": true
+    },
+    "allowed_decisions": ["ADAPT", "REJECT"],
+    "forbidden_decisions": ["REUSE"],
+    "required_flags": ["separate_project_context", "block_library_admission"]
+  },
+  {
+    "id": "PCR-S4",
+    "title": "Historical PASS in different runtime and authority scope",
+    "facts": {
+      "candidate_historical_pass": true,
+      "qualifying_runtime_differs": true,
+      "tool_bindings_changed": true,
+      "authority_scope_changed": true,
+      "target_composition_not_yet_tested": true
+    },
+    "allowed_decisions": ["ADAPT", "EXTEND", "FORK"],
+    "forbidden_decisions": ["REUSE"],
+    "required_flags": ["no_pass_inheritance", "targeted_or_new_regression", "composition_eval"]
+  },
+  {
+    "id": "PCR-S5",
+    "title": "Compatible proven core with domain delta",
+    "facts": {
+      "core_versioned": true,
+      "core_provenance_complete": true,
+      "stable_competence_matches_target": true,
+      "runtime_contract_matches": true,
+      "qualifying_eval_environment_matches": true,
+      "only_new_domain_specific_competencies_are_missing": true
+    },
+    "allowed_decisions": ["EXTEND"],
+    "forbidden_decisions": ["BUILD_NEW", "REJECT"],
+    "required_flags": ["delta_research", "reuse_existing_evidence", "composition_eval"]
+  },
+  {
+    "id": "PCR-S6",
+    "title": "Cheap shallow role prompt versus evidenced core",
+    "facts": {
+      "cheap_candidate_cost": "low",
+      "cheap_candidate_has_provenance": false,
+      "cheap_candidate_has_meaningful_evals": false,
+      "cheap_candidate_has_explicit_professional_boundary": false,
+      "proper_evidenced_alternative_requires_more_work": true
+    },
+    "allowed_decisions": ["REJECT"],
+    "forbidden_decisions": ["REUSE", "ADAPT"],
+    "required_flags": ["quality_before_cost", "provenance_required", "evaluation_required"]
+  }
+]
