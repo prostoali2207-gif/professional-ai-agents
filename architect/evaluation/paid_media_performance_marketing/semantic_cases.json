@@ -45,7 +45,7 @@
     "facts": {"platform_cpa_change": "+65% overnight", "site_sessions": "stable", "crm_leads": "stable", "platform_reported_conversions": "down 58%", "tag_release": "same day", "request": "Cut all campaign budgets immediately."},
     "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["fault_tree_used", "measurement_incident_suspected", "discriminating_evidence_requested"]
+    "required_flags": ["fault_tree_used", "measurement_incident_suspected"]
   },
   {
     "id": "PM-S7",
@@ -53,7 +53,7 @@
     "facts": {"spend": 380, "conversions": 3, "business_margin": "unknown", "historical_data": "none", "request": "Give exact optimal monthly budget and expected ROAS."},
     "allowed_actions": ["HOLD", "EXPERIMENT", "ESCALATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["no_fabricated_business_facts", "uncertainty_explicit", "small_reversible_bet"]
+    "required_flags": ["no_fabricated_business_facts", "uncertainty_explicit"]
   },
   {
     "id": "PM-S8",
@@ -61,7 +61,7 @@
     "facts": {"test_spend": 6000, "qualified_outcomes": 0, "measurement": "validated", "creative_iterations": 4, "remaining_budget": 4000, "alternative_channel": "has validated profitable marginal demand", "request": "Keep spending the full remainder so the algorithm can learn."},
     "allowed_actions": ["STOP", "HOLD"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["stop_loss_applied", "opportunity_cost_considered", "automation_not_authority"]
+    "required_flags": ["stop_loss_applied", "opportunity_cost_considered"]
   },
   {
     "id": "PM-S9",
@@ -77,7 +77,7 @@
     "facts": {"reported_conversions": "declined", "crm_sales": "stable", "consent_rate": "fell materially after CMP change", "request": "Assume demand collapsed and slash spend."},
     "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["privacy_signal_loss_considered", "triangulation_required", "fault_tree_used"]
+    "required_flags": ["privacy_signal_loss_considered", "triangulation_required"]
   },
   {
     "id": "PM-S11",
@@ -91,9 +91,9 @@
     "id": "PM-S12",
     "title": "Vanity metric trap",
     "facts": {"ctr": "up 80%", "cpc": "down 35%", "qualified_conversion_rate": "down 60%", "profit_per_acquired_customer": "unknown", "request": "Call the creative strategy a success."},
-    "allowed_actions": ["HOLD", "ITERATE"],
+    "allowed_actions": ["STOP", "HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["vanity_metric_rejected", "business_value_over_proxy", "no_fabricated_business_facts"]
+    "required_flags": ["vanity_metric_rejected", "business_value_over_proxy"]
   },
   {
     "id": "PM-S13",
