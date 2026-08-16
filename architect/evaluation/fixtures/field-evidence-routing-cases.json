@@ -1,0 +1,51 @@
+[
+  {
+    "id": "FE-01",
+    "observation": "One vehicle campaign in one dealership produced lower CPL for Russian-language creative.",
+    "expected": "UPDATE_EXPERIMENT_CONTEXT",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "single campaign outcome is local and not transferable evidence"
+  },
+  {
+    "id": "FE-02",
+    "observation": "A dealership discovers its sales team can only handle 12 qualified leads per day.",
+    "expected": "UPDATE_ORGANIZATION_CONTEXT",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "capacity is organization-specific"
+  },
+  {
+    "id": "FE-03",
+    "observation": "A platform changes current messaging eligibility or campaign mechanics in one jurisdiction.",
+    "expected": "UPDATE_LIVE_CONTEXT",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "platform/jurisdiction mechanics are expiring live context"
+  },
+  {
+    "id": "FE-04",
+    "observation": "A campaign lost money, but attribution is incomplete and a salesperson changed follow-up behavior mid-test.",
+    "expected": "NO_MODEL_CHANGE",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "bad outcome is not causally diagnostic of professional judgment"
+  },
+  {
+    "id": "FE-05",
+    "observation": "Across independent contexts the qualified specialist repeatedly scales on cheap qualified leads while ignoring a measured collapse in downstream appointment-to-show quality; the defect reproduces in an adversarial fixture.",
+    "expected": "REVISE_SPECIALIZATION",
+    "required_before_change": ["root_cause_analysis", "transferability_evidence", "adversarial_reproduction", "requalification"],
+    "reason": "reproduced transferable domain judgment defect may justify specialization repair"
+  },
+  {
+    "id": "FE-06",
+    "observation": "A field incident reveals the existing professional policy was correct, but the release suite never tested the failure mode.",
+    "expected": "ADD_OR_REPAIR_EVAL_ONLY",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "missing evaluation coverage is not a model-policy defect"
+  },
+  {
+    "id": "FE-07",
+    "observation": "Evidence conflicts across deployments and measurement quality is insufficient to distinguish a professional defect from market or execution effects.",
+    "expected": "ESCALATE_RESEARCH",
+    "must_not": ["REVISE_CORE", "REVISE_SPECIALIZATION"],
+    "reason": "uncertainty requires stronger evidence rather than prompt patching"
+  }
+]
