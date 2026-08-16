@@ -1,0 +1,59 @@
+name: UAE Meta WhatsApp Live Context Gate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/uae_meta_whatsapp/run_semantic_gate.py
+          cd architect/evaluation/uae_meta_whatsapp
+          python -m unittest -v test_contract.py
+      - name: Require Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY"
+      - name: Critical live-context reliability trials
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LIVE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          LIVE_CASE_IDS: LIVE-S1,LIVE-S2,LIVE-S3,LIVE-S5,LIVE-S8,LIVE-S9
+          LIVE_TRIALS: '3'
+          LIVE_BATCH_SIZE: '6'
+        run: |
+          rm -rf .tmp/uae-meta-whatsapp
+          python architect/evaluation/uae_meta_whatsapp/run_semantic_gate.py
+          cp .tmp/uae-meta-whatsapp/summary.json /tmp/live-critical-summary.json
+      - name: Complete live-context release suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LIVE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          LIVE_TRIALS: '1'
+          LIVE_BATCH_SIZE: '5'
+        run: |
+          rm -rf .tmp/uae-meta-whatsapp
+          python architect/evaluation/uae_meta_whatsapp/run_semantic_gate.py
+          cp /tmp/live-critical-summary.json .tmp/uae-meta-whatsapp/critical-reliability-summary.json
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uae-meta-whatsapp-${{ github.sha }}
+          path: .tmp/uae-meta-whatsapp
+          if-no-files-found: ignore
