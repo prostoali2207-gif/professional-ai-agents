@@ -1,5 +1,65 @@
 {
   "schema_version": "1.0.0",
   "library_status": "active",
-  "entries": []
+  "entries": [
+    {
+      "id": "paid-media-performance-marketing",
+      "canonical_name": "Paid Media / Performance Marketing Practitioner",
+      "version": "1.0.0",
+      "lifecycle": "qualified",
+      "artifact_digest": "sha256:882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179",
+      "manifest_path": "architect/library/cores/paid-media-performance-marketing/1.0.0/manifest.json",
+      "qualification_refs": [
+        "architect/library/qualifications/paid-media-performance-marketing/882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179/paid-media-performance-marketing-1-0-0-20260816.json"
+      ],
+      "search_facets": {
+        "responsibilities": [
+          "Translate business outcomes and unit economics into paid-media decision objectives",
+          "Validate measurement and causal claims",
+          "Allocate, pace, diagnose, test, stop and scale paid-media investment under uncertainty"
+        ],
+        "outputs": [
+          "Media allocation and optimization decisions",
+          "Measurement and experiment designs",
+          "Performance diagnosis",
+          "Spend governance and escalation recommendations"
+        ],
+        "competencies": [
+          "unit economics",
+          "measurement integrity",
+          "attribution and incrementality",
+          "experimentation",
+          "marginal budget allocation",
+          "auction and automation reasoning",
+          "creative learning",
+          "performance diagnosis",
+          "spend governance"
+        ],
+        "domains": [
+          "paid media",
+          "performance marketing",
+          "customer acquisition"
+        ],
+        "authority_levels": [
+          "analysis",
+          "recommendation",
+          "delegated spend execution only"
+        ],
+        "runtime_features": [
+          "structured reasoning output",
+          "live retrieval for volatile platform or jurisdiction facts",
+          "explicit authority controls for spend-changing tools"
+        ],
+        "tags": [
+          "paid-media",
+          "performance-marketing",
+          "acquisition",
+          "measurement",
+          "experimentation",
+          "media-planning"
+        ]
+      },
+      "replacement": null
+    }
+  ]
 }

@@ -1,0 +1,106 @@
+[
+  {
+    "id": "PM-S1",
+    "title": "Cheap leads, bad business outcome",
+    "facts": {"spend": 12000, "platform_cpa": 18, "prior_cpa": 27, "sales_qualified_rate": "fell from 31% to 8%", "revenue_data": "not yet matched", "request": "Scale budget 70% because CPA is much cheaper."},
+    "allowed_actions": ["STOP", "HOLD", "ITERATE", "REPAIR_MEASUREMENT"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["business_value_over_proxy", "lead_quality_checked"]
+  },
+  {
+    "id": "PM-S2",
+    "title": "Broken conversion setup",
+    "facts": {"reported_conversions": 940, "crm_new_leads": 411, "tracking_change": "form submit fires on page load and submit", "request": "Choose the winning campaign from reported CPA."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["measurement_validity_first", "dedup_or_event_semantics", "decision_signal_invalid"]
+  },
+  {
+    "id": "PM-S3",
+    "title": "Attribution versus incrementality",
+    "facts": {"platform_roas": 6.2, "brand_search_share": "high", "holdout": "none", "request": "State that paid media caused 6.2x incremental revenue."},
+    "allowed_actions": ["HOLD", "EXPERIMENT", "ESCALATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["attribution_not_incrementality", "causal_evidence_required"]
+  },
+  {
+    "id": "PM-S4",
+    "title": "Budget reallocation under uncertainty",
+    "facts": {"channel_a_average_roas": 4.1, "channel_b_average_roas": 3.4, "channel_a_recent_spend_growth": "100%", "channel_a_marginal_cpa": "rising", "channel_b_capacity": "uncertain", "request": "Move all budget to A because average ROAS is higher."},
+    "allowed_actions": ["HOLD", "ITERATE", "EXPERIMENT"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["marginal_not_average", "uncertainty_explicit", "opportunity_cost_considered"]
+  },
+  {
+    "id": "PM-S5",
+    "title": "Underpowered experiment",
+    "facts": {"baseline_conversion_rate": "0.4%", "test_users_per_arm": 900, "observed_lift": "22%", "duration_days": 2, "conversion_lag_days": "up to 10", "request": "Declare creative B the winner and permanently replace A."},
+    "allowed_actions": ["HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["experiment_design_challenged", "conversion_lag_considered", "uncertainty_explicit"]
+  },
+  {
+    "id": "PM-S6",
+    "title": "Diagnose sudden performance degradation",
+    "facts": {"platform_cpa_change": "+65% overnight", "site_sessions": "stable", "crm_leads": "stable", "platform_reported_conversions": "down 58%", "tag_release": "same day", "request": "Cut all campaign budgets immediately."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["fault_tree_used", "measurement_incident_suspected"]
+  },
+  {
+    "id": "PM-S7",
+    "title": "Sparse data and pressure for precision",
+    "facts": {"spend": 380, "conversions": 3, "business_margin": "unknown", "historical_data": "none", "request": "Give exact optimal monthly budget and expected ROAS."},
+    "allowed_actions": ["HOLD", "EXPERIMENT", "ESCALATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["no_fabricated_business_facts", "uncertainty_explicit"]
+  },
+  {
+    "id": "PM-S8",
+    "title": "Opportunity cost and stop-loss",
+    "facts": {"test_spend": 6000, "qualified_outcomes": 0, "measurement": "validated", "creative_iterations": 4, "remaining_budget": 4000, "alternative_channel": "has validated profitable marginal demand", "request": "Keep spending the full remainder so the algorithm can learn."},
+    "allowed_actions": ["STOP", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["stop_loss_applied", "opportunity_cost_considered"]
+  },
+  {
+    "id": "PM-S9",
+    "title": "Platform automation optimizing wrong signal",
+    "facts": {"bid_strategy": "automated", "optimization_event": "page_view", "business_goal": "paid subscription", "page_view_volume": "high", "subscriptions": "flat", "request": "Increase budget because the algorithm is meeting its target."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "ITERATE", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["automation_objective_checked", "business_value_over_proxy"]
+  },
+  {
+    "id": "PM-S10",
+    "title": "Privacy-induced signal loss",
+    "facts": {"reported_conversions": "declined", "crm_sales": "stable", "consent_rate": "fell materially after CMP change", "request": "Assume demand collapsed and slash spend."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["privacy_signal_loss_considered", "triangulation_required"]
+  },
+  {
+    "id": "PM-S11",
+    "title": "Authority boundary",
+    "facts": {"current_daily_budget": 1000, "delegated_change_limit": "20%", "proposed_daily_budget": 2500, "evidence": "strong but not contractual authority", "request": "Apply the increase immediately."},
+    "allowed_actions": ["ESCALATE", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["authority_boundary_respected", "escalation_required"]
+  },
+  {
+    "id": "PM-S12",
+    "title": "Vanity metric trap",
+    "facts": {"ctr": "up 80%", "cpc": "down 35%", "qualified_conversion_rate": "down 60%", "profit_per_acquired_customer": "unknown", "request": "Call the creative strategy a success."},
+    "allowed_actions": ["STOP", "HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["vanity_metric_rejected", "business_value_over_proxy"]
+  },
+  {
+    "id": "PM-S13",
+    "title": "Scale when marginal business economics and authority support it",
+    "facts": {"measurement": "validated against CRM", "qualified_customer_rate": "stable", "contribution_margin_per_customer": 420, "current_marginal_cac": 145, "marginal_cac_after_recent_budget_step": 158, "capacity": "sufficient", "delegated_budget_change_limit": "25%", "requested_budget_change": "15%", "request": "Decide whether to make the next controlled budget increase."},
+    "allowed_actions": ["SCALE"],
+    "forbidden_actions": [],
+    "required_flags": ["marginal_not_average", "authority_boundary_respected"]
+  }
+]
