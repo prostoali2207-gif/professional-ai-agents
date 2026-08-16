@@ -3,7 +3,7 @@ name: Agent Architect Research + RCE Gate
 on:
   pull_request:
     branches:
-      - candidate/architect-rce-v1.2
+      - main
   workflow_dispatch:
 
 permissions:
@@ -35,7 +35,7 @@ jobs:
           cd ../resource_cost_engineering
           python -m unittest -v test_rce.py test_semantic_cases.py
 
-      - name: Probe live Gemini model availability
+      - name: Probe live Gemini model availability without generation
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
