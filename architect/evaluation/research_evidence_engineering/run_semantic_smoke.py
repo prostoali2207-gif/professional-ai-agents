@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 CASES = HERE / "semantic_cases.json"
 OUT = ROOT / ".tmp/research-rce-semantic-smoke"
+INTERACTIONS_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
 CASE_IDS = ("RES-RCE-S1", "RES-RCE-S2")
 ALLOWED_DECISIONS = ["ESCALATE_OR_DEFER", "DIRECT_PRIMARY_INSPECTION", "CONTINUE", "STOP_WITH_LIMITATION", "SUPPORTED"]
 ALLOWED_RATIONALES = [
@@ -82,15 +83,37 @@ def output_json_schema() -> dict:
     }
 
 
-def generation_config() -> dict:
-    # Current Gemini 3.x guidance deprecates temperature/top_p/top_k. Keep the
-    # evaluation payload minimal and schema-constrained instead of relying on
-    # sampling controls for determinism.
+def response_format() -> dict:
     return {
-        "maxOutputTokens": 500,
-        "responseMimeType": "application/json",
-        "responseJsonSchema": output_json_schema(),
+        "type": "text",
+        "mime_type": "application/json",
+        "schema": output_json_schema(),
     }
+
+
+def interaction_payload(case: dict, system: str, model: str) -> dict:
+    return {
+        "model": model,
+        "input": task_for(case),
+        "system_instruction": system,
+        "response_format": response_format(),
+        "store": False,
+    }
+
+
+def extract_interaction_output_text(raw: dict) -> str:
+    # Current Interactions REST responses expose model output in observable steps.
+    for step in reversed(raw.get("steps") or []):
+        if step.get("type") != "model_output":
+            continue
+        for item in step.get("content") or []:
+            if item.get("type") == "text" and isinstance(item.get("text"), str):
+                return item["text"]
+    # Defensive support for SDK-like/envelope convenience fields without
+    # pretending a missing model_output step is valid evidence.
+    if isinstance(raw.get("output_text"), str):
+        return raw["output_text"]
+    raise ValueError("interaction response contains no observable text model_output")
 
 
 def classify_http_error(code: int, body: str) -> str:
@@ -109,25 +132,34 @@ def classify_http_error(code: int, body: str) -> str:
 def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
     model = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-    payload = {
-        "system_instruction": {"parts": [{"text": system}]},
-        "contents": [{"role": "user", "parts": [{"text": task_for(case)}]}],
-        "generationConfig": generation_config(),
-    }
-    req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json"})
+    payload = interaction_payload(case, system, model)
+    req = urllib.request.Request(
+        INTERACTIONS_ENDPOINT,
+        data=json.dumps(payload).encode(),
+        method="POST",
+        headers={"Content-Type": "application/json", "x-goog-api-key": key},
+    )
     try:
         with urllib.request.urlopen(req, timeout=90) as response:
             raw = json.loads(response.read().decode())
-        text = raw["candidates"][0]["content"]["parts"][0]["text"]
-        return extract_json(text), {"status": "OK", "usage": raw.get("usageMetadata"), "model": model}
+        text = extract_interaction_output_text(raw)
+        answer = extract_json(text)
+        transport = {
+            "status": "OK",
+            "api": "interactions/v1beta",
+            "model": model,
+            "interaction_id": raw.get("id"),
+            "interaction_status": raw.get("status"),
+            "usage": raw.get("usage") or raw.get("usageMetadata"),
+        }
+        return answer, transport
     except urllib.error.HTTPError as exc:
         body = exc.read().decode(errors="replace")
-        return None, {"status": "INFRA_FAILURE", "http_status": exc.code, "failure_class": classify_http_error(exc.code, body), "error": body, "model": model}
+        return None, {"status": "INFRA_FAILURE", "api": "interactions/v1beta", "http_status": exc.code, "failure_class": classify_http_error(exc.code, body), "error": body, "model": model}
     except json.JSONDecodeError as exc:
-        return None, {"status": "EVAL_OUTPUT_FAILURE", "failure_class": "SCHEMA_OUTPUT_PARSE", "error": repr(exc), "model": model}
+        return None, {"status": "EVAL_OUTPUT_FAILURE", "api": "interactions/v1beta", "failure_class": "SCHEMA_OUTPUT_PARSE", "error": repr(exc), "model": model}
     except Exception as exc:
-        return None, {"status": "INFRA_FAILURE", "failure_class": "TRANSPORT_OR_PROVIDER_RESPONSE", "error": repr(exc), "model": model}
+        return None, {"status": "INFRA_FAILURE", "api": "interactions/v1beta", "failure_class": "TRANSPORT_OR_PROVIDER_RESPONSE", "error": repr(exc), "model": model}
 
 
 def run_case(case: dict, sha: str, system: str) -> dict:
@@ -151,7 +183,9 @@ def run_case(case: dict, sha: str, system: str) -> dict:
         "actual_rationale_codes": sorted(reasons),
         "candidate_sha": sha,
         "provider": "Google Gemini API",
+        "api": transport.get("api"),
         "model": transport.get("model"),
+        "interaction_id": transport.get("interaction_id"),
         "usage": transport.get("usage"),
     }
     (workspace / "grade.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -176,6 +210,7 @@ def main() -> int:
     summary = {
         "candidate_sha": sha,
         "provider": "Google Gemini API",
+        "api": "interactions/v1beta",
         "model": os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"),
         "planned_model_calls": 2,
         "executed_cases": len(results),
