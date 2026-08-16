@@ -2,20 +2,19 @@
 """Rate-aware transport wrapper for gemini_interactions_adapter.
 
 The behavioral/tool adapter remains provider-neutral and fixture-independent.
-This wrapper adds provider-health policy only:
-- proactive cross-process request pacing for the observed free-tier RPM window;
+This wrapper adds provider-health/model-runtime policy only:
+- proactive cross-process request pacing;
+- optional official Interactions `generation_config.thinking_level`;
 - one bounded retry for a 429 only when the provider supplies a short retry-in
   duration, or for one 503 capacity transient;
-- daily/ambiguous quota exhaustion remains non-retriable and creates a shared
+- repeated/ambiguous quota exhaustion remains non-retriable and creates a shared
   provider block so later fixture processes do not create a retry storm.
 """
 from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 import re
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -51,6 +50,18 @@ def provider_retry_seconds(body: str) -> float | None:
         return None
 
 
+def configured_payload(payload: dict) -> dict:
+    value = dict(payload)
+    thinking = os.environ.get("GEMINI_THINKING_LEVEL", "").strip().lower()
+    if thinking:
+        if thinking not in {"minimal", "low", "medium", "high"}:
+            base.fail(f"unsupported GEMINI_THINKING_LEVEL: {thinking}")
+        cfg = dict(value.get("generation_config") or {})
+        cfg["thinking_level"] = thinking
+        value["generation_config"] = cfg
+    return value
+
+
 def api_call(payload: dict, *, allow_one_503_retry: bool = True) -> dict:
     if base.PROVIDER_BLOCK.exists():
         block = base.load_json(base.PROVIDER_BLOCK, {})
@@ -58,12 +69,13 @@ def api_call(payload: dict, *, allow_one_503_retry: bool = True) -> dict:
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
         base.fail("GEMINI_API_KEY is not configured")
+    request_body = configured_payload(payload)
 
     for attempt in range(2):
         wait_for_rate_slot()
         req = urllib.request.Request(
             base.INTERACTIONS_ENDPOINT,
-            data=json.dumps(payload).encode("utf-8"),
+            data=json.dumps(request_body).encode("utf-8"),
             method="POST",
             headers={"Content-Type": "application/json", "x-goog-api-key": key},
         )
