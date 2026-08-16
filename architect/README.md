@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: **v1.1 release candidate — authoritative-supersession repair completed; fresh behavioral revalidation is pending a usable model runtime.**
+Status: **v1.1 — behavioral release gate PASS.**
 
 Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
@@ -24,13 +24,20 @@ A pass for the Architect itself is never inherited by an applied agent.
 
 The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. A broader external benchmark on 2026-08-14 found material gaps in runtime state/memory/context engineering, long-horizon execution control, procedural capability packaging, and agent security/trust-boundary engineering.
 
-Those layers were added and subjected to controlled behavioral validation. Earlier one-SHA suites passed B1-B10 and the P0 security/state/action families, but the final sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The memory policy and executable router were repaired so an explicit applicable authoritative replacement updates current state while retaining useful superseded provenance/history.
+Those layers were added and subjected to controlled behavioral validation. A later sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The responsible memory policy and executable router were repaired generally rather than weakening the fixture.
 
-A fresh held-out B1 fixture remains preregistered, followed by a complete B1-B10 release suite on the same candidate SHA. The first repaired run did not produce behavioral evidence because GitHub Copilot SDK returned `monthly quota exceeded` before the model answered. A later GitHub Models fallback also produced no behavioral evidence: deterministic checks passed, but the inference endpoint returned HTTP 410 because GitHub Models had been retired. Neither runtime failure is B1 PASS or B1 FAIL.
+The repaired v1.1 candidate then passed the preregistered post-repair sequence on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`:
 
-Therefore benchmark qualification is **pending**, not PASS, until the repaired candidate completes fresh B1 and the full one-SHA gate.
+- fresh held-out B1 authoritative-supersession regression: **PASS**;
+- complete frozen B1–B10 one-SHA release suite: **PASS**;
+- P0 B4/B5/B6 included in the complete mechanical PASS;
+- B9 repeated-trial reliability threshold included in the same release grade.
 
-The harness has a provider-neutral protocol-v2 boundary and a contract-aligned OpenAI Responses BYOK adapter. BYOK still requires a real provider credential; no credential is assumed, and no unexecuted fallback counts as evidence. The obsolete GitHub Models adapter/workflow has been removed from the current release path.
+Qualifying runtime: provider-neutral protocol-v2 harness through Gemini Interactions using `gemini-3.5-flash-lite` with `medium` thinking. GitHub Actions run `31943354354`; evidence artifact ID `9262801768`, digest `sha256:7b20c3aec5afec403ed4f7861981336073d149cb8c7a02a455b55bb40efab763`.
+
+After PASS, automatic model-consuming release execution was disabled again. The immediate post-PASS commit changed only the release workflow trigger, not Agent Architect behavior, fixtures, graders, runner, or the qualifying adapter.
+
+See `evaluation/v1.1-behavioral-validation-report.md` for the evidence chain and release boundary.
 
 ## Maintenance rule
 
@@ -42,6 +49,10 @@ Use:
 
 Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register/evaluation claims agree with the repository's actual state.
 
+Any behavior-relevant change after the qualifying candidate requires impact analysis and the appropriate affected regression. Historical PASS evidence must not be reused mechanically across executable changes.
+
 ## Boundary
 
-No release means `perfect`, `complete`, or knowledgeable about every profession. Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
+`v1.1 PASS` means the current Agent Architect architecture met its preregistered behavioral release gate. It does not mean `perfect`, `complete`, knowledgeable about every profession, or that an applied agent automatically passes because it was designed by this Architect.
+
+Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.
