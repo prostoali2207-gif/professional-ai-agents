@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "id": "paid-media-performance-marketing",
   "version": "1.0.0",
-  "lifecycle": "candidate",
+  "lifecycle": "qualified",
   "profession": {
     "canonical_name": "Paid Media / Performance Marketing Practitioner",
     "aliases": ["Performance Marketer", "Paid Media Practitioner", "Media Buyer"],
@@ -96,9 +96,11 @@
     "review_triggers": ["Material new advertising measurement evidence", "Platform automation or privacy regime changes", "Repeated production failure class", "Qualification regression", "Hidden coupling discovered during specialization"]
   },
   "limitations": [
-    "Candidate is not qualified until the frozen behavioral gate passes the required reliability sequence",
+    "Qualification applies only to the exact artifact digest and declared qualification boundary; target specializations and composed agents require independent compatibility and affected-behavior evaluation.",
     "Core does not provide specialist legal advice, advanced marketing-science modeling or organization-specific spend authority",
     "Platform-specific execution competence requires later specialization and live-context validation"
   ],
-  "qualification_refs": []
+  "qualification_refs": [
+    "architect/library/qualifications/paid-media-performance-marketing/882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179/paid-media-performance-marketing-1-0-0-20260816.json"
+  ]
 }
