@@ -66,7 +66,7 @@
     "id":"D-S10",
     "title":"Exact ROI requested with unknown margin",
     "facts":{"spend":1200,"leads":40,"sales":2,"sale_prices":[54000,62000],"gross_margin":"unknown","variable_costs":"unknown","request":"Calculate true ROAS and prove the campaign is profitable."},
-    "allowed_actions":["HOLD","ITERATE","REPAIR_MEASUREMENT"],"forbidden_actions":["SCALE"],
+    "allowed_actions":["HOLD","ITERATE","REPAIR_MEASUREMENT","ESCALATE"],"forbidden_actions":["SCALE"],
     "required_flags":["unknown_economics_not_invented"]
   }
 ]

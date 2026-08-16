@@ -18,7 +18,9 @@ class DealerContract(unittest.TestCase):
         for x in ['gross/contribution economics','paid-media budget','spend authority','sales-team response/capacity','authoritative live inventory integration']:
             self.assertIn(x.lower(),self.ctx.lower())
     def test_scale_requires_explicit_capacity_check(self):
-        self.assertIn('Before any `SCALE` decision expected to increase lead volume, explicitly confirm',self.ctx)
+        self.assertIn('Mandatory scale checklist',self.ctx)
+        for x in ['marginal business value','delegated authority','operational capacity']:
+            self.assertIn(x.lower(),self.ctx.lower())
     def test_cross_repo_exact_revision(self):
         self.assertIn('5f0a7fdbc83f48d207499229dfbc3110e675b4da',self.evidence)
         self.assertIn('No code, prompt, agent instruction or professional artifact is imported',self.evidence)
@@ -31,6 +33,8 @@ class DealerContract(unittest.TestCase):
         by={c['id']:c for c in self.cases}
         self.assertEqual(['downstream_quality_required'],by['D-S1']['required_flags'])
         self.assertEqual(['missing_data_not_zero'],by['D-S8']['required_flags'])
+        self.assertIn('ESCALATE',by['D-S10']['allowed_actions'])
+        self.assertIn('SCALE',by['D-S10']['forbidden_actions'])
     def test_positive_scale_requires_business_evidence(self):
         c={x['id']:x for x in self.cases}['D-S7']
         self.assertEqual(['SCALE'],c['allowed_actions'])
