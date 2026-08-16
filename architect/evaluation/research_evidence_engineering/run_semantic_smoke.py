@@ -66,6 +66,33 @@ def task_for(case: dict) -> str:
     )
 
 
+def output_json_schema() -> dict:
+    return {
+        "type": "object",
+        "properties": {
+            "decision": {"type": "string", "enum": ALLOWED_DECISIONS},
+            "rationale_codes": {
+                "type": "array",
+                "items": {"type": "string", "enum": ALLOWED_RATIONALES},
+                "minItems": 1,
+            },
+        },
+        "required": ["decision", "rationale_codes"],
+        "additionalProperties": False,
+    }
+
+
+def generation_config() -> dict:
+    # Current Gemini generateContent API: responseJsonSchema is the full JSON Schema field.
+    # responseSchema must not be sent together with it.
+    return {
+        "temperature": 0,
+        "maxOutputTokens": 500,
+        "responseMimeType": "application/json",
+        "responseJsonSchema": output_json_schema(),
+    }
+
+
 def classify_http_error(code: int, body: str) -> str:
     low = body.lower()
     if code == 429 and ("quota" in low or "resource_exhausted" in low):
@@ -83,26 +110,10 @@ def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
     model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-    schema = {
-        "type": "OBJECT",
-        "properties": {
-            "decision": {"type": "STRING", "enum": ALLOWED_DECISIONS},
-            "rationale_codes": {
-                "type": "ARRAY",
-                "items": {"type": "STRING", "enum": ALLOWED_RATIONALES},
-            },
-        },
-        "required": ["decision", "rationale_codes"],
-    }
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": task_for(case)}]}],
-        "generationConfig": {
-            "temperature": 0,
-            "maxOutputTokens": 500,
-            "responseMimeType": "application/json",
-            "responseSchema": schema,
-        },
+        "generationConfig": generation_config(),
     }
     req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json"})
     try:
