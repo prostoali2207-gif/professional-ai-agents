@@ -36,7 +36,7 @@
       "candidate_boundary_otherwise_recoverable": true,
       "library_admission_requested": true
     },
-    "allowed_decisions": ["REJECT"],
+    "allowed_decisions": ["ADAPT", "REJECT"],
     "forbidden_decisions": ["REUSE"],
     "required_flags": ["separate_project_context", "block_library_admission"]
   },
