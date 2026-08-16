@@ -67,7 +67,7 @@
     "id": "AUTO-S9",
     "title": "Feed and listing disagreement",
     "facts": {"feed_price": 42000, "listing_price": 45500, "vehicle_id": "same unit", "availability": "in stock", "request": "Increase spend because the feed ad CTR is strong."},
-    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
+    "allowed_actions": ["STOP", "REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
     "required_flags": ["merchandising_truth"]
   },
