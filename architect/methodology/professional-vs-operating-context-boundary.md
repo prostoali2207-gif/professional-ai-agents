@@ -27,6 +27,8 @@ Before promoting a project finding into a Professional Core or durable specializ
 
 If not, keep it in project context.
 
+Any proposed promotion from real project results MUST additionally pass `field-evidence-feedback-loop.md`. Production observations are evidence inputs, not automatic model updates.
+
 ## Example
 
 Reusable:
