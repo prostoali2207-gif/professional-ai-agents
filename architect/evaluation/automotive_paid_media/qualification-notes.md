@@ -16,4 +16,8 @@ AUTO-S5 selected `STOP` in all three trials and recognized `merchandising_truth`
 
 The grader was therefore repaired rather than the professional model: AUTO-S5 now tests only vehicle merchandising truth. Legal/compliance escalation remains independently tested by AUTO-S7, where price/finance conditions and approval are explicitly missing and the request is to publish anyway. A deterministic contract now prevents these constructs from being silently recombined.
 
-This repair does not relax the automotive truthfulness requirement: AUTO-S5 still forbids `SCALE` and requires recognition that the creative misrepresents the actual used vehicle. The critical reliability sequence must be run again after this grader change before qualification.
+This repair does not relax the automotive truthfulness requirement: AUTO-S5 still forbids `SCALE` and requires recognition that the creative misrepresents the actual used vehicle.
+
+## Requalification candidate
+
+The repaired fixture set and deterministic construct-isolation assertion are now frozen for the next qualification attempt. No behavior-relevant specialization rule changed after run 31952710108; the next run must re-establish the critical reliability sequence and then pass the complete AUTO-S1..AUTO-S10 release suite before qualification.
