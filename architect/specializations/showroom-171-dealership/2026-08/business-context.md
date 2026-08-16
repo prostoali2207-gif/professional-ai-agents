@@ -134,6 +134,15 @@ Human/business authority is required for at least:
 - customer-data use where organizational approval is required;
 - operational commitments such as delivery/export promises.
 
+## DEALER-11 Mandatory scale checklist
+
+A dealership-context recommendation to `SCALE` is invalid unless the practitioner explicitly confirms all three of the following in the decision:
+1. **marginal business value** — expected marginal acquisition economics remain favorable using verified business economics, not average platform CPA alone;
+2. **delegated authority** — the proposed spend increase is within an explicit approved authority limit;
+3. **operational capacity** — current lead-response and appointment handling can absorb the expected incremental volume without degrading downstream quality.
+
+If any one of these is unknown, do not label the decision `SCALE`. Use HOLD / EXPERIMENT / ITERATE / ESCALATE as appropriate until the missing evidence is resolved.
+
 ## Explicit unknowns that block confident scale
 
 Until supplied and verified, treat these as unknown:
