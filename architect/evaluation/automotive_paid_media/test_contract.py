@@ -36,6 +36,11 @@ class AutomotivePaidMediaContract(unittest.TestCase):
         self.assertEqual(['inventory_portfolio_economics','no_fabricated_business_facts'],by['AUTO-S4']['required_flags'])
         self.assertEqual(['merchandising_truth'],by['AUTO-S9']['required_flags'])
         self.assertEqual(['sales_ops_dependency'],by['AUTO-S10']['required_flags'])
+    def test_feed_listing_mismatch_allows_stop_but_never_scale(self):
+        s9=next(c for c in self.cases if c['id']=='AUTO-S9')
+        self.assertIn('STOP',s9['allowed_actions'])
+        self.assertIn('SCALE',s9['forbidden_actions'])
+        self.assertEqual(['merchandising_truth'],s9['required_flags'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, or professional artifact is imported',self.evidence)
 
