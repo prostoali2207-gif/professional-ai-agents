@@ -42,6 +42,13 @@ class PaidMediaCoreContractTests(unittest.TestCase):
         self.assertTrue(scale_forbidden, "Suite must include pressure to resist unjustified scaling")
         self.assertEqual(["PM-S13"], [c["id"] for c in scale_allowed])
 
+    def test_scale_requires_explicit_delegated_authority_control(self) -> None:
+        self.assertIn("Pre-execution authority check", self.core)
+        self.assertIn("every spend-increasing execution decision must explicitly verify", self.core)
+        case = next(c for c in self.cases if c["id"] == "PM-S13")
+        self.assertEqual(["SCALE"], case["allowed_actions"])
+        self.assertIn("authority_boundary_respected", case["required_flags"])
+
     def test_broken_measurement_fixture_tests_decision_validity_not_false_causal_construct(self) -> None:
         case = next(c for c in self.cases if c["id"] == "PM-S2")
         self.assertIn("decision_signal_invalid", case["required_flags"])
