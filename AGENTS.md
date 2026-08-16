@@ -32,6 +32,26 @@ Do not confuse:
 - execution with verification;
 - instructions with training material.
 
+## Reuse before rebuild
+
+Before substantial implementation of a non-trivial applied professional agent, perform a professional-agent landscape and reuse audit using `architect/methodology/professional-agent-reuse-discovery.md`.
+
+Do not assume the requested specialist, skill, workflow, tool, benchmark, dataset, or evaluation asset must be built locally. Search for complete specialist agents and for reusable components separately, including professional skill packs, SOP/workflow implementations, domain tools/MCP servers/APIs, evaluation assets, structured knowledge resources, adjacent specialist systems, and mature infrastructure components.
+
+Start from the reconstructed profession and critical competency map, not repository names. A repository called `marketing-agent`, `lawyer-agent`, or `financial-analyst` is not evidence that it performs that profession competently.
+
+Inspect serious candidates beyond README claims and classify them as:
+
+`USE AS-IS | ADAPT | COMBINE | BENCHMARK ONLY | REJECT | BUILD MISSING PART`.
+
+For material candidates evaluate professional fidelity, behavioral evidence, evaluation validity, knowledge/source provenance, engineering quality, maintenance/freshness, security and supply-chain risk, licensing/reuse rights, runtime compatibility, and total resource/operational cost.
+
+New implementation requires an explicit residual gap:
+
+`target competency -> strongest existing candidate(s) -> evidence strength -> residual gap -> action`.
+
+Do not rebuild a mature sufficient capability merely because local implementation is easier than landscape research. Do not reuse a weak or unsafe capability merely because reuse appears cheaper. Reused components must still pass the target system's own local evaluation and governance requirements.
+
 ## Verification
 
 If an outcome can be directly observed or tested, direct observation/test is required. Reasoning is not a substitute for execution evidence.
@@ -54,6 +74,6 @@ Use the simplest architecture that can meet the professional task. Do not defaul
 
 An applied agent is not ready until:
 
-profession mapped -> competencies mapped -> authoritative knowledge assembled -> gaps identified -> workflows designed -> tools/evidence strategy defined -> professional judgment encoded -> failure modes encoded -> skill orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed.
+profession mapped -> competencies mapped -> existing professional-agent/component landscape audited -> reuse/adapt/build decisions evidenced -> authoritative knowledge assembled -> residual gaps identified -> workflows designed -> tools/evidence strategy defined -> professional judgment encoded -> failure modes encoded -> skill orchestrates the system -> competency evaluation run -> reused/adapted components locally verified -> weaknesses corrected -> practical evaluation passed.
 
 Even then, never claim exhaustive knowledge. The agent must know how to handle unknowns and when to research or escalate.
