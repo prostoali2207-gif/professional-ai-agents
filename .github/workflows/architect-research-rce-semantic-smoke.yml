@@ -50,25 +50,24 @@ jobs:
           path: .tmp/research-rce-model-probe
           if-no-files-found: ignore
 
-      - name: Require existing Gemini credential for targeted S2 regression
+      - name: Require existing Gemini credential for final semantic gate
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model call was not attempted.' >&2; exit 2)
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model calls were not attempted.' >&2; exit 2)
 
-      - name: Run targeted S2 semantic regression
+      - name: Run exactly two frozen cross-layer semantic cases
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-3.6-flash
-          SEMANTIC_CASE_IDS: RES-RCE-S2
         run: |
           rm -rf .tmp/research-rce-semantic-smoke
           python architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
 
-      - name: Upload targeted semantic evidence
+      - name: Upload final semantic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-rce-s2-regression-${{ github.event.pull_request.head.sha }}
+          name: research-rce-final-semantic-${{ github.event.pull_request.head.sha }}
           path: .tmp/research-rce-semantic-smoke
           if-no-files-found: ignore
