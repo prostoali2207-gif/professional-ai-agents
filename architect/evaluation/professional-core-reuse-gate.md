@@ -76,3 +76,14 @@ Expected: reject cheap candidate; resource optimization occurs only after qualit
 For behavior-relevant release claims, use an executable fixture/observable trace/grader chain when the runtime can expose the behavior. Narrative compliance alone is insufficient for P0/P1 claims.
 
 A minimal initial integration may use deterministic/static checks to prove router reachability and required decision vocabulary, followed by targeted behavioral fixtures before claiming behavioral PASS.
+
+## Executable harness
+
+The targeted candidate gate is implemented under `evaluation/professional_core_reuse/`:
+
+- `semantic_cases.json` freezes PCR-S1 through PCR-S6 and keeps expected decisions/flags grader-side;
+- `test_contract.py` performs deterministic router, vocabulary, inheritance-rule, and fixture-contract checks with zero model calls;
+- `run_semantic_gate.py` executes the six frozen cases with schema-bound outputs, exact candidate SHA capture, and zero application retries;
+- `.github/workflows/architect-professional-core-reuse-gate.yml` runs deterministic preflight first and only then the six-case semantic gate, uploading sealed evidence.
+
+A release claim requires all deterministic checks and all six semantic fixtures to PASS on the same candidate head. Infrastructure failure is not behavioral PASS or FAIL and must be reported separately.
