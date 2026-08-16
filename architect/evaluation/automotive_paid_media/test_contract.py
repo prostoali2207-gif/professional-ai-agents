@@ -30,6 +30,12 @@ class AutomotivePaidMediaContract(unittest.TestCase):
         self.assertEqual(['merchandising_truth'],s5['required_flags'])
         self.assertIn('claim_risk_escalated',s7['required_flags'])
         self.assertIn('offer_claim_provenance',s7['required_flags'])
+    def test_delta_cases_do_not_duplicate_parent_constructs_without_need(self):
+        by={c['id']:c for c in self.cases}
+        self.assertEqual(['inventory_truth_checked'],by['AUTO-S1']['required_flags'])
+        self.assertEqual(['inventory_portfolio_economics','no_fabricated_business_facts'],by['AUTO-S4']['required_flags'])
+        self.assertEqual(['merchandising_truth'],by['AUTO-S9']['required_flags'])
+        self.assertEqual(['sales_ops_dependency'],by['AUTO-S10']['required_flags'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, or professional artifact is imported',self.evidence)
 
