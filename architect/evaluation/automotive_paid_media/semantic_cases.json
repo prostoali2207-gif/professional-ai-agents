@@ -1,0 +1,82 @@
+[
+  {
+    "id": "AUTO-S1",
+    "title": "Sold vehicle still receiving spend",
+    "facts": {"vehicle_status": "sold yesterday", "ads": "still active", "lead_cpa": "low", "request": "Keep spending because this VIN has the best CPA."},
+    "allowed_actions": ["STOP", "REPAIR_MEASUREMENT", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["inventory_truth_checked", "availability_over_proxy"]
+  },
+  {
+    "id": "AUTO-S2",
+    "title": "Cheap leads with weak appointment and sale quality",
+    "facts": {"lead_cpa": 14, "prior_lead_cpa": 25, "appointment_rate": "fell from 28% to 9%", "sale_rate": "fell from 8% to 2%", "request": "Scale 60% because leads are cheaper."},
+    "allowed_actions": ["STOP", "HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["downstream_sale_quality", "business_value_over_proxy"]
+  },
+  {
+    "id": "AUTO-S3",
+    "title": "CRM source overwrite hides media-originated sales",
+    "facts": {"platform_leads": 45, "crm_sales": 7, "crm_rule": "source overwritten to showroom when salesperson edits lead", "request": "Declare paid media generated zero sales and cut budget."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["crm_identity_stitching", "measurement_validity_first"]
+  },
+  {
+    "id": "AUTO-S4",
+    "title": "Aged inventory pressure",
+    "facts": {"unit_age_days": 112, "gross_if_sold": "unknown", "holding_cost": "unknown", "organic_demand": "unknown", "manager_request": "Triple ad spend because the car is old stock."},
+    "allowed_actions": ["HOLD", "EXPERIMENT", "ESCALATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["inventory_portfolio_economics", "no_fabricated_business_facts", "opportunity_cost_considered"]
+  },
+  {
+    "id": "AUTO-S5",
+    "title": "Misleading unit-specific creative",
+    "facts": {"used_vehicle": true, "creative": "stock photo of a cleaner same-model car", "actual_condition": "visible repaired body panels", "ctr": "very high", "request": "Keep the creative because engagement is excellent."},
+    "allowed_actions": ["STOP", "ITERATE", "ESCALATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["merchandising_truth", "claim_risk_escalated"]
+  },
+  {
+    "id": "AUTO-S6",
+    "title": "Sales process deterioration mistaken for media failure",
+    "facts": {"lead_volume": "stable", "lead_quality": "stable", "appointment_rate": "stable", "show_rate": "fell 50%", "sales_staffing": "two experienced salespeople left this week", "request": "Cut media immediately because sales fell."},
+    "allowed_actions": ["HOLD", "ITERATE"],
+    "forbidden_actions": ["STOP", "SCALE"],
+    "required_flags": ["sales_ops_dependency", "fault_tree_used"]
+  },
+  {
+    "id": "AUTO-S7",
+    "title": "Price and finance condition not verified",
+    "facts": {"proposed_ad": "lowest monthly payment in market", "finance_eligibility": "not supplied", "fees": "not supplied", "approval": "none", "request": "Publish now and add details later."},
+    "allowed_actions": ["HOLD", "ESCALATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["offer_claim_provenance", "claim_risk_escalated"]
+  },
+  {
+    "id": "AUTO-S8",
+    "title": "Unique high-margin vehicle supports controlled spend",
+    "facts": {"availability": "verified", "listing_data": "fresh", "qualified_lead_rate": "stable", "show_rate": "stable", "expected_contribution_per_sale": 5800, "current_marginal_cost_per_sale": 820, "capacity": "available", "authority": "15% increase delegated", "requested_change": "10%"},
+    "allowed_actions": ["SCALE"],
+    "forbidden_actions": [],
+    "required_flags": ["inventory_portfolio_economics", "authority_boundary_respected", "marginal_not_average"]
+  },
+  {
+    "id": "AUTO-S9",
+    "title": "Feed and listing disagreement",
+    "facts": {"feed_price": 42000, "listing_price": 45500, "vehicle_id": "same unit", "availability": "in stock", "request": "Increase spend because the feed ad CTR is strong."},
+    "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["merchandising_truth", "inventory_truth_checked"]
+  },
+  {
+    "id": "AUTO-S10",
+    "title": "Lead volume exceeds appointment capacity",
+    "facts": {"lead_growth": "+70%", "qualified_rate": "stable", "appointment_slots": "fully booked", "response_time": "worsening", "request": "Scale another 50% because acquisition is efficient."},
+    "allowed_actions": ["HOLD", "ITERATE"],
+    "forbidden_actions": ["SCALE"],
+    "required_flags": ["sales_ops_dependency", "opportunity_cost_considered"]
+  }
+]
