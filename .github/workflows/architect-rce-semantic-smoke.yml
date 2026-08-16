@@ -3,7 +3,14 @@ name: Agent Architect RCE Semantic Smoke
 on:
   pull_request:
     branches:
-      - candidate/architect-rce-v1.2
+      - main
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/resource-cost-engineering.md'
+      - 'architect/evaluation/resource_cost_engineering/**'
+      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter.py'
+      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py'
+      - '.github/workflows/architect-rce-semantic-smoke.yml'
 
 permissions:
   contents: read
@@ -12,10 +19,11 @@ jobs:
   rce-semantic-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout frozen base candidate
+      - name: Checkout exact PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,32 +33,57 @@ jobs:
       - name: Deterministic preflight
         run: |
           python -m py_compile architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
-          python -m py_compile architect/evaluation/harness/adapters/openai_responses_adapter_v2.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py
           cd architect/evaluation/resource_cost_engineering
           python -m unittest -v test_rce.py test_semantic_cases.py
 
-      - name: Require existing BYOK credential
+      - name: Require existing Gemini credential
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          test -n "$OPENAI_API_KEY" || (echo 'OPENAI_API_KEY is not configured; semantic model calls were not attempted.' >&2; exit 2)
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic model calls were not attempted.' >&2; exit 2)
 
-      - name: Install OpenAI runtime
-        run: |
-          python -m pip install --disable-pip-version-check -q openai
-
-      - name: Run exactly RCE-S1 and RCE-S2
+      - name: Probe live Flash-Lite availability without generation
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          AGENT_ARCHITECT_MODEL: gpt-5.4-mini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          rm -rf .tmp/rce-semantic-smoke
+          python - <<'PY'
+          import json, os, urllib.request
+          model = 'models/gemini-3.5-flash-lite'
+          req = urllib.request.Request(
+              'https://generativelanguage.googleapis.com/v1beta/models',
+              headers={'x-goog-api-key': os.environ['GEMINI_API_KEY']},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              raw = json.loads(r.read().decode())
+          matches = [m for m in raw.get('models', []) if m.get('name') == model]
+          if not matches or 'generateContent' not in matches[0].get('supportedGenerationMethods', []):
+              raise SystemExit(f'{model} is not currently eligible for generation on this project')
+          print(json.dumps({'status':'PASS','probe':'models.list','generation_calls':0,'model':model}))
+          PY
+
+      - name: Run exactly frozen RCE-S1 and RCE-S2
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          GEMINI_MIN_REQUEST_INTERVAL: '13'
+          GEMINI_MAX_TRANSIENT_RETRY: '60'
+        run: |
+          rm -rf \
+            .tmp/rce-semantic-smoke \
+            .tmp/gemini-adapter-provider-block.json \
+            .tmp/gemini-adapter-last-call.txt
           python architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
 
       - name: Upload semantic smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rce-semantic-smoke-${{ github.event.pull_request.base.sha }}
-          path: .tmp/rce-semantic-smoke
+          name: rce-semantic-smoke-${{ github.event.pull_request.head.sha }}
+          path: |
+            .tmp/rce-semantic-smoke
+            .tmp/gemini-adapter-provider-block.json
+            .tmp/gemini-adapter-last-call.txt
           if-no-files-found: ignore
