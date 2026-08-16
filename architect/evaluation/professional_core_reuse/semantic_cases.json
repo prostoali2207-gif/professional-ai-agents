@@ -67,7 +67,7 @@
     },
     "allowed_decisions": ["EXTEND"],
     "forbidden_decisions": ["BUILD_NEW", "REJECT"],
-    "required_flags": ["delta_research", "reuse_existing_evidence", "evaluate_new_interactions"]
+    "required_flags": ["delta_research", "reuse_existing_evidence", "composition_eval"]
   },
   {
     "id": "PCR-S6",
