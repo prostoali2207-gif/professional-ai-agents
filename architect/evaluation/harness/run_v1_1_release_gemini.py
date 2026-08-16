@@ -14,7 +14,7 @@ import sys
 import run_v1_1_release_v5 as release
 
 HERE = Path(__file__).resolve().parent
-release.ADAPTER = HERE / "adapters" / "gemini_interactions_adapter.py"
+release.ADAPTER = HERE / "adapters" / "gemini_interactions_adapter_v2.py"
 
 
 def requested_out_root() -> Path:
@@ -35,7 +35,7 @@ def correct_transport_metadata(out_root: Path) -> None:
     except Exception:
         return
     if isinstance(value, dict):
-        value["runtime"] = "gemini-interactions-adapter-v1"
+        value["runtime"] = "gemini-interactions-adapter-v2"
         grade_path.write_text(json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
