@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/professional-core-catalog.schema.json",
+  "title": "Professional Core Library Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "library_status", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "library_status": {"enum": ["active", "read-only", "maintenance"]},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "canonical_name",
+          "version",
+          "lifecycle",
+          "artifact_digest",
+          "manifest_path",
+          "qualification_refs",
+          "search_facets"
+        ],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "canonical_name": {"type": "string", "minLength": 3},
+          "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+          "lifecycle": {"enum": ["candidate", "qualified", "deprecated", "quarantined", "revoked"]},
+          "artifact_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+          "manifest_path": {"type": "string", "pattern": "^architect/library/cores/"},
+          "qualification_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "search_facets": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["responsibilities", "outputs", "competencies", "domains", "authority_levels", "runtime_features", "tags"],
+            "properties": {
+              "responsibilities": {"type": "array", "items": {"type": "string"}},
+              "outputs": {"type": "array", "items": {"type": "string"}},
+              "competencies": {"type": "array", "items": {"type": "string"}},
+              "domains": {"type": "array", "items": {"type": "string"}},
+              "authority_levels": {"type": "array", "items": {"type": "string"}},
+              "runtime_features": {"type": "array", "items": {"type": "string"}},
+              "tags": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "replacement": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}
