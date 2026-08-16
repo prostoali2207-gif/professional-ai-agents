@@ -1,51 +1,98 @@
-# Research Evidence + RCE Integration Gate — 2026-08-15
+# Research Evidence + RCE Integration Gate — 2026-08-16
 
-Status: **MECHANICAL PASS / SEMANTIC BLOCKED BY PROVIDER QUOTA**.
+Status: **PASS — mechanical + frozen semantic integration gate**.
 
 Candidate branch: `agent/research-evidence-capability-v1.3`.
+Final steady-state head after cost-control cleanup: `be4bc686881dcdbb37c4b1b75e4847d58e2c9432`.
+Semantic evidence candidate SHA: `4a3d19378011bdf7d31b8a9e8984578aba15534b`.
 
-Release claim is intentionally narrow: Agent Architect should treat professional research as a contract-first evidence control plane whose routing, retries and stopping behavior are constrained by Resource & Cost Engineering without allowing cost/quota pressure to lower evidence thresholds.
+Release claim is intentionally narrow: Agent Architect treats material professional research as a contract-first evidence control plane whose routing, retries and stopping behavior are constrained by Resource & Cost Engineering without allowing cost/quota pressure to lower evidence thresholds.
 
 ## Deterministic evidence
 
-GitHub Actions exact-head preflight completed successfully on the candidate line:
+The exact-candidate GitHub Actions preflight on the semantic-PASS line completed successfully:
 
-- research policy + semantic fixture contract: 22/22 PASS;
-- existing RCE deterministic + semantic fixture contract: 16/16 PASS;
-- automatic PR gate after retry-storm prevention: SUCCESS, with semantic provider calls explicitly skipped.
+- Research Evidence Engineering policy/harness/probe suite: **29/29 PASS**;
+- existing Resource & Cost Engineering deterministic + fixture contract: **16/16 PASS**;
+- live Gemini `models.list` provider-state probe: PASS with `generation_calls: 0`.
 
-Earlier local reconstruction from exact branch files also produced research policy 19/19 PASS and RCE policy 12/12 PASS.
+After semantic validation, the workflow was returned to manual-semantic mode. The final steady-state head `be4bc686...` completed its PR gate successfully with deterministic checks and the zero-generation provider-state probe; semantic calls were skipped as designed.
+
+The compare `4a3d193... -> be4bc686...` contains exactly one changed file: `.github/workflows/architect-research-rce-semantic-smoke.yml`. No methodology, frozen case, grader, policy, or semantic harness changed after the semantic PASS; only the CI trigger was returned from automatic semantic execution to manual semantic execution.
 
 ## Frozen semantic gate
 
-Exactly two cross-layer cases are registered:
+The frozen two-case gate was not weakened during repair:
 
-1. high-stakes claim + two apparently distinct official sources + UNKNOWN methodological dependence + no spendable quota after protected reserve -> must `ESCALATE_OR_DEFER`, never convert uncertainty into support;
-2. exact official primary URL already known + discovery-provider quota exhausted + direct inspection eligible -> must choose `DIRECT_PRIMARY_INSPECTION`, not retry/ensemble the exhausted discovery route.
+1. `RES-RCE-S1`: high-stakes claim + two apparently distinct official sources + UNKNOWN methodological dependence + no spendable quota after protected reserve -> required `ESCALATE_OR_DEFER` with `unknown_dependence_not_independence`, `protected_reserve`, and `no_false_support`.
+2. `RES-RCE-S2`: exact official primary URL already known + discovery-provider quota exhausted + direct inspection eligible -> required `DIRECT_PRIMARY_INSPECTION` with `known_official_url`, `cheapest_sufficient_eligible_route`, and `no_blind_retry`.
 
-### Attempt history
+### Final semantic evidence
 
-1. OpenAI route was not executed because `OPENAI_API_KEY` is not configured. No paid credential was purchased or requested.
-2. Existing Gemini repository credential was used instead. The first call exposed a harness defect: JSON MIME type without `responseSchema` produced malformed structured output. This was classified as an evaluation implementation defect, not a behavioral failure.
-3. The harness was repaired to enforce a response schema, matching the completed research benchmark's structured-output finding.
-4. One bounded post-repair attempt reached Gemini and returned HTTP 429 `RESOURCE_EXHAUSTED`: free-tier daily request quota `GenerateRequestsPerDayPerProjectPerModel-FreeTier` was exhausted for `gemini-3.5-flash` (reported limit 20). No semantic case executed to a gradable answer.
+GitHub Actions run: `31940812030`.
+Job: `95149602775`.
+Provider transport: Google Gemini API, Interactions API `v1beta`.
+Model used as evaluation transport: `gemini-3.6-flash`.
+Planned/executed semantic cases: **2/2**.
 
-Per Resource & Cost Engineering, this quota boundary is not retried blindly and cannot turn unresolved semantic evidence into PASS.
+Results:
 
-The PR workflow now runs deterministic gates automatically but semantic calls only on explicit `workflow_dispatch`, preventing quota/retry storms on every commit.
+- `RES-RCE-S1`: **PASS** — actual decision `ESCALATE_OR_DEFER`; all required rationale codes present.
+- `RES-RCE-S2`: **PASS** — actual decision `DIRECT_PRIMARY_INSPECTION`; all required rationale codes present, including `no_blind_retry`.
+- semantic summary: **PASS**.
 
-## Current decision
+Semantic artifact: `research-rce-final-semantic-4a3d19378011bdf7d31b8a9e8984578aba15534b`.
+Artifact ID: `9261959457`.
+Artifact SHA-256: `d268f7265ddcf9a712457cbf8e5b5aba379c7587c42ac6f6e1fa0e0f6e5933be`.
 
-`RESEARCH + RCE INTEGRATION: MECHANICAL PASS / SEMANTIC NOT YET PROVEN`.
+## Repair history and evidence discipline
 
-Do not mark this capability release-ready or merge solely on the deterministic result. Run the two frozen semantic cases after usable provider quota is available; do not widen the suite before the minimal gate passes.
+Earlier failures were classified before any retry:
+
+- missing OpenAI credential -> route not executed; no paid credential purchased;
+- Gemini free-tier daily quota exhaustion -> no blind retry while quota state was unchanged;
+- malformed JSON under `generateContent` -> evaluator transport/harness defect, not behavioral PASS/FAIL;
+- HTTP 503 -> one bounded transient-capacity retry only;
+- model/endpoint availability mismatch -> provider state was probed live rather than inferred from static model memory;
+- repeated structured-output failures under `generateContent` -> transport migrated to the documented Interactions API without changing frozen cases or expected outcomes.
+
+The first gradable Interactions run exposed a genuine behavioral miss in S2: the decision was correct but the required non-retry principle was not explicit. The grader was not weakened. The responsible architecture layers were repaired so `DAILY_QUOTA_EXHAUSTED` explicitly forbids retrying the same quota-bound route until directly observed quota state/window change, and prefers an eligible known direct-primary route when available.
+
+A targeted affected regression then ran only `RES-RCE-S2` (`SEMANTIC_CASE_IDS=RES-RCE-S2`) and passed with exactly one model call. Only after that PASS was the complete frozen two-case gate rerun.
+
+## Provider interpretation boundary
+
+The Gemini model/API above is **evaluation transport**, not a universal research-provider default for Agent Architect. The completed benchmark does not justify hard-coding Exa, Tavily, Gemini, or another provider as the universal winner. Provider/source routing remains provisional, evidence-driven, claim-specific, and subject to live health/quota/eligibility state.
+
+The `models.list` probe is supporting provider-state evidence, not proof that every listed model is callable through every endpoint. The successful Interactions semantic run is the direct evidence for eligibility of the exact evaluation transport used here.
+
+## Expert-gap and red-team review
+
+Question: `What would a strong practitioner of this profession notice is missing, even though the user does not know to ask for it?`
+
+The material gaps found during implementation were: explicit methodological-dependence handling; failure-class-specific retry rules; distinction between provider model visibility and endpoint callability; exact-SHA semantic evidence; and prevention of automatic quota consumption on routine PR commits. These were repaired before PASS.
+
+Senior-practitioner challenge: a generic retry budget can create retry storms and false economy. Repair: retry eligibility is now failure-class-specific; daily quota exhaustion is non-retriable until observed state change, while transient capacity receives bounded retry only.
+
+Educator/competency-assessor challenge: deterministic policy tests alone do not prove professional judgment. Repair: frozen semantic cases remained independent of the implementation and were required to pass through an external model transport; the real S2 miss was preserved and repaired rather than grading around it.
+
+Hiring/operational challenge: a capability that passes by consuming provider quota on every commit is not production-worthy. Repair: steady-state PR validation runs deterministic checks plus a zero-generation live model probe; semantic generation is manual/release-gated.
+
+Remaining boundaries are explicit rather than hidden: this gate does not prove a universal provider ranking, calibrated quantitative dependence scoring, production network isolation, or profession-specific legal/medical/safety evidence profiles.
+
+## Decision
+
+`RESEARCH + RCE INTEGRATION: PASS FOR THE CLAIMED CAPABILITY SCOPE`.
+
+This PASS does not alter or qualify PR #1 and does not claim that every future applied Agent Architect output is correct. It proves the implemented Research Evidence + Resource & Cost control-plane integration against the frozen affected mechanical and semantic gates defined for this change.
 
 ## Release constraints
 
-- do not hard-code a universal Exa/Tavily provider winner;
+- do not hard-code a universal provider winner without a larger judged retrieval benchmark;
 - do not weaken existing RCE or Agent Architect evals;
 - do not treat URLs/publishers as independent methodologies when dependence is unknown;
 - do not treat quota exhaustion as evidence;
 - do not claim full primary inspection from snippets/metadata;
 - do not retry behavioral/evidence failures or daily quota exhaustion as transient failures;
-- preserve schema-enforced structured output for machine-consumed semantic gates.
+- preserve structured machine-consumed semantic output and observable exact-SHA evidence;
+- keep routine PR semantic generation disabled unless a new affected semantic claim requires it.
