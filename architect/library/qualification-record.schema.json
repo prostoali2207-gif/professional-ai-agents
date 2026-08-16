@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/qualification-record.schema.json",
+  "title": "Professional Core Qualification Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "qualification_id",
+    "core_id",
+    "core_version",
+    "artifact_digest",
+    "status",
+    "claims",
+    "evaluation",
+    "environment",
+    "evidence",
+    "limitations",
+    "freshness",
+    "qualified_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "qualification_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 3},
+    "core_id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+    "core_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "artifact_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "status": {"enum": ["pass", "conditional-pass", "fail", "revoked", "expired"]},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "criticality"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "statement": {"type": "string", "minLength": 3},
+          "criticality": {"enum": ["P0", "P1", "P2"]}
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_refs", "grader_refs", "thresholds", "reliability_trials", "result"],
+      "properties": {
+        "fixture_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+        "grader_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+        "thresholds": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "reliability_trials": {"type": "integer", "minimum": 1},
+        "result": {"enum": ["PASS", "FAIL", "BLOCKED"]}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "model_or_executor", "tools", "state_contract", "authority_scope"],
+      "properties": {
+        "runtime": {"type": "string", "minLength": 1},
+        "model_or_executor": {"type": "string", "minLength": 1},
+        "tools": {"type": "array", "items": {"type": "string"}},
+        "state_contract": {"type": "string", "minLength": 1},
+        "authority_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_refs", "artifact_refs", "provenance_refs"],
+      "properties": {
+        "run_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+        "artifact_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "provenance_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validity_boundary", "revalidation_triggers"],
+      "properties": {
+        "validity_boundary": {"type": "string", "minLength": 3},
+        "revalidation_triggers": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "qualified_at": {"type": "string", "format": "date-time"}
+  }
+}
