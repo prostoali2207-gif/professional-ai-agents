@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.2 — Agent Architect v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS.
+Status: v1.2 — Agent Architect v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS; Professional Core Reuse integration candidate.
 
 ## Mission
 
@@ -51,6 +51,32 @@ Do not accept the user's list as complete. Ask what a strong practitioner notice
 Use `methodology/scope-risk-prioritization.md`.
 
 Depth scales with consequence, coupling, reversibility, frequency, volatility, difficulty of detecting mistakes, and tacit-judgment burden.
+
+### Phase 2A — Inspect reusable professional cores and capabilities
+
+After reconstructing the target profession and its hidden requirements, but before rebuilding the full competency model from scratch, inspect the available trusted inventory of professional cores and reusable capabilities.
+
+Use `methodology/professional-core-reuse.md`.
+
+Separate, where professionally meaningful:
+
+`Professional Core -> Domain Specialization -> Jurisdiction/Market/Live Context -> Organization/Project Context`.
+
+Do not force this taxonomy where the profession does not support it, and do not treat a matching role title as evidence of compatibility.
+
+For every plausible candidate compare responsibility/output scope, competencies and expert judgment, domain/population assumptions, jurisdiction and temporal regime, evidence provenance/freshness, tools/runtime/state requirements, security/permissions, authority/governance, and qualifying evaluation environment. Then explicitly classify:
+
+`REUSE | ADAPT | EXTEND | FORK | BUILD NEW | REJECT`.
+
+Record:
+
+`target profession -> candidate/version -> compatibility evidence -> gaps/delta -> alternatives -> risks -> lifecycle/resource trade-off -> decision -> required regressions`.
+
+If reuse is justified, research the delta rather than repeating the entire profession research without cause. Revalidate inherited claims that are volatile, versioned, disputed, high-stakes, jurisdiction-specific, weakly evidenced, or affected by the new composition.
+
+Historical PASS evidence is prior evidence, not a transferable certificate. Unchanged invariants may retain supporting evidence only when implementation and relevant assumptions remain unchanged; affected/new behavior requires targeted/new regression, and shared high-coupling changes require broader regression when justified. The assembled applied agent still requires its own practical/adversarial evaluation.
+
+Do not promote a one-off agent or shallow role prompt into a reusable professional-core library without a coherent boundary, provenance, stable-vs-context separation, dependencies/portability contract, limitations, versioning/regression policy, and evaluation evidence.
 
 ### Phase 3 — Build the competency and evidence model
 
@@ -170,11 +196,12 @@ Use:
 
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
+- `evaluation/professional-core-reuse-gate.md` when a reusable core/capability is considered, inherited, adapted, extended, forked, rejected, or admitted to a reusable library;
 - `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
 - `evaluation/resource_cost_engineering/` when material resource/cost decisions, budget gates, volatile pricing/quota behavior, targeting, or post-run accounting are part of the capability claim;
 - files under `evaluation/`.
 
-Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, reuse compatibility and composition boundaries, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
 
 For every critical behavioral claim require an executable evidence chain:
 
@@ -204,11 +231,13 @@ Before finalizing any applied agent, ask exactly:
 
 Then red-team from at least senior-practitioner, educator/competency-assessor, and hiring-manager perspectives. Add evaluation-scientist, systems/operations, and security perspectives when material.
 
+For reuse decisions specifically ask whether the inherited model preserves real professional judgment rather than only vocabulary, whether transferred competencies remain construct-valid in the target context, and whether source-context success predicts acceptable target-job performance.
+
 Do not merely list criticisms. Repair material gaps before release.
 
 ### Phase 12 — Only now assemble the applied SKILL
 
-The applied `SKILL.md` orchestrates the professional system rather than duplicating the entire profession. Route to necessary knowledge, procedural capabilities, workflows, tools, state/context policy, evidence checks, decision frameworks, evaluation gates, security/escalation rules, and governance constraints.
+The applied `SKILL.md` orchestrates the professional system rather than duplicating the entire profession. Route to necessary inherited cores/capabilities, knowledge, procedural capabilities, workflows, tools, state/context policy, evidence checks, decision frameworks, evaluation gates, security/escalation rules, and governance constraints while preserving origin/version and local delta.
 
 ### Phase 13 — Evaluate the assembled agent
 
@@ -262,13 +291,13 @@ A methodology file that exists but cannot be reached from the executable router 
 
 ## Stop conditions
 
-Do not finalize an applied agent when any material item is missing: profession model, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
+Do not finalize an applied agent when any material item is missing: profession model, reusable-core/capability inventory and compatibility decision, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
 
 Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, state change, verification, and escalation.
 
 ## Definition of done
 
-`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> reusable cores/capabilities inspected -> compatibility + reuse/adapt/extend/fork/build/reject decision recorded -> competencies/evidence + delta mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates inherited + local system -> competency evaluation run -> reuse/composition + stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
 
 ## Current benchmark state
 
@@ -280,6 +309,8 @@ The repaired candidate then passed the preregistered fresh held-out B1 regressio
 
 Resource & Cost Engineering v1.2 then passed its rebased integration gates: 16/16 deterministic checks with zero model/API generation calls, followed by the frozen RCE-S1–S10 semantic/adversarial release gate at 10/10 PASS on candidate SHA `d0d5b4fcc7613c1139acfbb190d1020cce5f783d` (GitHub Actions run `31944762944`). The semantic release run used exactly 10 planned model calls, zero application retries, and preserved grader-side expected decisions. Canonical RCE evidence is recorded in `evaluation/resource_cost_engineering/integration-candidate-validation-2026-08-15.md`.
 
-The Gemini model used for qualification is an evaluation transport choice, not a universal RCE provider/model default. Provider pricing, billing tier, quotas, free-tier availability, and health remain volatile live state and must not be inferred from this PASS.
+The Professional Core Reuse layer is a behavior-relevant integration candidate on this branch. Its methodology and evaluation gate are wired into the executable router, but this branch must not claim behavioral PASS for the new reuse decisions until the targeted gate is actually executed with observable evidence.
 
-Benchmark qualification for v1.1 and RCE v1.2 does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
+The Gemini model used for prior qualification is an evaluation transport choice, not a universal RCE provider/model default. Provider pricing, billing tier, quotas, free-tier availability, and health remain volatile live state and must not be inferred from this PASS.
+
+Benchmark qualification for v1.1 and RCE v1.2 does not transfer automatically to applied agents or reusable cores and does not remove the requirement for live research, profession-specific evidence, compatibility analysis, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
