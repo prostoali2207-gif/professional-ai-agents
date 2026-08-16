@@ -18,7 +18,7 @@ ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
 ACTIONS = ["SCALE", "STOP", "ITERATE", "REPAIR_MEASUREMENT", "EXPERIMENT", "ESCALATE", "HOLD"]
 FLAGS = [
     "business_value_over_proxy", "lead_quality_checked", "no_fabricated_business_facts",
-    "measurement_validity_first", "dedup_or_event_semantics", "causal_claim_blocked",
+    "measurement_validity_first", "dedup_or_event_semantics", "decision_signal_invalid", "causal_claim_blocked",
     "attribution_not_incrementality", "causal_evidence_required", "marginal_not_average",
     "uncertainty_explicit", "opportunity_cost_considered", "experiment_design_challenged",
     "conversion_lag_considered", "fault_tree_used", "measurement_incident_suspected",
@@ -34,24 +34,39 @@ def git_sha() -> str:
     return p.stdout.strip()
 
 
-def schema() -> dict:
+def schema(case_ids: list[str]) -> dict:
     return {
         "type": "object",
         "properties": {
-            "action": {"type": "string", "enum": ACTIONS},
-            "flags": {"type": "array", "items": {"type": "string", "enum": FLAGS}, "uniqueItems": True},
+            "answers": {
+                "type": "array",
+                "minItems": len(case_ids),
+                "maxItems": len(case_ids),
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "case_id": {"type": "string", "enum": case_ids},
+                        "action": {"type": "string", "enum": ACTIONS},
+                        "flags": {"type": "array", "items": {"type": "string", "enum": FLAGS}, "uniqueItems": True}
+                    },
+                    "required": ["case_id", "action", "flags"],
+                    "additionalProperties": False
+                }
+            }
         },
-        "required": ["action", "flags"],
-        "additionalProperties": False,
+        "required": ["answers"],
+        "additionalProperties": False
     }
 
 
-def task(case: dict) -> str:
-    visible = {"id": case["id"], "title": case["title"], "facts": case["facts"]}
+def task(cases: list[dict]) -> str:
+    visible = [{"id": c["id"], "title": c["title"], "facts": c["facts"]} for c in cases]
     return (
         "Paid Media / Performance Marketing Professional Core behavioral evaluation. "
-        "Apply the supplied professional model. Choose the single primary next action and all policy flags materially required by the case. "
-        "Do not invent business facts. Return only schema-valid JSON. Case: " + json.dumps(visible, ensure_ascii=False)
+        "Evaluate every case independently using the supplied professional model. For each case choose one primary next action and all materially required policy flags. "
+        "Do not let facts or decisions from one case leak into another. Do not invent business facts. "
+        "decision_signal_invalid means the supplied performance signal is materially unfit for the requested comparative/optimization decision; it is distinct from making a causal-lift claim. "
+        "Return exactly one answer for every supplied case and no extra case IDs. Return only schema-valid JSON. Cases: " + json.dumps(visible, ensure_ascii=False)
     )
 
 
@@ -69,33 +84,38 @@ def extract_text(raw: dict) -> str:
     raise ValueError("no observable model output")
 
 
-def call(case: dict, system: str) -> tuple[dict | None, dict]:
+def call(cases: list[dict], system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
-    model = os.environ.get("PAID_MEDIA_MODEL", "gemini-3.5-flash-lite")
+    model = os.environ.get("PAID_MEDIA_MODEL", "gemini-2.5-flash-lite")
+    ids = [c["id"] for c in cases]
     payload = {
         "model": model,
-        "input": task(case),
+        "input": task(cases),
         "system_instruction": system,
-        "response_format": {"type": "text", "mime_type": "application/json", "schema": schema()},
+        "response_format": {"type": "text", "mime_type": "application/json", "schema": schema(ids)},
         "store": False,
         "generation_config": {"thinking_level": os.environ.get("GEMINI_THINKING_LEVEL", "medium")},
     }
     req = urllib.request.Request(ENDPOINT, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json", "x-goog-api-key": key})
     try:
-        with urllib.request.urlopen(req, timeout=90) as response:
+        with urllib.request.urlopen(req, timeout=120) as response:
             raw = json.loads(response.read().decode())
-        return json.loads(extract_text(raw).strip()), {"status": "OK", "model": model, "interaction_id": raw.get("id"), "usage": raw.get("usage") or raw.get("usageMetadata")}
+        answer = json.loads(extract_text(raw).strip())
+        returned = [a.get("case_id") for a in answer.get("answers", []) if isinstance(a, dict)]
+        if len(returned) != len(ids) or len(set(returned)) != len(ids) or set(returned) != set(ids):
+            raise ValueError(f"answer case ids must exactly match selected cases: expected={ids}, actual={returned}")
+        return answer, {"status": "OK", "model": model, "interaction_id": raw.get("id"), "usage": raw.get("usage") or raw.get("usageMetadata")}
     except urllib.error.HTTPError as exc:
         return None, {"status": "INFRA_FAILURE", "http_status": exc.code, "error": exc.read().decode(errors="replace")[:2000], "model": model}
     except Exception as exc:
         return None, {"status": "EVAL_OUTPUT_FAILURE", "error": repr(exc), "model": model}
 
 
-def grade(case: dict, answer: dict | None, transport: dict, sha: str, trial: int) -> dict:
-    if answer is None:
+def grade(case: dict, item: dict | None, transport: dict, sha: str, trial: int) -> dict:
+    if item is None:
         return {"case_id": case["id"], "trial": trial, "status": transport["status"], "candidate_sha": sha, **transport}
-    action = answer.get("action")
-    flags = set(answer.get("flags") or [])
+    action = item.get("action")
+    flags = set(item.get("flags") or [])
     passed = action in set(case["allowed_actions"]) and action not in set(case["forbidden_actions"]) and set(case["required_flags"]).issubset(flags)
     return {
         "case_id": case["id"], "trial": trial, "status": "PASS" if passed else "FAIL",
@@ -124,23 +144,28 @@ def main() -> int:
     sha = git_sha()
     OUT.mkdir(parents=True, exist_ok=True)
     results = []
-    for case in cases:
-        for trial in range(1, trials + 1):
-            answer, transport = call(case, system)
-            result = grade(case, answer, transport, sha, trial)
-            results.append(result)
-            print(json.dumps(result, ensure_ascii=False))
-            if result["status"] in {"INFRA_FAILURE", "EVAL_OUTPUT_FAILURE"}:
-                break
-        if results[-1]["status"] in {"INFRA_FAILURE", "EVAL_OUTPUT_FAILURE"}:
+    executed_calls = 0
+    for trial in range(1, trials + 1):
+        answer, transport = call(cases, system)
+        executed_calls += 1
+        if answer is None:
+            for case in cases:
+                results.append(grade(case, None, transport, sha, trial))
+            print(json.dumps(results[-len(cases):], ensure_ascii=False))
             break
-    planned = len(cases) * trials
-    passed = len(results) == planned and all(r["status"] == "PASS" for r in results)
+        by_id = {a["case_id"]: a for a in answer["answers"]}
+        trial_results = [grade(case, by_id[case["id"]], transport, sha, trial) for case in cases]
+        results.extend(trial_results)
+        print(json.dumps(trial_results, ensure_ascii=False))
+    planned_evaluations = len(cases) * trials
+    passed = len(results) == planned_evaluations and all(r["status"] == "PASS" for r in results)
     summary = {
         "candidate_sha": sha,
         "case_ids": [c["id"] for c in cases],
         "trials_per_case": trials,
-        "planned_model_calls": planned,
+        "planned_model_calls": trials,
+        "executed_model_calls": executed_calls,
+        "planned_case_evaluations": planned_evaluations,
         "application_retries": 0,
         "passes": sum(r["status"] == "PASS" for r in results),
         "release_gate": "PASS" if passed else "REVISE_OR_INFRA_BLOCK",
