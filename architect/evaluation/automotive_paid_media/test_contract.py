@@ -41,6 +41,13 @@ class AutomotivePaidMediaContract(unittest.TestCase):
         self.assertIn('STOP',s9['allowed_actions'])
         self.assertIn('SCALE',s9['forbidden_actions'])
         self.assertEqual(['merchandising_truth'],s9['required_flags'])
+    def test_sales_ops_cases_allow_valid_escalation_or_capacity_stop_without_scale(self):
+        by={c['id']:c for c in self.cases}
+        self.assertIn('ESCALATE',by['AUTO-S6']['allowed_actions'])
+        self.assertIn('SCALE',by['AUTO-S6']['forbidden_actions'])
+        self.assertIn('STOP',by['AUTO-S10']['allowed_actions'])
+        self.assertIn('ESCALATE',by['AUTO-S10']['allowed_actions'])
+        self.assertIn('SCALE',by['AUTO-S10']['forbidden_actions'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, or professional artifact is imported',self.evidence)
 
