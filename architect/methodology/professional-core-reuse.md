@@ -30,9 +30,11 @@ For each plausible reusable core or capability, classify the decision as one of:
 - **EXTEND** — existing core is valid but the target requires additional competencies, tools, judgment, evidence, or eval coverage.
 - **FORK** — a substantial branch is justified because preserving a shared core would create coupling, ambiguity, or regression risk.
 - **BUILD NEW** — no candidate passes applicability and quality gates.
-- **REJECT** — candidate is misleading, stale, weakly evidenced, unsafe, or outside the required profession boundary.
+- **REJECT** — candidate is misleading, stale, weakly evidenced, unevaluated for material professional claims, unsafe, or outside the required profession boundary.
 
 Do not choose reuse because it is cheaper. Do not choose build-new because it feels cleaner. Apply evidence, risk, and total lifecycle cost.
+
+A shallow role prompt, agent, or core without meaningful evaluation evidence for its material professional claims is **not eligible for REUSE or ADAPT merely because it is cheap, convenient, popular, or superficially plausible**. If missing evaluation evidence is material to rejection or non-admission, record that deficiency explicitly in the reuse decision. Provenance without evaluation is insufficient; evaluation without known provenance/scope is also insufficient.
 
 ## Compatibility gate
 
@@ -136,6 +138,8 @@ Admission requires:
 - known limitations / exclusions;
 - versioning and regression policy;
 - evidence that reuse produces value without unacceptable degradation or coordination cost.
+
+Missing meaningful evaluation evidence for material claims is a hard admission failure, not a documentation nit.
 
 Prefer a small set of strong, well-evaluated cores over a large catalog of shallow role prompts.
 
