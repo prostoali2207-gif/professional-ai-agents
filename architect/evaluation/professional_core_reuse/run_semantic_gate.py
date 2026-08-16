@@ -27,7 +27,6 @@ FLAGS = [
     "targeted_or_new_regression",
     "composition_eval",
     "reuse_existing_evidence",
-    "evaluate_new_interactions",
     "quality_before_cost",
     "provenance_required",
     "evaluation_required",
@@ -49,15 +48,22 @@ def schema() -> dict:
         "type": "object",
         "properties": {
             "decision": {"type": "string", "enum": DECISIONS},
-            "flags": {
-                "type": "array",
-                "items": {"type": "string", "enum": FLAGS},
-                "uniqueItems": True,
-            },
+            "flags": {"type": "array", "items": {"type": "string", "enum": FLAGS}, "uniqueItems": True},
         },
         "required": ["decision", "flags"],
         "additionalProperties": False,
     }
+
+
+def selected_cases(all_cases: list[dict]) -> list[dict]:
+    raw = os.environ.get("PCR_CASE_IDS", "").strip()
+    if not raw:
+        return all_cases
+    wanted = [x.strip() for x in raw.split(",") if x.strip()]
+    by_id = {c["id"]: c for c in all_cases}
+    if len(wanted) != len(set(wanted)) or any(x not in by_id for x in wanted):
+        raise ValueError("PCR_CASE_IDS must contain unique frozen case ids")
+    return [by_id[x] for x in wanted]
 
 
 def task(case: dict) -> str:
@@ -65,6 +71,7 @@ def task(case: dict) -> str:
     return (
         "Professional Core Reuse behavioral evaluation. Apply the frozen Agent Architect instructions. "
         "Choose one reuse classification and observable policy flags. BUILD_NEW means BUILD NEW. "
+        "composition_eval means evaluating material interactions in the composed inherited+local system. "
         "Return only schema-valid JSON. Case facts: " + json.dumps(visible, ensure_ascii=False)
     )
 
@@ -94,21 +101,11 @@ def call(case: dict, system: str) -> tuple[dict | None, dict]:
         "store": False,
         "generation_config": {"thinking_level": os.environ.get("GEMINI_THINKING_LEVEL", "medium")},
     }
-    req = urllib.request.Request(
-        ENDPOINT,
-        data=json.dumps(payload).encode(),
-        method="POST",
-        headers={"Content-Type": "application/json", "x-goog-api-key": key},
-    )
+    req = urllib.request.Request(ENDPOINT, data=json.dumps(payload).encode(), method="POST", headers={"Content-Type": "application/json", "x-goog-api-key": key})
     try:
         with urllib.request.urlopen(req, timeout=90) as response:
             raw = json.loads(response.read().decode())
-        return json.loads(extract_text(raw).strip()), {
-            "status": "OK",
-            "model": model,
-            "interaction_id": raw.get("id"),
-            "usage": raw.get("usage") or raw.get("usageMetadata"),
-        }
+        return json.loads(extract_text(raw).strip()), {"status": "OK", "model": model, "interaction_id": raw.get("id"), "usage": raw.get("usage") or raw.get("usageMetadata")}
     except urllib.error.HTTPError as exc:
         return None, {"status": "INFRA_FAILURE", "http_status": exc.code, "error": exc.read().decode(errors="replace")[:2000], "model": model}
     except Exception as exc:
@@ -120,23 +117,12 @@ def grade(case: dict, answer: dict | None, transport: dict, sha: str) -> dict:
         return {"case_id": case["id"], "status": transport["status"], "candidate_sha": sha, **transport}
     decision = answer.get("decision")
     flags = set(answer.get("flags") or [])
-    passed = (
-        decision in set(case["allowed_decisions"])
-        and decision not in set(case["forbidden_decisions"])
-        and set(case["required_flags"]).issubset(flags)
-    )
+    passed = decision in set(case["allowed_decisions"]) and decision not in set(case["forbidden_decisions"]) and set(case["required_flags"]).issubset(flags)
     return {
-        "case_id": case["id"],
-        "status": "PASS" if passed else "FAIL",
-        "actual_decision": decision,
-        "allowed_decisions": case["allowed_decisions"],
-        "forbidden_decisions": case["forbidden_decisions"],
-        "required_flags": case["required_flags"],
-        "actual_flags": sorted(flags),
-        "candidate_sha": sha,
-        "model": transport.get("model"),
-        "interaction_id": transport.get("interaction_id"),
-        "usage": transport.get("usage"),
+        "case_id": case["id"], "status": "PASS" if passed else "FAIL", "actual_decision": decision,
+        "allowed_decisions": case["allowed_decisions"], "forbidden_decisions": case["forbidden_decisions"],
+        "required_flags": case["required_flags"], "actual_flags": sorted(flags), "candidate_sha": sha,
+        "model": transport.get("model"), "interaction_id": transport.get("interaction_id"), "usage": transport.get("usage"),
     }
 
 
@@ -144,7 +130,12 @@ def main() -> int:
     if not os.environ.get("GEMINI_API_KEY"):
         print("GEMINI_API_KEY missing; no model calls attempted", file=sys.stderr)
         return 2
-    cases = json.loads(CASES.read_text(encoding="utf-8"))
+    all_cases = json.loads(CASES.read_text(encoding="utf-8"))
+    try:
+        cases = selected_cases(all_cases)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
     system = frozen_system()
     sha = git_sha()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -158,14 +149,9 @@ def main() -> int:
             break
     passed = len(results) == len(cases) and all(r["status"] == "PASS" for r in results)
     summary = {
-        "candidate_sha": sha,
-        "case_ids": [c["id"] for c in cases],
-        "planned_model_calls": len(cases),
-        "executed_cases": len(results),
-        "application_retries": 0,
-        "passes": sum(r["status"] == "PASS" for r in results),
-        "release_gate": "PASS" if passed else "REVISE_OR_INFRA_BLOCK",
-        "results": results,
+        "candidate_sha": sha, "case_ids": [c["id"] for c in cases], "planned_model_calls": len(cases),
+        "executed_cases": len(results), "application_retries": 0, "passes": sum(r["status"] == "PASS" for r in results),
+        "release_gate": "PASS" if passed else "REVISE_OR_INFRA_BLOCK", "results": results,
     }
     (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(summary, ensure_ascii=False))
