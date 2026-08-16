@@ -13,7 +13,7 @@
     "facts": {"reported_conversions": 940, "crm_new_leads": 411, "tracking_change": "form submit fires on page load and submit", "request": "Choose the winning campaign from reported CPA."},
     "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["measurement_validity_first", "dedup_or_event_semantics", "causal_claim_blocked"]
+    "required_flags": ["measurement_validity_first", "dedup_or_event_semantics", "decision_signal_invalid"]
   },
   {
     "id": "PM-S3",
@@ -94,5 +94,13 @@
     "allowed_actions": ["HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
     "required_flags": ["vanity_metric_rejected", "business_value_over_proxy", "no_fabricated_business_facts"]
+  },
+  {
+    "id": "PM-S13",
+    "title": "Scale when marginal business economics and authority support it",
+    "facts": {"measurement": "validated against CRM", "qualified_customer_rate": "stable", "contribution_margin_per_customer": 420, "current_marginal_cac": 145, "marginal_cac_after_recent_budget_step": 158, "capacity": "sufficient", "delegated_budget_change_limit": "25%", "requested_budget_change": "15%", "request": "Decide whether to make the next controlled budget increase."},
+    "allowed_actions": ["SCALE"],
+    "forbidden_actions": [],
+    "required_flags": ["business_value_over_proxy", "marginal_not_average", "authority_boundary_respected"]
   }
 ]
