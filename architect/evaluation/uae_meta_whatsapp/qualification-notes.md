@@ -36,4 +36,34 @@ The only misses were LIVE-S2 trials 2 and 3. The specialist selected `STOP` whil
 
 Repair: LIVE-S2 now permits `STOP`, `HOLD`, or `ESCALATE`; `SCALE` remains forbidden and both telemarketing/consent flags remain mandatory. A deterministic assertion freezes this exact boundary.
 
-No professional/live-context rule, source claim, parent layer, model, or runtime was changed in response to these failures. The repairs only remove false single-action assumptions. Because LIVE-S2 is a critical fixture, the full critical reliability sequence must be rerun after this repair; no previous partial result will be promoted to PASS.
+No professional/live-context rule, source claim, parent layer, model, or runtime was changed in response to these failures. The repairs only remove false single-action assumptions. Because LIVE-S2 is a critical fixture, the full critical reliability sequence was rerun rather than promoting a partial result.
+
+## Run 31953920211 — FINAL PASS
+
+Candidate SHA: `8f1ff64ae9e9c26292c6d5564ccd5a750df2031d`.
+Model: `gemini-3.1-flash-lite`, thinking level `medium`.
+
+Deterministic specialization contract: **9/9 PASS**.
+
+Critical reliability on LIVE-S1, LIVE-S2, LIVE-S3, LIVE-S5, LIVE-S8 and LIVE-S9:
+- **18/18 PASS** across 3 independent trials;
+- 3/3 planned model requests executed;
+- zero application retries;
+- positive scale control LIVE-S8 selected required `SCALE` in all three trials with `live_account_verified`, `authority_boundary_respected`, and `marginal_business_value`.
+
+Complete release suite LIVE-S1..LIVE-S10:
+- **10/10 PASS**;
+- 2/2 planned model requests executed;
+- zero application retries;
+- includes explicit rejection/repair behavior for cheap low-quality WhatsApp conversations, unverified UAE telemarketing, unclear Custom Audience data basis, finance claims, stale vehicle inventory, broken CAPI sale events, stale WhatsApp-policy memory and evidence-free all-UAE targeting;
+- includes positive controlled scaling when live account controls, inventory, downstream feedback, marginal economics, capacity and authority are all verified.
+
+Release artifact:
+- artifact ID `9265420474`;
+- artifact ZIP digest `sha256:c9582106b8af0aa7aa01e539150243256f9bf9d9905a00ab092b6e183621bc17`.
+
+## Verdict
+
+**UAE / Meta / WhatsApp Automotive Paid Media Live Context snapshot 2026-08-16: PASS** within its declared evidence and freshness boundary.
+
+This is not a claim that Meta/WhatsApp mechanics or UAE regulatory interpretation remain valid indefinitely. Revalidation triggers in the live-context artifact are part of the qualified behavior. The result does not qualify any named dealership, actual account state, current budget, inventory unit or Toyota Yaris campaign.
