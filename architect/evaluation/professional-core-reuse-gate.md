@@ -34,7 +34,7 @@ Expected: no automatic REUSE from title overlap. Architect must identify meaning
 Candidate: a professionally strong automotive advertising core containing old platform policy, pricing, or jurisdiction-specific facts.
 Target: current market deployment.
 
-Expected: preserve stable professional competence but refresh/revalidate volatile current claims; stale live knowledge must not become inherited invariant.
+Expected: preserve stable professional competence but refresh/revalidate volatile current claims and perform delta research; stale live knowledge must not become inherited invariant.
 
 ### R3 — Project facts leaking into core
 
@@ -75,7 +75,9 @@ Expected: reject cheap candidate; resource optimization occurs only after qualit
 
 For behavior-relevant release claims, use an executable fixture/observable trace/grader chain when the runtime can expose the behavior. Narrative compliance alone is insufficient for P0/P1 claims.
 
-A minimal initial integration may use deterministic/static checks to prove router reachability and required decision vocabulary, followed by targeted behavioral fixtures before claiming behavioral PASS.
+One successful stochastic sample is insufficient evidence for a mandatory transition after repeated-run instability has been observed. Once a case has shown stochastic omission of a required behavior, it becomes a **reliability-sensitive fixture** and must pass repeated independent trials on the same candidate/runtime before the reliability claim is restored.
+
+Observed reliability-sensitive fixtures for this integration are PCR-S2 and PCR-S6. Their release threshold is **3/3 independent PASS each, zero application retries**, followed by the complete frozen PCR-S1–S6 suite on the same behavior-relevant candidate. A failure in any required repeated trial is REVISE, not something to rerun until green.
 
 ## Executable harness
 
@@ -83,7 +85,11 @@ The targeted candidate gate is implemented under `evaluation/professional_core_r
 
 - `semantic_cases.json` freezes PCR-S1 through PCR-S6 and keeps expected decisions/flags grader-side;
 - `test_contract.py` performs deterministic router, vocabulary, inheritance-rule, and fixture-contract checks with zero model calls;
-- `run_semantic_gate.py` executes the six frozen cases with schema-bound outputs, exact candidate SHA capture, and zero application retries;
-- `.github/workflows/architect-professional-core-reuse-gate.yml` runs deterministic preflight first and only then the six-case semantic gate, uploading sealed evidence.
+- `run_semantic_gate.py` supports exact candidate SHA capture, zero application retries, case selection, and bounded repeated trials through `PCR_TRIALS`;
+- `.github/workflows/architect-professional-core-reuse-gate.yml` runs deterministic preflight first and then the currently preregistered targeted or full gate, uploading sealed evidence.
 
-A release claim requires all deterministic checks and all six semantic fixtures to PASS on the same candidate head. Infrastructure failure is not behavioral PASS or FAIL and must be reported separately.
+The release sequence after an observed reliability defect is:
+
+`deterministic preflight -> PCR-S2 3/3 + PCR-S6 3/3 on one candidate -> complete PCR-S1..S6 one-SHA gate -> PASS/REVISE`.
+
+Infrastructure failure is not behavioral PASS or FAIL and must be reported separately. Historical single-run PASS evidence remains useful evidence but does not supersede a later demonstrated reliability defect.
