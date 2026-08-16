@@ -125,6 +125,10 @@ def grade(case: dict, item: dict | None, transport: dict, sha: str, trial: int) 
     }
 
 
+def batches(cases: list[dict], batch_size: int) -> list[list[dict]]:
+    return [cases[i:i + batch_size] for i in range(0, len(cases), batch_size)]
+
+
 def main() -> int:
     if not os.environ.get("GEMINI_API_KEY"):
         print("GEMINI_API_KEY missing; no model calls attempted", file=sys.stderr)
@@ -140,30 +144,41 @@ def main() -> int:
     trials = int(os.environ.get("PM_TRIALS", "1"))
     if trials < 1 or trials > 5:
         raise SystemExit("PM_TRIALS must be 1..5")
+    batch_size = int(os.environ.get("PM_BATCH_SIZE", str(len(cases))))
+    if batch_size < 1 or batch_size > 5:
+        raise SystemExit("PM_BATCH_SIZE must be 1..5")
+    case_batches = batches(cases, batch_size)
     system = CORE.read_text(encoding="utf-8")
     sha = git_sha()
     OUT.mkdir(parents=True, exist_ok=True)
     results = []
     executed_calls = 0
+    infra_blocked = False
     for trial in range(1, trials + 1):
-        answer, transport = call(cases, system)
-        executed_calls += 1
-        if answer is None:
-            for case in cases:
-                results.append(grade(case, None, transport, sha, trial))
-            print(json.dumps(results[-len(cases):], ensure_ascii=False))
+        for batch_index, case_batch in enumerate(case_batches, start=1):
+            answer, transport = call(case_batch, system)
+            executed_calls += 1
+            if answer is None:
+                batch_results = [grade(case, None, transport, sha, trial) for case in case_batch]
+                results.extend(batch_results)
+                print(json.dumps({"trial": trial, "batch": batch_index, "results": batch_results}, ensure_ascii=False))
+                infra_blocked = True
+                break
+            by_id = {a["case_id"]: a for a in answer["answers"]}
+            batch_results = [grade(case, by_id[case["id"]], transport, sha, trial) for case in case_batch]
+            results.extend(batch_results)
+            print(json.dumps({"trial": trial, "batch": batch_index, "results": batch_results}, ensure_ascii=False))
+        if infra_blocked:
             break
-        by_id = {a["case_id"]: a for a in answer["answers"]}
-        trial_results = [grade(case, by_id[case["id"]], transport, sha, trial) for case in cases]
-        results.extend(trial_results)
-        print(json.dumps(trial_results, ensure_ascii=False))
     planned_evaluations = len(cases) * trials
+    planned_calls = len(case_batches) * trials
     passed = len(results) == planned_evaluations and all(r["status"] == "PASS" for r in results)
     summary = {
         "candidate_sha": sha,
         "case_ids": [c["id"] for c in cases],
         "trials_per_case": trials,
-        "planned_model_calls": trials,
+        "batch_size": batch_size,
+        "planned_model_calls": planned_calls,
         "executed_model_calls": executed_calls,
         "planned_case_evaluations": planned_evaluations,
         "application_retries": 0,
