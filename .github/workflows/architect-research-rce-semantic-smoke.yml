@@ -1,0 +1,75 @@
+name: Agent Architect Research + RCE Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  research-rce-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/research_evidence_engineering/research_policy.py
+          python -m py_compile architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
+          python -m py_compile architect/evaluation/research_evidence_engineering/probe_gemini_models.py
+          python -m pip install --disable-pip-version-check -q pytest
+          cd architect/evaluation/research_evidence_engineering
+          pytest -q test_research_policy.py test_semantic_cases.py test_model_probe.py
+          cd ../resource_cost_engineering
+          python -m unittest -v test_rce.py test_semantic_cases.py
+
+      - name: Probe live Gemini model availability without generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; model availability was not probed.' >&2; exit 2)
+          python architect/evaluation/research_evidence_engineering/probe_gemini_models.py
+
+      - name: Upload model availability evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-model-availability-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          path: .tmp/research-rce-model-probe
+          if-no-files-found: ignore
+
+      - name: Require existing Gemini credential for semantic gate
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model calls were not attempted.' >&2; exit 2)
+
+      - name: Run exactly two frozen cross-layer semantic cases
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: gemini-3.6-flash
+        run: |
+          rm -rf .tmp/research-rce-semantic-smoke
+          python architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
+
+      - name: Upload semantic evidence
+        if: github.event_name == 'workflow_dispatch' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-rce-semantic-smoke-${{ github.sha }}
+          path: .tmp/research-rce-semantic-smoke
+          if-no-files-found: ignore

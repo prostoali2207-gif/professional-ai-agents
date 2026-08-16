@@ -147,6 +147,14 @@ A free weak route can be globally more expensive than one paid call if it create
 
 ## Retry and failure controls
 
+A retry budget is an upper bound, not permission to retry every failure. Classify the failure before spending another call.
+
+- Behavioral/evidence failure -> repair the responsible layer; do not retry unchanged behavior hoping for a different answer.
+- Authentication/configuration failure -> repair configuration before another request.
+- Daily/project quota exhaustion -> **do not retry the same quota-bound route while the quota state or quota window is unchanged**. Resume only after directly observed capacity restoration, or use another sufficient eligible route. When the required authoritative primary source is already known and direct inspection is eligible, prefer that route over retrying or ensembling an exhausted discovery provider.
+- Retired/unsupported model or endpoint -> verify lifecycle and migrate; do not retry the obsolete route unchanged.
+- Short rate limit, transient capacity/503, or provider outage -> bounded retry/backoff/fallback is allowed only when there is a concrete unresolved gap, a reason to expect conditions to change, and sufficient budget/quota reserve.
+
 Retries require a bounded retry budget, backoff where appropriate, and a new reason to expect success. Stop retry storms against unchanged infrastructure/provider failures.
 
 If a workflow exhausts quota or budget mid-run:
