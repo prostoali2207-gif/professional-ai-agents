@@ -24,6 +24,12 @@ class AutomotivePaidMediaContract(unittest.TestCase):
         self.assertTrue(any('SCALE' in c['forbidden_actions'] for c in self.cases))
         for c in self.cases:
             self.assertTrue(c['required_flags'])
+    def test_truthfulness_and_legal_escalation_are_separate_constructs(self):
+        s5=next(c for c in self.cases if c['id']=='AUTO-S5')
+        s7=next(c for c in self.cases if c['id']=='AUTO-S7')
+        self.assertEqual(['merchandising_truth'],s5['required_flags'])
+        self.assertIn('claim_risk_escalated',s7['required_flags'])
+        self.assertIn('offer_claim_provenance',s7['required_flags'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, or professional artifact is imported',self.evidence)
 
