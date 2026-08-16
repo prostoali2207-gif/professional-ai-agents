@@ -9,7 +9,7 @@ Release order:
 3. complete frozen PM-S1..PM-S13 suite on the same behavior-relevant core/runtime: **13/13 PASS, zero application retries**;
 4. only then may the exact core artifact digest receive a PASS qualification record and `qualified` lifecycle state.
 
-The semantic runner batches the selected fixtures into one structured model request per independent trial. Hidden expected actions/flags remain grader-side and each case is graded separately. Therefore the release sequence requires **4 model requests** (three critical reliability trials plus one complete release-suite request), rather than 28 one-case requests, while preserving 15 critical case evaluations plus 13 full-suite case evaluations.
+The semantic runner batches fixtures while keeping hidden expected actions/flags grader-side and grading every case independently. API structured-output constraints require batches of at most five fixtures. The frozen release sequence therefore uses **6 model requests**: three one-batch critical reliability trials, then three bounded batches covering all 13 release fixtures. This preserves 15 critical case evaluations plus 13 complete-suite case evaluations while avoiding both one-case-per-request waste and an invalid oversized structured schema.
 
 Any behavioral failure is REVISE. Infrastructure/credential/quota failure is BLOCKED and is not behavioral PASS or FAIL. Do not rerun a failed stochastic sample until green; repair the root cause, then preregister and run a new candidate.
 
