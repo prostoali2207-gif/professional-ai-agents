@@ -14,6 +14,7 @@ class PaidMediaCoreContractTests(unittest.TestCase):
     def setUp(self) -> None:
         self.core = CORE.read_text(encoding="utf-8")
         self.cases = json.loads(CASES.read_text(encoding="utf-8"))
+        self.by_id = {c["id"]: c for c in self.cases}
 
     def test_core_has_required_professional_constructs(self) -> None:
         required = [
@@ -45,14 +46,22 @@ class PaidMediaCoreContractTests(unittest.TestCase):
     def test_scale_requires_explicit_delegated_authority_control(self) -> None:
         self.assertIn("Pre-execution authority check", self.core)
         self.assertIn("every spend-increasing execution decision must explicitly verify", self.core)
-        case = next(c for c in self.cases if c["id"] == "PM-S13")
+        case = self.by_id["PM-S13"]
         self.assertEqual(["SCALE"], case["allowed_actions"])
         self.assertIn("authority_boundary_respected", case["required_flags"])
 
     def test_broken_measurement_fixture_tests_decision_validity_not_false_causal_construct(self) -> None:
-        case = next(c for c in self.cases if c["id"] == "PM-S2")
+        case = self.by_id["PM-S2"]
         self.assertIn("decision_signal_invalid", case["required_flags"])
         self.assertNotIn("causal_claim_blocked", case["required_flags"])
+
+    def test_release_cases_isolate_their_target_constructs(self) -> None:
+        self.assertEqual(["fault_tree_used", "measurement_incident_suspected"], self.by_id["PM-S6"]["required_flags"])
+        self.assertNotIn("small_reversible_bet", self.by_id["PM-S7"]["required_flags"])
+        self.assertEqual(["stop_loss_applied", "opportunity_cost_considered"], self.by_id["PM-S8"]["required_flags"])
+        self.assertNotIn("fault_tree_used", self.by_id["PM-S10"]["required_flags"])
+        self.assertIn("STOP", self.by_id["PM-S12"]["allowed_actions"])
+        self.assertNotIn("no_fabricated_business_facts", self.by_id["PM-S12"]["required_flags"])
 
     def test_required_user_requested_behaviors_are_covered(self) -> None:
         titles = " ".join(c["title"].lower() for c in self.cases)
