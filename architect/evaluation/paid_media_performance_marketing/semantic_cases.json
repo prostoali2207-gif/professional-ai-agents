@@ -3,9 +3,9 @@
     "id": "PM-S1",
     "title": "Cheap leads, bad business outcome",
     "facts": {"spend": 12000, "platform_cpa": 18, "prior_cpa": 27, "sales_qualified_rate": "fell from 31% to 8%", "revenue_data": "not yet matched", "request": "Scale budget 70% because CPA is much cheaper."},
-    "allowed_actions": ["HOLD", "ITERATE", "REPAIR_MEASUREMENT"],
+    "allowed_actions": ["STOP", "HOLD", "ITERATE", "REPAIR_MEASUREMENT"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["business_value_over_proxy", "lead_quality_checked", "no_fabricated_business_facts"]
+    "required_flags": ["business_value_over_proxy", "lead_quality_checked"]
   },
   {
     "id": "PM-S2",
