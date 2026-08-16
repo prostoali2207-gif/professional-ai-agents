@@ -1,0 +1,101 @@
+name: Agent Architect v1.1 Gemini Behavioral Release Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/runtime-state-memory-context.md'
+      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter.py'
+      - 'architect/evaluation/harness/run_v1_1_release_gemini.py'
+      - 'architect/evaluation/harness/run_v1_1_release_v5.py'
+      - 'architect/evaluation/harness/runner.py'
+      - 'architect/evaluation/harness/round1/**'
+      - 'architect/evaluation/harness/round2/**'
+      - 'architect/evaluation/harness/round3/**'
+      - 'architect/evaluation/harness/round4/**'
+      - 'architect/evaluation/harness/round5/**'
+      - 'architect/evaluation/harness/round6/**'
+      - '.github/workflows/architect-v1_1-gemini-release.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact PR candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic adapter and harness preflight
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/run_v1_1_release_v5.py
+          python -m py_compile architect/evaluation/harness/run_v1_1_release_gemini.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter.py
+          python - <<'PY'
+          from pathlib import Path
+          adapter = Path('architect/evaluation/harness/adapters/gemini_interactions_adapter.py').read_text()
+          forbidden = ['B1-PRE5-01', 'B1-REL5-01', 'B2-REL5-01', 'B3-REL5-01', 'B4-REL5-01', 'B5-REL5-01', 'B6-REL5-01', 'B7-REL5-01', 'B8-REL5-01', 'B9-REL5-01', 'B10-REL5-01']
+          hits = [x for x in forbidden if x in adapter]
+          if hits:
+              raise SystemExit(f'fixture-specific expected-answer logic forbidden in adapter: {hits}')
+          print('adapter fixture-ID independence: PASS')
+          PY
+
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; no model call attempted.' >&2; exit 2)
+
+      - name: Probe live Gemini 3.6 availability without generation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          req = urllib.request.Request(
+              'https://generativelanguage.googleapis.com/v1beta/models',
+              headers={'x-goog-api-key': os.environ['GEMINI_API_KEY']},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              raw = json.loads(r.read().decode())
+          matches = [m for m in raw.get('models', []) if m.get('name') == 'models/gemini-3.6-flash']
+          if not matches or 'generateContent' not in matches[0].get('supportedGenerationMethods', []):
+              raise SystemExit('gemini-3.6-flash is not currently eligible for generation on this project')
+          print(json.dumps({'status':'PASS','probe':'models.list','generation_calls':0,'model':matches[0].get('name')}))
+          PY
+
+      - name: Run fresh B1 then complete frozen release suite only after B1 PASS
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gemini-3.6-flash
+        run: |
+          rm -rf .tmp/architect-v1_1-release-gemini .tmp/gemini-adapter-provider-block.json
+          python architect/evaluation/harness/run_v1_1_release_gemini.py \
+            --out-root .tmp/architect-v1_1-release-gemini \
+            --model gemini-3.6-flash \
+            --timeout 300
+
+      - name: Upload exact-head release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-v1_1-gemini-release-${{ github.event.pull_request.head.sha }}
+          path: |
+            .tmp/architect-v1_1-release-gemini
+            .tmp/gemini-adapter-provider-block.json
+            architect/evaluation/harness/release/v1.1-b1-fresh-v5.manifest.generated.json
+            architect/evaluation/harness/release/v1.1-final-v5.manifest.generated.json
+          if-no-files-found: ignore
