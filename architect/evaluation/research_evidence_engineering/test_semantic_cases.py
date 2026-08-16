@@ -1,11 +1,15 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from run_semantic_smoke import (
+    CASE_IDS,
     INTERACTIONS_ENDPOINT,
     extract_interaction_output_text,
     interaction_payload,
     response_format,
+    selected_case_ids,
 )
 
 HERE = Path(__file__).resolve().parent
@@ -62,3 +66,15 @@ def test_interactions_output_requires_observable_model_output_step():
     }
     text = extract_interaction_output_text(raw)
     assert json.loads(text)["decision"] == "SUPPORTED"
+
+
+def test_targeted_regression_can_select_only_frozen_s2():
+    assert selected_case_ids("RES-RCE-S2") == ("RES-RCE-S2",)
+    assert selected_case_ids("") == CASE_IDS
+
+
+def test_targeted_regression_rejects_unknown_or_duplicate_case_ids():
+    with pytest.raises(ValueError):
+        selected_case_ids("RES-RCE-S3")
+    with pytest.raises(ValueError):
+        selected_case_ids("RES-RCE-S2,RES-RCE-S2")
