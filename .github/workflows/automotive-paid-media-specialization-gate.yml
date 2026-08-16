@@ -1,0 +1,68 @@
+name: Automotive Paid Media Specialization Gate
+
+on:
+  push:
+    branches:
+      - agent/automotive-paid-media-specialization
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/automotive_paid_media/run_semantic_gate.py
+          cd architect/evaluation/automotive_paid_media
+          python -m unittest -v test_contract.py
+
+      - name: Require Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY"
+
+      - name: Critical automotive reliability trials
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AUTO_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          AUTO_CASE_IDS: AUTO-S1,AUTO-S2,AUTO-S3,AUTO-S5,AUTO-S8
+          AUTO_TRIALS: '3'
+          AUTO_BATCH_SIZE: '5'
+        run: |
+          rm -rf .tmp/automotive-paid-media
+          python architect/evaluation/automotive_paid_media/run_semantic_gate.py
+          cp .tmp/automotive-paid-media/summary.json /tmp/automotive-critical-summary.json
+
+      - name: Complete automotive release suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AUTO_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          AUTO_TRIALS: '1'
+          AUTO_BATCH_SIZE: '5'
+        run: |
+          rm -rf .tmp/automotive-paid-media
+          python architect/evaluation/automotive_paid_media/run_semantic_gate.py
+          cp /tmp/automotive-critical-summary.json .tmp/automotive-paid-media/critical-reliability-summary.json
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-paid-media-${{ github.sha }}
+          path: .tmp/automotive-paid-media
+          if-no-files-found: ignore
