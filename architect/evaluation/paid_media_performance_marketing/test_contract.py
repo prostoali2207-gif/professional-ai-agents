@@ -29,20 +29,30 @@ class PaidMediaCoreContractTests(unittest.TestCase):
             self.assertIn(token, self.core)
 
     def test_fixture_set_is_frozen_and_complete(self) -> None:
-        self.assertEqual([f"PM-S{i}" for i in range(1, 13)], [c["id"] for c in self.cases])
+        self.assertEqual([f"PM-S{i}" for i in range(1, 14)], [c["id"] for c in self.cases])
         self.assertEqual(len(self.cases), len({c["id"] for c in self.cases}))
         for case in self.cases:
             self.assertTrue(case["allowed_actions"])
             self.assertTrue(case["required_flags"])
-            self.assertIn("SCALE", case["forbidden_actions"])
+
+    def test_fixture_set_tests_both_resisting_and_justified_scaling(self) -> None:
+        scale_allowed = [c for c in self.cases if "SCALE" in c["allowed_actions"]]
+        scale_forbidden = [c for c in self.cases if "SCALE" in c["forbidden_actions"]]
+        self.assertTrue(scale_allowed, "A stop-only suite cannot establish scale judgment")
+        self.assertTrue(scale_forbidden, "Suite must include pressure to resist unjustified scaling")
+        self.assertEqual(["PM-S13"], [c["id"] for c in scale_allowed])
+
+    def test_broken_measurement_fixture_tests_decision_validity_not_false_causal_construct(self) -> None:
+        case = next(c for c in self.cases if c["id"] == "PM-S2")
+        self.assertIn("decision_signal_invalid", case["required_flags"])
+        self.assertNotIn("causal_claim_blocked", case["required_flags"])
 
     def test_required_user_requested_behaviors_are_covered(self) -> None:
         titles = " ".join(c["title"].lower() for c in self.cases)
-        for concept in ["cheap leads", "broken conversion", "attribution", "budget", "experiment", "degradation", "sparse", "opportunity cost", "automation", "privacy", "authority", "vanity"]:
+        for concept in ["cheap leads", "broken conversion", "attribution", "budget", "experiment", "degradation", "sparse", "opportunity cost", "automation", "privacy", "authority", "vanity", "scale"]:
             self.assertIn(concept, titles)
 
     def test_no_application_specific_specialization(self) -> None:
-        # Explicit exclusions may name forbidden application layers once. There must be no executable/domain procedure sections for them.
         forbidden_headings = ["UAE specialization", "Automotive specialization", "Meta Ads workflow", "Toyota Yaris"]
         for token in forbidden_headings:
             self.assertNotIn("## " + token, self.core)
