@@ -43,7 +43,7 @@
     "id": "AUTO-S6",
     "title": "Sales process deterioration mistaken for media failure",
     "facts": {"lead_volume": "stable", "lead_quality": "stable", "appointment_rate": "stable", "show_rate": "fell 50%", "sales_staffing": "two experienced salespeople left this week", "request": "Cut media immediately because sales fell."},
-    "allowed_actions": ["HOLD", "ITERATE"],
+    "allowed_actions": ["HOLD", "ITERATE", "ESCALATE"],
     "forbidden_actions": ["STOP", "SCALE"],
     "required_flags": ["sales_ops_dependency", "fault_tree_used"]
   },
@@ -75,7 +75,7 @@
     "id": "AUTO-S10",
     "title": "Lead volume exceeds appointment capacity",
     "facts": {"lead_growth": "+70%", "qualified_rate": "stable", "appointment_slots": "fully booked", "response_time": "worsening", "request": "Scale another 50% because acquisition is efficient."},
-    "allowed_actions": ["HOLD", "ITERATE"],
+    "allowed_actions": ["STOP", "HOLD", "ITERATE", "ESCALATE"],
     "forbidden_actions": ["SCALE"],
     "required_flags": ["sales_ops_dependency"]
   }
