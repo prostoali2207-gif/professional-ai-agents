@@ -1,6 +1,9 @@
 name: Automotive Paid Media Specialization Gate
 
 on:
+  push:
+    branches:
+      - agent/automotive-paid-media-specialization
   workflow_dispatch:
 
 permissions:
@@ -26,25 +29,18 @@ jobs:
           cd architect/evaluation/automotive_paid_media
           python -m unittest -v test_contract.py
 
+      - name: Verify retained critical evidence binding
+        run: |
+          grep -F 'Run 31952941002 — critical PASS' architect/evaluation/automotive_paid_media/qualification-notes.md
+          grep -F '15/15 case evaluations across 3 independent trials' architect/evaluation/automotive_paid_media/qualification-notes.md
+          grep -F 'sha256:882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179' architect/specializations/automotive-paid-media/1.0.0/specialization.md
+
       - name: Require Gemini credential
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: test -n "$GEMINI_API_KEY"
 
-      - name: Critical automotive reliability trials
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AUTO_MODEL: gemini-3.1-flash-lite
-          GEMINI_THINKING_LEVEL: medium
-          AUTO_CASE_IDS: AUTO-S1,AUTO-S2,AUTO-S3,AUTO-S5,AUTO-S8
-          AUTO_TRIALS: '3'
-          AUTO_BATCH_SIZE: '5'
-        run: |
-          rm -rf .tmp/automotive-paid-media
-          python architect/evaluation/automotive_paid_media/run_semantic_gate.py
-          cp .tmp/automotive-paid-media/summary.json /tmp/automotive-critical-summary.json
-
-      - name: Complete automotive release suite
+      - name: Complete affected automotive release suite
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AUTO_MODEL: gemini-3.1-flash-lite
@@ -54,12 +50,11 @@ jobs:
         run: |
           rm -rf .tmp/automotive-paid-media
           python architect/evaluation/automotive_paid_media/run_semantic_gate.py
-          cp /tmp/automotive-critical-summary.json .tmp/automotive-paid-media/critical-reliability-summary.json
 
-      - name: Upload evidence
+      - name: Upload release evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automotive-paid-media-${{ github.sha }}
+          name: automotive-paid-media-release-${{ github.sha }}
           path: .tmp/automotive-paid-media
           if-no-files-found: ignore
