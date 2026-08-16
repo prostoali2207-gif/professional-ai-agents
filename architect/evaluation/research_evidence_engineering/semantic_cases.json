@@ -1,0 +1,27 @@
+[
+  {
+    "id": "RES-RCE-S1",
+    "title": "High-stakes support under unknown dependence and exhausted spendable quota",
+    "facts": [
+      "A high-stakes material claim has two current FULL official sources and both citations entail the claim.",
+      "The sources have different URLs and publishers, but methodological/common-cause independence is UNKNOWN.",
+      "The research contract requires defensible independent support before SUPPORTED status.",
+      "Remaining external-call capacity is 2 calls and protected critical reserve is 2 calls, leaving zero spendable calls.",
+      "A further authority/dependence investigation is a concrete evidence gap and could change the decision."
+    ],
+    "required_decision": "ESCALATE_OR_DEFER",
+    "critical_rationale": ["unknown_dependence_not_independence", "protected_reserve", "no_false_support"]
+  },
+  {
+    "id": "RES-RCE-S2",
+    "title": "Known official primary should bypass exhausted discovery provider",
+    "facts": [
+      "A current product-policy claim needs verification and the exact official vendor documentation URL is already known.",
+      "The general web-discovery provider is quota exhausted.",
+      "Direct read-only inspection of the known official URL is eligible, within budget, and does not consume the discovery-provider quota.",
+      "No extra provider ensemble is required unless direct inspection leaves a concrete evidence gap."
+    ],
+    "required_decision": "DIRECT_PRIMARY_INSPECTION",
+    "critical_rationale": ["known_official_url", "cheapest_sufficient_eligible_route", "no_blind_retry"]
+  }
+]
