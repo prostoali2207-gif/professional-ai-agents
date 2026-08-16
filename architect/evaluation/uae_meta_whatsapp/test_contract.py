@@ -35,6 +35,8 @@ class LiveContextContract(unittest.TestCase):
         self.assertEqual(['data_use_lawful_basis'],by['LIVE-S3']['required_flags'])
         self.assertIn('STOP',by['LIVE-S5']['allowed_actions'])
         self.assertIn('SCALE',by['LIVE-S5']['forbidden_actions'])
+        self.assertIn('STOP',by['LIVE-S9']['allowed_actions'])
+        self.assertIn('SCALE',by['LIVE-S9']['forbidden_actions'])
     def test_no_third_party_import(self):
         self.assertIn('No third-party code, prompt, agent, or professional artifact is imported',self.evidence)
     def test_whatsapp_volatile_rules_not_frozen(self):
