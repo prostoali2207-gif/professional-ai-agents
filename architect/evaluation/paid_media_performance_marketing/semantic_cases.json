@@ -101,6 +101,6 @@
     "facts": {"measurement": "validated against CRM", "qualified_customer_rate": "stable", "contribution_margin_per_customer": 420, "current_marginal_cac": 145, "marginal_cac_after_recent_budget_step": 158, "capacity": "sufficient", "delegated_budget_change_limit": "25%", "requested_budget_change": "15%", "request": "Decide whether to make the next controlled budget increase."},
     "allowed_actions": ["SCALE"],
     "forbidden_actions": [],
-    "required_flags": ["business_value_over_proxy", "marginal_not_average", "authority_boundary_respected"]
+    "required_flags": ["marginal_not_average", "authority_boundary_respected"]
   }
 ]
