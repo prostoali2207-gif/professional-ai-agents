@@ -1,9 +1,6 @@
 name: UAE Meta WhatsApp Live Context Gate
 
 on:
-  push:
-    branches:
-      - agent/uae-meta-whatsapp-live-context
   workflow_dispatch:
 
 permissions:
