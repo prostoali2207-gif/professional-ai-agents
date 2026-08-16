@@ -8,6 +8,7 @@ on:
       - 'architect/SKILL.md'
       - 'architect/methodology/runtime-state-memory-context.md'
       - 'architect/evaluation/harness/adapters/gemini_interactions_adapter.py'
+      - 'architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py'
       - 'architect/evaluation/harness/run_v1_1_release_gemini.py'
       - 'architect/evaluation/harness/run_v1_1_release_v5.py'
       - 'architect/evaluation/harness/runner.py'
@@ -43,9 +44,14 @@ jobs:
           python -m py_compile architect/evaluation/harness/run_v1_1_release_v5.py
           python -m py_compile architect/evaluation/harness/run_v1_1_release_gemini.py
           python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py
           python - <<'PY'
           from pathlib import Path
-          adapter = Path('architect/evaluation/harness/adapters/gemini_interactions_adapter.py').read_text()
+          adapter = (
+              Path('architect/evaluation/harness/adapters/gemini_interactions_adapter.py').read_text()
+              + '\n'
+              + Path('architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py').read_text()
+          )
           forbidden = ['B1-PRE5-01', 'B1-REL5-01', 'B2-REL5-01', 'B3-REL5-01', 'B4-REL5-01', 'B5-REL5-01', 'B6-REL5-01', 'B7-REL5-01', 'B8-REL5-01', 'B9-REL5-01', 'B10-REL5-01']
           hits = [x for x in forbidden if x in adapter]
           if hits:
@@ -81,8 +87,13 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AGENT_ARCHITECT_MODEL: gemini-3.6-flash
+          GEMINI_MIN_REQUEST_INTERVAL: '13'
+          GEMINI_MAX_TRANSIENT_RETRY: '60'
         run: |
-          rm -rf .tmp/architect-v1_1-release-gemini .tmp/gemini-adapter-provider-block.json
+          rm -rf \
+            .tmp/architect-v1_1-release-gemini \
+            .tmp/gemini-adapter-provider-block.json \
+            .tmp/gemini-adapter-last-call.txt
           python architect/evaluation/harness/run_v1_1_release_gemini.py \
             --out-root .tmp/architect-v1_1-release-gemini \
             --model gemini-3.6-flash \
@@ -96,6 +107,7 @@ jobs:
           path: |
             .tmp/architect-v1_1-release-gemini
             .tmp/gemini-adapter-provider-block.json
+            .tmp/gemini-adapter-last-call.txt
             architect/evaluation/harness/release/v1.1-b1-fresh-v5.manifest.generated.json
             architect/evaluation/harness/release/v1.1-final-v5.manifest.generated.json
           if-no-files-found: ignore
