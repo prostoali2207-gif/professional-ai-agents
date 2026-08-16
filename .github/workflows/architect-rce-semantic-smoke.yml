@@ -1,7 +1,12 @@
 name: Agent Architect RCE Semantic Smoke
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/evaluation/resource_cost_engineering/run_semantic_smoke.py'
+      - '.github/workflows/architect-rce-semantic-smoke.yml'
 
 permissions:
   contents: read
@@ -10,10 +15,10 @@ jobs:
   rce-semantic-smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact candidate
+      - name: Checkout exact PR head
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
 
       - name: Set up Python
@@ -57,6 +62,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
           GEMINI_THINKING_LEVEL: medium
+          RCE_SEMANTIC_CASE_IDS: RCE-S1,RCE-S2
         run: |
           rm -rf .tmp/rce-semantic-smoke
           python architect/evaluation/resource_cost_engineering/run_semantic_smoke.py
@@ -65,6 +71,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rce-semantic-smoke-${{ github.sha }}
+          name: rce-semantic-smoke-${{ github.event.pull_request.head.sha }}
           path: .tmp/rce-semantic-smoke
           if-no-files-found: ignore
