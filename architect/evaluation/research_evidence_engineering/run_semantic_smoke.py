@@ -83,10 +83,10 @@ def output_json_schema() -> dict:
 
 
 def generation_config() -> dict:
-    # Current Gemini generateContent API: responseJsonSchema is the full JSON Schema field.
-    # responseSchema must not be sent together with it.
+    # Current Gemini 3.x guidance deprecates temperature/top_p/top_k. Keep the
+    # evaluation payload minimal and schema-constrained instead of relying on
+    # sampling controls for determinism.
     return {
-        "temperature": 0,
         "maxOutputTokens": 500,
         "responseMimeType": "application/json",
         "responseJsonSchema": output_json_schema(),
@@ -108,7 +108,7 @@ def classify_http_error(code: int, body: str) -> str:
 
 def call_gemini(case: dict, system: str) -> tuple[dict | None, dict]:
     key = os.environ["GEMINI_API_KEY"]
-    model = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
+    model = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
     payload = {
         "system_instruction": {"parts": [{"text": system}]},
@@ -176,7 +176,7 @@ def main() -> int:
     summary = {
         "candidate_sha": sha,
         "provider": "Google Gemini API",
-        "model": os.environ.get("GEMINI_MODEL", "gemini-3.5-flash"),
+        "model": os.environ.get("GEMINI_MODEL", "gemini-3.6-flash"),
         "planned_model_calls": 2,
         "executed_cases": len(results),
         "results": results,
