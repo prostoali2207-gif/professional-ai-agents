@@ -234,9 +234,15 @@ Distinguish at least:
 - `PROVIDER_OUTAGE`;
 - `MODEL_LIFECYCLE` / retired endpoint.
 
-Behavioral/evidence failures require repair, not blind retry. Operational failures receive bounded retry/fallback only when the remaining evidence gap, eligibility constraints, budget, quota reserve, and expected information value justify it.
+Failure class determines retry eligibility; a generic retry budget is not permission to retry every failure.
 
-Repeated retries against unchanged failure conditions are resource-control failures.
+- Behavioral/evidence failure -> repair the responsible evidence/architecture layer; do not retry unchanged behavior hoping for a different answer.
+- `AUTH_CONFIG` -> repair credentials/configuration first; do not retry the same invalid request.
+- `DAILY_QUOTA_EXHAUSTED` -> **do not retry the same quota-bound route while the quota state/window is unchanged**. Resume only after directly observed quota reset/state change, or route to another sufficient eligible source/provider. If the authoritative primary URL is already known and direct inspection is eligible, use that direct route instead of retrying or ensembling the exhausted discovery provider.
+- `MODEL_LIFECYCLE` -> verify current model/endpoint state and migrate; do not retry a retired route unchanged.
+- `RATE_LIMIT_SHORT`, `CAPACITY_TRANSIENT`, or `PROVIDER_OUTAGE` -> bounded retry/backoff/fallback is allowed only when the concrete evidence gap remains, current budget/quota reserve permits it, and there is a reason to expect conditions to change.
+
+Repeated retries against unchanged failure conditions are resource-control failures. Operational fallback must preserve authority, privacy, reliability, comparability/independence requirements, and the original evidence threshold.
 
 ## 14. Research stopping
 
