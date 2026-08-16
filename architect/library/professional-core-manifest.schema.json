@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/professional-core-manifest.schema.json",
+  "title": "Professional Core Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "lifecycle",
+    "profession",
+    "scope",
+    "artifact",
+    "maintainers",
+    "competency_contract",
+    "context_boundary",
+    "provenance",
+    "dependencies",
+    "runtime_contract",
+    "authority_and_security",
+    "freshness",
+    "limitations",
+    "qualification_refs"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "minLength": 3},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"},
+    "lifecycle": {"enum": ["candidate", "qualified", "deprecated", "quarantined", "revoked"]},
+    "profession": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_name", "responsibilities", "outputs"],
+      "properties": {
+        "canonical_name": {"type": "string", "minLength": 3},
+        "aliases": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "responsibilities": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "outputs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["included", "excluded"],
+      "properties": {
+        "included": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "excluded": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_digest", "paths"],
+      "properties": {
+        "content_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "maintainers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "accountability"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "accountability": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "competency_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_refs", "critical_claims"],
+      "properties": {
+        "model_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+        "critical_claims": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true}
+      }
+    },
+    "context_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stable_core", "domain_specific", "jurisdiction_or_live", "organization_or_project"],
+      "properties": {
+        "stable_core": {"type": "array", "items": {"type": "string"}},
+        "domain_specific": {"type": "array", "items": {"type": "string"}},
+        "jurisdiction_or_live": {"type": "array", "items": {"type": "string"}},
+        "organization_or_project": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_register_refs", "creation_record"],
+      "properties": {
+        "source_register_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+        "creation_record": {"type": "string", "minLength": 3},
+        "supersedes": {"type": ["string", "null"]}
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "constraint", "kind"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "constraint": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["required", "optional", "evaluation", "tool", "runtime"]}
+        }
+      }
+    },
+    "runtime_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_features", "state_assumptions", "tool_assumptions"],
+      "properties": {
+        "required_features": {"type": "array", "items": {"type": "string"}},
+        "state_assumptions": {"type": "array", "items": {"type": "string"}},
+        "tool_assumptions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "authority_and_security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_authority", "trust_boundaries", "escalation_conditions"],
+      "properties": {
+        "max_authority": {"type": "string", "minLength": 3},
+        "trust_boundaries": {"type": "array", "items": {"type": "string"}},
+        "escalation_conditions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["volatile_claim_policy", "review_triggers"],
+      "properties": {
+        "volatile_claim_policy": {"type": "string", "minLength": 3},
+        "review_triggers": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "qualification_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

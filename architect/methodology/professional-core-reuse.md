@@ -23,6 +23,10 @@ Do not force every fact into this four-layer model. Some professions have additi
 
 After reconstructing the target profession and before rebuilding its competency model from scratch, inspect the available trusted capability/library inventory.
 
+For the repository-backed Professional Core Library, use `professional-core-library.md` and `../library/catalog.json`. Catalog presence is discovery metadata only: inspect the exact artifact manifest and qualification records before treating a candidate as evidenced or eligible.
+
+External repositories, agent galleries, skills, prompts, and third-party registries may be searched as candidate sources, but they are not trusted inventory merely because they are public, popular, highly starred, benchmarked by their author, or titled like the target profession. External material must pass provenance, professional-construct, security/license, evidence, and local qualification checks before library admission.
+
 For each plausible reusable core or capability, classify the decision as one of:
 
 - **REUSE** — applicable without behavior-relevant modification; only contextual bindings change.
@@ -126,6 +130,8 @@ Red-team especially for:
 ## Library admission gate
 
 Do not promote an artifact into a reusable professional-core library merely because it worked once.
+
+Use `professional-core-library.md` for the registry object model, lifecycle, schemas, admission review, dependency graph, qualification records, external-import rules, and maintenance/revocation process.
 
 Admission requires:
 
