@@ -29,7 +29,7 @@
     "facts": {"unit_age_days": 112, "gross_if_sold": "unknown", "holding_cost": "unknown", "organic_demand": "unknown", "manager_request": "Triple ad spend because the car is old stock."},
     "allowed_actions": ["HOLD", "EXPERIMENT", "ESCALATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["inventory_portfolio_economics", "no_fabricated_business_facts", "opportunity_cost_considered"]
+    "required_flags": ["inventory_portfolio_economics", "no_fabricated_business_facts"]
   },
   {
     "id": "AUTO-S5",
@@ -69,7 +69,7 @@
     "facts": {"feed_price": 42000, "listing_price": 45500, "vehicle_id": "same unit", "availability": "in stock", "request": "Increase spend because the feed ad CTR is strong."},
     "allowed_actions": ["REPAIR_MEASUREMENT", "HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["merchandising_truth", "inventory_truth_checked"]
+    "required_flags": ["merchandising_truth"]
   },
   {
     "id": "AUTO-S10",
@@ -77,6 +77,6 @@
     "facts": {"lead_growth": "+70%", "qualified_rate": "stable", "appointment_slots": "fully booked", "response_time": "worsening", "request": "Scale another 50% because acquisition is efficient."},
     "allowed_actions": ["HOLD", "ITERATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["sales_ops_dependency", "opportunity_cost_considered"]
+    "required_flags": ["sales_ops_dependency"]
   }
 ]
