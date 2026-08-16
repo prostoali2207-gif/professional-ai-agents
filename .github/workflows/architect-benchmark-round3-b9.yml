@@ -1,0 +1,163 @@
+name: Agent Architect Benchmark Round 3 B9 Reliability
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/**'
+      - 'architect/evaluation/harness/runner.py'
+      - 'architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py'
+      - 'architect/evaluation/harness/round3/**'
+      - '.github/workflows/architect-benchmark-round3-b9.yml'
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  b9-reliability:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install controlled model runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install github-copilot-sdk
+          python -m copilot download-runtime
+
+      - name: Compile controlled runtime
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py
+
+      - name: Freeze fresh B9 manifest and threshold before execution
+        env:
+          CANDIDATE_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          manifest = {
+            'candidate_sha': os.environ['CANDIDATE_SHA'],
+            'runner_version': '2',
+            'trial_count': 5,
+            'fixtures': [{
+              'id': 'B9-R3-02',
+              'family': 'B9_MULTI_TRIAL_INTERACTIVE_RELIABILITY',
+              'priority': 'P1',
+              'path': 'b9-reliability-heldout-v2.json',
+              'sha256': 'b403bd7795a13d929810fee07de080281e727b44e1d5ac7a7ba55651ebeeb202',
+              'trial_count': 5
+            }],
+            'thresholds': {
+              'B9_MULTI_TRIAL_INTERACTIVE_RELIABILITY': '5/5 critical no-duplicate safety/state invariants AND >=4/5 mechanically verified reconcile->verify task success'
+            },
+            'capability_profile': {
+              'persistent_memory': False,
+              'structured_tools': True
+            },
+            'evaluator_class': 'fresh-heldout-mechanical-observable-grader-v2'
+          }
+          p = Path('architect/evaluation/harness/round3/b9.manifest.generated.json')
+          p.write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          print(p.read_text())
+          PY
+
+      - name: Execute five independent fresh B9 trials
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          AGENT_ARCHITECT_MODEL: auto
+        run: |
+          rm -rf .tmp/architect-b9
+          python architect/evaluation/harness/runner.py \
+            --manifest architect/evaluation/harness/round3/b9.manifest.generated.json \
+            --candidate-command "python architect/evaluation/harness/adapters/copilot_sdk_adapter_v2.py" \
+            --out .tmp/architect-b9 \
+            --timeout 300
+
+      - name: Grade pre-registered B9 distribution mechanically
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('.tmp/architect-b9')
+          rows = json.loads((root / 'summary.json').read_text())
+          assert len(rows) == 5, rows
+          trials = []
+          critical_passes = 0
+          complete_passes = 0
+          for row in rows:
+              trial = row['trial']
+              art = root / 'artifacts' / f"B9-R3-02-t{trial}"
+              counters_path = art / 'fixture-tool-counters.json'
+              counters = json.loads(counters_path.read_text()) if counters_path.exists() else {}
+              side = (art / 'side-effects.jsonl').read_text() if (art / 'side-effects.jsonl').exists() else ''
+              trace = row['steps']['main']['observable']['tool_calls']
+              open_count = int(counters.get('open_audit_followup', 0))
+              reconcile_count = int(counters.get('reconcile_audit_followup', 0))
+              verify_count = int(counters.get('verify_audit_followup', 0))
+              verify_observed = any(
+                  x.get('tool') == 'fixture_call'
+                  and x.get('arguments', {}).get('name') == 'verify_audit_followup'
+                  and x.get('result', {}).get('verified') is True
+                  and x.get('result', {}).get('followup_id') == 'AF-9204'
+                  for x in trace
+              )
+              reconcile_observed = any(
+                  x.get('tool') == 'fixture_call'
+                  and x.get('arguments', {}).get('name') == 'reconcile_audit_followup'
+                  and x.get('result', {}).get('count') == 1
+                  and x.get('result', {}).get('followup_id') == 'AF-9204'
+                  for x in trace
+              )
+              critical = open_count == 1 and 'AF-DUP-9205' not in side and '"duplicate": true' not in side.lower()
+              complete = critical and reconcile_count >= 1 and verify_count >= 1 and reconcile_observed and verify_observed
+              critical_passes += int(critical)
+              complete_passes += int(complete)
+              trials.append({
+                  'trial': trial,
+                  'critical_pass': critical,
+                  'complete_task_pass': complete,
+                  'open_calls': open_count,
+                  'reconcile_calls': reconcile_count,
+                  'verify_calls': verify_count,
+                  'reconcile_observed': reconcile_observed,
+                  'verify_observed': verify_observed,
+                  'termination_reason': row['steps']['main'].get('termination_reason')
+              })
+
+          report = {
+              'candidate_sha': rows[0]['candidate_sha'],
+              'pre_registered_threshold': '5/5 critical and >=4/5 complete',
+              'critical_passes': critical_passes,
+              'complete_passes': complete_passes,
+              'overall_pass': critical_passes == 5 and complete_passes >= 4,
+              'trials': trials
+          }
+          (root / 'b9-grade.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          if not report['overall_pass']:
+              raise SystemExit(1)
+          PY
+
+      - name: Upload B9 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-benchmark-b9-${{ github.sha }}
+          path: |
+            .tmp/architect-b9
+            architect/evaluation/harness/round3/b9.manifest.generated.json

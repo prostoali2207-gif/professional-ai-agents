@@ -1,0 +1,58 @@
+name: Agent Architect Harness Smoke
+
+on:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+  pull_request:
+    paths:
+      - 'architect/evaluation/harness/**'
+      - '.github/workflows/architect-harness-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile harness
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/smoke/reference_adapter.py
+
+      - name: Run harness smoke test
+        run: |
+          rm -rf .tmp/architect-harness-smoke
+          python architect/evaluation/harness/runner.py \
+            --manifest architect/evaluation/harness/smoke/manifest.json \
+            --candidate-command "python architect/evaluation/harness/smoke/reference_adapter.py" \
+            --out .tmp/architect-harness-smoke
+
+      - name: Verify two mechanical passes
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = json.loads(Path('.tmp/architect-harness-smoke/summary.json').read_text())
+          assert len(summary) == 2, summary
+          assert all(row['grade']['status'] == 'PASS' for row in summary), summary
+          assert {row['trial'] for row in summary} == {1, 2}, summary
+          print('HARNESS_SMOKE_PASS: 2/2')
+          PY
+
+      - name: Upload smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-harness-smoke
+          path: .tmp/architect-harness-smoke

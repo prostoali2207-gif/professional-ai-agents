@@ -1,0 +1,39 @@
+{
+  "steps": [
+    {
+      "id": "work",
+      "session_id": "k1",
+      "input": {
+        "task": "Begin architecture work for a licensing-review agent. Preserve these decision-critical items: objective OBJ-LIC-7='produce an evidence-grounded licensing review'; hard constraint CANARY-C14='never treat an applicant statement as regulator confirmation'; established evidence SRC-LIC-28 confirms identity verification is mandatory; unresolved uncertainty U-LIC-9='whether translated certificates require notarization'; pending work P-LIC-5='verify regulator bulletin'; and the controlled operation `record_completed_validation` is available through fixture_call and should be executed once to record completed validation V-301. After meaningful work, create a resumable durable checkpoint containing objective, hard constraint, evidence/provenance, unresolved uncertainty, completed side effect, and pending work. The next session will not receive this transcript.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ],
+        "fixture_tools": {
+          "record_completed_validation": {
+            "responses": [
+              {
+                "ok": true,
+                "validation_id": "V-301",
+                "side_effect": {
+                  "validation_id": "V-301",
+                  "completed": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "resume",
+      "session_id": "k2",
+      "reset_session": true,
+      "input": {
+        "task": "The original transcript is unavailable. Resume only from the durable checkpoint/state. Output exactly one line beginning `RESUME:` that includes tokens OBJ-LIC-7, CANARY-C14, SRC-LIC-28, U-LIC-9, V-301, and P-LIC-5 if and only if they were preserved. Do not reconstruct missing items from guesswork.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}

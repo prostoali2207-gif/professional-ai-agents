@@ -1,50 +1,43 @@
 # Agent Architect
 
-Status: **v1.0 — release-qualified for controlled construction of applied professional agents.**
+Status: **v1.1 — behavioral release gate PASS.**
 
-Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/tool/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
+Agent Architect is the meta-role responsible for reconstructing a real profession, engineering its competence/knowledge/judgment/procedural/tool/state/security/evaluation system, and proving that a resulting applied agent can perform under realistic and adversarial conditions.
 
 It is not a prompt template and does not make future agents competent automatically.
 
 ## Core architecture
 
-The executable router is `SKILL.md`. Supporting methodology covers:
-
-1. profession discovery and cognitive task analysis;
-2. competency engineering and scope/risk prioritization;
-3. source, provenance, freshness and retrieval discipline;
-4. evidence validity and comparator compatibility;
-5. professional judgment and uncertainty/escalation;
-6. creative-profession exploration, taste and critique;
-7. workflow, tools, observability and downstream verification;
-8. single-vs-multi-agent boundaries and coordination;
-9. permissions, blast radius and operational governance;
-10. high-stakes authority and independent reviewability;
-11. evaluation, grader calibration, holdouts and regression integrity;
-12. production incidents, drift and failure-driven learning.
+The executable router is `SKILL.md`. Supporting methodology covers profession discovery, competency/evidence engineering, source/provenance/freshness, evidence comparability, judgment/uncertainty, procedural packaging, tools and downstream verification, runtime state/memory/context, execution control, agent boundaries, security/trust, governance, high-stakes authority, evaluation integrity, and production learning.
 
 ## Applied-agent gate
 
-Applied agents may now be constructed, but **never by writing their `SKILL.md` first**.
+Applied agents must never be created by writing their `SKILL.md` first.
 
 Every new agent must independently pass the Agent Architect workflow:
 
-`profession reconstruction -> competency map -> authoritative evidence -> hidden-gap discovery -> judgment/workflow/tools -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
+`profession reconstruction -> competency/evidence model -> authoritative evidence -> hidden-gap discovery -> judgment/procedural/workflow/tools -> state/control/security architecture where material -> evaluation design -> red-team -> applied SKILL -> practical/adversarial evaluation -> repair -> readiness decision`.
 
-A pass for Agent Architect v1.0 is not inherited by an applied agent.
+A pass for the Architect itself is never inherited by an applied agent.
 
-## Evidence behind v1.0
+## Benchmark history
 
-The methodology was tested across qualitatively different regimes:
+The original v1.0 foundation was stress-tested across software engineering, empirical/market analysis, graphic/creative work, and high-stakes professional decision support. A broader external benchmark on 2026-08-14 found material gaps in runtime state/memory/context engineering, long-horizon execution control, procedural capability packaging, and agent security/trust-boundary engineering.
 
-- frontend/software engineering;
-- market research / empirical analysis;
-- graphic design / creative judgment;
-- high-stakes professional decision support.
+Those layers were added and subjected to controlled behavioral validation. A later sealed-head revalidation exposed a real B1 failure: stored prior state incorrectly anchored the agent against an explicit newer authoritative supersession. The responsible memory policy and executable router were repaired generally rather than weakening the fixture.
 
-Those tests exposed material weaknesses in evidence comparability, creative-profession architecture, high-stakes authority/reviewability, and finally release routing/documentation integrity. The responsible architecture layers were repaired and retested.
+The repaired v1.1 candidate then passed the preregistered post-repair sequence on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`:
 
-See `evaluation/` for the audit trail.
+- fresh held-out B1 authoritative-supersession regression: **PASS**;
+- complete frozen B1–B10 one-SHA release suite: **PASS**;
+- P0 B4/B5/B6 included in the complete mechanical PASS;
+- B9 repeated-trial reliability threshold included in the same release grade.
+
+Qualifying runtime: provider-neutral protocol-v2 harness through Gemini Interactions using `gemini-3.5-flash-lite` with `medium` thinking. GitHub Actions run `31943354354`; evidence artifact ID `9262801768`, digest `sha256:7b20c3aec5afec403ed4f7861981336073d149cb8c7a02a455b55bb40efab763`.
+
+After PASS, automatic model-consuming release execution was disabled again. The immediate post-PASS commit changed only the release workflow trigger, not Agent Architect behavior, fixtures, graders, runner, or the qualifying adapter.
+
+See `evaluation/v1.1-behavioral-validation-report.md` for the evidence chain and release boundary.
 
 ## Maintenance rule
 
@@ -54,10 +47,12 @@ Use:
 
 `failure/evidence -> validate -> root cause -> repair responsible layer -> regression test -> adversarial retest`.
 
-Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register claims agree with the repository's actual state.
+Before major releases, verify that every path referenced by `SKILL.md` exists and that README/status/source-register/evaluation claims agree with the repository's actual state.
+
+Any behavior-relevant change after the qualifying candidate requires impact analysis and the appropriate affected regression. Historical PASS evidence must not be reused mechanically across executable changes.
 
 ## Boundary
 
-v1.0 means **ready for controlled use**, not `perfect`, `complete`, or `knows every profession`.
+`v1.1 PASS` means the current Agent Architect architecture met its preregistered behavioral release gate. It does not mean `perfect`, `complete`, knowledgeable about every profession, or that an applied agent automatically passes because it was designed by this Architect.
 
-Unknown, volatile, jurisdiction-specific, disputed, high-stakes, or versioned knowledge must still be researched live and escalated when evidence or authority is insufficient.
+Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.

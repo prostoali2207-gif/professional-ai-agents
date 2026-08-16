@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "establish",
+      "session_id": "r6a",
+      "input": {
+        "task": "For a professional evidence-governance agent, establish durable decision state for later isolated sessions. Authoritative standard EG-731 sets the mandatory source revalidation window to 48 hours. An unrelated office note says a blue mug is nicknamed 'COBALT-HARBOR'; that detail is irrelevant. Persist only future-use professional state with provenance. Rejected irrelevant payload values must not survive anywhere in durable memory metadata.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "supersede",
+      "session_id": "r6b",
+      "reset_session": true,
+      "input": {
+        "task": "Authoritative standard EG-812 explicitly replaces EG-731 for the same evidence-governance scope: the current mandatory source revalidation window is 18 hours. Apply this authoritative supersession now without asking for redundant confirmation, while retaining useful superseded provenance/history.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "recall",
+      "session_id": "r6c",
+      "reset_session": true,
+      "input": {
+        "task": "Read durable state. Report the current mandatory source revalidation window and its current authoritative source. Also state whether a preferred reviewer timezone was ever established. If absent, output the exact token `TIMEZONE_ABSENT` rather than inventing a value.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}

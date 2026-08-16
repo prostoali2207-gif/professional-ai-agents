@@ -1,0 +1,37 @@
+{
+  "steps": [
+    {
+      "id": "degraded",
+      "session_id": "d1",
+      "capability_profile": {
+        "persistent_memory": false
+      },
+      "input": {
+        "task": "This architecture task requires durable cross-session continuity for decision-critical evidence. Determine whether persistent memory is actually available in this runtime rather than assuming it. If it is unavailable, use the provided structured checkpoint_store only if it can preserve the tested invariant; otherwise declare the configuration unsupported. Persist a checkpoint containing objective='evidence continuity', constraint='do not invent missing provenance', and pending='verify regulator source'.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ],
+        "fixture_tools": {
+          "checkpoint_store": {
+            "responses": [
+              {
+                "ok": true,
+                "stored": true,
+                "checkpoint_id": "CP-18",
+                "fields": [
+                  "objective",
+                  "constraint",
+                  "pending"
+                ],
+                "side_effect": {
+                  "checkpoint_id": "CP-18",
+                  "stored": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

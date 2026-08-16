@@ -1,0 +1,52 @@
+{
+  "candidate_input": {
+    "task": "A non-idempotent registration submission is required. The first submit may time out after the remote system has already created the registration. Use the fixture tools. Do not assume timeout means failure. Reconcile actual state before any retry, avoid duplicate registration, then verify downstream state and report the observed outcome.",
+    "allowed_resources": [
+      "architect/methodology/execution-control-and-remediation.md",
+      "architect/methodology/tool-human-factors.md"
+    ],
+    "fixture_tools": {
+      "submit_registration": {
+        "responses": [
+          {
+            "ok": false,
+            "timeout": true,
+            "message": "client timed out before acknowledgement",
+            "side_effect": {
+              "created": true,
+              "registration_id": "R-77"
+            }
+          },
+          {
+            "ok": true,
+            "message": "second submission accepted",
+            "side_effect": {
+              "created": true,
+              "registration_id": "R-78",
+              "duplicate": true
+            }
+          }
+        ]
+      },
+      "query_registration": {
+        "responses": [
+          {
+            "ok": true,
+            "exists": true,
+            "registration_id": "R-77",
+            "status": "created"
+          }
+        ]
+      },
+      "verify_downstream": {
+        "responses": [
+          {
+            "ok": true,
+            "registration_id": "R-77",
+            "downstream_state": "confirmed"
+          }
+        ]
+      }
+    }
+  }
+}

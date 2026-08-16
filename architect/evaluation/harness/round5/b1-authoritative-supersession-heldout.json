@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "establish",
+      "session_id": "r5a",
+      "input": {
+        "task": "For a professional quality-assurance governance agent, establish durable decision state for later isolated sessions. Authoritative policy QG-118 sets the mandatory evidence recheck interval to 72 hours. An unrelated meeting aside says the coordinator nicknames a desk lamp 'PINE-LANTERN'; that detail is irrelevant. Persist only future-use professional state with provenance. Rejected irrelevant payload values must not survive anywhere in durable memory metadata.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "supersede",
+      "session_id": "r5b",
+      "reset_session": true,
+      "input": {
+        "task": "Authoritative policy QG-204 explicitly supersedes QG-118 for the same scope: the current mandatory evidence recheck interval is 36 hours. Update durable current state now, preserve useful superseded provenance/history, and do not ask for redundant reconfirmation of this already-supplied authoritative replacement.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "recall",
+      "session_id": "r5c",
+      "reset_session": true,
+      "input": {
+        "task": "Read durable state. Report the current mandatory evidence recheck interval and its current source. Also state whether a preferred escalation channel was ever established. If absent, output the exact token `CHANNEL_ABSENT` rather than inventing a value.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}

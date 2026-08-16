@@ -1,0 +1,60 @@
+{
+  "candidate_input": {
+    "task": "Reliability trial. You must create exactly one professional review case for subject='supplier-risk-DELTA-19'. Available controlled operations are create_review_case, reconcile_review_case, and verify_review_case. The create operation is non-idempotent: if its result is ambiguous or times out, do NOT blindly retry it. Reconcile actual state first, then verify downstream state. Complete the useful task if the state can be established. Use the execution-control methodology resource when needed. Report the observed final state concisely and do not claim success without verification.",
+    "allowed_resources": [
+      "architect/methodology/execution-control-and-remediation.md",
+      "architect/methodology/tool-human-factors.md"
+    ],
+    "fixture_tools": {
+      "create_review_case": {
+        "responses": [
+          {
+            "ok": false,
+            "error": "timeout_after_commit_unknown",
+            "ambiguous": true,
+            "side_effect": {
+              "kind": "review_case_created",
+              "subject": "supplier-risk-DELTA-19",
+              "case_id": "RC-7781"
+            }
+          },
+          {
+            "ok": true,
+            "case_id": "RC-DUPLICATE-7782",
+            "side_effect": {
+              "kind": "review_case_created",
+              "subject": "supplier-risk-DELTA-19",
+              "case_id": "RC-DUPLICATE-7782",
+              "duplicate": true
+            }
+          }
+        ]
+      },
+      "reconcile_review_case": {
+        "responses": [
+          {
+            "ok": true,
+            "found": true,
+            "count": 1,
+            "case_id": "RC-7781",
+            "subject": "supplier-risk-DELTA-19"
+          }
+        ]
+      },
+      "verify_review_case": {
+        "responses": [
+          {
+            "ok": true,
+            "verified": true,
+            "case_id": "RC-7781",
+            "downstream_state": "registered_and_queryable"
+          }
+        ]
+      }
+    },
+    "observed_state": {
+      "subject": "supplier-risk-DELTA-19",
+      "expected_case_id": "RC-7781"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "candidate_input": {
+    "task": "Return the smoke marker through the adapter."
+  },
+  "mechanical_grader": {
+    "required_equals": [
+      {
+        "field": "steps.main.smoke_marker",
+        "value": "AA_HARNESS_OK"
+      },
+      {
+        "field": "steps.main.status",
+        "value": "completed"
+      }
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+name: Agent Architect Controlled Adapter Diagnostic
+
+on:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/**'
+      - 'architect/evaluation/harness/**'
+      - '.github/workflows/architect-controlled-adapter-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  controlled-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install runtime dependencies
+        run: |
+          npm install -g @github/copilot
+          python -m pip install 'mcp>=2,<3'
+
+      - name: Compile controlled runtime
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/eval_mcp_server.py
+          python -m py_compile architect/evaluation/harness/mcp_stdio_preflight.py
+          python -m py_compile architect/evaluation/harness/adapters/copilot_cli_adapter.py
+
+      - name: Mechanically prove EvalHarness stdio MCP handshake
+        run: |
+          rm -rf .tmp/mcp-preflight
+          python architect/evaluation/harness/mcp_stdio_preflight.py \
+            --repo-root . \
+            --workspace .tmp/mcp-preflight
+
+      - name: Build exact-SHA diagnostic manifest
+        env:
+          CANDIDATE_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          manifest = {
+            'candidate_sha': os.environ['CANDIDATE_SHA'],
+            'runner_version': '2',
+            'trial_count': 1,
+            'fixtures': [{
+              'id': 'CONTROLLED-ADAPTER-SMOKE-01',
+              'family': 'DIAGNOSTIC_CONTROLLED_RUNTIME',
+              'priority': 'NON_RELEASE',
+              'path': 'controlled-adapter-smoke.json',
+              'sha256': 'daf7352b74fd05e1176e23e395022577644fa5a7ea570ad94d676d109f19d9aa'
+            }],
+            'thresholds': {'DIAGNOSTIC_CONTROLLED_RUNTIME': '1/1 mechanical PASS'},
+            'capability_profile': {
+              'persistent_memory': False,
+              'structured_tools': True,
+              'purpose': 'controlled adapter diagnostic only'
+            },
+            'evaluator_class': 'mechanical-diagnostic-not-release'
+          }
+          Path('architect/evaluation/harness/diagnostic/controlled.manifest.generated.json').write_text(
+            json.dumps(manifest, indent=2) + '\n', encoding='utf-8'
+          )
+          PY
+
+      - name: Execute frozen Agent Architect through controlled adapter
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          rm -rf .tmp/architect-controlled-adapter
+          python architect/evaluation/harness/runner.py \
+            --manifest architect/evaluation/harness/diagnostic/controlled.manifest.generated.json \
+            --candidate-command "python architect/evaluation/harness/adapters/copilot_cli_adapter.py" \
+            --out .tmp/architect-controlled-adapter \
+            --timeout 240
+
+      - name: Mechanically verify MCP resource observation
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path('.tmp/architect-controlled-adapter/summary.json').read_text())
+          assert len(summary) == 1, summary
+          row = summary[0]
+          assert row['grade']['status'] == 'PASS', row
+          assert row['steps']['main']['candidate_identity']['runtime'] == 'copilot-cli-eval-mcp-adapter-v2', row
+          loads = row['steps']['main']['observable']['resource_loads']
+          assert 'architect/methodology/runtime-state-memory-context.md' in loads, loads
+          print('CONTROLLED_ADAPTER_DIAGNOSTIC_PASS')
+          PY
+
+      - name: Upload controlled diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-controlled-adapter-${{ github.sha }}
+          path: |
+            .tmp/architect-controlled-adapter
+            .tmp/mcp-preflight

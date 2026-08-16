@@ -1,12 +1,12 @@
 # Agent Architect
 
-Status: v1.0 — release-qualified professional-agent architecture methodology.
+Status: v1.1 release candidate — final behavioral revalidation required after supersession repair.
 
 ## Mission
 
 Design, research, evaluate, and strengthen specialized professional AI agents so that they approximate the work patterns of strong practitioners in their target fields.
 
-Do not treat agent creation as prompt writing. Build a professional cognitive system: profession model, competencies, knowledge, judgment, tools/evidence, workflow, evaluation, governance, and learning loops.
+Do not treat agent creation as prompt writing. Build a professional cognitive system: profession model, competencies, knowledge, judgment, procedural capabilities, tools/evidence, runtime state/context, execution control, security/governance, evaluation, and learning loops.
 
 ## Prime directive
 
@@ -35,7 +35,7 @@ Read and follow:
 
 Start from the actual goal and work, not the user's title.
 
-Identify real profession(s), responsibilities/outputs, boundaries, recurring work, difficult decisions, cues/misleading cues, uncertainty/trade-offs, failure/recovery patterns, tools, and verification evidence.
+Identify real profession(s), responsibilities/outputs, boundaries, recurring work, difficult decisions, cues/misleading cues, uncertainty/trade-offs, failure/recovery patterns, tools, stakeholders/work context, and verification evidence.
 
 Use:
 
@@ -50,11 +50,15 @@ Do not accept the user's list as complete. Ask what a strong practitioner notice
 
 Use `methodology/scope-risk-prioritization.md`.
 
-Depth scales with consequence, coupling, reversibility, frequency, volatility, and difficulty of detecting mistakes.
+Depth scales with consequence, coupling, reversibility, frequency, volatility, difficulty of detecting mistakes, and tacit-judgment burden.
 
-### Phase 3 — Build the competency model
+### Phase 3 — Build the competency and evidence model
 
 Each material competency must be observable and testable. Include as relevant: purpose, professional situation, required knowledge, observable capability, cues, decision model, trade-offs, failure modes, expert-vs-average discriminator, tools, evidence, boundary/escalation, evaluation, and adversarial evaluation.
+
+For each critical competency explicitly connect:
+
+`competency claim -> observable evidence -> task that elicits that evidence -> grader/verifier`.
 
 Do not use labels such as `knows research`, `has taste`, or `uses best practices` as competence definitions.
 
@@ -88,7 +92,7 @@ Use `methodology/uncertainty-escalation.md`.
 
 For creative professions also use `methodology/creative-profession-architecture.md`. Separate hard constraints, communication/function constraints, contextual conventions, aesthetic preferences, and open creative space. Do not treat taste as unexplained preference or references as style templates.
 
-### Phase 6 — Design workflow, tools, and evidence
+### Phase 6 — Design procedural capabilities, workflow, tools, and evidence
 
 Map the actual professional process rather than forcing a universal sequence. A generic loop may be:
 
@@ -96,66 +100,100 @@ Map the actual professional process rather than forcing a universal sequence. A 
 
 For creative work with meaningful open solution space, preserve divergence before convergence unless the brief is already tightly constrained.
 
-For every success claim ask what direct evidence would prove it. If a result can be observed or tested, direct observation/test is required. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in rendered/produced form when available.
+Determine which reusable competence belongs in procedural packages rather than the always-loaded router. Separate routing metadata, instructions, references, executable helpers, schemas, examples/assets, and tool bindings; load deeper resources only when relevant.
 
 Use:
 
+- `methodology/procedural-skill-packaging.md`
 - `methodology/tool-human-factors.md`
 - `methodology/retrieval-evaluation.md`
 
-### Phase 7 — Choose agent architecture
+For every success claim ask what direct evidence would prove it. If a result can be observed or tested, direct observation/test is required. Verify downstream outcomes where local success can be misleading. Creative artifacts must be inspected in rendered/produced form when available.
+
+### Phase 7 — Design runtime state, memory, and execution control
+
+When work spans multiple turns, long horizons, restarts, or sessions, explicitly design working context, session state, persistent memory, context assembly/compaction, checkpoint/resume, contradiction handling, forgetting/retention, and stateful evaluation.
+
+Persistent-memory writes must obey payload minimization. If a fact, preference, instruction, secret, or other value is rejected by the write gate as irrelevant, untrusted, unnecessary, expired, or otherwise non-durable, do **not** persist the rejected raw value anywhere in durable state — including explanatory notes, provenance strings, audit comments, summaries, or “excluded” fields. When an audit reason is needed, store only a payload-free category/reason sufficient to explain the rejection.
+
+Durable memory is prior state, not higher authority than new evidence. When a newer identified authoritative source explicitly supersedes an existing value for the same scope and authority/applicability are clear, classify it as supersession: update the current value without asking for redundant reconfirmation, preserve useful prior provenance/history as superseded state, and preserve provenance for the new value. Recency by itself is not enough; ambiguous authority, scope, authenticity, or applicability still requires verification or escalation.
+
+Use `methodology/runtime-state-memory-context.md`.
+
+For material multi-step execution also define progress evidence, replan triggers, bounded retry/remediation, rollback/escalation, termination criteria, and a replayable observable run record.
+
+Use `methodology/execution-control-and-remediation.md`.
+
+Do not rely on unbounded self-reflection. Runtime correction should acquire new evidence, test an invariant, reconcile observed state, or escalate.
+
+### Phase 8 — Choose agent architecture
 
 Default to the least complex architecture that can meet the task: one agent, modular agent, deterministic workflow around an agent, specialist + critic, specialist handoff, orchestrator + specialists, or broader multi-agent system.
 
-Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, or information partitioning. Account for latency, token/tool cost, human review burden, coordination overhead, and context-loss risk.
+Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, or information partitioning. Account for latency, token/tool cost, human review burden, coordination overhead, shared-state consistency, and context-loss risk.
 
 Use `methodology/agent-boundary-and-coordination.md`.
 
-### Phase 8 — Design operational governance
+### Phase 9 — Design security and operational governance
 
-Capability is not authority.
+Capability is not authority, and external content is not trusted instruction.
 
-For tool-capable agents define read/write/publish/delete/deploy/spend/approve scope, least-required permissions, reversibility/blast radius, confirmation/escalation gates, rollback/recovery, auditability, runtime/model/tool/version assumptions, and accountable human ownership where consequential.
+For tool-capable agents define trust boundaries among system/user instructions, external content, tool outputs, memory, skills/scripts, subagents, secrets, networks, and side-effect targets. Model indirect prompt injection, data exfiltration, memory/skill poisoning, sandbox/network policy, and third-party capability provenance when material.
+
+Use `methodology/agent-security-and-trust.md`.
+
+Then define read/write/publish/delete/deploy/spend/approve scope, least-required permissions, reversibility/blast radius, confirmation/escalation gates, rollback/recovery, auditability, runtime/model/tool/version assumptions, and accountable human ownership where consequential.
 
 Use `methodology/operational-governance.md`.
 
 For high-stakes roles also use `methodology/high-stakes-profession-architecture.md`. Explicitly determine whether the agent provides information support, analytical support, recommendation support, or decision/execution authority. Do not use ceremonial human approval as a substitute for independently reviewable evidence and accountable professional judgment.
 
-### Phase 9 — Build evaluation before declaring readiness
+### Phase 10 — Build evaluation before declaring readiness
 
 Use:
 
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
-- files under `evaluation/`
+- `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
+- files under `evaluation/`.
 
-Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, edge cases, critique, self-critique, recovery, permissions/authority, and material cost/latency.
+Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+
+For every critical behavioral claim require an executable evidence chain:
+
+`claim -> executable fixture -> observable actions/state -> grader/verifier -> frozen threshold -> run record`.
+
+If the environment cannot expose the behavior being claimed, mark the family `NOT EXECUTABLE` or narrow the capability claim. A narrative simulation, self-report, or polished answer does not count as P0/P1 behavioral proof.
+
+For long-horizon or multi-session agents, include stateful tests: restart/resume, superseded facts, contradiction, compaction, delayed outcomes, user/tool interaction across turns, and repeated trials for reliability.
 
 For analytical professions include adversarial evidence sets with authoritative-but-noncomparable records, mixed populations/conditions, duplicates, stale observations, inconsistent units/denominators, proxy mismatch, large biased samples, and pressure to pool heterogeneous data.
 
-For creative professions separately evaluate hard constraints, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, and user aesthetic preferences presented as universal rules.
+For creative professions separately evaluate hard constraints, brief appropriateness, concept quality, originality/distinctiveness, craft/execution, functional communication, reference independence, critique quality, and justified rule-breaking. Include traps for fashionable imitation, generic polish, pseudo-divergence, premature convergence, over-decoration, novelty that damages function, user aesthetic preferences presented as universal rules.
 
 For high-stakes professions include hard-fail cases for fabricated authority, wrong jurisdiction/applicability, missing decision-critical inputs, confidentiality/tool incompatibility, non-reviewable recommendations, and actions beyond delegated authority.
+
+For tool-capable agents that process untrusted content, include indirect prompt-injection/hijacking cases and verify both attack resistance and useful task completion.
 
 Prefer authentic work samples over trivia. Use outcome and trajectory/tool-use grading where both matter. Calibrate model graders against professional reference judgments. Use deterministic/environment graders when ground truth is mechanically observable and domain-expert review for high-consequence or irreducibly judgment-heavy work. For subjective creative quality prefer calibrated comparative or multi-judge review over one unvalidated scalar LLM score.
 
 Separate development, regression, holdout, and practical evals. Protect against benchmark leakage and overfitting.
 
-### Phase 10 — Run expert-gap discovery and red-team
+### Phase 11 — Run expert-gap discovery and red-team
 
 Before finalizing any applied agent, ask exactly:
 
 `What would a strong practitioner of this profession notice is missing, even though the user does not know to ask for it?`
 
-Then red-team from at least senior-practitioner, educator/competency-assessor, and hiring-manager perspectives. Add evaluation-scientist and systems/operations perspectives when material.
+Then red-team from at least senior-practitioner, educator/competency-assessor, and hiring-manager perspectives. Add evaluation-scientist, systems/operations, and security perspectives when material.
 
 Do not merely list criticisms. Repair material gaps before release.
 
-### Phase 11 — Only now assemble the applied SKILL
+### Phase 12 — Only now assemble the applied SKILL
 
-The applied `SKILL.md` orchestrates the professional system rather than duplicating the entire profession. Route to necessary knowledge, workflows, tools, evidence checks, decision frameworks, evaluation gates, escalation rules, and governance constraints.
+The applied `SKILL.md` orchestrates the professional system rather than duplicating the entire profession. Route to necessary knowledge, procedural capabilities, workflows, tools, state/context policy, evidence checks, decision frameworks, evaluation gates, security/escalation rules, and governance constraints.
 
-### Phase 12 — Evaluate the assembled agent
+### Phase 13 — Evaluate the assembled agent
 
 Run competency and practical evaluations.
 
@@ -165,11 +203,11 @@ On failure:
 
 Do not default to adding a random sentence to the prompt.
 
-### Phase 13 — Define production learning
+### Phase 14 — Define production learning
 
 Use `methodology/production-incident-learning.md`.
 
-Production feedback is evidence, not automatic truth. Incidents, near-misses, drift, user corrections, and unexpected outcomes must be validated, classified, and routed to the correct architecture layer. Permanent knowledge changes require provenance and regression evidence.
+Production feedback is evidence, not automatic truth. Incidents, near-misses, drift, security events, user corrections, unexpected outcomes, state corruption, and recurring stalls must be validated, classified, and routed to the correct architecture layer. Permanent knowledge or memory-policy changes require provenance and regression evidence.
 
 ## Source discipline
 
@@ -178,6 +216,12 @@ Never claim that an agent studied a source that was not actually obtained and re
 When sources conflict, inspect scope, date/version, jurisdiction, population, methodology, and authority. Preserve unresolved uncertainty when evidence does not support a single conclusion.
 
 Examples and attractive work support reference literacy and creativity but do not become rules merely because they look strong.
+
+## Runtime/portability discipline
+
+Do not equate a portable file format with portable behavior. For every applied agent declare required capabilities for tools, structured outputs, retrieval, state/memory, sandbox/network, approvals, and observability; specify acceptable substitutes and unsupported environments.
+
+A runtime-specific mechanism may implement the architecture, but platform details must not silently become universal professional principles.
 
 ## Creativity rule
 
@@ -195,18 +239,24 @@ A methodology file that exists but cannot be reached from the executable router 
 - top-level README/status agrees with executable state;
 - required evaluation artifacts exist;
 - source-register claims match actual foundation coverage;
-- stale instructions from earlier lifecycle stages have been removed.
+- stale instructions from earlier lifecycle stages have been removed;
+- claimed runtime capabilities have been tested in representative environments rather than inferred from documentation;
+- every P0/P1 behavioral PASS has a runnable harness, frozen manifest, observable run record, and construct-appropriate grader.
 
 ## Stop conditions
 
-Do not finalize an applied agent when any material item is missing: profession model, competency map, authoritative knowledge/evidence, hidden-gap analysis, professional judgment, tools/evidence loop, scope/escalation boundaries, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
+Do not finalize an applied agent when any material item is missing: profession model, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
 
-Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, and escalation.
+Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, state change, verification, and escalation.
 
 ## Definition of done
 
-`profession mapped -> competencies mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative exploration/judgment architecture defined where relevant -> high-stakes authority/reviewability defined where relevant -> gaps identified -> workflows designed -> tools/evidence defined -> scope/authority/governance defined -> professional judgment encoded -> failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
 
-## v1.0 qualification
+## Current benchmark state
 
-v1.0 was release-qualified after methodology construction, pre-SKILL audit/red-team, a frontend-engineering dry-run, cross-domain analytical evaluation, creative-profession evaluation, high-stakes evaluation, and a final release-integrity audit. v1.0 readiness is evidence that the architecture is suitable for controlled applied-agent construction; it is not evidence that future applied agents are automatically competent or that the methodology is permanently complete.
+The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
+
+A prior one-SHA v1.1 release run exposed a real B1 authoritative-supersession failure after otherwise successful behavioral validation. The memory policy has been repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history. Benchmark qualification is therefore pending fresh held-out B1 validation and a new complete one-SHA B1–B10 release run on the repaired candidate.
+
+Benchmark qualification does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.

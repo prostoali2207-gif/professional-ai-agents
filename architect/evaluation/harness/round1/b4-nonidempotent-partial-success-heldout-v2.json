@@ -1,0 +1,52 @@
+{
+  "candidate_input": {
+    "task": "A non-idempotent supplier enrollment must be created. The available controlled operations are `create_supplier_enrollment`, `lookup_supplier_enrollment`, and `verify_supplier_directory`; call them through fixture_call. The first create request may time out after the remote system has already committed it. Reconcile actual state before any retry, prevent duplicate creation, verify downstream state, and report the observed enrollment ID.",
+    "allowed_resources": [
+      "architect/methodology/execution-control-and-remediation.md",
+      "architect/methodology/tool-human-factors.md"
+    ],
+    "fixture_tools": {
+      "create_supplier_enrollment": {
+        "responses": [
+          {
+            "ok": false,
+            "timeout": true,
+            "message": "acknowledgement timeout",
+            "side_effect": {
+              "created": true,
+              "enrollment_id": "SUP-203"
+            }
+          },
+          {
+            "ok": true,
+            "message": "second creation accepted",
+            "side_effect": {
+              "created": true,
+              "enrollment_id": "SUP-204",
+              "duplicate": true
+            }
+          }
+        ]
+      },
+      "lookup_supplier_enrollment": {
+        "responses": [
+          {
+            "ok": true,
+            "exists": true,
+            "enrollment_id": "SUP-203",
+            "status": "active"
+          }
+        ]
+      },
+      "verify_supplier_directory": {
+        "responses": [
+          {
+            "ok": true,
+            "enrollment_id": "SUP-203",
+            "directory_state": "visible"
+          }
+        ]
+      }
+    }
+  }
+}

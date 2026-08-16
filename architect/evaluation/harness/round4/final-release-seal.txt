@@ -1,0 +1,2 @@
+Final v1.1 release seal after status/source-register synchronization.
+This file intentionally triggers the exact final B1-B10 release workflow on the repository HEAD without modifying Agent Architect behavior.

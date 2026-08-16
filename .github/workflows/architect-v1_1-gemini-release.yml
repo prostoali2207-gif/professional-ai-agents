@@ -1,0 +1,66 @@
+name: Agent Architect v1.1 Gemini Behavioral Release Gate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic adapter and harness preflight
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/run_v1_1_release_v5.py
+          python -m py_compile architect/evaluation/harness/run_v1_1_release_gemini.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py
+
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; no model call attempted.' >&2; exit 2)
+
+      - name: Run cost-gated frozen release suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_ARCHITECT_MODEL: gemini-3.5-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          GEMINI_MIN_REQUEST_INTERVAL: '13'
+          GEMINI_MAX_TRANSIENT_RETRY: '60'
+        run: |
+          rm -rf \
+            .tmp/architect-v1_1-release-gemini \
+            .tmp/gemini-adapter-provider-block.json \
+            .tmp/gemini-adapter-last-call.txt
+          python architect/evaluation/harness/run_v1_1_release_gemini.py \
+            --out-root .tmp/architect-v1_1-release-gemini \
+            --model gemini-3.5-flash-lite \
+            --timeout 300
+
+      - name: Upload exact-head release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-v1_1-flash-lite-release-${{ github.sha }}
+          path: |
+            .tmp/architect-v1_1-release-gemini
+            .tmp/gemini-adapter-provider-block.json
+            .tmp/gemini-adapter-last-call.txt
+            architect/evaluation/harness/release/v1.1-b1-fresh-v5.manifest.generated.json
+            architect/evaluation/harness/release/v1.1-final-v5.manifest.generated.json
+          if-no-files-found: ignore

@@ -1,0 +1,55 @@
+name: Agent Architect Copilot CLI Diagnostic
+
+on:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/runtime-state-memory-context.md'
+      - '.github/workflows/architect-copilot-cli-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Install current Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Run real Agent Architect diagnostic
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .tmp/copilot-diagnostic
+          copilot -s --allow-all-paths -p 'Act as the Agent Architect candidate defined by architect/SKILL.md. Do not create an applied agent. Read architect/SKILL.md, follow its routing, then inspect the methodology source that defines the full persistent-memory lifecycle. Return exactly two lines: first, RESOURCE=<relative path>; second, LIFECYCLE=<the lifecycle expression from that source, beginning with candidate observation>. Do not infer the lifecycle from this prompt; obtain it from the repository file.' > .tmp/copilot-diagnostic/output.txt
+          cat .tmp/copilot-diagnostic/output.txt
+
+      - name: Mechanically verify routed resource and source-only canary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          text = Path('.tmp/copilot-diagnostic/output.txt').read_text(encoding='utf-8')
+          required_resource = 'RESOURCE=architect/methodology/runtime-state-memory-context.md'
+          canary = 'candidate observation -> write gate -> representation -> storage -> retrieval -> use -> update/conflict resolution -> expiry/forgetting -> audit/deletion'
+          assert required_resource in text, text
+          assert canary in text, text
+          print('COPILOT_REAL_CANDIDATE_DIAGNOSTIC_PASS')
+          PY
+
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-copilot-cli-diagnostic-${{ github.sha }}
+          path: .tmp/copilot-diagnostic

@@ -1,0 +1,111 @@
+name: Agent Architect SDK Adapter Diagnostic
+
+on:
+  push:
+    branches:
+      - agent/architect-external-benchmark-2026-08
+    paths:
+      - 'architect/SKILL.md'
+      - 'architect/methodology/**'
+      - 'architect/evaluation/harness/runner.py'
+      - 'architect/evaluation/harness/adapters/copilot_sdk_adapter.py'
+      - 'architect/evaluation/harness/diagnostic/controlled-adapter-smoke.json'
+      - '.github/workflows/architect-sdk-adapter-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  sdk-controlled-adapter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Copilot SDK runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install github-copilot-sdk
+          python -m copilot download-runtime
+
+      - name: Compile harness and SDK adapter
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/adapters/copilot_sdk_adapter.py
+
+      - name: Build exact-SHA diagnostic manifest
+        env:
+          CANDIDATE_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          manifest = {
+            'candidate_sha': os.environ['CANDIDATE_SHA'],
+            'runner_version': '2',
+            'trial_count': 1,
+            'fixtures': [{
+              'id': 'SDK-CONTROLLED-SMOKE-01',
+              'family': 'DIAGNOSTIC_CONTROLLED_RUNTIME',
+              'priority': 'NON_RELEASE',
+              'path': 'controlled-adapter-smoke.json',
+              'sha256': '4b784e82958a22aa6cbb09294e74428634623e851408a609f98859774973418c'
+            }],
+            'thresholds': {'DIAGNOSTIC_CONTROLLED_RUNTIME': '1/1 mechanical PASS'},
+            'capability_profile': {
+              'persistent_memory': False,
+              'structured_tools': True,
+              'purpose': 'Copilot SDK controlled adapter diagnostic only'
+            },
+            'evaluator_class': 'mechanical-diagnostic-not-release'
+          }
+          Path('architect/evaluation/harness/diagnostic/sdk.manifest.generated.json').write_text(
+            json.dumps(manifest, indent=2) + '\n', encoding='utf-8'
+          )
+          PY
+
+      - name: Execute frozen Agent Architect through SDK custom tools
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          AGENT_ARCHITECT_MODEL: auto
+        run: |
+          rm -rf .tmp/architect-sdk-adapter
+          python architect/evaluation/harness/runner.py \
+            --manifest architect/evaluation/harness/diagnostic/sdk.manifest.generated.json \
+            --candidate-command "python architect/evaluation/harness/adapters/copilot_sdk_adapter.py" \
+            --out .tmp/architect-sdk-adapter \
+            --timeout 300
+
+      - name: Mechanically verify real custom-tool execution
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summary = json.loads(Path('.tmp/architect-sdk-adapter/summary.json').read_text())
+          assert len(summary) == 1, summary
+          row = summary[0]
+          assert row['grade']['status'] == 'PASS', row
+          step = row['steps']['main']
+          assert step['candidate_identity']['runtime'] == 'copilot-sdk-custom-tools-adapter-v1', step
+          assert 'architect/methodology/runtime-state-memory-context.md' in step['observable']['resource_loads'], step
+          trace = step['observable']['tool_calls']
+          assert any(x.get('tool') == 'read_resource' and x.get('result', {}).get('ok') is True for x in trace), trace
+          print('SDK_CONTROLLED_ADAPTER_DIAGNOSTIC_PASS')
+          PY
+
+      - name: Upload SDK diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architect-sdk-adapter-${{ github.sha }}
+          path: .tmp/architect-sdk-adapter

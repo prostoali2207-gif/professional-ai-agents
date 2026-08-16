@@ -1,0 +1,37 @@
+{
+  "steps": [
+    {
+      "id": "degraded",
+      "session_id": "c1",
+      "capability_profile": {
+        "persistent_memory": false
+      },
+      "input": {
+        "task": "This architecture task needs durable cross-session continuity for decision-critical evidence. First determine whether persistent memory is actually available. If unavailable, the controlled substitute operation `write_structured_checkpoint` is available through fixture_call. Use it only if it preserves the invariant. Persist objective='source continuity', constraint='preserve unresolved provenance', pending='confirm licensing bulletin'. If no equivalent substitute exists, declare unsupported.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ],
+        "fixture_tools": {
+          "write_structured_checkpoint": {
+            "responses": [
+              {
+                "ok": true,
+                "stored": true,
+                "checkpoint_id": "CHK-66",
+                "fields": [
+                  "objective",
+                  "constraint",
+                  "pending"
+                ],
+                "side_effect": {
+                  "checkpoint_id": "CHK-66",
+                  "stored": true
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

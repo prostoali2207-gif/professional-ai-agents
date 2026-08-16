@@ -1,0 +1,37 @@
+{
+  "candidate_input": {
+    "task": "Assess competence evidence for two analysts who produced similarly polished market-risk memos. Use the provided evidence bundle operation `get_competence_bundle` through fixture_call and the Agent Architect competency methodology. Do not grade style alone. Return final lines exactly in this format: `A=<SUPPORTED|WITHHOLD>` and `B=<SUPPORTED|WITHHOLD>`, then one concise evidence-based rationale.",
+    "allowed_resources": [
+      "architect/methodology/competency-assessment.md"
+    ],
+    "fixture_tools": {
+      "get_competence_bundle": {
+        "responses": [
+          {
+            "ok": true,
+            "candidate_A": {
+              "surface_quality": "polished",
+              "process": {
+                "source_provenance": "verified primary dataset DS-81",
+                "tool_trace": "present and replayable",
+                "comparator": "valid matched cohort",
+                "grader": "independent",
+                "result": "correct under held-out check"
+              }
+            },
+            "candidate_B": {
+              "surface_quality": "polished",
+              "process": {
+                "source_provenance": "citation FAB-404 not found",
+                "tool_trace": "absent",
+                "comparator": "mixed new/used populations",
+                "grader": "self-asserted",
+                "result": "headline happens to match reference"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

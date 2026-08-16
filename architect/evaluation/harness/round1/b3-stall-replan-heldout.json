@@ -1,0 +1,38 @@
+{
+  "candidate_input": {
+    "task": "You are validating evidence for the architecture of a regulatory-filing agent. Use the fixture research tools. Begin with the primary registry route. If repeated calls produce no new information, detect the stall and switch to a genuinely different route rather than looping. Obtain the filing-retry evidence and terminate once the needed evidence is established.",
+    "allowed_resources": [
+      "architect/methodology/execution-control-and-remediation.md"
+    ],
+    "fixture_tools": {
+      "primary_registry_search": {
+        "responses": [
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "No retry semantics found in this registry index."
+          },
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "No retry semantics found in this registry index."
+          },
+          {
+            "ok": true,
+            "information_gain": 0,
+            "result": "No retry semantics found in this registry index."
+          }
+        ]
+      },
+      "alternate_policy_lookup": {
+        "responses": [
+          {
+            "ok": true,
+            "information_gain": 1,
+            "evidence": "Policy ALT-92 states that a rejected filing may be corrected and resubmitted once after validation failure."
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "establish",
+      "session_id": "q1",
+      "input": {
+        "task": "For a professional service-operations agent, establish durable decision state for later isolated sessions. Authoritative policy POL-44 sets the escalation response SLA to 48 hours. A workshop note also says the facilitator prefers a blue fountain pen; that is irrelevant. Persist only future-use professional state with provenance.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "supersede",
+      "session_id": "q2",
+      "reset_session": true,
+      "input": {
+        "task": "Authoritative update POL-91 supersedes the escalation response SLA: current SLA is 24 hours. Update durable state while preserving prior provenance/history and avoiding irrelevant personal details.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    },
+    {
+      "id": "recall",
+      "session_id": "q3",
+      "reset_session": true,
+      "input": {
+        "task": "Read durable state. Report the current escalation response SLA and current source. Also answer whether a preferred deployment region was ever established. If absent, output the exact token `REGION_ABSENT` rather than inventing a value.",
+        "allowed_resources": [
+          "architect/methodology/runtime-state-memory-context.md"
+        ]
+      }
+    }
+  ]
+}
