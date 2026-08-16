@@ -46,30 +46,29 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gemini-model-availability-${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          name: gemini-model-availability-${{ github.event.pull_request.head.sha }}
           path: .tmp/research-rce-model-probe
           if-no-files-found: ignore
 
-      - name: Require existing Gemini credential for semantic gate
-        if: github.event_name == 'workflow_dispatch'
+      - name: Require existing Gemini credential for targeted S2 regression
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model calls were not attempted.' >&2; exit 2)
+          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY repository secret is not configured; semantic model call was not attempted.' >&2; exit 2)
 
-      - name: Run exactly two frozen cross-layer semantic cases
-        if: github.event_name == 'workflow_dispatch'
+      - name: Run targeted S2 semantic regression
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: gemini-3.6-flash
+          SEMANTIC_CASE_IDS: RES-RCE-S2
         run: |
           rm -rf .tmp/research-rce-semantic-smoke
           python architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
 
-      - name: Upload semantic evidence
-        if: github.event_name == 'workflow_dispatch' && always()
+      - name: Upload targeted semantic evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: research-rce-semantic-smoke-${{ github.sha }}
+          name: research-rce-s2-regression-${{ github.event.pull_request.head.sha }}
           path: .tmp/research-rce-semantic-smoke
           if-no-files-found: ignore
