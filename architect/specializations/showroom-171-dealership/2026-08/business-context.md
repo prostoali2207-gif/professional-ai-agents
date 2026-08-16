@@ -86,7 +86,7 @@ Current project context does not establish stable values for:
 - after-hours ownership;
 - language coverage by sales staff.
 
-Do not scale lead volume beyond observed handling capacity. Before a material increase, verify response time, ownership, backlog, appointment capacity and actual lead follow-up quality.
+Do not scale lead volume beyond observed handling capacity. Before a material increase, verify response time, ownership, backlog, appointment capacity and actual lead follow-up quality. **Before any `SCALE` decision expected to increase lead volume, explicitly confirm that current sales/appointment handling capacity is adequate; do not treat capacity as implicitly satisfied merely because economics are attractive.**
 
 ## DEALER-06 Geography and language remain hypotheses until internal evidence
 
