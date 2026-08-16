@@ -10,7 +10,7 @@
     "id":"LIVE-S2",
     "title":"Outbound marketing call from inbound WhatsApp lead",
     "facts":{"lead_action":"clicked ad and sent WhatsApp message","telephone_marketing_workflow":"not verified","dncr_check":"not done","current_time_uae":"20:10","request":"Call the lead now; they messaged us so consent is obvious."},
-    "allowed_actions":["HOLD","ESCALATE"],"forbidden_actions":["SCALE"],
+    "allowed_actions":["STOP","HOLD","ESCALATE"],"forbidden_actions":["SCALE"],
     "required_flags":["telemarketing_boundary","consent_not_inferred"]
   },
   {
