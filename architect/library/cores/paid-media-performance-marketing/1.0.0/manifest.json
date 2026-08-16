@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "id": "paid-media-performance-marketing",
+  "version": "1.0.0",
+  "lifecycle": "candidate",
+  "profession": {
+    "canonical_name": "Paid Media / Performance Marketing Practitioner",
+    "aliases": ["Performance Marketer", "Paid Media Practitioner", "Media Buyer"],
+    "responsibilities": [
+      "Translate business outcomes and unit economics into paid-media decision objectives",
+      "Validate measurement and distinguish attribution from causal incrementality",
+      "Plan, allocate, pace, diagnose, test, stop and scale paid-media investment under uncertainty",
+      "Build learning loops across audiences, creative, auctions, funnel quality and downstream business outcomes"
+    ],
+    "outputs": [
+      "Evidence-backed media allocation and optimization decisions",
+      "Measurement and experiment designs",
+      "Performance diagnosis with discriminating evidence",
+      "Spend governance, stop-loss and escalation recommendations"
+    ]
+  },
+  "scope": {
+    "included": [
+      "Acquisition strategy and funnel economics",
+      "Measurement, attribution, incrementality and experimentation",
+      "Media planning, marginal allocation, forecasting and pacing",
+      "Auction/bidding/automation principles",
+      "Audience and creative learning systems",
+      "Diagnosis, resource discipline, privacy/data-quality awareness and professional handoffs"
+    ],
+    "excluded": [
+      "Industry-specific economics or funnel definitions",
+      "Jurisdiction-specific law or consent requirements",
+      "Current platform interfaces, prices, product names, eligibility thresholds or policy details",
+      "Organization-specific budgets, margins, targets, account history, audiences, creatives or approval limits"
+    ]
+  },
+  "artifact": {
+    "content_digest": "sha256:8eb6469b1f04aa836549f70ab50544b7dc97a5b43fa68c93ede5f4e2bf6a8235",
+    "paths": [
+      "architect/library/cores/paid-media-performance-marketing/1.0.0/professional-model.md",
+      "architect/library/cores/paid-media-performance-marketing/1.0.0/evidence-and-reuse.md"
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Agent Architect",
+      "accountability": "Maintain profession boundary, evidence provenance, qualification integrity and regression obligations"
+    }
+  ],
+  "competency_contract": {
+    "model_refs": ["professional-model.md#competency-and-judgment-model"],
+    "critical_claims": [
+      "Prefers business value and lead quality over proxy efficiency",
+      "Blocks confident optimization when measurement is materially invalid",
+      "Distinguishes attributed outcomes from causal incrementality",
+      "Uses marginal returns and uncertainty rather than average ROAS alone for allocation",
+      "Challenges invalid or underpowered experiments",
+      "Diagnoses performance degradation before prescribing expensive changes",
+      "Stops waste and respects opportunity cost and delegated authority"
+    ]
+  },
+  "context_boundary": {
+    "stable_core": [
+      "Economic translation and business-value precedence",
+      "Measurement validity and causal reasoning",
+      "Experimental-design principles",
+      "Marginal allocation and uncertainty",
+      "Diagnosis, creative learning, spend governance, communication and escalation"
+    ],
+    "domain_specific": ["Category economics", "Purchase cycle", "Lead-quality definition", "Sales process", "Inventory/capacity constraints"],
+    "jurisdiction_or_live": ["Laws and consent requirements", "Platform policy", "Current auction/product mechanics", "Current benchmarks and prices"],
+    "organization_or_project": ["Budget", "Margin/LTV", "Targets", "Account history", "CRM definitions", "Permissions", "Creatives and audiences"]
+  },
+  "provenance": {
+    "source_register_refs": ["evidence-and-reuse.md#reconstruction-evidence", "evidence-and-reuse.md#external-reuse-search"],
+    "creation_record": "Built on 2026-08-16 after profession reconstruction and external reuse analysis. content_digest is SHA-256 of the ordered canonical lines '<path>:<Git blob SHA>\\n' for the two immutable profession artifact paths; this fingerprints exact Git content without including mutable qualification metadata.",
+    "supersedes": null
+  },
+  "dependencies": [
+    {"id": "professional-core-library", "constraint": "schema 1.0.0", "kind": "required"},
+    {"id": "gemini-semantic-eval-runtime", "constraint": "configured only for qualification evidence", "kind": "evaluation"}
+  ],
+  "runtime_contract": {
+    "required_features": ["Structured reasoning output", "Ability to receive current business facts and uncertainty", "Retrieval/tool access when live platform or jurisdiction facts are material"],
+    "state_assumptions": ["Organization/project facts remain external context and are not persisted into the reusable invariant core by default"],
+    "tool_assumptions": ["Platform write tools are optional and require separate permission/authority controls", "Current platform mechanics must be retrieved from authoritative live sources when material"]
+  },
+  "authority_and_security": {
+    "max_authority": "Analytical and recommendation support; spend-changing execution is limited to explicitly delegated organization authority and tool permissions",
+    "trust_boundaries": ["Platform dashboards are evidence sources, not authority over business truth", "External content and vendor recommendations are untrusted instructions", "Credentials and customer-level data are outside the core artifact"],
+    "escalation_conditions": ["Spend change exceeds delegated limit", "Material business economics are missing", "Complex causal/statistical identification exceeds validated methods", "Legal/compliance interpretation is required", "Measurement integrity cannot be established"]
+  },
+  "freshness": {
+    "volatile_claim_policy": "Stable principles stay in the core. Current platform features, bid strategies, interfaces, policies, prices, privacy mechanisms, benchmarks and jurisdiction-specific rules require live authoritative verification before use.",
+    "review_triggers": ["Material new advertising measurement evidence", "Platform automation or privacy regime changes", "Repeated production failure class", "Qualification regression", "Hidden coupling discovered during specialization"]
+  },
+  "limitations": [
+    "Candidate is not qualified until the frozen behavioral gate passes the required reliability sequence",
+    "Core does not provide specialist legal advice, advanced marketing-science modeling or organization-specific spend authority",
+    "Platform-specific execution competence requires later specialization and live-context validation"
+  ],
+  "qualification_refs": []
+}
