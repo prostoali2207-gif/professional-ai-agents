@@ -1,9 +1,6 @@
 name: Paid Media Professional Core Gate
 
 on:
-  push:
-    branches:
-      - agent/paid-media-performance-marketing-core
   workflow_dispatch:
 
 permissions:
@@ -53,6 +50,7 @@ jobs:
           PAID_MEDIA_MODEL: gemini-3.1-flash-lite
           GEMINI_THINKING_LEVEL: medium
           PM_TRIALS: '1'
+          PM_BATCH_SIZE: '5'
         run: |
           rm -rf .tmp/paid-media-performance-marketing
           python architect/evaluation/paid_media_performance_marketing/run_semantic_gate.py
