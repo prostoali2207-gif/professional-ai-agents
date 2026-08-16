@@ -32,6 +32,9 @@ class LiveContextContract(unittest.TestCase):
         for c in self.cases: self.assertTrue(c['required_flags'])
     def test_construct_isolation_repairs(self):
         by={c['id']:c for c in self.cases}
+        self.assertIn('STOP',by['LIVE-S2']['allowed_actions'])
+        self.assertIn('SCALE',by['LIVE-S2']['forbidden_actions'])
+        self.assertEqual(['telemarketing_boundary','consent_not_inferred'],by['LIVE-S2']['required_flags'])
         self.assertEqual(['data_use_lawful_basis'],by['LIVE-S3']['required_flags'])
         self.assertIn('STOP',by['LIVE-S5']['allowed_actions'])
         self.assertIn('SCALE',by['LIVE-S5']['forbidden_actions'])
