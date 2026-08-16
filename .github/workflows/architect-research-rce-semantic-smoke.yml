@@ -29,11 +29,14 @@ jobs:
           python -m py_compile architect/evaluation/research_evidence_engineering/research_policy.py
           python -m py_compile architect/evaluation/research_evidence_engineering/run_semantic_smoke.py
           python -m py_compile architect/evaluation/research_evidence_engineering/probe_gemini_models.py
+          python -m py_compile architect/evaluation/professional_core_library/test_library_contract.py
           python -m pip install --disable-pip-version-check -q pytest
           cd architect/evaluation/research_evidence_engineering
           pytest -q test_research_policy.py test_semantic_cases.py test_model_probe.py
           cd ../resource_cost_engineering
           python -m unittest -v test_rce.py test_semantic_cases.py
+          cd ../professional_core_library
+          python -m unittest -v test_library_contract.py
 
       - name: Probe live Gemini model availability without generation
         env:
