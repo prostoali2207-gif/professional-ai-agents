@@ -28,8 +28,17 @@ AUTO-S1 was isolated to require `inventory_truth_checked` while retaining `SCALE
 
 On SHA `dbaec32b9d2c23599ffe6e226b78769babebbca7`, deterministic preflight passed and the critical subset AUTO-S1, AUTO-S2, AUTO-S3, AUTO-S5 and AUTO-S8 passed **15/15 case evaluations across 3 independent trials**, with zero application retries. AUTO-S8 selected the required `SCALE` action in all three trials while demonstrating inventory portfolio economics, marginal-not-average allocation and delegated authority.
 
-The complete AUTO-S1..AUTO-S10 suite then passed 9/10. The only miss was AUTO-S9: the feed advertised price 42,000 while the listing showed 45,500 for the same unit. The system selected `STOP` and emitted `merchandising_truth`, but the fixture allowed only `REPAIR_MEASUREMENT`, `HOLD`, or `ITERATE` while forbidding `SCALE`.
+The complete AUTO-S1..AUTO-S10 suite then passed 9/10. The only miss was AUTO-S9: the feed advertised price 42,000 while the listing showed 45,500 for the same unit. The system selected `STOP` and emitted `merchandising_truth`, but the fixture did not allow `STOP`.
 
-This is a false policy singularity rather than a professional failure. The specialization explicitly requires the ad-to-listing chain to preserve material vehicle/offer truth and does not require continuing spend while a material price mismatch is repaired. `STOP` is therefore added as an allowed action for AUTO-S9; `SCALE` remains forbidden and `merchandising_truth` remains required. A deterministic assertion prevents this boundary from drifting.
+`STOP` is professionally valid while a material price mismatch is repaired. It was added as an allowed action; `SCALE` remains forbidden and `merchandising_truth` remains required.
 
-Because this repair changes only one non-critical grader action set and does not change the specialization, parent core, runtime, critical fixtures, or critical grader expectations, the 15/15 critical reliability evidence from run 31952941002 is retained for the unchanged behavior. The final affected release check must rerun the complete AUTO-S1..AUTO-S10 suite once under the repaired grader. It must not repeat the already-proved critical trials merely to consume quota.
+## Run 31953093883 — release semantics review
+
+The affected full-suite rerun passed 8/10. AUTO-S9 passed under the repaired contract. The two misses again had all required automotive judgment flags but selected professionally defensible actions outside an overly narrow action set:
+
+- AUTO-S6 recognized both `sales_ops_dependency` and `fault_tree_used` after experienced sales staff departed and show rate collapsed, but selected `ESCALATE` rather than only `HOLD`/`ITERATE`. Escalating an identified sales-operations dependency is valid and does not imply cutting media.
+- AUTO-S10 recognized `sales_ops_dependency` when appointment capacity was full and response time was worsening, but selected `STOP` rather than only `HOLD`/`ITERATE`. Stopping additional acquisition pressure is valid under exhausted operating capacity; `SCALE` remains forbidden.
+
+The action sets were repaired to admit these defensible operating responses while retaining the actual constructs: AUTO-S6 still requires `sales_ops_dependency` plus `fault_tree_used` and forbids `STOP`/`SCALE`; AUTO-S10 still requires `sales_ops_dependency` and forbids `SCALE`. Deterministic assertions now freeze those semantics.
+
+No behavior-relevant specialization rule, parent-core content, critical fixture, critical expectation, model, or runtime changed. Therefore the **15/15 critical reliability evidence from run 31952941002 remains the qualifying critical evidence**. A final complete AUTO-S1..AUTO-S10 one-trial run is required after this action-contract repair; repeating the critical trials would provide no affected evidence and would waste quota.
