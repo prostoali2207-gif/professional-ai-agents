@@ -2,7 +2,9 @@
 """Minimal blind semantic smoke for RCE-S1 and RCE-S2.
 
 Runs exactly one candidate invocation per case through the existing exact-SHA
-OpenAI Responses adapter. No retries. Expected decisions remain grader-side.
+Gemini Interactions protocol-v2 adapter. Expected decisions remain grader-side.
+The adapter owns bounded provider-health handling; this harness never adds an
+application-level retry or widens beyond the two frozen smoke cases.
 """
 from __future__ import annotations
 
@@ -15,7 +17,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 CASES = HERE / "semantic_cases.json"
-ADAPTER = ROOT / "architect/evaluation/harness/adapters/openai_responses_adapter_v2.py"
+ADAPTER = ROOT / "architect/evaluation/harness/adapters/gemini_interactions_adapter_v2.py"
 OUT = ROOT / ".tmp/rce-semantic-smoke"
 CASE_IDS = ("RCE-S1", "RCE-S2")
 ALLOWED_DECISIONS = [
@@ -143,8 +145,8 @@ def run_case(case: dict, sha: str) -> dict:
 
 
 def main() -> int:
-    if not os.environ.get("OPENAI_API_KEY"):
-        fail("OPENAI_API_KEY is not configured; no model call attempted.", 2)
+    if not os.environ.get("GEMINI_API_KEY"):
+        fail("GEMINI_API_KEY is not configured; no model call attempted.", 2)
     cases = {c["id"]: c for c in json.loads(CASES.read_text(encoding="utf-8"))}
     sha = git_sha()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -157,7 +159,8 @@ def main() -> int:
             break
     summary = {
         "candidate_sha": sha,
-        "model": os.environ.get("AGENT_ARCHITECT_MODEL", "gpt-5.4-mini"),
+        "runtime": "gemini-interactions-adapter-v2",
+        "model": os.environ.get("AGENT_ARCHITECT_MODEL", "gemini-3.5-flash-lite"),
         "planned_model_calls": 2,
         "executed_cases": len(results),
         "results": results,
