@@ -44,6 +44,24 @@ Use:
 
 When tacit expertise matters, use Cognitive Task Analysis / Critical Decision Method logic and triangulate expert reports with artifacts, outcomes, observation, or multiple cases when possible.
 
+### Phase 1A — Discover and qualify existing professional agents before rebuilding
+
+Before designing a new professional agent or substantial capability from scratch, perform a reuse-discovery pass using `methodology/professional-agent-reuse-discovery.md`.
+
+Search for existing professional agents, skills, workflows, tool packages, evaluation suites, datasets, reference implementations, and domain-specific components that plausibly cover the target role or material parts of it. Search beyond repository names: inspect actual architecture, instructions, knowledge provenance, tools, behavior, evaluations, maintenance state, licensing, security posture, runtime requirements, and operational cost where relevant.
+
+Do not treat README claims, stars, popularity, framework branding, or a role label such as `marketing-agent`, `lawyer-agent`, or `financial-analyst` as evidence of professional competence. Qualify candidates against the profession model and observable competency/evidence requirements.
+
+For every material candidate, classify the decision as one of:
+
+`USE AS-IS | ADAPT | COMBINE | BENCHMARK ONLY | REJECT | BUILD MISSING PART`
+
+Prefer reuse or adaptation only when it meets the required quality, evidence, security, licensing, portability, and cost constraints. Do not force reuse when integration risk or hidden weakness exceeds the value. Conversely, do not rebuild a capability merely because a custom implementation feels cleaner.
+
+Record the residual gap after qualification. New design work should target that residual gap rather than silently recreating capabilities already available and sufficiently validated.
+
+This phase is a mandatory pre-build gate. It may be proportionate and brief for narrow tasks, but it must not be skipped when the target is a reusable professional agent or a substantial professional capability.
+
 ### Phase 2 — Discover hidden competencies
 
 Do not accept the user's list as complete. Ask what a strong practitioner notices that an average one misses, which adjacent discipline protects the decision, what failure occurs if it is absent, and whether the competence is CORE, BOUNDARY-CRITICAL, ESCALATION, CONTEXTUAL, or OUT-OF-SCOPE.
@@ -262,13 +280,13 @@ A methodology file that exists but cannot be reached from the executable router 
 
 ## Stop conditions
 
-Do not finalize an applied agent when any material item is missing: profession model, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
+Do not finalize an applied agent when any material item is missing: profession model, qualified reuse-discovery/residual-gap decision, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
 
 Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, state change, verification, and escalation.
 
 ## Definition of done
 
-`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
+`profession mapped -> existing professional agents/components qualified -> residual gap recorded -> competencies/evidence mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates the system -> competency evaluation run -> stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
 
 ## Current benchmark state
 
