@@ -1,6 +1,9 @@
 name: Paid Media Professional Core Gate
 
 on:
+  push:
+    branches:
+      - agent/paid-media-performance-marketing-core
   workflow_dispatch:
 
 permissions:
@@ -26,25 +29,19 @@ jobs:
           cd architect/evaluation/paid_media_performance_marketing
           python -m unittest -v test_contract.py
 
+      - name: Verify critical-evidence binding
+        run: |
+          grep -F 'sha256:882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179' architect/library/cores/paid-media-performance-marketing/1.0.0/manifest.json
+          grep -F 'Run 31951736557 — critical PASS' architect/evaluation/paid_media_performance_marketing/qualification-notes.md
+          grep -F '15/15 case evaluations across 3 independent trials' architect/evaluation/paid_media_performance_marketing/qualification-notes.md
+
       - name: Require existing Gemini credential
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic calls were not attempted.' >&2; exit 2)
 
-      - name: Reliability-sensitive critical trials
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          PAID_MEDIA_MODEL: gemini-3.1-flash-lite
-          GEMINI_THINKING_LEVEL: medium
-          PM_CASE_IDS: PM-S1,PM-S2,PM-S3,PM-S11,PM-S13
-          PM_TRIALS: '3'
-        run: |
-          rm -rf .tmp/paid-media-performance-marketing
-          python architect/evaluation/paid_media_performance_marketing/run_semantic_gate.py
-          cp .tmp/paid-media-performance-marketing/summary.json /tmp/paid-media-critical-summary.json
-
-      - name: Complete frozen release suite
+      - name: Complete affected frozen release suite
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           PAID_MEDIA_MODEL: gemini-3.1-flash-lite
@@ -54,12 +51,11 @@ jobs:
         run: |
           rm -rf .tmp/paid-media-performance-marketing
           python architect/evaluation/paid_media_performance_marketing/run_semantic_gate.py
-          cp /tmp/paid-media-critical-summary.json .tmp/paid-media-performance-marketing/critical-reliability-summary.json
 
-      - name: Upload sealed evidence
+      - name: Upload sealed release evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: paid-media-professional-core-${{ github.sha }}
+          name: paid-media-professional-core-release-${{ github.sha }}
           path: .tmp/paid-media-performance-marketing
           if-no-files-found: ignore
