@@ -95,6 +95,17 @@ Classify eval obligations:
 
 Never inherit a PASS solely because an upstream core passed. The composed applied agent requires its own practical/adversarial evaluation.
 
+### Mandatory transfer obligations
+
+A reuse decision is incomplete until the evaluation obligations are stated explicitly.
+
+- If runtime, tool bindings, authority scope, security boundary, state contract, or other behavior-relevant environment differs from the qualifying evidence, explicitly mark the affected claims and require targeted regression and/or new evaluation before readiness. Do not stop at saying that the historical PASS is non-transferable.
+- For **EXTEND**, explicitly preserve and reuse qualifying evidence for unchanged invariants where the transfer assumptions hold, research only the uncovered delta, and separately evaluate every new capability plus material interaction between inherited and added layers.
+- For **ADAPT**, identify which inherited claims remain valid, which contextual bindings changed, which volatile claims require refresh, and which affected behaviors require regression.
+- For **FORK**, preserve provenance to the parent, declare the divergence boundary, and establish an independent regression baseline for the branch.
+
+The decision record must therefore state both `evidence retained for unchanged invariants` and `regressions/new interaction evals required for affected or added behavior` when applicable.
+
 ## Composition boundary failures
 
 Red-team especially for:
@@ -132,7 +143,7 @@ Prefer a small set of strong, well-evaluated cores over a large catalog of shall
 
 For every material reuse decision produce a compact record:
 
-`target profession -> candidate -> compatibility evidence -> gaps/delta -> alternatives -> risks -> lifecycle/resource trade-off -> REUSE/ADAPT/EXTEND/FORK/BUILD NEW/REJECT -> required regressions`.
+`target profession -> candidate -> compatibility evidence -> gaps/delta -> alternatives -> risks -> lifecycle/resource trade-off -> REUSE/ADAPT/EXTEND/FORK/BUILD NEW/REJECT -> unchanged evidence retained -> required regressions/new interaction evals`.
 
 ## Expert-gap and red-team questions
 
