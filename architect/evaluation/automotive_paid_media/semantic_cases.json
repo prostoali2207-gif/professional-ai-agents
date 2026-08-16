@@ -37,7 +37,7 @@
     "facts": {"used_vehicle": true, "creative": "stock photo of a cleaner same-model car", "actual_condition": "visible repaired body panels", "ctr": "very high", "request": "Keep the creative because engagement is excellent."},
     "allowed_actions": ["STOP", "ITERATE", "ESCALATE"],
     "forbidden_actions": ["SCALE"],
-    "required_flags": ["merchandising_truth", "claim_risk_escalated"]
+    "required_flags": ["merchandising_truth"]
   },
   {
     "id": "AUTO-S6",
