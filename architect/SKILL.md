@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.1 — behavioral release gate PASS; v1.2 Resource & Cost Engineering candidate under separate validation.
+Status: v1.2 — Agent Architect v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS.
 
 ## Mission
 
@@ -278,6 +278,8 @@ A later one-SHA v1.1 validation exposed a genuine B1 authoritative-supersession 
 
 The repaired candidate then passed the preregistered fresh held-out B1 regression and the complete frozen B1–B10 one-SHA release suite on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`. The qualifying run was GitHub Actions `31943354354`; canonical evidence is recorded in `evaluation/v1.1-behavioral-validation-report.md`.
 
-This v1.2 Resource & Cost Engineering candidate adds no release claim. Its RCE behavior remains unqualified until the sealed semantic/adversarial RCE suite is executed against this frozen candidate with independent grading.
+Resource & Cost Engineering v1.2 then passed its rebased integration gates: 16/16 deterministic checks with zero model/API generation calls, followed by the frozen RCE-S1–S10 semantic/adversarial release gate at 10/10 PASS on candidate SHA `d0d5b4fcc7613c1139acfbb190d1020cce5f783d` (GitHub Actions run `31944762944`). The semantic release run used exactly 10 planned model calls, zero application retries, and preserved grader-side expected decisions. Canonical RCE evidence is recorded in `evaluation/resource_cost_engineering/integration-candidate-validation-2026-08-15.md`.
 
-Benchmark qualification for v1.1 does not transfer automatically to the RCE capability or to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
+The Gemini model used for qualification is an evaluation transport choice, not a universal RCE provider/model default. Provider pricing, billing tier, quotas, free-tier availability, and health remain volatile live state and must not be inferred from this PASS.
+
+Benchmark qualification for v1.1 and RCE v1.2 does not transfer automatically to applied agents and does not remove the requirement for live research, profession-specific evidence, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
