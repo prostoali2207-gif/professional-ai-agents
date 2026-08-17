@@ -1,0 +1,501 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/social-community-listening-reputation-output-contracts-v0.1.schema.json",
+  "title": "Social Community, Listening & Reputation Management Output Contracts",
+  "description": "First-draft portable contracts. Organization, jurisdiction and platform adapters may add separate envelopes but must not weaken required provenance, uncertainty or authority fields.",
+  "oneOf": [
+    {"$ref": "#/$defs/communityCase"},
+    {"$ref": "#/$defs/moderationDecision"},
+    {"$ref": "#/$defs/listeningSignal"},
+    {"$ref": "#/$defs/reputationIssue"},
+    {"$ref": "#/$defs/escalationPacket"},
+    {"$ref": "#/$defs/approvedResponse"},
+    {"$ref": "#/$defs/incidentReview"}
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "confidence": {
+      "enum": ["supported", "plausible", "weak", "unknown", "contested"]
+    },
+    "authorityLevel": {
+      "enum": ["observe", "propose", "draft", "execute_reversible", "execute_irreversible", "approve"]
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_id", "source_type", "locator", "observed_at", "trust_class"],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/id"},
+        "source_type": {
+          "enum": ["platform_content", "platform_metadata", "internal_record", "approved_fact_packet", "tool_observation", "human_statement", "official_policy", "other"]
+        },
+        "locator": {"$ref": "#/$defs/nonEmptyString"},
+        "observed_at": {"$ref": "#/$defs/timestamp"},
+        "trust_class": {
+          "enum": ["trusted_instruction", "authorized_context", "untrusted_data", "tool_observation", "unverified_assertion"]
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "access_limit": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "factItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "status", "evidence_refs"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/nonEmptyString"},
+        "status": {
+          "enum": ["verified", "asserted", "inferred", "estimated", "unknown", "contradicted", "superseded"]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        },
+        "supersedes_fact_id": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["window_start", "window_end", "channels_inspected", "languages", "collection_method", "known_blind_spots"],
+      "properties": {
+        "window_start": {"$ref": "#/$defs/timestamp"},
+        "window_end": {"$ref": "#/$defs/timestamp"},
+        "channels_inspected": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/nonEmptyString"},
+          "uniqueItems": true
+        },
+        "languages": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"},
+          "uniqueItems": true
+        },
+        "collection_method": {"$ref": "#/$defs/nonEmptyString"},
+        "known_blind_spots": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "retrieval_complete": {"type": "boolean"}
+      }
+    },
+    "ownerRoute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "route_reason", "acknowledgment_status"],
+      "properties": {
+        "role": {"$ref": "#/$defs/nonEmptyString"},
+        "named_owner": {"type": ["string", "null"]},
+        "route_reason": {"$ref": "#/$defs/nonEmptyString"},
+        "acknowledgment_status": {
+          "enum": ["not_required", "pending", "acknowledged", "declined", "expired", "fallback_triggered"]
+        },
+        "acknowledged_at": {
+          "oneOf": [
+            {"$ref": "#/$defs/timestamp"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "baseArtifact": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "artifact_type",
+        "artifact_id",
+        "created_at",
+        "organization_context_id",
+        "confidence",
+        "evidence",
+        "facts",
+        "unknowns",
+        "assumptions",
+        "authority_required",
+        "status"
+      ],
+      "properties": {
+        "schema_version": {"const": "0.1.0"},
+        "artifact_type": {
+          "enum": [
+            "community_case",
+            "moderation_decision",
+            "listening_signal",
+            "reputation_issue",
+            "escalation_packet",
+            "approved_response",
+            "incident_review"
+          ]
+        },
+        "artifact_id": {"$ref": "#/$defs/id"},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "updated_at": {
+          "oneOf": [
+            {"$ref": "#/$defs/timestamp"},
+            {"type": "null"}
+          ]
+        },
+        "organization_context_id": {"$ref": "#/$defs/id"},
+        "jurisdiction_context_ids": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        },
+        "confidence": {"$ref": "#/$defs/confidence"},
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/evidenceRef"}
+        },
+        "facts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/factItem"}
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "authority_required": {"$ref": "#/$defs/authorityLevel"},
+        "status": {
+          "enum": ["open", "monitoring", "pending_evidence", "pending_approval", "blocked", "executed_unverified", "executed_verified", "closed", "superseded"]
+        },
+        "supersedes_artifact_id": {
+          "type": ["string", "null"]
+        },
+        "expires_at": {
+          "oneOf": [
+            {"$ref": "#/$defs/timestamp"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "communityCase": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "channel", "thread_id", "case_labels", "request_summary", "owner_route", "next_action"],
+          "properties": {
+            "artifact_type": {"const": "community_case"},
+            "channel": {"$ref": "#/$defs/nonEmptyString"},
+            "thread_id": {"$ref": "#/$defs/id"},
+            "subject_ref": {"type": ["string", "null"]},
+            "case_labels": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "enum": ["routine_question", "lead", "support", "complaint", "criticism", "abuse", "spam", "fraud", "misinformation", "sensitive_issue", "crisis_signal", "safety_threat", "privacy_exposure"]
+              },
+              "uniqueItems": true
+            },
+            "request_summary": {"$ref": "#/$defs/nonEmptyString"},
+            "sensitive_data_present": {"type": "boolean"},
+            "duplicate_of_case_id": {"type": ["string", "null"]},
+            "owner_route": {"$ref": "#/$defs/ownerRoute"},
+            "next_action": {"$ref": "#/$defs/nonEmptyString"},
+            "due_at": {
+              "oneOf": [
+                {"$ref": "#/$defs/timestamp"},
+                {"type": "null"}
+              ]
+            },
+            "closure_evidence": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/id"}
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "moderationDecision": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "community_case_id", "proposed_action", "policy_basis", "reversibility", "evidence_preserved", "execution_authorized"],
+          "properties": {
+            "artifact_type": {"const": "moderation_decision"},
+            "community_case_id": {"$ref": "#/$defs/id"},
+            "proposed_action": {
+              "enum": ["preserve", "reply", "acknowledge", "move_private", "hide", "delete", "restrict", "report", "escalate"]
+            },
+            "policy_basis": {"$ref": "#/$defs/nonEmptyString"},
+            "current_platform_capability_ref": {"type": ["string", "null"]},
+            "reversibility": {
+              "enum": ["fully_reversible", "partially_reversible", "irreversible", "unknown"]
+            },
+            "evidence_preserved": {"type": "boolean"},
+            "execution_authorized": {"type": "boolean"},
+            "confirmation_owner": {"type": ["string", "null"]},
+            "rollback_or_recovery": {"type": ["string", "null"]},
+            "verification_result": {
+              "enum": ["not_executed", "executed_unverified", "verified", "failed", "not_observable"]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "listeningSignal": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "signal_type", "summary", "observed_count", "coverage", "representativeness_scope", "alternative_explanations", "route"],
+          "properties": {
+            "artifact_type": {"const": "listening_signal"},
+            "signal_type": {
+              "enum": ["recurring_question", "complaint_pattern", "objection_pattern", "sentiment_shift", "velocity_anomaly", "misinformation", "suspected_manipulation", "market_signal", "other"]
+            },
+            "summary": {"$ref": "#/$defs/nonEmptyString"},
+            "observed_count": {"type": "integer", "minimum": 1},
+            "unique_content_count": {"type": ["integer", "null"], "minimum": 1},
+            "unique_actor_count": {"type": ["integer", "null"], "minimum": 1},
+            "denominator": {"type": ["number", "null"], "exclusiveMinimum": 0},
+            "baseline_ref": {"type": ["string", "null"]},
+            "coverage": {"$ref": "#/$defs/coverage"},
+            "representativeness_scope": {"$ref": "#/$defs/nonEmptyString"},
+            "sentiment_method": {"type": ["string", "null"]},
+            "sentiment_validation_ref": {"type": ["string", "null"]},
+            "alternative_explanations": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            },
+            "route": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/ownerRoute"}
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "reputationIssue": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "issue_class", "claim_summary", "severity_dimensions", "hard_triggers", "response_mode", "affected_stakeholders", "owner_route"],
+          "properties": {
+            "artifact_type": {"const": "reputation_issue"},
+            "issue_class": {
+              "enum": ["complaint", "reputation_issue", "sensitive_issue", "crisis_signal", "declared_crisis"]
+            },
+            "claim_summary": {"$ref": "#/$defs/nonEmptyString"},
+            "severity_dimensions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["harm", "credibility", "velocity", "reach", "reversibility", "operational_impact"],
+              "properties": {
+                "harm": {"enum": ["low", "medium", "high", "catastrophic", "unknown"]},
+                "credibility": {"enum": ["low", "medium", "high", "contested", "unknown"]},
+                "velocity": {"enum": ["stable", "rising", "rapid", "falling", "unknown"]},
+                "reach": {"enum": ["limited", "material", "broad", "unknown"]},
+                "reversibility": {"enum": ["high", "medium", "low", "unknown"]},
+                "operational_impact": {"enum": ["none", "limited", "material", "severe", "unknown"]}
+              }
+            },
+            "hard_triggers": {
+              "type": "array",
+              "items": {
+                "enum": ["imminent_safety", "credible_violence", "doxxing", "material_privacy", "legal_process", "active_fraud", "major_operational_disruption", "none"]
+              },
+              "uniqueItems": true
+            },
+            "response_mode": {
+              "enum": ["immediate_factual", "holding_response", "planned_delay", "monitor_no_response", "private_resolution", "specialist_review"]
+            },
+            "affected_stakeholders": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            },
+            "next_update_due_at": {
+              "oneOf": [
+                {"$ref": "#/$defs/timestamp"},
+                {"type": "null"}
+              ]
+            },
+            "owner_route": {"$ref": "#/$defs/ownerRoute"},
+            "closure_or_reopen_conditions": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "escalationPacket": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "trigger", "consequence_if_wrong", "decision_required", "primary_route", "fallback_routes", "clock_started_at", "deadline_at"],
+          "properties": {
+            "artifact_type": {"const": "escalation_packet"},
+            "trigger": {"$ref": "#/$defs/nonEmptyString"},
+            "consequence_if_wrong": {
+              "enum": ["low", "medium", "high", "catastrophic"]
+            },
+            "decision_required": {"$ref": "#/$defs/nonEmptyString"},
+            "primary_route": {"$ref": "#/$defs/ownerRoute"},
+            "fallback_routes": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/ownerRoute"}
+            },
+            "clock_started_at": {"$ref": "#/$defs/timestamp"},
+            "deadline_at": {"$ref": "#/$defs/timestamp"},
+            "fallback_trigger_at": {
+              "oneOf": [
+                {"$ref": "#/$defs/timestamp"},
+                {"type": "null"}
+              ]
+            },
+            "protective_action_already_taken": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            },
+            "payload_minimization_note": {"$ref": "#/$defs/nonEmptyString"}
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "approvedResponse": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "response_id", "version", "response_mode", "channel", "language", "body", "approval_status", "factual_basis_refs"],
+          "properties": {
+            "artifact_type": {"const": "approved_response"},
+            "response_id": {"$ref": "#/$defs/id"},
+            "version": {"type": "integer", "minimum": 1},
+            "response_mode": {
+              "enum": ["routine_reply", "acknowledgment", "correction", "rebuttal", "apology_draft", "holding_response", "protective_instruction"]
+            },
+            "channel": {"$ref": "#/$defs/nonEmptyString"},
+            "language": {"type": "string", "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"},
+            "body": {"$ref": "#/$defs/nonEmptyString"},
+            "approval_status": {
+              "enum": ["draft", "pending", "approved", "rejected", "expired", "superseded"]
+            },
+            "approved_by_role": {"type": ["string", "null"]},
+            "approved_at": {
+              "oneOf": [
+                {"$ref": "#/$defs/timestamp"},
+                {"type": "null"}
+              ]
+            },
+            "factual_basis_refs": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/id"},
+              "uniqueItems": true
+            },
+            "known_unknowns_included": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            },
+            "next_update_at": {
+              "oneOf": [
+                {"$ref": "#/$defs/timestamp"},
+                {"type": "null"}
+              ]
+            },
+            "source_response_id": {"type": ["string", "null"]},
+            "translation_review_status": {
+              "enum": ["not_required", "pending", "verified", "failed"]
+            },
+            "publication_verification": {
+              "enum": ["not_published", "published_unverified", "verified", "failed"]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "incidentReview": {
+      "allOf": [
+        {"$ref": "#/$defs/baseArtifact"},
+        {
+          "type": "object",
+          "required": ["artifact_type", "incident_id", "expected_behavior", "observed_behavior", "root_cause_layer", "material_failures", "repair_actions", "regression_refs", "accountable_owner"],
+          "properties": {
+            "artifact_type": {"const": "incident_review"},
+            "incident_id": {"$ref": "#/$defs/id"},
+            "expected_behavior": {"$ref": "#/$defs/nonEmptyString"},
+            "observed_behavior": {"$ref": "#/$defs/nonEmptyString"},
+            "root_cause_layer": {
+              "enum": ["profession_model", "knowledge_evidence", "decision_policy", "schema_state", "tool_runtime", "authority_governance", "live_context", "evaluation", "human_process", "unknown"]
+            },
+            "material_failures": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            },
+            "repair_actions": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["action", "owner_role", "verification"],
+                "properties": {
+                  "action": {"$ref": "#/$defs/nonEmptyString"},
+                  "owner_role": {"$ref": "#/$defs/nonEmptyString"},
+                  "verification": {"$ref": "#/$defs/nonEmptyString"},
+                  "due_at": {
+                    "oneOf": [
+                      {"$ref": "#/$defs/timestamp"},
+                      {"type": "null"}
+                    ]
+                  }
+                }
+              }
+            },
+            "regression_refs": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/id"},
+              "uniqueItems": true
+            },
+            "permission_review_required": {"type": "boolean"},
+            "accountable_owner": {"$ref": "#/$defs/nonEmptyString"},
+            "residual_risks": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

@@ -1,0 +1,567 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/social-community-listening-reputation-live-context-handoff-v0.1.schema.json",
+  "title": "Social Community, Listening & Reputation Live Context and Handoff Contracts",
+  "description": "Portable input and coordination contracts for binding organization/platform/runtime context and transferring bounded work to adjacent professional owners. These contracts do not grant authority; deployments may narrow them but must not remove provenance, expiry, uncertainty, acknowledgment or payload-minimization controls.",
+  "oneOf": [
+    {"$ref": "#/$defs/liveContextPacket"},
+    {"$ref": "#/$defs/platformCapabilityBinding"},
+    {"$ref": "#/$defs/handoffEnvelope"}
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "nullableTimestamp": {
+      "oneOf": [
+        {"$ref": "#/$defs/timestamp"},
+        {"type": "null"}
+      ]
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "artifact_type", "schema_version"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/id"},
+        "artifact_type": {"$ref": "#/$defs/nonEmptyString"},
+        "schema_version": {"$ref": "#/$defs/nonEmptyString"},
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "provenanceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "source_kind", "locator", "trust_class", "observed_at", "owner_role"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/id"},
+        "source_kind": {
+          "enum": ["approved_policy", "official_platform", "organization_record", "authorized_human", "tool_observation", "legal_authority", "other"]
+        },
+        "locator": {"$ref": "#/$defs/nonEmptyString"},
+        "trust_class": {
+          "enum": ["trusted_instruction", "authorized_context", "tool_observation", "unverified_assertion"]
+        },
+        "observed_at": {"$ref": "#/$defs/timestamp"},
+        "effective_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "expires_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "version": {"type": ["string", "null"]},
+        "owner_role": {"$ref": "#/$defs/nonEmptyString"},
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role_key", "route_reason", "acknowledgment_target_seconds", "fallback_after_seconds"],
+      "properties": {
+        "role_key": {"$ref": "#/$defs/nonEmptyString"},
+        "named_owner": {"type": ["string", "null"]},
+        "backup_role_keys": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"},
+          "uniqueItems": true
+        },
+        "route_reason": {"$ref": "#/$defs/nonEmptyString"},
+        "acknowledgment_target_seconds": {"type": "integer", "minimum": 1},
+        "fallback_after_seconds": {"type": "integer", "minimum": 1}
+      }
+    },
+    "policyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_key", "policy_ref", "version", "owner_role", "verified_at", "expires_at", "status"],
+      "properties": {
+        "policy_key": {"$ref": "#/$defs/id"},
+        "policy_ref": {"$ref": "#/$defs/nonEmptyString"},
+        "version": {"$ref": "#/$defs/nonEmptyString"},
+        "owner_role": {"$ref": "#/$defs/nonEmptyString"},
+        "verified_at": {"$ref": "#/$defs/timestamp"},
+        "expires_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "status": {"enum": ["active", "pending", "expired", "superseded", "conflicted"]},
+        "supersedes_policy_key": {"type": ["string", "null"]},
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "roleBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role_key", "accountability", "primary_route", "authority_policy_ref"],
+      "properties": {
+        "role_key": {"$ref": "#/$defs/id"},
+        "accountability": {"$ref": "#/$defs/nonEmptyString"},
+        "primary_route": {"$ref": "#/$defs/route"},
+        "out_of_hours_route": {
+          "oneOf": [
+            {"$ref": "#/$defs/route"},
+            {"type": "null"}
+          ]
+        },
+        "authority_policy_ref": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "runtimeRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_features", "structured_output_required", "persistent_state_required", "network_requirement", "human_approval_required", "side_effect_observability_required", "acceptable_substitutes", "unsupported_conditions"],
+      "properties": {
+        "required_features": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"},
+          "uniqueItems": true
+        },
+        "structured_output_required": {"type": "boolean"},
+        "persistent_state_required": {"type": "boolean"},
+        "network_requirement": {"enum": ["none", "restricted", "required"]},
+        "human_approval_required": {"type": "boolean"},
+        "side_effect_observability_required": {"type": "boolean"},
+        "acceptable_substitutes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "unsupported_conditions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    },
+    "liveContextPacket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact_type",
+        "binding_id",
+        "organization_id",
+        "business_scope_id",
+        "created_at",
+        "effective_at",
+        "expires_at",
+        "owner_role",
+        "status",
+        "brand",
+        "jurisdictions",
+        "languages",
+        "roles",
+        "response_targets",
+        "policy_bindings",
+        "platform_capability_binding_refs",
+        "runtime_requirements",
+        "sources",
+        "conflicts",
+        "unknowns"
+      ],
+      "properties": {
+        "schema_version": {"const": "0.1.0"},
+        "artifact_type": {"const": "live_context_packet"},
+        "binding_id": {"$ref": "#/$defs/id"},
+        "organization_id": {"$ref": "#/$defs/id"},
+        "business_scope_id": {"$ref": "#/$defs/id"},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "effective_at": {"$ref": "#/$defs/timestamp"},
+        "expires_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "owner_role": {"$ref": "#/$defs/nonEmptyString"},
+        "status": {"enum": ["draft", "active", "expired", "superseded", "conflicted"]},
+        "supersedes_binding_id": {"type": ["string", "null"]},
+        "brand": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["brand_id", "voice_policy_ref", "allowed_claims_policy_ref", "prohibited_claims_policy_ref"],
+          "properties": {
+            "brand_id": {"$ref": "#/$defs/id"},
+            "voice_policy_ref": {"$ref": "#/$defs/nonEmptyString"},
+            "allowed_claims_policy_ref": {"$ref": "#/$defs/nonEmptyString"},
+            "prohibited_claims_policy_ref": {"$ref": "#/$defs/nonEmptyString"}
+          }
+        },
+        "jurisdictions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["jurisdiction_id", "scope", "legal_policy_ref", "verified_at", "expires_at", "owner_role"],
+            "properties": {
+              "jurisdiction_id": {"$ref": "#/$defs/id"},
+              "scope": {"$ref": "#/$defs/nonEmptyString"},
+              "legal_policy_ref": {"$ref": "#/$defs/nonEmptyString"},
+              "verified_at": {"$ref": "#/$defs/timestamp"},
+              "expires_at": {"$ref": "#/$defs/nullableTimestamp"},
+              "owner_role": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        },
+        "languages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["language", "permitted_scope", "high_impact_reviewer_route"],
+            "properties": {
+              "language": {"type": "string", "pattern": "^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$"},
+              "permitted_scope": {"$ref": "#/$defs/nonEmptyString"},
+              "high_impact_reviewer_route": {"$ref": "#/$defs/route"}
+            }
+          }
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/roleBinding"}
+        },
+        "response_targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["case_class", "acknowledgment_target_seconds", "resolution_owner_role"],
+            "properties": {
+              "case_class": {"$ref": "#/$defs/nonEmptyString"},
+              "acknowledgment_target_seconds": {"type": "integer", "minimum": 1},
+              "resolution_owner_role": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        },
+        "policy_bindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/policyBinding"}
+        },
+        "platform_capability_binding_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        },
+        "runtime_requirements": {"$ref": "#/$defs/runtimeRequirements"},
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/provenanceRef"}
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "unknowns": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    },
+    "platformCapabilityBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "artifact_type", "binding_id", "organization_id", "platform", "account_scope_ref", "channel", "adapter", "verified_at", "expires_at", "owner_role", "sources", "capabilities", "limitations", "fallback_mode"],
+      "properties": {
+        "schema_version": {"const": "0.1.0"},
+        "artifact_type": {"const": "platform_capability_binding"},
+        "binding_id": {"$ref": "#/$defs/id"},
+        "organization_id": {"$ref": "#/$defs/id"},
+        "platform": {"$ref": "#/$defs/nonEmptyString"},
+        "account_scope_ref": {"$ref": "#/$defs/nonEmptyString"},
+        "channel": {"$ref": "#/$defs/nonEmptyString"},
+        "adapter": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["adapter_id", "version", "runtime", "permission_scopes"],
+          "properties": {
+            "adapter_id": {"$ref": "#/$defs/id"},
+            "version": {"$ref": "#/$defs/nonEmptyString"},
+            "runtime": {"$ref": "#/$defs/nonEmptyString"},
+            "permission_scopes": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/nonEmptyString"},
+              "uniqueItems": true
+            }
+          }
+        },
+        "verified_at": {"$ref": "#/$defs/timestamp"},
+        "expires_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "owner_role": {"$ref": "#/$defs/nonEmptyString"},
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/provenanceRef"}
+        },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["action", "support_status", "permission_status", "reversibility", "verification_method", "rollback_or_recovery", "last_observed_at"],
+            "properties": {
+              "action": {"enum": ["read", "reply", "send_private", "hide", "unhide", "delete", "restrict", "block", "report", "pause_scheduled_content", "resume_scheduled_content", "other"]},
+              "support_status": {"enum": ["supported", "unsupported", "unknown", "degraded"]},
+              "permission_status": {"enum": ["granted", "denied", "unknown", "approval_only"]},
+              "reversibility": {"enum": ["fully_reversible", "partially_reversible", "irreversible", "unknown"]},
+              "verification_method": {"$ref": "#/$defs/nonEmptyString"},
+              "rollback_or_recovery": {"$ref": "#/$defs/nonEmptyString"},
+              "limitations": {
+                "type": "array",
+                "items": {"$ref": "#/$defs/nonEmptyString"}
+              },
+              "last_observed_at": {"$ref": "#/$defs/timestamp"}
+            }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        },
+        "fallback_mode": {"enum": ["manual", "proposal_only", "alternate_adapter", "unsupported"]},
+        "fallback_route": {
+          "oneOf": [
+            {"$ref": "#/$defs/route"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "factTransfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "status", "evidence_refs"],
+      "properties": {
+        "statement": {"$ref": "#/$defs/nonEmptyString"},
+        "status": {"enum": ["verified", "asserted", "inferred", "estimated", "unknown", "contradicted", "superseded"]},
+        "evidence_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "salesLeadPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "intent_summary", "consent_status", "contact_ref", "requested_next_action"],
+      "properties": {
+        "kind": {"const": "sales_lead"},
+        "intent_summary": {"$ref": "#/$defs/nonEmptyString"},
+        "consent_status": {"enum": ["confirmed", "not_required", "unknown", "declined"]},
+        "contact_ref": {"type": ["string", "null"]},
+        "requested_next_action": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "supportCasePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "issue_summary", "requested_remedy", "operational_fact_refs"],
+      "properties": {
+        "kind": {"const": "support_case"},
+        "issue_summary": {"$ref": "#/$defs/nonEmptyString"},
+        "requested_remedy": {"$ref": "#/$defs/nonEmptyString"},
+        "operational_fact_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "analyticsRequestPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "decision_question", "metric_or_construct", "observation_window", "coverage_ref"],
+      "properties": {
+        "kind": {"const": "analytics_request"},
+        "decision_question": {"$ref": "#/$defs/nonEmptyString"},
+        "metric_or_construct": {"$ref": "#/$defs/nonEmptyString"},
+        "observation_window": {"$ref": "#/$defs/nonEmptyString"},
+        "coverage_ref": {"$ref": "#/$defs/id"}
+      }
+    },
+    "marketIntelligencePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "research_question", "entities", "geography", "time_scope", "exclusions", "inference_limit"],
+      "properties": {
+        "kind": {"const": "market_intelligence_signal"},
+        "research_question": {"$ref": "#/$defs/nonEmptyString"},
+        "entities": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "geography": {"$ref": "#/$defs/nonEmptyString"},
+        "time_scope": {"$ref": "#/$defs/nonEmptyString"},
+        "exclusions": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "inference_limit": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "contentStrategyPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "community_insight", "decision_use", "evidence_limitations"],
+      "properties": {
+        "kind": {"const": "content_strategy_input"},
+        "community_insight": {"$ref": "#/$defs/nonEmptyString"},
+        "decision_use": {"$ref": "#/$defs/nonEmptyString"},
+        "evidence_limitations": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}}
+      }
+    },
+    "publisherActionPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "requested_action", "artifact_ref", "channel", "scope", "approval_ref"],
+      "properties": {
+        "kind": {"const": "publisher_action_request"},
+        "requested_action": {"enum": ["publish", "pause", "resume", "correct", "withdraw"]},
+        "artifact_ref": {"$ref": "#/$defs/artifactRef"},
+        "channel": {"$ref": "#/$defs/nonEmptyString"},
+        "scope": {"$ref": "#/$defs/nonEmptyString"},
+        "approval_ref": {"type": ["string", "null"]}
+      }
+    },
+    "specialistReviewPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "specialty", "issue_summary", "scope_or_jurisdiction", "decision_requested"],
+      "properties": {
+        "kind": {"const": "specialist_review"},
+        "specialty": {"enum": ["legal", "privacy", "security", "safety", "language", "forensics"]},
+        "issue_summary": {"$ref": "#/$defs/nonEmptyString"},
+        "scope_or_jurisdiction": {"$ref": "#/$defs/nonEmptyString"},
+        "decision_requested": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "incidentDecisionPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "trigger", "consequence_if_wrong", "decision_requested", "clock_started_at"],
+      "properties": {
+        "kind": {"const": "incident_decision"},
+        "trigger": {"$ref": "#/$defs/nonEmptyString"},
+        "consequence_if_wrong": {"enum": ["low", "medium", "high", "catastrophic"]},
+        "decision_requested": {"$ref": "#/$defs/nonEmptyString"},
+        "clock_started_at": {"$ref": "#/$defs/timestamp"}
+      }
+    },
+    "handoffPayload": {
+      "oneOf": [
+        {"$ref": "#/$defs/salesLeadPayload"},
+        {"$ref": "#/$defs/supportCasePayload"},
+        {"$ref": "#/$defs/analyticsRequestPayload"},
+        {"$ref": "#/$defs/marketIntelligencePayload"},
+        {"$ref": "#/$defs/contentStrategyPayload"},
+        {"$ref": "#/$defs/publisherActionPayload"},
+        {"$ref": "#/$defs/specialistReviewPayload"},
+        {"$ref": "#/$defs/incidentDecisionPayload"}
+      ]
+    },
+    "handoffEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact_type",
+        "handoff_id",
+        "correlation_id",
+        "organization_context_id",
+        "source_role",
+        "source_artifacts",
+        "target_route",
+        "objective",
+        "payload",
+        "evidence_refs",
+        "facts",
+        "assumptions",
+        "unknowns",
+        "decisions_already_made",
+        "invariant_constraints",
+        "required_output_schema_ref",
+        "evidence_required",
+        "definition_of_done",
+        "escalation_condition",
+        "priority",
+        "created_at",
+        "deadline_at",
+        "authority_requested",
+        "sensitive_data_class",
+        "payload_minimization_note",
+        "actions_already_taken",
+        "actions_not_authorized",
+        "acknowledgment_status",
+        "status",
+        "idempotency_key"
+      ],
+      "properties": {
+        "schema_version": {"const": "0.1.0"},
+        "artifact_type": {"const": "handoff_envelope"},
+        "handoff_id": {"$ref": "#/$defs/id"},
+        "correlation_id": {"$ref": "#/$defs/id"},
+        "organization_context_id": {"$ref": "#/$defs/id"},
+        "source_role": {"$ref": "#/$defs/nonEmptyString"},
+        "source_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/artifactRef"}
+        },
+        "target_route": {"$ref": "#/$defs/route"},
+        "objective": {"$ref": "#/$defs/nonEmptyString"},
+        "payload": {"$ref": "#/$defs/handoffPayload"},
+        "evidence_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/id"},
+          "uniqueItems": true
+        },
+        "facts": {"type": "array", "items": {"$ref": "#/$defs/factTransfer"}},
+        "assumptions": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "unknowns": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "decisions_already_made": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["decision", "rationale", "owner_role"],
+            "properties": {
+              "decision": {"$ref": "#/$defs/nonEmptyString"},
+              "rationale": {"$ref": "#/$defs/nonEmptyString"},
+              "owner_role": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        },
+        "invariant_constraints": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "required_output_schema_ref": {"$ref": "#/$defs/nonEmptyString"},
+        "evidence_required": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "definition_of_done": {"$ref": "#/$defs/nonEmptyString"},
+        "escalation_condition": {"$ref": "#/$defs/nonEmptyString"},
+        "priority": {"enum": ["routine", "time_sensitive", "urgent", "critical"]},
+        "created_at": {"$ref": "#/$defs/timestamp"},
+        "deadline_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "authority_requested": {"enum": ["observe", "analyze", "draft", "execute_reversible", "execute_irreversible", "approve", "specialist_decision"]},
+        "sensitive_data_class": {"enum": ["none", "internal", "personal", "restricted", "legal_hold"]},
+        "payload_minimization_note": {"$ref": "#/$defs/nonEmptyString"},
+        "actions_already_taken": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "actions_not_authorized": {"type": "array", "items": {"$ref": "#/$defs/nonEmptyString"}},
+        "acknowledgment_status": {"enum": ["pending", "acknowledged", "declined", "expired", "fallback_triggered"]},
+        "acknowledged_at": {"$ref": "#/$defs/nullableTimestamp"},
+        "acknowledged_by": {"type": ["string", "null"]},
+        "status": {"enum": ["open", "accepted", "in_progress", "blocked", "completed", "declined", "expired", "superseded"]},
+        "idempotency_key": {"$ref": "#/$defs/id"},
+        "result_artifact_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/artifactRef"}
+        }
+      }
+    }
+  }
+}
