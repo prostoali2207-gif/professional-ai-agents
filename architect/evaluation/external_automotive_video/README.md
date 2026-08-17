@@ -1,6 +1,6 @@
 # Frozen external automotive video qualification subject
 
-Evaluation-only snapshot of three files from `prostoali2207-gif/auto-sales-growth-system` commit `111462d1d305f3c7d7c7dfdc7be2cc8a8d257ae9`:
+Evaluation-only snapshot of three files from `prostoali2207-gif/auto-sales-growth-system` commit `16ce28b8bffd827b72ee1b27aa824358858b952c`:
 
 - `agents/uae-automotive-video-post-production.md`
 - `evaluation/video-post-production/semantic-cases.json`
