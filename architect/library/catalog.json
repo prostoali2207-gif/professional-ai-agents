@@ -25,39 +25,46 @@
           "Spend governance and escalation recommendations"
         ],
         "competencies": [
-          "unit economics",
-          "measurement integrity",
-          "attribution and incrementality",
-          "experimentation",
-          "marginal budget allocation",
-          "auction and automation reasoning",
-          "creative learning",
-          "performance diagnosis",
-          "spend governance"
+          "unit economics", "measurement integrity", "attribution and incrementality",
+          "experimentation", "marginal budget allocation", "auction and automation reasoning",
+          "creative learning", "performance diagnosis", "spend governance"
         ],
-        "domains": [
-          "paid media",
-          "performance marketing",
-          "customer acquisition"
-        ],
-        "authority_levels": [
-          "analysis",
-          "recommendation",
-          "delegated spend execution only"
-        ],
+        "domains": ["paid media", "performance marketing", "customer acquisition"],
+        "authority_levels": ["analysis", "recommendation", "delegated spend execution only"],
         "runtime_features": [
-          "structured reasoning output",
-          "live retrieval for volatile platform or jurisdiction facts",
+          "structured reasoning output", "live retrieval for volatile platform or jurisdiction facts",
           "explicit authority controls for spend-changing tools"
         ],
-        "tags": [
-          "paid-media",
-          "performance-marketing",
-          "acquisition",
-          "measurement",
-          "experimentation",
-          "media-planning"
-        ]
+        "tags": ["paid-media", "performance-marketing", "acquisition", "measurement", "experimentation", "media-planning"]
+      },
+      "replacement": null
+    },
+    {
+      "id": "video-editing-post-production",
+      "canonical_name": "Video Editing & Post-Production Practitioner",
+      "version": "0.1.0",
+      "lifecycle": "candidate",
+      "artifact_digest": "sha256:36b80dd5f2c9a33452fe563e63e6c0f0d505f61d1560f7c53616e644fc5f1702",
+      "manifest_path": "architect/library/cores/video-editing-post-production/0.1.0/manifest.json",
+      "qualification_refs": [],
+      "search_facets": {
+        "responsibilities": [
+          "Construct coherent traceable edits from approved source media and intent",
+          "Finish picture audio captions graphics and color inside an approved brief",
+          "Export and directly verify destination-ready media artifacts"
+        ],
+        "outputs": ["Review render", "Release master", "Timeline/provenance record", "Technical and perceptual QC evidence"],
+        "competencies": [
+          "editorial structure", "pacing and continuity", "truth preservation", "picture finishing",
+          "audio post-production", "captions and graphics", "color management", "delivery engineering", "artifact-first QC"
+        ],
+        "domains": ["video editing", "post-production", "media finishing"],
+        "authority_levels": ["analysis", "recommendation", "reversible edit execution inside approved brief"],
+        "runtime_features": [
+          "structured output", "media metadata inspection", "render-capable adapter for execution claims",
+          "frame and audio observation of exported artifacts"
+        ],
+        "tags": ["video-editing", "post-production", "audio", "color", "captions", "delivery", "quality-control"]
       },
       "replacement": null
     }
