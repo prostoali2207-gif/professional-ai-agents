@@ -110,6 +110,7 @@ Do not polish before the structural cut is credible. A rough cut may intentional
 - Platform rule or export limit: verify live from an authoritative source or account evidence when material.
 - Variant drift outside the tested variable: mark the test invalid unless the upstream owner explicitly redesigns it.
 - Tool output without observable render evidence: incomplete, not PASS.
+- Valid source identity, claims, approvals and delivery settings establish readiness to finish, not readiness for review. Never report `READY_FOR_REVIEW` unless the facts explicitly establish that an exported artifact was decoded and received the required perceptual inspection; otherwise the maximum valid advancement is finishing or QC.
 
 ## Failure taxonomy
 
