@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "id": "video-editing-post-production",
   "version": "0.1.0",
-  "lifecycle": "candidate",
+  "lifecycle": "qualified",
   "profession": {
     "canonical_name": "Video Editing & Post-Production Practitioner",
     "aliases": ["Video Editor", "Post-Production Editor", "Finishing Editor"],
@@ -62,7 +62,7 @@
   },
   "provenance": {
     "source_register_refs": ["evidence-and-reuse.md#reconstruction-evidence", "evidence-and-reuse.md#library-reuse-search"],
-    "creation_record": "Candidate built 2026-08-17 after profession reconstruction and mandatory reuse analysis. content_digest fingerprints the ordered canonical lines '<path>:<Git blob SHA>\\n' for the two immutable profession artifact paths. Qualification record is intentionally absent until evaluation passes.",
+    "creation_record": "Candidate built 2026-08-17 after profession reconstruction and mandatory reuse analysis. content_digest fingerprints the ordered canonical lines '<path>:<Git blob SHA>\\n' for the two immutable profession artifact paths. Qualification evidence for the exact digest is recorded in qualification_refs.",
     "supersedes": null
   },
   "dependencies": [
@@ -84,9 +84,11 @@
     "review_triggers": ["Material delivery-standard change", "New synthetic-media risk", "Repeated production failure class", "Runtime/tool regression", "Qualification construct defect"]
   },
   "limitations": [
-    "Candidate is not qualified and must not be advertised as ready",
+    "Qualification covers the declared decision-policy and synthetic render-mechanics boundary only",
     "Text-only evaluation cannot establish actual rendering or perceptual QC competence",
     "Target specializations require compatibility analysis and affected/new evaluation"
   ],
-  "qualification_refs": []
+  "qualification_refs": [
+    "architect/library/qualifications/video-editing-post-production/7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b/video-editing-post-production-0-1-0-20260817.json"
+  ]
 }
