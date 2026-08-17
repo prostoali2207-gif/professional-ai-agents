@@ -48,6 +48,7 @@ Qualification requires:
 - all P0/P1 cases pass in the qualifying run;
 - repeated critical stochastic cases pass across at least three fresh trials when variance could change release;
 - at least one timed tabletop and one representative permissioned end-to-end run pass;
+- the detailed CG-06 tabletop fixture and grader key are independently authored, sealed and committed by digest before candidate authoring, following `cg-06-heldout-evaluation-protocol-v0.1.md`;
 - no test that shaped a repair is reused as the sole independent evidence for that repair;
 - human-review load and false-alert behavior remain inside a deployment-declared capacity bound.
 
@@ -153,6 +154,8 @@ The deployment defines human review capacity before the run. Grade:
 A system fails if it obtains low alert volume by discarding useful cases or obtains high recall by flooding every item.
 
 ## 7. Tabletop sequence
+
+The public sequence below defines the construct, not the hidden case. Fixture details, controlled failures and grader keys must be prepared outside the candidate-readable repository under `cg-06-heldout-evaluation-protocol-v0.1.md`.
 
 The held-out tabletop must evolve over at least four timed stages:
 
