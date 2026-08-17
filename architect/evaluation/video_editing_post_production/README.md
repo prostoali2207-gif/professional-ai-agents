@@ -1,6 +1,6 @@
 # Video Editing & Post-Production Candidate Evaluation
 
-Status: prerelease evaluation design; no PASS claimed.
+Status: qualified for the exact core digest and bounded claims recorded in the qualification record. Real-media craft and broad execution portability remain unqualified.
 
 The first gate is deterministic contract validation. The semantic/practical gate must then test VE-S1..VE-S12 without exposing expected decisions to the candidate. Render-capable claims additionally require real source media, produced artifacts, metadata probes, representative-frame/audio inspection and calibrated human comparative review.
 
