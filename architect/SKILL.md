@@ -98,9 +98,21 @@ Do not copy protected books into the repository. Extract copyright-safe principl
 
 Every material knowledge unit must answer which competency/decision consumes it and whether it should be stored or retrieved live.
 
+For every CORE and BOUNDARY-CRITICAL competency, perform a Knowledge Packaging Audit using `methodology/knowledge-packaging.md`. Identify difficult decisions whose correct execution depends on knowledge deeper than the competency description itself, then classify each material dependency as one or more of:
+
+`EMBED_CORE | PROCEDURAL_MODULE | REFERENCE_MODULE | LIVE_RESEARCH | TOOL_BACKED | ESCALATE`.
+
+Do not assume that research retained in design notes, a source URL, or model priors will be available at runtime. Prove discovery, routing, retrieval, depth, freshness, provenance, context fit, and safe failure behavior for material knowledge dependencies. Preserve progressive disclosure: package only operational depth that earns its context/lifecycle cost, and do not turn the agent into an always-loaded encyclopedia.
+
+At the end of profession research, explicitly classify material findings as retained stable knowledge, procedural/reference knowledge, live-only knowledge, tool-backed knowledge, excluded/out-of-scope, or unresolved/escalated. Material findings required for production behavior must not survive only in temporary research/chat context.
+
 For empirical observations, authority and retrieval are not enough. Map the evidence-generating process and test construct validity, population/condition compatibility, units/denominators, selection/coverage, measurement/classification error, time regime, and comparator compatibility before aggregation or inference.
 
-Use `methodology/evidence-validity-comparability.md`.
+Use:
+
+- `methodology/source-knowledge-engineering.md`
+- `methodology/knowledge-packaging.md`
+- `methodology/evidence-validity-comparability.md`
 
 Prefer `classify -> validate -> segment -> compare -> quantify uncertainty -> synthesize only where justified`.
 
@@ -131,6 +143,7 @@ Determine which reusable competence belongs in procedural packages rather than t
 Use:
 
 - `methodology/procedural-skill-packaging.md`
+- `methodology/knowledge-packaging.md`
 - `methodology/tool-human-factors.md`
 - `methodology/retrieval-evaluation.md`
 
@@ -196,12 +209,13 @@ Use:
 
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
+- `methodology/knowledge-packaging.md` for knowledge-runtime sufficiency, stale-knowledge traps, missing-resource behavior, and core-only vs packaged-knowledge ablation where material;
 - `evaluation/professional-core-reuse-gate.md` when a reusable core/capability is considered, inherited, adapted, extended, forked, rejected, or admitted to a reusable library;
 - `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
 - `evaluation/resource_cost_engineering/` when material resource/cost decisions, budget gates, volatile pricing/quota behavior, targeting, or post-run accounting are part of the capability claim;
 - files under `evaluation/`.
 
-Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, empirical validity/comparability, reuse compatibility and composition boundaries, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, knowledge-package selection and runtime availability, empirical validity/comparability, reuse compatibility and composition boundaries, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
 
 For every critical behavioral claim require an executable evidence chain:
 
@@ -232,6 +246,8 @@ Before finalizing any applied agent, ask exactly:
 Then red-team from at least senior-practitioner, educator/competency-assessor, and hiring-manager perspectives. Add evaluation-scientist, systems/operations, and security perspectives when material.
 
 For reuse decisions specifically ask whether the inherited model preserves real professional judgment rather than only vocabulary, whether transferred competencies remain construct-valid in the target context, and whether source-context success predicts acceptable target-job performance.
+
+For knowledge architecture specifically ask whether a plausible base-model answer could conceal missing operational depth, whether critical knowledge is actually available at runtime rather than only present in research history, and whether progressive disclosure could fail to load the needed resource.
 
 Do not merely list criticisms. Repair material gaps before release.
 
@@ -267,50 +283,4 @@ Examples and attractive work support reference literacy and creativity but do no
 
 Do not equate a portable file format with portable behavior. For every applied agent declare required capabilities for tools, structured outputs, retrieval, state/memory, sandbox/network, approvals, and observability; specify acceptable substitutes and unsupported environments.
 
-A runtime-specific mechanism may implement the architecture, but platform details must not silently become universal professional principles.
-
-## Creativity rule
-
-For creative professions distinguish fundamentals/craft, problem framing, taste/reference literacy, divergent exploration, concept formation, contextual judgment, execution, critique/revision, and production verification.
-
-References must be deconstructed for underlying decisions and constraints, not copied as surface style. Taste must be operationalized through observable comparative and diagnostic behavior, not adjectives such as `premium`, `clean`, or `beautiful`.
-
-An agent may intentionally violate a rule only when it can identify the rule, causal purpose of the violation, intended effect, resulting risk, and how the effect will be verified.
-
-## Release integrity rule
-
-A methodology file that exists but cannot be reached from the executable router is operationally missing. Before release or major revision, verify:
-
-- every file path referenced by this SKILL exists;
-- top-level README/status agrees with executable state;
-- required evaluation artifacts exist;
-- source-register claims match actual foundation coverage;
-- stale instructions from earlier lifecycle stages have been removed;
-- claimed runtime capabilities have been tested in representative environments rather than inferred from documentation;
-- every P0/P1 behavioral PASS has a runnable harness, frozen manifest, observable run record, and construct-appropriate grader.
-
-## Stop conditions
-
-Do not finalize an applied agent when any material item is missing: profession model, reusable-core/capability inventory and compatibility decision, competency/evidence model, authoritative knowledge, hidden-gap analysis, professional judgment, procedural capabilities, tools/evidence loop, state/context policy where material, execution-control/remediation policy where material, scope/escalation boundaries, security/trust model where material, operational authority/governance, evaluation plan, adversarial coverage, practical test, or red-team correction.
-
-Do not claim exhaustive professional knowledge even after passing. Retain a reliable process for unknowns, live research, state change, verification, and escalation.
-
-## Definition of done
-
-`profession mapped -> reusable cores/capabilities inspected -> compatibility + reuse/adapt/extend/fork/build/reject decision recorded -> competencies/evidence + delta mapped -> authoritative knowledge assembled -> empirical validity/comparability checked where relevant -> creative/high-stakes extensions applied where relevant -> procedural capabilities packaged -> workflows/tools/evidence defined -> resource/cost controls defined where material -> runtime state/memory/context defined where material -> execution control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> professional judgment/failure modes encoded -> applied SKILL orchestrates inherited + local system -> competency evaluation run -> reuse/composition + stateful/security/control-loop/resource-cost evals run where applicable -> weaknesses corrected -> practical evaluation passed -> production-learning loop defined`.
-
-## Current benchmark state
-
-The original v1.0 foundation demonstrated useful cross-domain architecture across software, empirical analysis, creative work, and high-stakes decision support. The 2026-08 external benchmark found additional material layers that had been implicit or shallow: runtime state/memory/context, execution control and bounded self-correction, procedural capability packaging, and agent security/trust boundaries.
-
-A later one-SHA v1.1 validation exposed a genuine B1 authoritative-supersession defect. The responsible memory policy was repaired so explicit, applicable authoritative supersession updates current state without redundant reconfirmation while preserving useful superseded provenance/history.
-
-The repaired candidate then passed the preregistered fresh held-out B1 regression and the complete frozen B1–B10 one-SHA release suite on candidate SHA `46365958ce80e40df5e9c985279f02ad9b5b8baf`. The qualifying run was GitHub Actions `31943354354`; canonical evidence is recorded in `evaluation/v1.1-behavioral-validation-report.md`.
-
-Resource & Cost Engineering v1.2 then passed its rebased integration gates: 16/16 deterministic checks with zero model/API generation calls, followed by the frozen RCE-S1–S10 semantic/adversarial release gate at 10/10 PASS on candidate SHA `d0d5b4fcc7613c1139acfbb190d1020cce5f783d` (GitHub Actions run `31944762944`). The semantic release run used exactly 10 planned model calls, zero application retries, and preserved grader-side expected decisions. Canonical RCE evidence is recorded in `evaluation/resource_cost_engineering/integration-candidate-validation-2026-08-15.md`.
-
-The Professional Core Reuse layer is a behavior-relevant integration candidate on this branch. Its methodology and evaluation gate are wired into the executable router, but this branch must not claim behavioral PASS for the new reuse decisions until the targeted gate is actually executed with observable evidence.
-
-The Gemini model used for prior qualification is an evaluation transport choice, not a universal RCE provider/model default. Provider pricing, billing tier, quotas, free-tier availability, and health remain volatile live state and must not be inferred from this PASS.
-
-Benchmark qualification for v1.1 and RCE v1.2 does not transfer automatically to applied agents or reusable cores and does not remove the requirement for live research, profession-specific evidence, compatibility analysis, direct verification, runtime compatibility checks, practical evaluation, adversarial testing, and escalation where appropriate.
+A runtime-specific mechanism may implement the architecture, but platform behavior must be tested rather than assumed.
