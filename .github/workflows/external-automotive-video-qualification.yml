@@ -1,0 +1,63 @@
+name: External Automotive Video Qualification
+
+on:
+  push:
+    branches:
+      - agent/video-editing-post-production-core
+    paths:
+      - architect/evaluation/external_automotive_video_qualification_trigger.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout evaluator repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Deterministic specialization contract
+        working-directory: architect/evaluation/external_automotive_video/subject
+        run: |
+          python -m py_compile evaluation/video-post-production/run-semantic-gate.py
+          python -m json.tool evaluation/video-post-production/semantic-cases.json >/dev/null
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY missing; no model calls attempted.' >&2; exit 2)
+      - name: Critical automotive delta — exactly 3 model calls
+        working-directory: architect/evaluation/external_automotive_video/subject
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AUTO_VE_CANDIDATE_SHA: 480efbecf07abb53b8707a852bd4acb59c534e48
+          AUTO_VE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          AUTO_VE_CASE_IDS: AUTO-VE-S1,AUTO-VE-S2,AUTO-VE-S3,AUTO-VE-S6
+          AUTO_VE_TRIALS: '3'
+          AUTO_VE_BATCH_SIZE: '4'
+          AUTO_VE_OUT_TAG: critical
+        run: python evaluation/video-post-production/run-semantic-gate.py
+      - name: Complete automotive delta — exactly 2 model calls
+        working-directory: architect/evaluation/external_automotive_video/subject
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AUTO_VE_CANDIDATE_SHA: 480efbecf07abb53b8707a852bd4acb59c534e48
+          AUTO_VE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          AUTO_VE_TRIALS: '1'
+          AUTO_VE_BATCH_SIZE: '4'
+          AUTO_VE_OUT_TAG: full
+        run: python evaluation/video-post-production/run-semantic-gate.py
+      - name: Upload specialization evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-video-post-production-480efbecf07abb53b8707a852bd4acb59c534e48
+          path: architect/evaluation/external_automotive_video/subject/.tmp/automotive-video-post-production
+          if-no-files-found: error

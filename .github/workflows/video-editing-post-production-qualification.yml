@@ -1,0 +1,67 @@
+name: Video Editing Post-Production Qualification
+
+on:
+  push:
+    branches:
+      - agent/video-editing-post-production-core
+    paths:
+      - architect/evaluation/video_editing_post_production/qualification-trigger.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/video_editing_post_production/run_semantic_gate.py
+          python -m py_compile architect/evaluation/video_editing_post_production/run_practical_render_gate.py
+          python -m unittest -v architect/evaluation/video_editing_post_production/test_contract.py
+      - name: Install FFmpeg runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Synthetic practical render and artifact QC
+        run: python architect/evaluation/video_editing_post_production/run_practical_render_gate.py
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY missing; semantic calls were not attempted.' >&2; exit 2)
+      - name: Critical reliability gate — exactly 3 model calls
+        if: ${{ !contains(github.event.head_commit.message, '[full-only]') }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          VE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          VE_CASE_IDS: VE-S2,VE-S4,VE-S6,VE-S10,VE-S11
+          VE_TRIALS: '3'
+          VE_BATCH_SIZE: '5'
+          VE_OUT_TAG: critical
+        run: python architect/evaluation/video_editing_post_production/run_semantic_gate.py
+      - name: Complete frozen gate — exactly 3 model calls
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          VE_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          VE_TRIALS: '1'
+          VE_BATCH_SIZE: '5'
+          VE_OUT_TAG: full
+        run: python architect/evaluation/video_editing_post_production/run_semantic_gate.py
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-editing-post-production-${{ github.sha }}
+          path: .tmp/video-editing-post-production
+          if-no-files-found: error

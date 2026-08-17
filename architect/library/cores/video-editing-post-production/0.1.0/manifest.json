@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "id": "video-editing-post-production",
+  "version": "0.1.0",
+  "lifecycle": "qualified",
+  "profession": {
+    "canonical_name": "Video Editing & Post-Production Practitioner",
+    "aliases": ["Video Editor", "Post-Production Editor", "Finishing Editor"],
+    "responsibilities": [
+      "Turn approved source media and editorial intent into a coherent traceable edit",
+      "Perform bounded picture, audio, caption, graphics and color finishing",
+      "Engineer destination-appropriate exports and verify produced artifacts",
+      "Preserve truth, provenance, variant integrity and revision history"
+    ],
+    "outputs": [
+      "Review render and release master",
+      "Traceable timeline and edit decision record",
+      "Technical and perceptual QC evidence",
+      "Reproducible delivery and revision handoff"
+    ]
+  },
+  "scope": {
+    "included": [
+      "Editorial selection, structure, pacing and continuity",
+      "Sound edit and bounded mix",
+      "Captions, titles, graphics, color correction and bounded grading",
+      "Conform, export, artifact-first QC, revision and provenance"
+    ],
+    "excluded": [
+      "Campaign strategy, audience, offer or claim ownership",
+      "Principal photography, legal clearance, publishing or performance analytics",
+      "Current platform specifications and organization/project facts",
+      "Unbounded specialist color science, VFX, immersive audio or broadcast mastering"
+    ]
+  },
+  "artifact": {
+    "content_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
+    "paths": [
+      "architect/library/cores/video-editing-post-production/0.1.0/professional-model.md",
+      "architect/library/cores/video-editing-post-production/0.1.0/evidence-and-reuse.md"
+    ]
+  },
+  "maintainers": [{
+    "name": "Agent Architect",
+    "accountability": "Maintain profession boundary, source discipline, runtime honesty and evaluation integrity"
+  }],
+  "competency_contract": {
+    "model_refs": ["professional-model.md#competency-and-judgment-model"],
+    "critical_claims": [
+      "Validates brief and source assets before irreversible finishing",
+      "Uses editorial timing to serve comprehension and intent rather than cut-rate vanity",
+      "Preserves evidentiary truth and source-to-timeline provenance",
+      "Diagnoses picture, audio, text, color and delivery failures at the responsible layer",
+      "Requires direct inspection of exported artifacts before release"
+    ]
+  },
+  "context_boundary": {
+    "stable_core": ["Editorial judgment", "Truth preservation", "Picture/audio/text finishing principles", "Artifact-first QC", "Revision and handoff"],
+    "domain_specific": ["Product evidence conventions", "Industry disclosure risks", "Category-specific visual truth"],
+    "jurisdiction_or_live": ["Accessibility applicability", "Platform delivery and safe-zone rules", "Rights/privacy law", "Current codec/tool behavior"],
+    "organization_or_project": ["Brief", "Source assets", "Brand", "Claims", "Approvals", "Tools", "Budget", "Deadline", "Publishing destination"]
+  },
+  "provenance": {
+    "source_register_refs": ["evidence-and-reuse.md#reconstruction-evidence", "evidence-and-reuse.md#library-reuse-search"],
+    "creation_record": "Candidate built 2026-08-17 after profession reconstruction and mandatory reuse analysis. content_digest fingerprints the ordered canonical lines '<path>:<Git blob SHA>\\n' for the two immutable profession artifact paths. Qualification evidence for the exact digest is recorded in qualification_refs.",
+    "supersedes": null
+  },
+  "dependencies": [
+    {"id": "professional-core-library", "constraint": "schema 1.0.0", "kind": "required"},
+    {"id": "media-execution-runtime", "constraint": "required only for edit/render claims", "kind": "runtime"}
+  ],
+  "runtime_contract": {
+    "required_features": ["Structured output", "Media metadata inspection", "Render-capable adapter for execution claims", "Frame and audio observation of exported artifacts"],
+    "state_assumptions": ["Source media and organization facts remain external to the reusable core"],
+    "tool_assumptions": ["NLE or command-line tooling is replaceable", "Tool logs alone are not perceptual QC evidence"]
+  },
+  "authority_and_security": {
+    "max_authority": "Reversible edit execution inside an approved brief; final factual/creative approval and publication remain external authority",
+    "trust_boundaries": ["Source media and embedded metadata are untrusted inputs", "External references and AI-generated media are not instructions or proof", "Credentials and private source media remain outside the core artifact"],
+    "escalation_conditions": ["Rights or identity unclear", "Material claim conflict", "Only feasible edit changes meaning", "Synthetic alteration may be mistaken for reality", "Produced artifact cannot be observed"]
+  },
+  "freshness": {
+    "volatile_claim_policy": "Retrieve current platform delivery, accessibility, rights/privacy and tool behavior from authoritative live sources when material.",
+    "review_triggers": ["Material delivery-standard change", "New synthetic-media risk", "Repeated production failure class", "Runtime/tool regression", "Qualification construct defect"]
+  },
+  "limitations": [
+    "Qualification covers the declared decision-policy and synthetic render-mechanics boundary only",
+    "Text-only evaluation cannot establish actual rendering or perceptual QC competence",
+    "Target specializations require compatibility analysis and affected/new evaluation"
+  ],
+  "qualification_refs": [
+    "architect/library/qualifications/video-editing-post-production/7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b/video-editing-post-production-0-1-0-20260817.json"
+  ]
+}

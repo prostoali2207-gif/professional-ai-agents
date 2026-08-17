@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "video-editing-post-production-0-1-0-20260817",
+  "core_id": "video-editing-post-production",
+  "core_version": "0.1.0",
+  "artifact_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
+  "status": "pass",
+  "claims": [
+    {
+      "id": "VE-C1",
+      "statement": "Validates brief and source availability, stops missing-coverage finishing, and routes material gaps without inventing media.",
+      "criticality": "P0"
+    },
+    {
+      "id": "VE-C2",
+      "statement": "Protects comprehension and intentional continuity instead of maximizing cut rate or applying conventions mechanically.",
+      "criticality": "P1"
+    },
+    {
+      "id": "VE-C3",
+      "statement": "Rejects deceptive condition concealment and preserves factual truth and accountable authority boundaries.",
+      "criticality": "P0"
+    },
+    {
+      "id": "VE-C4",
+      "statement": "Diagnoses color-management, audio-intelligibility, caption, variant and delivery failures at the responsible layer.",
+      "criticality": "P0"
+    },
+    {
+      "id": "VE-C5",
+      "statement": "Requires exported-artifact decode and perceptual inspection before claiming review readiness.",
+      "criticality": "P0"
+    },
+    {
+      "id": "VE-C6",
+      "statement": "The supplied FFmpeg harness can render, decode, probe and lineage-check a bounded synthetic vertical-video fixture.",
+      "criticality": "P1"
+    }
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "architect/evaluation/video_editing_post_production/semantic_cases.json#VE-S1-VE-S12",
+      "architect/evaluation/video_editing_post_production/run_practical_render_gate.py"
+    ],
+    "grader_refs": [
+      "architect/evaluation/video_editing_post_production/run_semantic_gate.py",
+      "architect/evaluation/video_editing_post_production/test_contract.py"
+    ],
+    "thresholds": [
+      "Deterministic contract preflight PASS",
+      "Synthetic render/decode/probe/hash harness checks PASS",
+      "Critical VE-S2, VE-S4, VE-S6, VE-S10 and VE-S11 each PASS 3/3 independent trials with zero application retries",
+      "Complete frozen VE-S1 through VE-S12 suite PASS 12/12 with zero application retries",
+      "Infrastructure failures are BLOCKED and cannot count as behavioral PASS"
+    ],
+    "reliability_trials": 3,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "GitHub Actions ubuntu-latest / Python 3.12 / FFmpeg 6.x-compatible harness",
+    "model_or_executor": "gemini-3.1-flash-lite; thinking level medium",
+    "tools": [
+      "Gemini Interactions structured-output API for behavioral evaluation only",
+      "FFmpeg and FFprobe for bounded synthetic render mechanics"
+    ],
+    "state_contract": "Each semantic fixture is evaluated from the immutable Professional Core plus supplied case facts. Synthetic media validates harness mechanics only; project and live destination facts remain external.",
+    "authority_scope": "Analysis, recommendation, and reversible editing inside an approved brief; factual/creative approval and publication remain external authority."
+  },
+  "evidence": {
+    "run_refs": [
+      "github-actions:32003322803",
+      "github-actions:32003552170"
+    ],
+    "artifact_refs": [
+      "github-actions-artifact:9279161112",
+      "github-actions-artifact:9279230563"
+    ],
+    "provenance_refs": [
+      "architect/library/cores/video-editing-post-production/0.1.0/evidence-and-reuse.md#reconstruction-evidence",
+      "architect/library/cores/video-editing-post-production/0.1.0/evidence-and-reuse.md#library-reuse-search",
+      "architect/evaluation/video_editing_post_production/qualification-notes.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest and declared runtime/evaluation boundary; future specializations and composed agents require compatibility and affected-case evaluation.",
+    "The synthetic render fixture does not establish real-media editorial taste, broad NLE portability, arbitrary codec support, or reliable perceptual inspection of footage.",
+    "Current platform specifications, rights/privacy law, project facts, approvals and publishing authority remain external and require live or accountable evidence when material."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional decision policies remain qualified while the exact core digest, critical controls and evaluation assumptions are unchanged; volatile platform, legal and tool facts require live verification at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to the Professional Core artifact",
+      "Qualification regression or newly observed stochastic failure on a critical construct",
+      "Material change in runtime, model, FFmpeg, codec or tool behavior affecting qualified claims",
+      "New deceptive-media or accessibility risk that invalidates a stable policy",
+      "Hidden coupling discovered during specialization or production use"
+    ]
+  },
+  "qualified_at": "2026-08-17T06:55:39Z"
+}
