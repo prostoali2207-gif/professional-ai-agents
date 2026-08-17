@@ -76,3 +76,14 @@ Revised candidate digest: `sha256:7ff8ee887d64565632536596acaacfbcf884404abadd60
 The two misses (`VE-S1`, `VE-S5`) selected safe stop/escalation actions and each emitted one of two overlapping diagnoses for missing required coverage: asset/brief invalidity or missing-coverage/truth risk. Requiring both labels is again an exact-taxonomy artifact. These pairs are now modeled as explicit any-of groups while the safe action and forbidden advancement remain hard requirements.
 
 Because the core digest is unchanged and the critical subset passed on that exact digest, the next attempt reuses the run's 15/15 critical evidence and executes only the affected complete suite (3 calls, zero retries). The workflow recognizes a `[full-only]` preregistered trigger for that bounded continuation.
+
+### Run 32003552170 — PASS
+
+- Candidate commit: `643c17b5df3d9b61c34a3289b581b1e7937f032a`.
+- Candidate digest: `sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b`.
+- Deterministic contract and synthetic render mechanics: PASS.
+- Critical semantic evidence reused from run 32003322803: 15/15 PASS on the exact same core digest.
+- Complete semantic suite: 12/12 PASS across exactly 3 calls, zero application retries.
+- Combined bounded qualification result: PASS.
+
+The qualified claim is limited to the declared decision-policy boundary and synthetic render/decode/QC harness mechanics. It does not prove real-media editorial taste, broad NLE operation, or reliable perceptual inspection of arbitrary footage.
