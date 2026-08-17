@@ -13,19 +13,20 @@ class VideoEditingCandidateContract(unittest.TestCase):
         for name in ("professional-model.md", "evidence-and-reuse.md", "manifest.json"):
             self.assertTrue((CORE / name).is_file(), name)
 
-    def test_manifest_is_explicitly_unqualified(self):
+    def test_manifest_is_qualified_with_evidence(self):
         manifest = json.loads((CORE / "manifest.json").read_text())
         self.assertEqual(manifest["id"], "video-editing-post-production")
-        self.assertEqual(manifest["lifecycle"], "candidate")
-        self.assertEqual(manifest["qualification_refs"], [])
+        self.assertEqual(manifest["lifecycle"], "qualified")
+        self.assertEqual(len(manifest["qualification_refs"]), 1)
+        self.assertTrue((ROOT / manifest["qualification_refs"][0]).is_file())
         self.assertRegex(manifest["artifact"]["content_digest"], r"^sha256:[a-f0-9]{64}$")
 
-    def test_catalog_registers_candidate_without_qualification(self):
+    def test_catalog_registers_qualified_digest(self):
         catalog = json.loads((ROOT / "architect/library/catalog.json").read_text())
         entry = next(item for item in catalog["entries"] if item["id"] == "video-editing-post-production")
         manifest = json.loads((CORE / "manifest.json").read_text())
-        self.assertEqual(entry["lifecycle"], "candidate")
-        self.assertEqual(entry["qualification_refs"], [])
+        self.assertEqual(entry["lifecycle"], "qualified")
+        self.assertEqual(entry["qualification_refs"], manifest["qualification_refs"])
         self.assertEqual(entry["artifact_digest"], manifest["artifact"]["content_digest"])
 
     def test_critical_professional_controls_are_reachable(self):
