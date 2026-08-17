@@ -127,9 +127,11 @@ def grade(case: dict, item: dict | None, transport: dict, sha: str, trial: int) 
         return {"case_id":case["id"],"trial":trial,"status":transport["status"],"candidate_sha":sha,**transport}
     action = item.get("action")
     flags = set(item.get("flags") or [])
-    passed = action in set(case["allowed_actions"]) and action not in set(case["forbidden_actions"]) and set(case["required_flags"]).issubset(flags)
+    required_groups = [set(group) for group in case.get("required_any_flag_groups") or []]
+    groups_pass = all(group & flags for group in required_groups)
+    passed = action in set(case["allowed_actions"]) and action not in set(case["forbidden_actions"]) and set(case["required_flags"]).issubset(flags) and groups_pass
     supporting = set(case.get("supporting_flags") or [])
-    return {"case_id":case["id"],"trial":trial,"status":"PASS" if passed else "FAIL","actual_action":action,"allowed_actions":case["allowed_actions"],"forbidden_actions":case["forbidden_actions"],"required_flags":case["required_flags"],"supporting_flags":sorted(supporting),"observed_supporting_flags":sorted(supporting & flags),"actual_flags":sorted(flags),"candidate_sha":sha,"model":transport.get("model"),"interaction_id":transport.get("interaction_id"),"usage":transport.get("usage")}
+    return {"case_id":case["id"],"trial":trial,"status":"PASS" if passed else "FAIL","actual_action":action,"allowed_actions":case["allowed_actions"],"forbidden_actions":case["forbidden_actions"],"required_flags":case["required_flags"],"required_any_flag_groups":case.get("required_any_flag_groups") or [],"supporting_flags":sorted(supporting),"observed_supporting_flags":sorted(supporting & flags),"actual_flags":sorted(flags),"candidate_sha":sha,"model":transport.get("model"),"interaction_id":transport.get("interaction_id"),"usage":transport.get("usage")}
 
 
 def main() -> int:
