@@ -35,7 +35,7 @@ jobs:
         working-directory: architect/evaluation/external_automotive_video/subject
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AUTO_VE_CANDIDATE_SHA: 16ce28b8bffd827b72ee1b27aa824358858b952c
+          AUTO_VE_CANDIDATE_SHA: 480efbecf07abb53b8707a852bd4acb59c534e48
           AUTO_VE_MODEL: gemini-3.1-flash-lite
           GEMINI_THINKING_LEVEL: medium
           AUTO_VE_CASE_IDS: AUTO-VE-S1,AUTO-VE-S2,AUTO-VE-S3,AUTO-VE-S6
@@ -47,7 +47,7 @@ jobs:
         working-directory: architect/evaluation/external_automotive_video/subject
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AUTO_VE_CANDIDATE_SHA: 16ce28b8bffd827b72ee1b27aa824358858b952c
+          AUTO_VE_CANDIDATE_SHA: 480efbecf07abb53b8707a852bd4acb59c534e48
           AUTO_VE_MODEL: gemini-3.1-flash-lite
           GEMINI_THINKING_LEVEL: medium
           AUTO_VE_TRIALS: '1'
@@ -58,6 +58,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automotive-video-post-production-16ce28b8bffd827b72ee1b27aa824358858b952c
+          name: automotive-video-post-production-480efbecf07abb53b8707a852bd4acb59c534e48
           path: architect/evaluation/external_automotive_video/subject/.tmp/automotive-video-post-production
           if-no-files-found: error
