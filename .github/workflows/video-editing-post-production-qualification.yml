@@ -28,6 +28,10 @@ jobs:
           python -m py_compile architect/evaluation/video_editing_post_production/run_semantic_gate.py
           python -m py_compile architect/evaluation/video_editing_post_production/run_practical_render_gate.py
           python -m unittest -v architect/evaluation/video_editing_post_production/test_contract.py
+      - name: Install FFmpeg runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
       - name: Synthetic practical render and artifact QC
         run: python architect/evaluation/video_editing_post_production/run_practical_render_gate.py
       - name: Require existing Gemini credential
