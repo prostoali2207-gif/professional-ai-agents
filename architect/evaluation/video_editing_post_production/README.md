@@ -6,12 +6,13 @@ The first gate is deterministic contract validation. The semantic/practical gate
 
 Required release order:
 
-1. validate manifest, evidence links and frozen fixture structure with zero model calls;
-2. run the critical decision subset repeatedly: VE-S2, VE-S4, VE-S6, VE-S10 and VE-S11;
-3. run all frozen semantic cases;
-4. run practical render cases on at least two materially different runtimes/toolchains or narrow portability claims;
-5. calibrate subjective craft grading against domain-practitioner judgments;
-6. freeze exact artifact digest and qualifying environment;
-7. only then add a qualification record and promote catalog lifecycle.
+1. validate manifest, evidence links, runner syntax and frozen fixture structure with zero model calls;
+2. run the synthetic FFmpeg render/decode/metadata/hash fixture; its PASS proves only harness mechanics;
+3. run VE-S2, VE-S4, VE-S6, VE-S10 and VE-S11 for three independent trials in exactly three batched model calls;
+4. only after critical PASS, run all VE-S1..VE-S12 in exactly three batched model calls;
+5. retain zero application retries and stop on the first infrastructure block;
+6. before broad portability or creative-craft claims, run real-media practical cases and calibrate subjective grading against domain-practitioner judgments;
+7. freeze the exact artifact digest and qualifying environment;
+8. only then add a qualification record and promote catalog lifecycle for the claims actually proved.
 
-Infrastructure failure is BLOCKED, not behavioral PASS/FAIL. A polished self-report, edit plan, command log or timeline screenshot is not evidence that the exported video is correct.
+The maximum first semantic release budget is six model calls: three critical reliability batches plus three complete-suite batches. Infrastructure failure is BLOCKED, not behavioral PASS/FAIL. A polished self-report, edit plan, command log or timeline screenshot is not evidence that the exported video is correct.
