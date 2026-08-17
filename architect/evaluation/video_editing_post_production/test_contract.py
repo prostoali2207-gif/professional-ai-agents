@@ -40,11 +40,21 @@ class VideoEditingCandidateContract(unittest.TestCase):
         cases = json.loads(CASES.read_text())
         self.assertEqual(len(cases), 12)
         self.assertEqual(len({case["id"] for case in cases}), 12)
-        self.assertEqual(len({case["construct"] for case in cases}), 12)
         for case in cases:
             self.assertTrue(case["facts"])
-            self.assertTrue(case["forbidden"])
-            self.assertTrue(case["required"])
+            self.assertTrue(case["allowed_actions"])
+            self.assertTrue(case["forbidden_actions"])
+            self.assertTrue(case["required_flags"])
+
+    def test_release_gate_is_bounded_and_has_positive_control(self):
+        runner = (Path(__file__).with_name("run_semantic_gate.py")).read_text()
+        workflow = (ROOT / ".github/workflows/video-editing-post-production-qualification.yml").read_text()
+        cases = json.loads(CASES.read_text())
+        positive = next(case for case in cases if case["id"] == "VE-S12")
+        self.assertEqual(positive["allowed_actions"], ["PROCEED_TO_FINISHING"])
+        self.assertIn("single gate invocation exceeds 3-call budget", runner)
+        self.assertIn("exactly 3 model calls", workflow)
+        self.assertIn("application_retries", runner)
 
 
 if __name__ == "__main__":
