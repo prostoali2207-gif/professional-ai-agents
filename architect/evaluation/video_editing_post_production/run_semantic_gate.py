@@ -128,7 +128,8 @@ def grade(case: dict, item: dict | None, transport: dict, sha: str, trial: int) 
     action = item.get("action")
     flags = set(item.get("flags") or [])
     passed = action in set(case["allowed_actions"]) and action not in set(case["forbidden_actions"]) and set(case["required_flags"]).issubset(flags)
-    return {"case_id":case["id"],"trial":trial,"status":"PASS" if passed else "FAIL","actual_action":action,"allowed_actions":case["allowed_actions"],"forbidden_actions":case["forbidden_actions"],"required_flags":case["required_flags"],"actual_flags":sorted(flags),"candidate_sha":sha,"model":transport.get("model"),"interaction_id":transport.get("interaction_id"),"usage":transport.get("usage")}
+    supporting = set(case.get("supporting_flags") or [])
+    return {"case_id":case["id"],"trial":trial,"status":"PASS" if passed else "FAIL","actual_action":action,"allowed_actions":case["allowed_actions"],"forbidden_actions":case["forbidden_actions"],"required_flags":case["required_flags"],"supporting_flags":sorted(supporting),"observed_supporting_flags":sorted(supporting & flags),"actual_flags":sorted(flags),"candidate_sha":sha,"model":transport.get("model"),"interaction_id":transport.get("interaction_id"),"usage":transport.get("usage")}
 
 
 def main() -> int:
