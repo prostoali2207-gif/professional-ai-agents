@@ -46,3 +46,20 @@ Scoring repair:
 - safe upstream escalation is accepted for the pacing case because the demand rests on an unverified strategy claim outside editorial authority.
 
 Again, the failed sample is not rerun unchanged; the next run uses this preregistered scoring construct.
+
+### Run 32003124577 — core behavior revision
+
+- Candidate commit: `c3169a61597f0d090247c7cc365ca0a53de5775e`.
+- Deterministic contract: PASS.
+- Synthetic render mechanics: PASS.
+- Critical semantic reliability: 15/15 PASS across 3 calls and 3 trials.
+- Complete semantic suite: 10/12 PASS across 3 calls; no application retries.
+- Result: REVISE.
+
+`VE-S1` returned `HOLD` while detecting both the invalid asset and missing coverage. That is a valid stop state, so the accepted safe actions now include hold and upstream revision while forbidden advancement remains unchanged.
+
+`VE-S12` returned `READY_FOR_REVIEW` even though the case established source, claim and delivery validity but did not explicitly establish an exported and inspected artifact. This is a genuine behavior defect. The professional core is revised to state that upstream/delivery validity permits finishing only; review readiness requires explicit decode and perceptual inspection evidence. The positive fixture now makes the missing artifact evidence explicit and forbids `READY_FOR_REVIEW`.
+
+Because the behavior-relevant core changes, the candidate digest is replaced and all prior semantic evidence remains historical rather than qualifying evidence for the revised candidate.
+
+Revised candidate digest: `sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b`.
