@@ -43,10 +43,12 @@
       "id": "video-editing-post-production",
       "canonical_name": "Video Editing & Post-Production Practitioner",
       "version": "0.1.0",
-      "lifecycle": "candidate",
+      "lifecycle": "qualified",
       "artifact_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
       "manifest_path": "architect/library/cores/video-editing-post-production/0.1.0/manifest.json",
-      "qualification_refs": [],
+      "qualification_refs": [
+        "architect/library/qualifications/video-editing-post-production/7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b/video-editing-post-production-0-1-0-20260817.json"
+      ],
       "search_facets": {
         "responsibilities": [
           "Construct coherent traceable edits from approved source media and intent",
