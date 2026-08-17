@@ -63,3 +63,16 @@ Again, the failed sample is not rerun unchanged; the next run uses this preregis
 Because the behavior-relevant core changes, the candidate digest is replaced and all prior semantic evidence remains historical rather than qualifying evidence for the revised candidate.
 
 Revised candidate digest: `sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b`.
+
+### Run 32003322803 — revised candidate partial PASS
+
+- Candidate commit: `5633d9f901328a0bd665795325f41261f57ecb61`.
+- Candidate digest: `sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b`.
+- Deterministic contract and synthetic render mechanics: PASS.
+- Critical semantic reliability: 15/15 PASS across 3 calls and 3 trials.
+- Complete semantic suite: 10/12 PASS across 3 calls; the repaired `VE-S12` positive control PASSed with `PROCEED_TO_FINISHING`.
+- Result: REVISE for full-suite scoring only.
+
+The two misses (`VE-S1`, `VE-S5`) selected safe stop/escalation actions and each emitted one of two overlapping diagnoses for missing required coverage: asset/brief invalidity or missing-coverage/truth risk. Requiring both labels is again an exact-taxonomy artifact. These pairs are now modeled as explicit any-of groups while the safe action and forbidden advancement remain hard requirements.
+
+Because the core digest is unchanged and the critical subset passed on that exact digest, the next attempt reuses the run's 15/15 critical evidence and executes only the affected complete suite (3 calls, zero retries). The workflow recognizes a `[full-only]` preregistered trigger for that bounded continuation.
