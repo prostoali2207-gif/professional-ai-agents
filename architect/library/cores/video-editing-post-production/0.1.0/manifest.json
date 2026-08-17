@@ -34,7 +34,7 @@
     ]
   },
   "artifact": {
-    "content_digest": "sha256:36b80dd5f2c9a33452fe563e63e6c0f0d505f61d1560f7c53616e644fc5f1702",
+    "content_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
     "paths": [
       "architect/library/cores/video-editing-post-production/0.1.0/professional-model.md",
       "architect/library/cores/video-editing-post-production/0.1.0/evidence-and-reuse.md"
