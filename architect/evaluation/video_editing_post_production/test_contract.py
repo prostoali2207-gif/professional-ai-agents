@@ -44,7 +44,9 @@ class VideoEditingCandidateContract(unittest.TestCase):
             self.assertTrue(case["facts"])
             self.assertTrue(case["allowed_actions"])
             self.assertTrue(case["forbidden_actions"])
-            self.assertTrue(case["required_flags"])
+            self.assertTrue(case["required_flags"] or case.get("required_any_flag_groups"))
+            for group in case.get("required_any_flag_groups", []):
+                self.assertGreaterEqual(len(group), 2)
 
     def test_release_gate_is_bounded_and_has_positive_control(self):
         runner = (Path(__file__).with_name("run_semantic_gate.py")).read_text()
