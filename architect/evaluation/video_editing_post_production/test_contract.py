@@ -20,6 +20,14 @@ class VideoEditingCandidateContract(unittest.TestCase):
         self.assertEqual(manifest["qualification_refs"], [])
         self.assertRegex(manifest["artifact"]["content_digest"], r"^sha256:[a-f0-9]{64}$")
 
+    def test_catalog_registers_candidate_without_qualification(self):
+        catalog = json.loads((ROOT / "architect/library/catalog.json").read_text())
+        entry = next(item for item in catalog["entries"] if item["id"] == "video-editing-post-production")
+        manifest = json.loads((CORE / "manifest.json").read_text())
+        self.assertEqual(entry["lifecycle"], "candidate")
+        self.assertEqual(entry["qualification_refs"], [])
+        self.assertEqual(entry["artifact_digest"], manifest["artifact"]["content_digest"])
+
     def test_critical_professional_controls_are_reachable(self):
         model = (CORE / "professional-model.md").read_text()
         for phrase in (
