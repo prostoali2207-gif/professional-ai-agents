@@ -1,8 +1,52 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
+
+
+STOPWORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "because", "before", "by", "for",
+    "from", "has", "in", "is", "it", "of", "on", "only", "or", "the", "to", "with",
+    "this", "that", "than", "uses", "use", "using", "not", "no",
+}
+
+# Small deterministic synonym map. This is deliberately narrow: it improves wording tolerance
+# without turning grading into an opaque second model judgment.
+ALIASES = {
+    "incorrect": "invalid",
+    "wrong": "invalid",
+    "invalidates": "invalid",
+    "invalid": "invalid",
+    "denominators": "denominator",
+    "conversations": "conversation",
+    "leads": "lead",
+    "outcomes": "outcome",
+    "comparisons": "comparison",
+    "equivalent": "comparable",
+    "non-equivalent": "incomparable",
+    "not-equivalent": "incomparable",
+    "unexplained": "unexplained",
+    "imbalance": "imbalance",
+    "contamination": "contamination",
+    "confounded": "contamination",
+    "confounder": "contamination",
+    "missing": "missing",
+    "delayed": "delayed",
+    "immature": "immature",
+    "duplicate": "duplicate",
+    "duplicates": "duplicate",
+    "causal": "causal",
+    "causality": "causal",
+    "caused": "causal",
+    "incrementality": "incrementality",
+    "incremental": "incrementality",
+    "diagnostic": "diagnostic",
+    "diagnostics": "diagnostic",
+    "scale": "scale",
+    "scaling": "scale",
+}
 
 
 def load(path):
@@ -18,6 +62,45 @@ def flatten_text(result):
         *result.get("confounders", []),
     ]
     return "\n".join(str(x) for x in parts).lower()
+
+
+def normalize_tokens(text):
+    text = text.lower().replace("per 1,000", "per 1000")
+    raw = re.findall(r"[a-z0-9]+(?:-[a-z0-9]+)?", text)
+    out = []
+    for token in raw:
+        if token in STOPWORDS:
+            continue
+        token = ALIASES.get(token, token)
+        # conservative plural normalization
+        if token.endswith("s") and len(token) > 4 and token not in {"sales"}:
+            token = token[:-1]
+        token = ALIASES.get(token, token)
+        out.append(token)
+    return out
+
+
+def concept_match(required_finding, candidate_text):
+    """Return True when the candidate expresses most of the required concept.
+
+    This is intentionally deterministic. It tolerates paraphrasing by matching normalized
+    content words, but it does not ask another LLM to decide whether the answer is correct.
+    Numeric and decision checks remain exact elsewhere in the grader.
+    """
+    required = set(normalize_tokens(required_finding))
+    candidate = set(normalize_tokens(candidate_text))
+    if not required:
+        return True
+
+    matched = required & candidate
+    # Short requirements need near-complete coverage; longer requirements allow paraphrase.
+    if len(required) <= 3:
+        threshold = 1.0
+    elif len(required) <= 5:
+        threshold = 0.75
+    else:
+        threshold = 0.60
+    return len(matched) / len(required) >= threshold
 
 
 def find_fixture(suite, fixture_id):
@@ -56,13 +139,16 @@ def grade(suite, key, result):
 
     text = flatten_text(result)
 
+    # Hard-fail text checks are intentionally conservative. They catch explicit forbidden claims;
+    # the main protection against paraphrased bad decisions comes from allowed recommendation,
+    # required concepts and numeric checks rather than exact prose matching alone.
     for needle in expected.get("hard_fails", []):
         if needle.lower() in text:
             failures.append(f"hard-fail condition present: {needle}")
 
     for finding in expected.get("required_findings", []):
-        if finding.lower() not in text:
-            failures.append(f"required finding missing: {finding}")
+        if not concept_match(finding, text):
+            failures.append(f"required concept missing: {finding}")
 
     computations = {
         c.get("name"): c
