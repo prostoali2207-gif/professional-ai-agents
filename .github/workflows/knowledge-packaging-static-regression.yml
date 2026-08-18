@@ -1,0 +1,30 @@
+name: Knowledge Packaging Static Regression
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/knowledge-packaging-static-regression.yml'
+      - 'architect/evaluation/knowledge_packaging/run_pm04_v2_gate.py'
+      - 'architect/evaluation/knowledge_packaging/pm04_v2_cases.json'
+      - 'architect/evaluation/knowledge_packaging/pm04_v2_observed_answers_2026-08-18.json'
+      - 'architect/evaluation/knowledge_packaging/test_pm04_v2_grader.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/knowledge-packaging-static-regression.yml'
+      - 'architect/evaluation/knowledge_packaging/run_pm04_v2_gate.py'
+      - 'architect/evaluation/knowledge_packaging/pm04_v2_cases.json'
+      - 'architect/evaluation/knowledge_packaging/pm04_v2_observed_answers_2026-08-18.json'
+      - 'architect/evaluation/knowledge_packaging/test_pm04_v2_grader.py'
+
+permissions:
+  contents: read
+
+jobs:
+  pm04-v2-grader-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Re-grade frozen observed answers without model calls
+        run: python architect/evaluation/knowledge_packaging/test_pm04_v2_grader.py
