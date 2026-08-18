@@ -1,13 +1,6 @@
 name: Knowledge Packaging Targeted Baseline
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/knowledge-packaging-targeted-baseline.yml'
-      - 'architect/evaluation/knowledge_packaging/**'
-      - 'architect/library/cores/paid-media-performance-marketing/**'
-      - 'architect/library/cores/video-editing-post-production/**'
   workflow_dispatch:
 
 permissions:
