@@ -13,17 +13,30 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["name", "inputs", "method", "result"],
+        "required": ["name", "inputs", "method", "result", "unit"],
         "properties": {
           "name": {"type": "string", "minLength": 1},
           "inputs": {"type": "object"},
           "method": {"type": "string", "minLength": 1},
-          "result": {"type": "number"}
+          "result": {"type": ["number", "string"]},
+          "unit": {"type": ["string", "null"]}
         }
       }
     },
     "claim_boundaries": {"type": "array", "items": {"type": "string"}},
-    "confounders": {"type": "array", "items": {"type": "string"}},
+    "confounders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "severity", "effect"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["NONE_OBSERVED", "LOW", "MATERIAL", "FATAL"]},
+          "effect": {"type": "string"}
+        }
+      }
+    },
     "rationale": {"type": "string", "minLength": 1},
     "next_action": {"type": "string", "minLength": 1}
   }
