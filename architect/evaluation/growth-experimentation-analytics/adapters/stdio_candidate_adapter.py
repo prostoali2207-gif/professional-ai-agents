@@ -2,13 +2,13 @@
 """Provider-neutral candidate adapter for Growth Experimentation & Measurement evals.
 
 The harness owns fixtures and grading. This adapter owns only the execution boundary:
-- build a candidate request envelope;
+- load an externally supplied frozen candidate manifest;
+- build one candidate request envelope;
 - call an external executor command;
 - require one JSON response;
 - propagate failures rather than inventing a result.
 
-The external executor may bind any eligible model/runtime. It must not receive grader
-answers, expected decisions, or sealed fixture metadata beyond the candidate-facing case.
+No project-specific candidate is stored in this repository.
 """
 
 from __future__ import annotations
@@ -22,11 +22,6 @@ from pathlib import Path
 from typing import Any
 
 
-HERE = Path(__file__).resolve().parent
-EVAL_ROOT = HERE.parent
-MANIFEST_PATH = EVAL_ROOT / "candidate-manifest.json"
-
-
 def load_json(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as f:
         value = json.load(f)
@@ -35,16 +30,24 @@ def load_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def load_manifest() -> dict[str, Any]:
+    raw = os.environ.get("ANALYTICS_CANDIDATE_MANIFEST")
+    if not raw:
+        raise RuntimeError(
+            "ANALYTICS_CANDIDATE_MANIFEST is required and must point to an external frozen candidate manifest"
+        )
+    return load_json(Path(raw))
+
+
 def build_envelope(fixture: dict[str, Any]) -> dict[str, Any]:
-    manifest = load_json(MANIFEST_PATH)
     return {
         "protocol": "growth-experimentation-analytics-candidate-v1",
-        "candidate": manifest,
+        "candidate": load_manifest(),
         "task": {
             "instruction": (
-                "Analyze exactly one experiment fixture using the frozen Analytics "
-                "candidate instructions. Return only one JSON object matching the "
-                "candidate output schema. Do not invent unavailable facts."
+                "Analyze exactly one experiment fixture using the frozen Analytics candidate instructions. "
+                "Return only one JSON object matching the candidate output schema. "
+                "Do not invent unavailable facts."
             ),
             "fixture": fixture,
         },
@@ -55,13 +58,12 @@ def execute(envelope: dict[str, Any]) -> dict[str, Any]:
     raw_cmd = os.environ.get("ANALYTICS_CANDIDATE_CMD")
     if not raw_cmd:
         raise RuntimeError(
-            "ANALYTICS_CANDIDATE_CMD is required. It must name an executor that reads "
-            "one JSON request from stdin and writes one JSON result to stdout."
+            "ANALYTICS_CANDIDATE_CMD is required. It must name an executor that reads one JSON request "
+            "from stdin and writes one JSON result to stdout."
         )
 
-    cmd = shlex.split(raw_cmd)
     completed = subprocess.run(
-        cmd,
+        shlex.split(raw_cmd),
         input=json.dumps(envelope, ensure_ascii=False),
         text=True,
         stdout=subprocess.PIPE,
@@ -72,8 +74,7 @@ def execute(envelope: dict[str, Any]) -> dict[str, Any]:
 
     if completed.returncode != 0:
         raise RuntimeError(
-            f"Candidate executor failed with exit code {completed.returncode}: "
-            f"{completed.stderr[-4000:]}"
+            f"Candidate executor failed with exit code {completed.returncode}: {completed.stderr[-4000:]}"
         )
 
     stdout = completed.stdout.strip()
@@ -95,12 +96,11 @@ def main() -> int:
         fixture = json.load(sys.stdin)
         if not isinstance(fixture, dict):
             raise ValueError("Fixture must be one JSON object")
-        envelope = build_envelope(fixture)
-        result = execute(envelope)
+        result = execute(build_envelope(fixture))
         json.dump(result, sys.stdout, ensure_ascii=False)
         sys.stdout.write("\n")
         return 0
-    except Exception as exc:  # fail closed at process boundary
+    except Exception as exc:
         print(f"adapter_error: {exc}", file=sys.stderr)
         return 2
 
