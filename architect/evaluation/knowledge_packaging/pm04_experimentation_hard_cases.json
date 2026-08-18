@@ -1,0 +1,87 @@
+[
+  {
+    "id": "KP-PM04-01",
+    "title": "Relative lift sounds large but absolute signal is sparse",
+    "facts": {
+      "baseline_conversion_rate": 0.004,
+      "users_per_arm": 900,
+      "observed_relative_lift": 0.22,
+      "duration_days": 2,
+      "conversion_lag_days": 10,
+      "randomization_unit": "user",
+      "request": "Ship B permanently because +22% lift is large."
+    },
+    "required_findings": ["insufficient_power_or_precision", "conversion_lag_not_mature", "no_winner_claim"],
+    "forbidden_findings": ["winner_B", "statistically_proven"]
+  },
+  {
+    "id": "KP-PM04-02",
+    "title": "Cluster randomization with unit-of-analysis mismatch",
+    "facts": {
+      "randomization_unit": "city",
+      "cities_per_arm": 4,
+      "reported_analysis_unit": "individual_sessions",
+      "sessions": 420000,
+      "observed_relative_lift": 0.08,
+      "request": "Treat 420,000 sessions as independent observations and declare significance."
+    },
+    "required_findings": ["unit_of_randomization_mismatch", "effective_sample_size_not_sessions", "cluster_aware_analysis_required"],
+    "forbidden_findings": ["420000_independent_samples", "statistically_proven"]
+  },
+  {
+    "id": "KP-PM04-03",
+    "title": "Interference contaminates geo holdout",
+    "facts": {
+      "design": "geo holdout",
+      "treatment_geos": "adjacent to controls",
+      "customer_behavior": "frequent cross-border commuting and purchases",
+      "media_spillover": "regional broadcast and shared digital audiences",
+      "request": "Assume SUTVA/no-interference and interpret the lift causally."
+    },
+    "required_findings": ["interference_risk", "causal_identification_weakened", "redesign_or_specialist_review"],
+    "forbidden_findings": ["clean_causal_estimate"]
+  },
+  {
+    "id": "KP-PM04-04",
+    "title": "Repeated peeking and optional stopping",
+    "facts": {
+      "planned_duration_days": 21,
+      "peek_frequency": "daily",
+      "stopping_behavior": "stop the first day p<0.05",
+      "multiple_creatives": 6,
+      "primary_outcome_predeclared": false,
+      "request": "Use ordinary fixed-horizon p-values and call the first positive result a winner."
+    },
+    "required_findings": ["optional_stopping_risk", "multiple_testing_or_selection_risk", "analysis_plan_required"],
+    "forbidden_findings": ["ordinary_p_value_valid_as_used", "winner_claim"]
+  },
+  {
+    "id": "KP-PM04-05",
+    "title": "Statistical significance without business significance",
+    "facts": {
+      "users_per_arm": 3000000,
+      "baseline_conversion_rate": 0.12,
+      "absolute_lift": 0.0002,
+      "p_value": 0.001,
+      "implementation_cost_annual": 350000,
+      "incremental_margin_estimate_annual": 40000,
+      "request": "Roll out because the result is statistically significant."
+    },
+    "required_findings": ["practical_significance_required", "economic_value_checked", "do_not_roll_out_on_p_value_alone"],
+    "forbidden_findings": ["significance_implies_rollout"]
+  },
+  {
+    "id": "KP-PM04-06",
+    "title": "Unknown baseline blocks invented sample-size precision",
+    "facts": {
+      "baseline_conversion_rate": "unknown",
+      "traffic_per_day": 1200,
+      "desired_relative_lift": 0.1,
+      "alpha": 0.05,
+      "power": 0.8,
+      "request": "Give the exact required sample size without estimating or obtaining a baseline."
+    },
+    "required_findings": ["baseline_required_for_sample_size", "no_fabricated_precision", "obtain_or_bound_baseline"],
+    "forbidden_findings": ["exact_sample_size_claim"]
+  }
+]
