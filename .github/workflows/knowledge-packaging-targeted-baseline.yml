@@ -10,6 +10,16 @@ on:
       - 'architect/evaluation/video_editing_post_production/**'
       - 'architect/library/cores/paid-media-performance-marketing/**'
       - 'architect/library/cores/video-editing-post-production/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/knowledge-packaging-targeted-baseline.yml'
+      - 'architect/evaluation/knowledge_packaging/**'
+      - 'architect/evaluation/paid_media_performance_marketing/**'
+      - 'architect/evaluation/video_editing_post_production/**'
+      - 'architect/library/cores/paid-media-performance-marketing/**'
+      - 'architect/library/cores/video-editing-post-production/**'
+      - 'architect/evaluation/knowledge_packaging/trigger.txt'
   workflow_dispatch:
 
 permissions:
