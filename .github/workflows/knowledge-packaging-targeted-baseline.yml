@@ -1,0 +1,54 @@
+name: Knowledge Packaging Targeted Baseline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/knowledge-packaging-targeted-baseline.yml'
+      - 'architect/evaluation/knowledge_packaging/**'
+      - 'architect/evaluation/paid_media_performance_marketing/**'
+      - 'architect/evaluation/video_editing_post_production/**'
+      - 'architect/library/cores/paid-media-performance-marketing/**'
+      - 'architect/library/cores/video-editing-post-production/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  video-ve11:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      - name: Run VE-11 defect-injection baseline
+        run: python architect/evaluation/knowledge_packaging/run_ve11_defect_gate.py
+      - name: Upload VE-11 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ve11-defect-baseline
+          path: .tmp/knowledge-packaging/ve11
+          if-no-files-found: ignore
+
+  paid-media-pm04:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_THINKING_LEVEL: medium
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Gemini secret exists
+        run: test -n "$GEMINI_API_KEY"
+      - name: Run PM-04 operational-depth baseline
+        run: python architect/evaluation/knowledge_packaging/run_pm04_baseline.py
+      - name: Upload PM-04 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pm04-operational-depth-baseline
+          path: .tmp/knowledge-packaging/pm04
+          if-no-files-found: ignore
