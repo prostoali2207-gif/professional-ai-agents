@@ -50,18 +50,34 @@ Each computation must include inputs, method/formula label and result. Unsupport
 5. Claim-boundary checks.
 6. Only residual judgment that cannot be deterministically graded may use a separate rubric/reviewer.
 
-## Qualification boundary
+## Development vs qualification — hard separation
 
-Public fixtures are for development and regression only. They cannot qualify the candidate because the candidate developer can see them.
+Public fixtures and any fixture whose expected behavior, answer key, grader rule, or hard-fail condition is visible to the candidate developer are **development/regression tests only**.
 
-Final qualification requires:
+They may be used to:
+- find defects;
+- improve the candidate;
+- verify a repair;
+- prevent regression.
 
-- frozen candidate digest;
-- sealed held-out fixtures created after freeze;
-- grader separated from candidate implementation;
-- reproducible execution record;
-- no repair using held-out answers.
+They must **not** be presented as independent final qualification, even when executed by a different model such as Claude or Gemini. A different model is only a different runtime; it does not turn a known-answer development case into a held-out exam.
+
+A cross-model manual run on public fixtures may provide useful compatibility evidence, but its status must remain `DEVELOPMENT_EVIDENCE`, never `QUALIFICATION_PASS`.
+
+## Final qualification protocol
+
+Final qualification requires all of the following:
+
+1. Freeze the candidate implementation and record its exact digest/version.
+2. Only after freeze, create new held-out fixtures that were not used to design or repair the candidate.
+3. Keep held-out fixture contents, expected behavior and grading key unavailable to the candidate/developer during execution.
+4. Execute the frozen candidate without repair or prompt changes between held-out cases.
+5. Keep grader/answer key separate from the candidate execution context.
+6. Preserve a reproducible run record: candidate digest, runtime/model, fixture IDs/versions, outputs and grading result.
+7. If a held-out case is exposed and then used to repair the candidate, that case is burned and becomes development evidence only; a new held-out case is required.
+
+Manual execution in a clean Claude/Gemini chat is acceptable as an execution transport if the frozen candidate and held-out fixture can be transferred without exposing the answer key. Manual transport does not weaken the separation rule, and the resulting answer must still be graded independently.
 
 ## Immediate next action
 
-Implement the JSON fixture/output schemas and deterministic runner/grader skeleton, then bind a real candidate adapter. Until an adapter can actually execute the frozen Analytics behavior, no claim of a behavioral PASS is permitted.
+Use the public fixture suite to develop and repair the current Analytics candidate. Do not prepare a final Claude/Gemini qualification packet from those public fixtures. After the candidate passes development regression, freeze it and then create fresh sealed held-out qualification cases.
