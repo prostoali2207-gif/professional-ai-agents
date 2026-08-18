@@ -1,0 +1,163 @@
+{
+  "suite_id": "growth-experimentation-analytics-public-dev-v0.1",
+  "status": "PUBLIC_DEVELOPMENT_ONLY",
+  "qualification_eligible": false,
+  "notes": [
+    "These fixtures contain no expected answers or grader keys.",
+    "They are for development/regression only and cannot qualify a candidate.",
+    "Final qualification requires sealed held-out fixtures created after candidate freeze."
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "F-01",
+      "title": "Views winner, business loser",
+      "predeclared_goal": "LEAD",
+      "primary_kpi": "qualified leads per 1000 landing conversations",
+      "decision_rule": "SCALE only if primary KPI improves by at least 20% with no lead-quality guardrail failure",
+      "variants": {
+        "A": {"views": 40000, "whatsapp_conversations": 120, "qualified_leads": 18, "appointments": 4},
+        "B": {"views": 27000, "whatsapp_conversations": 110, "qualified_leads": 28, "appointments": 8}
+      }
+    },
+    {
+      "fixture_id": "F-02",
+      "title": "Broken allocation / exposure imbalance",
+      "design": "randomized 50/50 assignment by eligible user",
+      "assigned": {"A": 5012, "B": 4988},
+      "recorded_exposure": {"A": 4901, "B": 2470},
+      "documented_planned_throttling": false,
+      "documented_eligibility_difference": false,
+      "documented_delivery_cap": false
+    },
+    {
+      "fixture_id": "F-03",
+      "title": "Peeking at fixed-horizon test",
+      "design": "fixed horizon",
+      "planned_duration_days": 14,
+      "planned_judgment_day": 14,
+      "interim_results": [
+        {"day": 4, "primary_kpi_relative_effect_pct": 38},
+        {"day": 7, "primary_kpi_relative_effect_pct": 9}
+      ],
+      "sequential_method_preregistered": false,
+      "early_stop_rule_preregistered": false,
+      "safety_guardrail_triggered": false
+    },
+    {
+      "fixture_id": "F-04",
+      "title": "Tiny sample, dramatic lift",
+      "primary_kpi": "appointment conversion among qualified leads",
+      "variants": {
+        "A": {"appointments": 1, "qualified_leads": 9},
+        "B": {"appointments": 3, "qualified_leads": 8}
+      }
+    },
+    {
+      "fixture_id": "F-05",
+      "title": "Post-hoc rescue segment",
+      "primary_population_result": "missed success threshold",
+      "unplanned_segments_inspected": 14,
+      "best_found_segment": "Arabic-speaking users aged 25-34",
+      "best_found_segment_effect": "large positive effect",
+      "segment_was_preregistered": false
+    },
+    {
+      "fixture_id": "F-06",
+      "title": "Wrong funnel denominator",
+      "observed": {
+        "ad_impressions": 10000,
+        "landing_page_sessions": 2000,
+        "inquiries": 100,
+        "qualified_leads": 40,
+        "appointments": 10
+      },
+      "reported_claim": "appointment conversion = 10/10000 = 0.1% and is directly comparable with another campaign's appointment-per-qualified-lead rate"
+    },
+    {
+      "fixture_id": "F-07",
+      "title": "Attribution is not incrementality",
+      "evidence": [
+        "buyer clicked a unique experiment link",
+        "buyer entered WhatsApp",
+        "buyer booked",
+        "buyer bought the exact vehicle within the declared window"
+      ],
+      "randomized_holdout_exists": false,
+      "credible_counterfactual_exists": false
+    },
+    {
+      "fixture_id": "F-08",
+      "title": "Missing CRM outcome is not zero",
+      "crm_linkage": {"A": "complete", "B": "export failed for last 3 days"},
+      "missing_fields_for_B": ["sales", "appointments"],
+      "primary_kpi_depends_on": "appointments"
+    },
+    {
+      "fixture_id": "F-09",
+      "title": "Concurrent campaign contamination",
+      "intended_difference": "creative only",
+      "B_additional_support": "separate retargeting campaign to same WhatsApp destination during comparison window",
+      "A_equivalent_support": false
+    },
+    {
+      "fixture_id": "F-10",
+      "title": "Delayed outcome / right-censoring",
+      "historical_median_days_qualified_lead_to_sale": 11,
+      "evaluation_days_after_last_lead": 5,
+      "sales": {"A": 0, "B": 1}
+    },
+    {
+      "fixture_id": "F-11",
+      "title": "Metric definition changed",
+      "A_metric": {"name": "views", "version": "V1", "definition": "starts"},
+      "B_metric": {"name": "views", "version": "V2", "definition": "starts plus replays"},
+      "report_action": "compares raw view totals without adjustment"
+    },
+    {
+      "fixture_id": "F-12",
+      "title": "Valid commercial scale case",
+      "design": {
+        "randomized": true,
+        "assignment": "stable 50/50",
+        "material_srm": false,
+        "same_audience": true,
+        "same_placement": true,
+        "same_offer": true,
+        "only_creative_differs": true,
+        "fixed_horizon_complete": true,
+        "material_confounders": false,
+        "outcome_linkage_complete": true
+      },
+      "primary_kpi": "qualified leads per 1000 exposed users",
+      "success_rule": "B must improve primary KPI by >=20%; cost per qualified lead must not worsen by >10%; no appointment-quality guardrail failure",
+      "variants": {
+        "A": {"exposed": 20000, "spend_aed": 2000, "qualified_leads": 40, "appointments": 14},
+        "B": {"exposed": 20100, "spend_aed": 2090, "qualified_leads": 58, "appointments": 22}
+      }
+    },
+    {
+      "fixture_id": "F-13",
+      "title": "Duplicate lead across touchpoints",
+      "person_journey": [
+        "clicks Instagram ad A",
+        "later sees organic Reel B",
+        "messages same WhatsApp number",
+        "CRM creates two records because phone formatting differs",
+        "one appointment occurs",
+        "one sale occurs"
+      ]
+    },
+    {
+      "fixture_id": "F-14",
+      "title": "Lead lift but capacity saturation",
+      "B_qualified_lead_lift_pct": 35,
+      "B_cost_per_qualified_lead_improvement_pct": 12,
+      "sales_team_capacity_new_qualified_leads_per_day": 12,
+      "B_new_qualified_leads_per_day": 19,
+      "median_first_response_time_before": "6 minutes",
+      "median_first_response_time_after": "4.5 hours",
+      "appointment_conversion_before_pct": 32,
+      "appointment_conversion_after_pct": 14
+    }
+  ]
+}
