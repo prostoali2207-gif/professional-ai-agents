@@ -4,25 +4,25 @@
   "qualification_eligible": false,
   "notes": [
     "These fixtures contain no expected answers or grader keys.",
-    "They are for development/regression only and cannot qualify a candidate.",
+    "They are generic development/regression cases and cannot qualify a candidate.",
     "Final qualification requires sealed held-out fixtures created after candidate freeze."
   ],
   "fixtures": [
     {
       "fixture_id": "F-01",
-      "title": "Views winner, business loser",
+      "title": "Proxy winner, business loser",
       "predeclared_goal": "LEAD",
-      "primary_kpi": "qualified leads per 1000 landing conversations",
+      "primary_kpi": "qualified leads per 1000 tracked conversations",
       "decision_rule": "SCALE only if primary KPI improves by at least 20% with no lead-quality guardrail failure",
       "variants": {
-        "A": {"views": 40000, "whatsapp_conversations": 120, "qualified_leads": 18, "appointments": 4},
-        "B": {"views": 27000, "whatsapp_conversations": 110, "qualified_leads": 28, "appointments": 8}
+        "A": {"views": 40000, "tracked_conversations": 120, "qualified_leads": 18, "appointments": 4},
+        "B": {"views": 27000, "tracked_conversations": 110, "qualified_leads": 28, "appointments": 8}
       }
     },
     {
       "fixture_id": "F-02",
       "title": "Broken allocation / exposure imbalance",
-      "design": "randomized 50/50 assignment by eligible user",
+      "design": "randomized 50/50 assignment by eligible unit",
       "assigned": {"A": 5012, "B": 4988},
       "recorded_exposure": {"A": 4901, "B": 2470},
       "documented_planned_throttling": false,
@@ -57,7 +57,7 @@
       "title": "Post-hoc rescue segment",
       "primary_population_result": "missed success threshold",
       "unplanned_segments_inspected": 14,
-      "best_found_segment": "Arabic-speaking users aged 25-34",
+      "best_found_segment": "unplanned demographic segment S14",
       "best_found_segment_effect": "large positive effect",
       "segment_was_preregistered": false
     },
@@ -78,9 +78,9 @@
       "title": "Attribution is not incrementality",
       "evidence": [
         "buyer clicked a unique experiment link",
-        "buyer entered WhatsApp",
+        "buyer entered the tracked conversion channel",
         "buyer booked",
-        "buyer bought the exact vehicle within the declared window"
+        "buyer purchased the target offer within the declared window"
       ],
       "randomized_holdout_exists": false,
       "credible_counterfactual_exists": false
@@ -94,9 +94,9 @@
     },
     {
       "fixture_id": "F-09",
-      "title": "Concurrent campaign contamination",
+      "title": "Concurrent treatment contamination",
       "intended_difference": "creative only",
-      "B_additional_support": "separate retargeting campaign to same WhatsApp destination during comparison window",
+      "B_additional_support": "separate retargeting treatment to the same conversion destination during comparison window",
       "A_equivalent_support": false
     },
     {
@@ -120,8 +120,8 @@
         "randomized": true,
         "assignment": "stable 50/50",
         "material_srm": false,
-        "same_audience": true,
-        "same_placement": true,
+        "same_eligibility": true,
+        "same_distribution_conditions": true,
         "same_offer": true,
         "only_creative_differs": true,
         "fixed_horizon_complete": true,
@@ -131,28 +131,28 @@
       "primary_kpi": "qualified leads per 1000 exposed users",
       "success_rule": "B must improve primary KPI by >=20%; cost per qualified lead must not worsen by >10%; no appointment-quality guardrail failure",
       "variants": {
-        "A": {"exposed": 20000, "spend_aed": 2000, "qualified_leads": 40, "appointments": 14},
-        "B": {"exposed": 20100, "spend_aed": 2090, "qualified_leads": 58, "appointments": 22}
+        "A": {"exposed": 20000, "spend_units": 2000, "qualified_leads": 40, "appointments": 14},
+        "B": {"exposed": 20100, "spend_units": 2090, "qualified_leads": 58, "appointments": 22}
       }
     },
     {
       "fixture_id": "F-13",
-      "title": "Duplicate lead across touchpoints",
+      "title": "Duplicate outcome across touchpoints",
       "person_journey": [
-        "clicks Instagram ad A",
-        "later sees organic Reel B",
-        "messages same WhatsApp number",
-        "CRM creates two records because phone formatting differs",
+        "interacts with paid touchpoint A",
+        "later interacts with organic touchpoint B",
+        "enters the same tracked conversion channel",
+        "CRM creates two records because identifier formatting differs",
         "one appointment occurs",
         "one sale occurs"
       ]
     },
     {
       "fixture_id": "F-14",
-      "title": "Lead lift but capacity saturation",
+      "title": "Acquisition lift but capacity saturation",
       "B_qualified_lead_lift_pct": 35,
       "B_cost_per_qualified_lead_improvement_pct": 12,
-      "sales_team_capacity_new_qualified_leads_per_day": 12,
+      "downstream_capacity_new_qualified_leads_per_day": 12,
       "B_new_qualified_leads_per_day": 19,
       "median_first_response_time_before": "6 minutes",
       "median_first_response_time_after": "4.5 hours",
