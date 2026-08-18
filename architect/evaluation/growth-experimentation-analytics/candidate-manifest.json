@@ -1,0 +1,20 @@
+{
+  "candidate_id": "auto-sales-growth-system-analytics-main-2026-08-18",
+  "candidate_type": "instruction-bound-runtime",
+  "source_repository": "prostoali2207-gif/auto-sales-growth-system",
+  "source_ref": "main",
+  "source_path": "agents/analytics.md",
+  "source_git_blob_sha": "64f6313ea1c61963c5dda74fcc1ae35354f26c67",
+  "status": "UNQUALIFIED",
+  "instructions_binding": {
+    "rule": "Executor must bind the exact source file identified above. Do not silently substitute a later revision.",
+    "allowed_runtime": "Any eligible model/runtime that can preserve the candidate instructions and emit the required JSON contract.",
+    "forbidden_context": [
+      "grader expected answers",
+      "hard-fail answer keys",
+      "sealed held-out fixtures not currently under test",
+      "repair notes derived from held-out failures"
+    ]
+  },
+  "qualification_scope": "No behavioral PASS is claimed until public development runs pass and a later sealed held-out suite passes after candidate freeze."
+}
