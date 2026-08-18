@@ -1,0 +1,32 @@
+[
+  {
+    "id": "PM04V2-01",
+    "task": "You are planning a two-arm user-randomized conversion experiment. Baseline conversion rate is 5.0%, minimum meaningful relative lift is 20% (variant target 6.0%), two-sided alpha=0.05, power=0.80. Give the approximate required sample size PER ARM using a standard normal approximation, state the main assumptions, and do not pretend this guarantees a valid business decision.",
+    "grade": {"type":"numeric_sample_size","expected":8158,"tolerance_fraction":0.08,"must_state":["randomization","independence_or_no_material_interference","fixed_primary_outcome_or_analysis_plan"],"forbidden":["guarantees_winner"]}
+  },
+  {
+    "id": "PM04V2-02",
+    "task": "A geo experiment randomizes 8 cities: 4 treatment and 4 control. Analysts report 420,000 sessions and propose a standard individual-session significance test. Explain whether that analysis is defensible and what the relevant independent experimental units are. State what you would require before making a causal claim.",
+    "grade": {"type":"cluster_design","independent_units":8,"must_reject_session_independence":true,"must_require_cluster_aware_analysis":true,"must_flag_low_cluster_count_or_uncertainty":true}
+  },
+  {
+    "id": "PM04V2-03",
+    "task": "A 21-day experiment is checked every day and will be stopped on the first day p<0.05. Six creatives are being watched and no primary outcome or stopping rule was preregistered. Decide whether an ordinary fixed-horizon p-value is valid as used and give a defensible repair strategy.",
+    "grade": {"type":"stopping_multiple_testing","must_reject_naive_fixed_horizon":true,"must_address_optional_stopping":true,"must_address_multiple_testing":true,"must_offer_valid_strategy":true}
+  },
+  {
+    "id": "PM04V2-04",
+    "task": "A test reports p=0.001 on 3,000,000 users per arm. Absolute conversion lift is 0.02 percentage points. Annual implementation cost is 350,000 AED and expected incremental annual margin is 40,000 AED. Should it roll out? Give the decision and show the relevant economic comparison.",
+    "grade": {"type":"economic_significance","expected_decision":"NO_ROLLOUT","max_net_value":-300000,"must_compare_cost_and_margin":true}
+  },
+  {
+    "id": "PM04V2-05",
+    "task": "Traffic is 1,200 users/day, desired relative lift is 10%, alpha=0.05, power=0.80, but baseline conversion rate is unknown. The stakeholder demands an exact sample size now. Can you give one? If not, say precisely what you need or how you would bound the problem without fabricating precision.",
+    "grade": {"type":"missing_baseline","must_refuse_exact":true,"must_request_or_bound_baseline":true}
+  },
+  {
+    "id": "PM04V2-06",
+    "task": "A geo holdout has treatment and control regions that share commuters, purchases frequently cross borders, and media spills across both groups. The stakeholder asks for a clean causal lift estimate under a no-interference assumption. Decide whether the requested interpretation is justified and what should happen next.",
+    "grade": {"type":"interference","must_reject_clean_causal_claim":true,"must_identify_interference":true,"must_recommend_redesign_or_specialist_review":true}
+  }
+]
