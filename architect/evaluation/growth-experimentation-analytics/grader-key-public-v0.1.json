@@ -1,0 +1,21 @@
+{
+  "version": "0.1",
+  "status": "public-development-only",
+  "purpose": "Deterministic grading key for the 14 public development fixtures. This file must never be used as sealed qualification evidence.",
+  "fixtures": {
+    "F-01": {"allowed_recommendations": ["SCALE", "ITERATE"], "required_findings": ["views are diagnostic only", "qualified-lead rate uses conversations as denominator", "B stronger on declared commercial KPI"], "hard_fails": ["A wins because of more views"]},
+    "F-02": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE"], "required_findings": ["assignment counts differ from exposure counts", "material unexplained exposure imbalance", "diagnose instrumentation or delivery before causal decision"], "hard_fails": ["treats 4901 vs 2470 exposure as harmless random variation"]},
+    "F-03": {"allowed_recommendations": ["CONTINUE"], "required_findings": ["fixed horizon not complete", "no preregistered sequential stopping"], "hard_fails": ["SCALE or KILL before day 14 from interim result"]},
+    "F-04": {"allowed_recommendations": ["INCONCLUSIVE", "CONTINUE"], "required_findings": ["raw counts and rates", "high uncertainty", "no confident scale from tiny sample"], "hard_fails": ["robust 3x improvement claim"]},
+    "F-05": {"allowed_recommendations": ["KILL", "INCONCLUSIVE", "ITERATE"], "required_findings": ["primary preregistered result remains controlling", "post-hoc subgroup is exploratory only"], "hard_fails": ["SCALE based on discovered subgroup"]},
+    "F-06": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE"], "required_findings": ["denominator mismatch invalidates direct comparison", "appointment per qualified lead is 25%"], "required_computations": [{"label": "appointment_per_qualified_lead", "expected": 0.25, "tolerance": 0.0001}], "hard_fails": ["treats appointment per impression and appointment per qualified lead as equivalent"]},
+    "F-07": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE", "SCALE"], "required_findings": ["deterministic attribution is supported", "incrementality is not established"], "hard_fails": ["ad caused the sale"]},
+    "F-08": {"allowed_recommendations": ["INCONCLUSIVE", "CONTINUE"], "required_findings": ["B outcomes are missing or delayed", "missing is not zero"], "hard_fails": ["uses missing CRM days as zero appointments or sales"]},
+    "F-09": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE"], "required_findings": ["concurrent retargeting is material contamination", "creative-only causal interpretation compromised"], "hard_fails": ["credits all B lift to creative"]},
+    "F-10": {"allowed_recommendations": ["CONTINUE", "INCONCLUSIVE"], "required_findings": ["sale outcomes are immature", "right-censoring or delayed conversion risk"], "hard_fails": ["B sales winner solely because A has zero at day 5"]},
+    "F-11": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE"], "required_findings": ["V1 and V2 view definitions are non-equivalent", "direct raw comparison invalid"], "hard_fails": ["compares raw view totals as equivalent"]},
+    "F-12": {"allowed_recommendations": ["SCALE"], "required_findings": ["primary threshold passed", "cost guardrail passed", "no material confounders"], "required_computations": [{"label": "A_qualified_leads_per_1000", "expected": 2.0, "tolerance": 0.01}, {"label": "B_qualified_leads_per_1000", "expected": 2.8855721393, "tolerance": 0.01}, {"label": "relative_lift", "expected": 0.4427860697, "tolerance": 0.01}, {"label": "A_cost_per_qualified_lead", "expected": 50.0, "tolerance": 0.01}, {"label": "B_cost_per_qualified_lead", "expected": 36.0344827586, "tolerance": 0.02}], "hard_fails": ["refuses scale despite all preregistered conditions passing", "scales for an unrelated reason"]},
+    "F-13": {"allowed_recommendations": ["INCONCLUSIVE", "ITERATE", "SCALE"], "required_findings": ["probable duplicate identity", "one customer and one sale only", "multiple touchpoints preserved without double counting"], "hard_fails": ["reports two customers or two sales"]},
+    "F-14": {"allowed_recommendations": ["ITERATE", "INCONCLUSIVE"], "required_findings": ["sales capacity is a material bottleneck", "unrestricted scale is not justified", "response time and appointment conversion deterioration matter"], "hard_fails": ["unrestricted SCALE from acquisition lift alone"]}
+  }
+}
