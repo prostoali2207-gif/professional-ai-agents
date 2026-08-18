@@ -1,0 +1,73 @@
+{
+  "answers": [
+    {
+      "case_id": "PM04V2-01",
+      "decision": "Required sample size is approximately 8,150 per arm.",
+      "numeric_answer": 8150,
+      "reasoning_points": [
+        "Uses normal approximation for two-sample proportion test with p1=0.05 and p2=0.06.",
+        "Assumes independence of observations and constant probability of conversion.",
+        "Calculation assumes no interference between arms (SUTVA).",
+        "Does not account for business-specific variance or external shocks during test duration."
+      ],
+      "next_action": "Execute test with pre-registered sample size and guardrail metrics to monitor for conversion quality degradation."
+    },
+    {
+      "case_id": "PM04V2-02",
+      "decision": "Analysis is fundamentally flawed and invalid; do not rely on it.",
+      "numeric_answer": null,
+      "reasoning_points": [
+        "The unit of randomization is the city, not the session; session-level testing ignores intra-city correlation.",
+        "Individual-level testing on geo-data violates the independence assumption of standard t-tests.",
+        "Requires city-level aggregation using Difference-in-Differences (DiD) or Synthetic Control methods.",
+        "The small sample (N=8) suggests very low power to detect effects."
+      ],
+      "next_action": "Re-aggregate data at the city level and perform a permutation test or DiD regression to estimate causal impact with appropriate standard errors."
+    },
+    {
+      "case_id": "PM04V2-03",
+      "decision": "The fixed-horizon p-value is invalid due to peeking and selection bias (multiple testing).",
+      "numeric_answer": null,
+      "reasoning_points": [
+        "Continuous monitoring and stopping at the first p<0.05 leads to a significantly inflated False Positive Rate.",
+        "The absence of a primary outcome variable creates multiple testing bias.",
+        "Fixed-horizon statistics assume the sample size is fixed before viewing data."
+      ],
+      "next_action": "Implement a proper sequential testing boundary (e.g., O'Brien-Fleming or Pocock) or pre-register a fixed-horizon duration and commit to it before analysis."
+    },
+    {
+      "case_id": "PM04V2-04",
+      "decision": "Do not roll out; negative ROI.",
+      "numeric_answer": -310000,
+      "reasoning_points": [
+        "Statistical significance (p=0.001) does not imply business significance.",
+        "Incremental margin of 40,000 AED does not cover the implementation cost of 350,000 AED.",
+        "The absolute lift is likely trivial despite the low p-value.",
+        "Economic comparison: -310k AED net annual impact."
+      ],
+      "next_action": "Cease implementation and re-evaluate the hypothesis for higher-impact interventions."
+    },
+    {
+      "case_id": "PM04V2-05",
+      "decision": "Cannot provide a single exact sample size without the baseline conversion rate.",
+      "numeric_answer": null,
+      "reasoning_points": [
+        "Required sample size is highly sensitive to the baseline conversion rate.",
+        "Fabricating a baseline rate introduces catastrophic risk to power calculations.",
+        "Professional standard is to bound the problem by defining worst-case and best-case baseline conversion scenarios."
+      ],
+      "next_action": "Query historical CRM data or existing dashboard signals to establish a confidence interval for the baseline conversion rate and provide a range-based sample estimate."
+    },
+    {
+      "case_id": "PM04V2-06",
+      "decision": "Interpretation is not justified; the interference makes the result biased and unreliable.",
+      "numeric_answer": null,
+      "reasoning_points": [
+        "Commuter cross-over, media spill, and cross-border purchase behavior violate the SUTVA requirement.",
+        "The estimate will suffer from severe selection and contamination bias.",
+        "Ignoring interference can distort the estimated lift."
+      ],
+      "next_action": "Acknowledge the measurement risk, transition to a switchback design, or move to an alternative method like a synthetic control model that explicitly addresses spillover/correlation."
+    }
+  ]
+}
