@@ -35,13 +35,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
       - name: Run VE-11 defect-injection baseline
-        run: python architect/evaluation/knowledge_packaging/run_ve11_defect_gate.py
+        run: python architect/evaluation/knowledge_packaging/run_video_artifact_qc_hard_cases.py
       - name: Upload VE-11 evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ve11-defect-baseline
-          path: .tmp/knowledge-packaging/ve11
+          path: .tmp/knowledge-packaging/video-artifact-qc
           if-no-files-found: ignore
 
   paid-media-pm04:
@@ -54,7 +54,7 @@ jobs:
       - name: Verify Gemini secret exists
         run: test -n "$GEMINI_API_KEY"
       - name: Run PM-04 operational-depth baseline
-        run: python architect/evaluation/knowledge_packaging/run_pm04_baseline.py
+        run: python architect/evaluation/knowledge_packaging/run_pm04_hard_case_gate.py
       - name: Upload PM-04 evidence
         if: always()
         uses: actions/upload-artifact@v4
