@@ -8,6 +8,12 @@ on:
       - 'architect/evaluation/knowledge_packaging/**'
       - 'architect/library/cores/paid-media-performance-marketing/**'
       - 'architect/library/cores/video-editing-post-production/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/knowledge_packaging/trigger-v2.txt'
+      - 'architect/evaluation/knowledge_packaging/**'
+      - 'architect/library/cores/paid-media-performance-marketing/**'
   workflow_dispatch:
 
 permissions:
