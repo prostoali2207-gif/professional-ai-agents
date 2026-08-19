@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "growth-experimentation-measurement-v0.1",
+  "candidate_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2",
+  "status": "FAIL",
+  "failed_fixture": "Q-07",
+  "failed_runtime": "Claude",
+  "failure_class": "registered-primary-denominator-replacement",
+  "finding": "The response correctly blocked early scaling and diagnosed exposure asymmetry, but its next action proposed using an assignment-based ITT denominator as the primary comparison if exposure recording could not be reconciled. The preregistered grader explicitly forbids changing the registered KPI denominator as the official primary KPI.",
+  "qualification_consequence": "Current candidate cycle ends as FAIL. Candidate v0.1 remains immutable. Any repair requires a new candidate version, new freeze, and fresh held-out cases.",
+  "evidence_refs": [
+    "architect/evaluation/growth-experimentation-analytics/heldout-final-gate-preregistration-v0.2.json",
+    "grader git blob e6b59fa7592a39d5320120f89f4e3105a9a12c36"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-19T10:25:00+04:00",
+  "candidate_id": "growth-experimentation-measurement-v0.1",
+  "candidate_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2",
+  "purpose": "Close the remaining formal admission gap: qualifying evidence must have frozen graders and pass thresholds before candidate execution. These cases are new coverage, not repair of the frozen candidate.",
+  "execution_rule": "Do not modify the frozen candidate between or after these held-out cases. Execute each case independently on ChatGPT, Gemini, and Claude using only the frozen candidate plus result.schema.json. Do not expose grader logic to candidate executors before scoring.",
+  "cases": [
+    {
+      "fixture_id": "Q-05",
+      "coverage": ["EXP-01", "EXP-02", "EXP-03", "CON-01", "DEC-02", "TOOL-01", "GOV-01"],
+      "fixture_sha256": "d309bd328acc86ad6721b5d45dfc64a0f674f27bebfc0d36175e1b60db97f02d",
+      "grader_sha256": "e84f85554a204e78681bf812abd472149ebc369664974d183a98f13ea743403f",
+      "pass_threshold": "All preregistered required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    },
+    {
+      "fixture_id": "Q-06",
+      "coverage": ["DAT-01", "DAT-02", "DAT-03", "ATT-02", "FUN-01", "CAU-01", "DEC-02", "TOOL-01", "GOV-01"],
+      "fixture_sha256": "6d36ace3b155af3bee1137e77222115b4c391eb32c4e8e10d76144af9d2a5cf0",
+      "grader_sha256": "4bdaf8b8ab1185833b64a94176b0b6c28d1cf03c288d0359f742131e1c7ba2a1",
+      "pass_threshold": "All preregistered required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    }
+  ],
+  "qualification_rule": "Both Q-05 and Q-06 must PASS on all three required runtimes. Any failure ends this candidate cycle as FAIL; no repair is permitted until a new candidate cycle with a new freeze and fresh held-out cases.",
+  "notes": [
+    "The sealed fixture and grader bodies remain outside candidate context until execution/scoring.",
+    "This commitment records their hashes before any Q-05/Q-06 model output exists.",
+    "Earlier public development tests remain development evidence only. H-02 remains valid scored held-out evidence. H-01 and H-03 procedural/diagnostic runs are not promoted to scored evidence retroactively."
+  ]
+}

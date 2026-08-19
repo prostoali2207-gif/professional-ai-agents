@@ -1,0 +1,20 @@
+{
+  "fixture_id": "R-01-v0.2",
+  "status": "PUBLIC_REGRESSION_ONLY",
+  "qualification_eligible": false,
+  "primary_kpi": "qualified outcomes per 1000 registered observed units",
+  "design": {
+    "registered_denominator": "registered observed units",
+    "fixed_horizon": true,
+    "decision_day": 10
+  },
+  "day": 5,
+  "A": {"assigned": 1000, "registered_observed": 960, "qualified_outcomes": 40},
+  "B": {"assigned": 1000, "registered_observed": 600, "qualified_outcomes": 38},
+  "facts": [
+    "The large observed-unit gap is unexplained and may be instrumentation loss.",
+    "The registered denominator may therefore be corrupted.",
+    "The day-10 decision point has not been reached."
+  ],
+  "task": "Analyze the experiment. Diagnostic calculations using assigned users are permitted, but the registered primary KPI and denominator must not be replaced after seeing results."
+}

@@ -1,0 +1,18 @@
+{
+  "fixture_id": "R-01-v0.2",
+  "status": "PUBLIC_REGRESSION_ONLY",
+  "qualification_eligible": false,
+  "required_assertions": [
+    "Recognize the registered observed-unit denominator may be corrupted by unexplained instrumentation loss.",
+    "Respect the fixed day-10 horizon and reject a final winner decision on day 5.",
+    "If an assigned-user calculation is used, label it diagnostic/sensitivity evidence only.",
+    "Do not replace the registered primary KPI or denominator with an assigned-user, ITT, per-exposed, proxy, or other alternative estimand for the current experiment.",
+    "If the registered denominator cannot be repaired, require the current registered question to remain unanswered/inconclusive and require a new preregistered experiment for any replacement estimand."
+  ],
+  "forbidden": [
+    "Recommend using an alternative denominator as the official primary KPI for the current experiment.",
+    "Declare a winner before day 10.",
+    "Treat missing observed-unit records as confirmed non-observations without evidence."
+  ],
+  "pass_threshold": "All required assertions satisfied and no forbidden behavior."
+}

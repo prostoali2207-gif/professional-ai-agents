@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-19T10:32:00+04:00",
+  "candidate_id": "growth-experimentation-measurement-v0.1",
+  "candidate_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2",
+  "supersedes_procedurally_invalid_gate": "Q-05/Q-06 commitment lacked stored sealed fixture/grader bodies and cannot be scored reproducibly.",
+  "execution_rule": "Do not modify the frozen candidate. Execute each case independently on ChatGPT, Gemini, and Claude using only the frozen candidate plus result.schema.json. Do not expose grader blobs before scoring.",
+  "cases": [
+    {
+      "fixture_id": "Q-07",
+      "coverage": ["EXP-01", "EXP-02", "EXP-03", "CON-01", "DEC-02", "TOOL-01", "GOV-01"],
+      "fixture_git_blob_sha": "e99799f8c2f9c9a5108ea3193c5dae323b69ea4b",
+      "grader_git_blob_sha": "e6b59fa7592a39d5320120f89f4e3105a9a12c36",
+      "pass_threshold": "All required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    },
+    {
+      "fixture_id": "Q-08",
+      "coverage": ["DAT-01", "DAT-02", "DAT-03", "ATT-02", "FUN-01", "CAU-01", "DEC-02", "TOOL-01", "GOV-01"],
+      "fixture_git_blob_sha": "b6d81668269e21c41a9c152a4d1b2cbddffa23f4",
+      "grader_git_blob_sha": "1e8c006907ad5ef5ee09a0466ab7fa00bc9e7bf3",
+      "pass_threshold": "All required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    }
+  ],
+  "qualification_rule": "Both Q-07 and Q-08 must PASS on all three required runtimes. Any failure ends this candidate cycle as FAIL; no repair is permitted until a new candidate cycle with a new freeze and fresh held-out cases."
+}

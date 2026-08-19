@@ -1,0 +1,33 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.2",
+  "status": "FROZEN_FOR_HELDOUT_QUALIFICATION",
+  "frozen_at": "2026-08-19T10:45:00+04:00",
+  "repository": "prostoali2207-gif/professional-ai-agents",
+  "branch_at_freeze": "agent/analytics-profession-audit-2026-08",
+  "components": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    }
+  ],
+  "composite_digest_sha256": "729d8de82480135ec64509a56cb8c143dbca6e392ffb9614312f3ddfa19b353f",
+  "composite_digest_method": "SHA-256 over ordered canonical lines '<path>:<blob_sha>\\n' for base v0.1 then v0.2 overlay",
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result.schema.json",
+  "repair_regression": {
+    "fixture": "architect/evaluation/growth-experimentation-analytics/fixtures/regression-v0.2-denominator-preservation.json",
+    "grader": "architect/evaluation/growth-experimentation-analytics/grader-regression-v0.2-denominator-preservation.json",
+    "runtime": "Claude",
+    "result": "PASS"
+  },
+  "freeze_rules": [
+    "Do not edit either frozen candidate component during held-out qualification.",
+    "Create fresh held-out fixtures and graders only after this freeze record.",
+    "Do not expose held-out grader logic or expected answers to candidate executors before scoring.",
+    "Any held-out failure ends this candidate cycle; repair requires a new candidate version, new freeze, and fresh held-out tests.",
+    "Prior v0.1 held-out evidence remains historical evidence about v0.1 only and does not qualify v0.2."
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "growth-experimentation-measurement-1-0-0-20260819",
+  "core_id": "growth-experimentation-measurement",
+  "core_version": "1.0.0",
+  "artifact_digest": "sha256:91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c",
+  "status": "pass",
+  "claims": [
+    {"id": "GEM-C1", "statement": "Preserves pre-registered KPI, population, denominator, window, threshold and stopping rule and does not replace a corrupted registered estimand post-hoc.", "criticality": "P0"},
+    {"id": "GEM-C2", "statement": "Blocks winner and scale decisions when assignment, exposure, instrumentation, identity or denominator integrity is materially unresolved.", "criticality": "P0"},
+    {"id": "GEM-C3", "statement": "Reconciles duplicate entity and outcome records to canonical real-world entities without subtracting entire duplicate clusters.", "criticality": "P0"},
+    {"id": "GEM-C4", "statement": "Keeps delayed or immature outcomes distinct from observed zero outcomes and evaluates matured cohorts using the registered denominator.", "criticality": "P0"},
+    {"id": "GEM-C5", "statement": "Distinguishes deterministic journey attribution from causal incrementality and requires a credible counterfactual for incremental causal claims.", "criticality": "P0"},
+    {"id": "GEM-C6", "statement": "Uses reproducible calculations, guardrails and available downstream economics or capacity evidence to support CONTINUE, ITERATE, SCALE, KILL or INCONCLUSIVE decisions.", "criticality": "P1"}
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "git-blob:7a736263058c0e90180e0cdb1e4edc0e90d175b0#Q-09",
+      "git-blob:2f233e392d4776a494fd11263f5e91d4a4d0022c#Q-11"
+    ],
+    "grader_refs": [
+      "git-blob:e44fa1f6c6708df5e2f3e18c18980594017d8b96#Q-09-grader",
+      "git-blob:1319f55358cd98fd3e7115a729019df2f313d7b0#Q-11-grader"
+    ],
+    "thresholds": [
+      "Q-09 satisfies all preregistered assertions with no forbidden behavior on ChatGPT, Gemini and Claude",
+      "Q-11 satisfies all preregistered assertions with no forbidden behavior on ChatGPT, Gemini and Claude",
+      "No candidate repair between the two scored held-out cases",
+      "Construct-invalid Q-10 is burned and excluded from score rather than used as candidate failure evidence"
+    ],
+    "reliability_trials": 3,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "Manual clean-chat cross-model held-out qualification",
+    "model_or_executor": "ChatGPT, Gemini, Claude",
+    "tools": ["Frozen base candidate v0.1", "Frozen v0.2 overlay", "result.schema.json"],
+    "state_contract": "Each runtime received the exact frozen v0.1 base, v0.2 overlay in higher-priority order, the output contract, and one held-out fixture without grader/key exposure before scoring.",
+    "authority_scope": "Analytical and recommendation capability only; commercial facts, platform execution and organization-specific authority remain external."
+  },
+  "evidence": {
+    "run_refs": [
+      "architect/evaluation/growth-experimentation-analytics/qualification-result-v0.2.json",
+      "manual-heldout:Q-09:ChatGPT+Gemini+Claude",
+      "manual-heldout:Q-11:ChatGPT+Gemini+Claude"
+    ],
+    "artifact_refs": [
+      "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.2.json",
+      "architect/evaluation/growth-experimentation-analytics/q10-invalidation-and-q11-preregistration-v0.2.json",
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/professional-model.md",
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/evidence-and-reuse.md"
+    ],
+    "provenance_refs": [
+      "architect/research/growth-experimentation-analytics/analytics-agent-profession-gap-audit-v0.1.md",
+      "architect/research/growth-experimentation-analytics/competency-matrix-v0.1.md",
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/evidence-and-reuse.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact library artifact digest and the frozen base-plus-overlay assembly it references.",
+    "Held-out execution used manual clean-chat transport rather than a fully automated provider executor; any material runtime/tool change can require revalidation.",
+    "The core does not supply current platform definitions, organization-specific economics, legal interpretation, campaign execution authority or advanced statistical methods outside its validated boundary."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional rules remain qualified while the exact core digest, frozen component SHAs, critical decision policies and declared evaluation assumptions are unchanged; volatile business/platform/legal facts require live context at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to either frozen normative component or the library assembly contract",
+      "A repeated production failure on a P0 qualified claim",
+      "Material change in model/runtime/tool behavior that can affect the qualified claims",
+      "Material new experimentation or causal-inference evidence invalidating a stable professional rule",
+      "Hidden coupling discovered during specialization or composition"
+    ]
+  },
+  "qualified_at": "2026-08-19T11:34:00+04:00"
+}

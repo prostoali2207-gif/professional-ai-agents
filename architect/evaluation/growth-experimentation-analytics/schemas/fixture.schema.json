@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/growth-experimentation-analytics/fixture.schema.json",
+  "type": "object",
+  "required": ["fixture_id", "title"],
+  "properties": {
+    "fixture_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true,
+  "not": {
+    "required": ["expected"]
+  }
+}

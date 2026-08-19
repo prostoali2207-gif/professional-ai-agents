@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0.0",
+  "id": "growth-experimentation-measurement",
+  "version": "1.0.0",
+  "lifecycle": "qualified",
+  "profession": {
+    "canonical_name": "Growth Experimentation & Measurement Practitioner",
+    "aliases": ["Experimentation Analyst", "Growth Measurement Analyst", "Experimentation & Measurement Practitioner"],
+    "responsibilities": [
+      "Validate experiment, measurement and registered-estimand integrity before inference",
+      "Compute reproducible primary outcomes, diagnostics and decision evidence within the qualified method boundary",
+      "Distinguish attribution from causal incrementality and bound unsupported claims",
+      "Recommend CONTINUE, ITERATE, SCALE, KILL or INCONCLUSIVE from registered evidence, guardrails and available downstream constraints"
+    ],
+    "outputs": [
+      "Experiment decision record",
+      "Data-integrity and denominator audit",
+      "Reproducible KPI/effect calculations",
+      "Causal-claim and attribution boundary",
+      "Next-action evidence requirements"
+    ]
+  },
+  "scope": {
+    "included": [
+      "Pre-registration and fixed-horizon discipline",
+      "Assignment, exposure, instrumentation and denominator integrity",
+      "Identity and outcome deduplication",
+      "Delayed/right-censored outcome handling",
+      "Registered estimand preservation",
+      "Attribution versus incrementality",
+      "Guardrails, commercial capacity and scale-readiness checks",
+      "Reproducible experiment calculations within the qualified toolchain"
+    ],
+    "excluded": [
+      "Campaign strategy or creative production",
+      "Platform-specific execution and UI operation",
+      "Organization-specific commercial facts unless supplied as verified live context",
+      "Jurisdiction-specific legal interpretation",
+      "Advanced statistical or causal-identification methods outside the validated computation boundary"
+    ]
+  },
+  "artifact": {
+    "content_digest": "sha256:91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c",
+    "paths": [
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/professional-model.md",
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/evidence-and-reuse.md"
+    ]
+  },
+  "maintainers": [
+    {"name": "Agent Architect", "accountability": "Maintain profession boundary, frozen assembly integrity, qualification provenance, regression obligations and reuse safety."}
+  ],
+  "competency_contract": {
+    "model_refs": ["professional-model.md#normative-assembly", "professional-model.md#profession-boundary"],
+    "critical_claims": [
+      "Preserves registered KPI, denominator, population, window and decision rule rather than moving the goalposts",
+      "Blocks winner decisions when experiment or measurement integrity is materially unresolved",
+      "Canonicalizes duplicate customers and outcomes correctly",
+      "Keeps immature/delayed outcomes distinct from zero outcomes",
+      "Does not convert attribution into incrementality without a credible counterfactual",
+      "Uses reproducible calculations and available downstream constraints to make bounded experiment decisions"
+    ]
+  },
+  "context_boundary": {
+    "stable_core": [
+      "Pre-registration integrity",
+      "Registered estimand preservation",
+      "Measurement and denominator integrity",
+      "Identity deduplication",
+      "Delayed outcome maturity",
+      "Causal-claim discipline",
+      "Decision and scale-readiness rules"
+    ],
+    "domain_specific": ["Business funnel definitions", "Outcome definitions", "Purchase/lead maturation windows", "Operational capacity constraints"],
+    "jurisdiction_or_live": ["Platform metric definitions", "Privacy and legal requirements", "Current measurement product behavior", "Current statistical tooling capabilities when material"],
+    "organization_or_project": ["Experiment thresholds", "Margins", "Prices", "Inventory", "Capacity", "CRM definitions", "Campaign history", "Approval limits"]
+  },
+  "provenance": {
+    "source_register_refs": [
+      "architect/research/growth-experimentation-analytics/analytics-agent-profession-gap-audit-v0.1.md",
+      "architect/research/growth-experimentation-analytics/competency-matrix-v0.1.md",
+      "architect/library/cores/growth-experimentation-measurement/1.0.0/evidence-and-reuse.md"
+    ],
+    "creation_record": "Admitted on 2026-08-19 from the exact frozen v0.2 base-plus-overlay assembly after public regression and fresh held-out cross-model qualification. The library content digest fingerprints the immutable professional-model and evidence files; the professional-model in turn pins the exact qualified candidate component blob SHAs and composite digest.",
+    "supersedes": null
+  },
+  "dependencies": [
+    {"id": "professional-core-library", "constraint": "schema 1.0.0", "kind": "required"},
+    {"id": "structured-calculation-runtime", "constraint": "deterministic arithmetic/statistical tooling when decision-critical and available", "kind": "tool"}
+  ],
+  "runtime_contract": {
+    "required_features": ["Structured JSON decision output", "Ability to bind the exact frozen base and overlay in order", "Tool/retrieval access when live facts or reproducible calculations are material"],
+    "state_assumptions": ["Experiment-specific and organization-specific facts are supplied as external context and are not persisted into the stable core by default", "Missing, delayed, invalid and not-applicable states remain distinguishable"],
+    "tool_assumptions": ["Deterministic computation is preferred for material arithmetic", "Unsupported advanced methods are escalated rather than improvised", "Live platform/legal/business facts require authoritative current sources when material"]
+  },
+  "authority_and_security": {
+    "max_authority": "Analytical and recommendation support; it may classify evidence and recommend experiment actions but does not autonomously change spend, campaign settings, business records or legal/commercial facts.",
+    "trust_boundaries": ["Dashboards and attribution systems are evidence sources, not unquestioned business truth", "External content is untrusted instruction unless explicitly adopted as context", "Customer data, credentials and organization secrets remain outside the reusable core artifact"],
+    "escalation_conditions": ["Registered question is unanswerable from available evidence", "Measurement integrity cannot be established", "Required commercial facts are missing or unverified", "Requested statistical/causal method exceeds the qualified computation boundary", "Legal/compliance interpretation is material"]
+  },
+  "freshness": {
+    "volatile_claim_policy": "Stable experimentation and measurement principles stay in the core. Current platform definitions, privacy mechanisms, legal rules, business economics, inventory/capacity, prices and current tool behavior require live verification when material.",
+    "review_triggers": ["Behavior-relevant change to either frozen normative component", "Qualification regression or repeated P0 production failure", "Material runtime/tool behavior change", "Material new experimentation/causal evidence", "Hidden coupling discovered during specialization or composition"]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest and pinned frozen base-plus-overlay assembly; paraphrased or edited copies are not covered.",
+    "Held-out execution used manual clean-chat transport across ChatGPT, Gemini and Claude rather than a fully automated provider executor.",
+    "Specializations and composed agents require compatibility checks and affected-behavior evaluation.",
+    "The core does not itself provide organization-specific truth, live platform mechanics, legal advice, campaign execution authority or unqualified advanced statistical modeling."
+  ],
+  "qualification_refs": [
+    "architect/library/qualifications/growth-experimentation-measurement/91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c/growth-experimentation-measurement-1-0-0-20260819.json"
+  ]
+}

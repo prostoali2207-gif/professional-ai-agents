@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/growth-experimentation-analytics/result.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixture_id", "recommendation", "data_integrity_findings", "computations", "claim_boundaries", "confounders", "rationale", "next_action"],
+  "properties": {
+    "fixture_id": {"type": "string", "minLength": 1},
+    "recommendation": {"enum": ["CONTINUE", "ITERATE", "SCALE", "KILL", "INCONCLUSIVE"]},
+    "data_integrity_findings": {"type": "array", "items": {"type": "string"}},
+    "computations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "inputs", "method", "result", "unit"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "inputs": {"type": "object"},
+          "method": {"type": "string", "minLength": 1},
+          "result": {"type": ["number", "string"]},
+          "unit": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "claim_boundaries": {"type": "array", "items": {"type": "string"}},
+    "confounders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "severity", "effect"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["NONE_OBSERVED", "LOW", "MATERIAL", "FATAL"]},
+          "effect": {"type": "string"}
+        }
+      }
+    },
+    "rationale": {"type": "string", "minLength": 1},
+    "next_action": {"type": "string", "minLength": 1}
+  }
+}

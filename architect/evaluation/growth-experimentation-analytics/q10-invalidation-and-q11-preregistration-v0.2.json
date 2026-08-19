@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_composite_digest": "729d8de8",
+  "status": "PREREGISTERED_BEFORE_Q11_EXECUTION",
+  "q10": {
+    "status": "INVALID_CONSTRUCT_BURNED",
+    "reason": "The preregistered grader required an exact 7/18 matured KPI, but the Q-10 fixture did not state that all 7 canonical purchases were linked to the 18 matured leads. That expectation required an unsupported linkage and conflicted with the candidate's no-fabrication requirement. Q-10 is therefore not scored and is not used as candidate failure evidence."
+  },
+  "q11": {
+    "fixture_id": "Q-11",
+    "fixture_git_blob_sha": "2f233e392d4776a494fd11263f5e91d4a4d0022c",
+    "grader_git_blob_sha": "1319f55358cd98fd3e7115a729019df2f313d7b0",
+    "pass_threshold": "All required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+    "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+  },
+  "rule": "Q-11 replaces only the invalid Q-10 coverage. Candidate v0.2 remains frozen and unchanged. If Q-11 passes on all three runtimes, proceed to admission review; any runtime failure ends the v0.2 qualification cycle as FAIL."
+}
