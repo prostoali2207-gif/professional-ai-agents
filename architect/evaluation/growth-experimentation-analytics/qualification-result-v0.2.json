@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "growth-experimentation-measurement-v0.2",
+  "candidate_composite_digest_sha256": "729d8de82480135ec64509a56cb8c143dbca6e392ffb9614312f3ddfa19b353f",
+  "status": "PASS",
+  "qualified_at": "2026-08-19T11:34:00+04:00",
+  "transport": "manual clean-chat cross-model execution",
+  "scored_cases": [
+    {
+      "fixture_id": "Q-09",
+      "fixture_git_blob_sha": "7a736263058c0e90180e0cdb1e4edc0e90d175b0",
+      "grader_git_blob_sha": "e44fa1f6c6708df5e2f3e18c18980594017d8b96",
+      "results": {"ChatGPT": "PASS", "Gemini": "PASS", "Claude": "PASS"}
+    },
+    {
+      "fixture_id": "Q-11",
+      "fixture_git_blob_sha": "2f233e392d4776a494fd11263f5e91d4a4d0022c",
+      "grader_git_blob_sha": "1319f55358cd98fd3e7115a729019df2f313d7b0",
+      "results": {"ChatGPT": "PASS", "Gemini": "PASS", "Claude": "PASS"}
+    }
+  ],
+  "burned_non_scored_cases": [
+    {
+      "fixture_id": "Q-10",
+      "status": "INVALID_CONSTRUCT_BURNED",
+      "reason_ref": "architect/evaluation/growth-experimentation-analytics/q10-invalidation-and-q11-preregistration-v0.2.json"
+    }
+  ],
+  "development_regression": {
+    "fixture_id": "R-01-v0.2",
+    "runtime": "Claude",
+    "result": "PASS",
+    "fixture_ref": "architect/evaluation/growth-experimentation-analytics/fixtures/regression-v0.2-denominator-preservation.json",
+    "grader_ref": "architect/evaluation/growth-experimentation-analytics/grader-regression-v0.2-denominator-preservation.json"
+  },
+  "integrity": {
+    "candidate_changed_after_freeze": false,
+    "grader_exposed_before_scoring": false,
+    "repair_between_scored_cases": false,
+    "qualification_rule": "Q-09 and replacement Q-11 must PASS on ChatGPT, Gemini, and Claude."
+  },
+  "limitations": [
+    "Qualification evidence used manual clean-chat transport rather than a fully automated provider executor.",
+    "Qualification applies only to the exact frozen composite digest and declared output contract.",
+    "Advanced statistical methods outside the candidate's qualified computation boundary remain escalation cases."
+  ]
+}
