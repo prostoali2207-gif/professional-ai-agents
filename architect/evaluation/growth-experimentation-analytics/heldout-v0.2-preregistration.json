@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-19T10:49:00+04:00",
+  "candidate_id": "growth-experimentation-measurement-v0.2",
+  "candidate_composite_digest_sha256": "729d8de82480135ec64509a56cb8c143dbca6e392ffb9614312f3ddfa19b353f",
+  "cases": [
+    {
+      "fixture_id": "Q-09",
+      "fixture_git_blob_sha": "7a736263058c0e90180e0cdb1e4edc0e90d175b0",
+      "grader_git_blob_sha": "e44fa1f6c6708df5e2f3e18c18980594017d8b96",
+      "coverage": ["registered estimand preservation", "completed-horizon integrity failure", "DEC-02", "TOOL-01", "GOV-01"],
+      "pass_threshold": "All required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    },
+    {
+      "fixture_id": "Q-10",
+      "fixture_git_blob_sha": "077ca962f207701b92c19c86436f3f5c9239a2e4",
+      "grader_git_blob_sha": "226e8139315038425c8a93197a5f603a798e0693",
+      "coverage": ["DAT-02", "DAT-03", "FUN-01", "ATT-02", "CAU-01", "DEC-02", "TOOL-01"],
+      "pass_threshold": "All required assertions satisfied; no forbidden behavior; output conforms to result.schema.json.",
+      "required_runtimes": ["ChatGPT", "Gemini", "Claude"]
+    }
+  ],
+  "qualification_rule": "Both Q-09 and Q-10 must PASS on all three runtimes. Any failure ends v0.2 as FAIL; no repair within this freeze."
+}
