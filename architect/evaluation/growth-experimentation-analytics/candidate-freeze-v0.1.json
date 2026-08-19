@@ -1,0 +1,35 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.1",
+  "status": "FROZEN_FOR_HELDOUT_QUALIFICATION",
+  "frozen_at": "2026-08-19",
+  "repository": "prostoali2207-gif/professional-ai-agents",
+  "branch_at_freeze": "agent/analytics-profession-audit-2026-08",
+  "candidate_path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+  "candidate_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2",
+  "candidate_introducing_commit": "8b648c8932a9237a6c1361699c3444b2007df3b2",
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result.schema.json",
+  "manual_protocol_path": "architect/evaluation/growth-experimentation-analytics/manual-cross-model-exam.md",
+  "freeze_rules": [
+    "Do not edit the frozen candidate while held-out qualification is in progress.",
+    "Create held-out fixtures only after this freeze point.",
+    "Do not expose held-out expected answers, grader logic, or repair hints to candidate executors.",
+    "If the candidate is changed after a held-out failure, invalidate the current qualification attempt and create fresh held-out cases for the next qualification attempt.",
+    "Public development fixtures and their grader key remain development evidence only and cannot qualify this candidate."
+  ],
+  "development_gate_summary": {
+    "distinct_public_failure_modes_exercised": [
+      "assignment-to-exposure integrity",
+      "fixed-horizon stopping discipline",
+      "small-sample uncertainty",
+      "denominator mismatch",
+      "attribution versus incrementality",
+      "delayed outcome maturity",
+      "identity deduplication",
+      "commercial capacity saturation",
+      "clean scalable win"
+    ],
+    "known_regression_repaired": "duplicate-cluster canonicalization: n records for one established entity count as 1 entity, therefore n-1 duplicates",
+    "regression_recheck": "PASS on ChatGPT and Gemini after repair",
+    "qualification_status": "NOT_YET_QUALIFIED"
+  }
+}
