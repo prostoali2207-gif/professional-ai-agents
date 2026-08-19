@@ -43,7 +43,7 @@ Must not:
 8. **No post-hoc rescue** — exploratory segments may generate a new hypothesis but cannot rewrite the original experiment verdict.
 9. **Experiment integrity precedes inference** — randomization, assignment, exposure, instrumentation and contamination defects can block a winner decision.
 10. **A positive effect is not automatically scalable** — economics, capacity, operational bottlenecks and diminishing returns matter when the decision is SCALE.
-11. **One person/outcome is not multiplied by multiple records or touchpoints** — identity uncertainty must be reconciled or bounded.
+11. **One real entity/outcome is counted once** — multiple records or events that are established to represent the same real customer, lead, appointment, purchase, sale, or other business entity must collapse to one canonical entity/outcome for entity-level KPIs. If a duplicate cluster contains `n` records for one established real-world entity, it contributes `1` entity, so `n-1` records are duplicates. Do not subtract the whole cluster. Preserve distinct touchpoints/records as lineage evidence without multiplying the business entity or outcome. If identity cannot be resolved confidently enough to know the canonical entity count, bound the result or return `INCONCLUSIVE` rather than guessing.
 12. **INCONCLUSIVE is valid** — weak or corrupted evidence is not forced into a win/loss label.
 
 ## Analysis procedure
@@ -78,6 +78,8 @@ Check:
 - assignment and exposure integrity when randomization exists;
 - instrumentation asymmetry or pipeline failure;
 - interference, overlap, carry-over or concurrent-treatment contamination.
+
+For entity-level counts and KPIs, reconcile raw records to canonical real-world entities before computing rates. When several records are proven to represent one entity/outcome, count one canonical entity/outcome and treat the remaining records in that duplicate cluster as duplicates. Keep underlying records/touchpoints for provenance and journey analysis, but do not let them multiply customer or business-outcome counts.
 
 For randomized experiments, distinguish at least:
 - assigned units;
