@@ -1,0 +1,130 @@
+name: Sales qualification API canary
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'OpenAI model for the qualification runtime canary'
+        required: true
+        default: 'gpt-5.6-terra'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: ${{ inputs.model }}
+      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor.py
+      SALES_CANDIDATE_MANIFEST: ${{ runner.temp }}/sales-candidate-manifest.json
+      SALES_CANDIDATE_TIMEOUT_SECONDS: '180'
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify required secret is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${OPENAI_API_KEY:-}" ]; then
+            echo 'OPENAI_API_KEY is not available to this workflow.' >&2
+            exit 2
+          fi
+
+      - name: Verify frozen candidate and local executor invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+          python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor.py
+
+      - name: Create evaluator-owned frozen identity manifest
+        shell: bash
+        run: |
+          cat > "$SALES_CANDIDATE_MANIFEST" <<'JSON'
+          {
+            "commit": "b1a5f214a7cc9452e8a168f3292a2e9b613ecae0",
+            "artifact_digest": "sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"
+          }
+          JSON
+
+      - name: Run one unscored provider-backed canary through the full adapter boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/canary-request.json" <<'JSON'
+          {
+            "protocol": "sales-lead-conversion-candidate-v1",
+            "run": {
+              "run_id": "sales-api-canary",
+              "trial_id": "canary-1",
+              "capability_profile": {
+                "purpose": "unscored_infrastructure_canary"
+              }
+            },
+            "task": {
+              "instruction": "Infrastructure canary only. Reply with a concise acknowledgement that you can process the request. Do not make any external action or commercial claim."
+            },
+            "initial_state": {},
+            "tool_scenario": {
+              "authority": {
+                "external_actions": false
+              },
+              "tools": []
+            },
+            "checkpoint": null
+          }
+          JSON
+
+          python3 architect/evaluation/sales-lead-conversion/adapters/stdio_candidate_adapter.py \
+            < "$RUNNER_TEMP/canary-request.json" \
+            > "$RUNNER_TEMP/canary-result.json"
+
+      - name: Validate canary observables without exposing credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          path = Path(os.environ['RUNNER_TEMP']) / 'canary-result.json'
+          data = json.loads(path.read_text(encoding='utf-8'))
+
+          assert data['protocol'] == 'sales-lead-conversion-candidate-v1'
+          assert data['run_id'] == 'sales-api-canary'
+          assert data['trial_id'] == 'canary-1'
+          assert data['candidate_identity']['commit'] == 'b1a5f214a7cc9452e8a168f3292a2e9b613ecae0'
+          assert data['candidate_identity']['artifact_digest'] == 'sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6'
+          assert data['termination_reason'] == 'model_final'
+          assert data.get('final_response')
+          assert data.get('side_effect_ledger') == []
+          runtime = data.get('runtime_identity') or {}
+          assert runtime.get('model') == os.environ['SALES_MODEL']
+
+          print('CANARY PASS')
+          print('candidate_commit=' + data['candidate_identity']['commit'])
+          print('model=' + str(runtime.get('model')))
+          print('termination_reason=' + data['termination_reason'])
+          print('side_effects=0')
+          PY
+
+      - name: Preserve non-secret canary evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-qualification-canary
+          path: ${{ runner.temp }}/canary-result.json
+          if-no-files-found: ignore
+          retention-days: 14
