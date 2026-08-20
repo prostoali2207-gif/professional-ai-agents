@@ -1,90 +1,13 @@
-name: Market Intelligence Professional Core Gate
+name: Market Intelligence Professional Core Gate (superseded diagnostic)
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'architect/research/market-competitive-intelligence/**'
-      - 'architect/evaluation/market_competitive_intelligence/**'
-      - '.github/workflows/market-intelligence-professional-core-gate.yml'
   workflow_dispatch:
-
-concurrency:
-  group: market-intelligence-core-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  qualify:
+  superseded:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout candidate
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Deterministic preflight
-        run: |
-          python -m py_compile architect/evaluation/market_competitive_intelligence/run_v5_release_gate.py
-          python -m py_compile architect/evaluation/market_competitive_intelligence/run_practical_gate.py
-          test "$(git hash-object architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md)" = "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
-          python - <<'PY'
-          import json
-          h=json.load(open('architect/evaluation/market_competitive_intelligence/v5_fresh_release_cases.json'))
-          p=json.load(open('architect/evaluation/market_competitive_intelligence/v2_practical_case.json'))
-          assert len(h)==12 and p['id']=='MI-P01'
-          ids=[c['id'] for c in h]
-          assert len(ids)==len(set(ids))
-          for c in h:
-              assert c['allowed_actions'] and c['critical_control']
-          print('v5 release fixture contract OK')
-          PY
-
-      - name: Require existing Gemini credential
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic calls were not attempted.' >&2; exit 2)
-
-      - name: Run v5 fresh held-out qualification
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          MI_MODEL: gemini-3.1-flash-lite
-          GEMINI_THINKING_LEVEL: medium
-          MI_TRIALS: '3'
-          MI_BATCH_SIZE: '4'
-          MI_CALL_PACE_SECONDS: '6'
-          MI_429_BACKOFF_SECONDS: '40'
-        run: |
-          rm -rf .tmp/market-competitive-intelligence-v5 .tmp/market-competitive-intelligence-v2
-          python architect/evaluation/market_competitive_intelligence/run_v5_release_gate.py
-
-      - name: Pace before practical work sample
-        run: sleep 12
-
-      - name: Run end-to-end practical work sample
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          MI_MODEL: gemini-3.1-flash-lite
-          GEMINI_THINKING_LEVEL: medium
-          MI_PRACTICAL_TRIALS: '3'
-        run: |
-          python architect/evaluation/market_competitive_intelligence/run_practical_gate.py
-
-      - name: Upload sealed qualification evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: market-intelligence-professional-core-v5-${{ github.sha }}
-          path: |
-            .tmp/market-competitive-intelligence-v5
-            .tmp/market-competitive-intelligence-v2
-          if-no-files-found: ignore
+      - run: echo 'Superseded by Market Intelligence v0.3 single-decision qualification. Manual diagnostic only.'
