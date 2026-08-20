@@ -7,6 +7,7 @@ on:
     paths:
       - 'architect/research/growth-strategy-experiment-portfolio/**'
       - 'architect/evaluation/growth_strategy_experiment_portfolio/**'
+      - '.github/workflows/strategist-professional-qualification-v0_1.yml'
   pull_request:
     branches:
       - main
@@ -16,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   copilot-requests: write
 
 jobs:
@@ -37,13 +38,32 @@ jobs:
       - name: Compile qualification runner
         run: python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/qualification_v0_1.py
       - name: Execute fresh held-out qualification
+        id: qualification
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           STRATEGIST_EVAL_MODEL: auto
         run: python architect/evaluation/growth_strategy_experiment_portfolio/qualification_v0_1.py
+      - name: Persist non-secret qualification summary on branch
+        if: always() && github.event_name == 'push'
+        run: |
+          mkdir -p docs/qualification-results
+          if [ -f .tmp/strategist-qualification-v0.1/summary.json ]; then
+            cp .tmp/strategist-qualification-v0.1/summary.json docs/qualification-results/strategist-v0.1-latest.json
+          else
+            printf '{"heldout_round_pass":false,"infrastructure_error":true,"note":"qualification terminated before producing summary"}\n' > docs/qualification-results/strategist-v0.1-latest.json
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/qualification-results/strategist-v0.1-latest.json
+          git commit -m 'eval: record strategist v0.1 qualification summary' || exit 0
+          git push origin HEAD:agent/strategist-professional-rebuild-2026-08-20
       - name: Upload qualification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: strategist-professional-qualification-v0_1-${{ github.sha }}
           path: .tmp/strategist-qualification-v0.1
+      - name: Enforce qualification gate
+        if: steps.qualification.outcome != 'success'
+        run: exit 1
