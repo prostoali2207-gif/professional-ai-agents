@@ -70,7 +70,7 @@ jobs:
               "run_id": "sales-api-canary",
               "trial_id": "canary-1",
               "capability_profile": {
-                "purpose": "unscored_infrastructure_canary"
+                "purpose": "unscored_infrastructure_and_usage_canary"
               }
             },
             "task": {
@@ -91,7 +91,7 @@ jobs:
             < "$RUNNER_TEMP/canary-request.json" \
             > "$RUNNER_TEMP/canary-result.json"
 
-      - name: Validate canary observables without exposing credentials
+      - name: Validate canary observables and report token usage
         shell: bash
         run: |
           set -euo pipefail
@@ -113,11 +113,23 @@ jobs:
           runtime = data.get('runtime_identity') or {}
           assert runtime.get('model') == os.environ['SALES_MODEL']
 
+          usage = data.get('model_usage') or {}
+          assert usage.get('api_calls', 0) >= 1
+          assert usage.get('input_tokens', 0) > 0
+          assert usage.get('output_tokens', 0) > 0
+          assert usage.get('total_tokens', 0) >= usage.get('input_tokens', 0) + usage.get('output_tokens', 0)
+          assert usage.get('cached_input_tokens', 0) <= usage.get('input_tokens', 0)
+
           print('CANARY PASS')
           print('candidate_commit=' + data['candidate_identity']['commit'])
           print('model=' + str(runtime.get('model')))
           print('termination_reason=' + data['termination_reason'])
           print('side_effects=0')
+          print('api_calls=' + str(usage.get('api_calls')))
+          print('input_tokens=' + str(usage.get('input_tokens')))
+          print('cached_input_tokens=' + str(usage.get('cached_input_tokens')))
+          print('output_tokens=' + str(usage.get('output_tokens')))
+          print('total_tokens=' + str(usage.get('total_tokens')))
           PY
 
       - name: Preserve non-secret canary evidence

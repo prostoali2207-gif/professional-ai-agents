@@ -8,6 +8,7 @@ observable JSON run record to stdout. The executor:
 - runs a model through OpenAI Chat Completions;
 - exposes only harness-declared deterministic mock tools;
 - mechanically records tool use, state changes and side-effect attempts;
+- records provider-reported token usage without embedding volatile pricing;
 - never reads grader keys or other sealed fixtures.
 """
 from __future__ import annotations
@@ -20,7 +21,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
-from typing import Any
+from typing import Any, NoReturn
 
 FROZEN_COMMIT = "b1a5f214a7cc9452e8a168f3292a2e9b613ecae0"
 FROZEN_DIGEST = "sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"
@@ -29,7 +30,7 @@ PROTOCOL = "sales-lead-conversion-candidate-v1"
 MAX_STEPS = 12
 
 
-def fail(msg: str) -> "NoReturn":
+def fail(msg: str) -> NoReturn:
     print(f"executor_error: {msg}", file=sys.stderr)
     raise SystemExit(2)
 
@@ -91,7 +92,38 @@ def validate_request(req: dict[str, Any]) -> None:
         fail("task is required")
 
 
-def api_call(messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> dict[str, Any]:
+def normalize_usage(raw: Any) -> dict[str, int]:
+    """Normalize OpenAI-compatible usage fields into stable evaluator observables."""
+    if not isinstance(raw, dict):
+        return {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "cached_input_tokens": 0}
+
+    input_tokens = raw.get("prompt_tokens", raw.get("input_tokens", 0))
+    output_tokens = raw.get("completion_tokens", raw.get("output_tokens", 0))
+    total_tokens = raw.get("total_tokens", 0)
+
+    details = raw.get("prompt_tokens_details") or raw.get("input_tokens_details") or {}
+    cached = details.get("cached_tokens", 0) if isinstance(details, dict) else 0
+
+    def as_int(value: Any) -> int:
+        return value if isinstance(value, int) and value >= 0 else 0
+
+    normalized = {
+        "input_tokens": as_int(input_tokens),
+        "output_tokens": as_int(output_tokens),
+        "total_tokens": as_int(total_tokens),
+        "cached_input_tokens": as_int(cached),
+    }
+    if normalized["total_tokens"] == 0:
+        normalized["total_tokens"] = normalized["input_tokens"] + normalized["output_tokens"]
+    return normalized
+
+
+def add_usage(total: dict[str, int], item: dict[str, int]) -> None:
+    for key in ("input_tokens", "output_tokens", "total_tokens", "cached_input_tokens"):
+        total[key] = total.get(key, 0) + item.get(key, 0)
+
+
+def api_call(messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[str, int]]:
     key = os.environ.get("OPENAI_API_KEY")
     model = os.environ.get("SALES_MODEL")
     if not key:
@@ -119,9 +151,10 @@ def api_call(messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> dic
     except Exception as exc:
         fail(f"model API failure: {exc}")
     try:
-        return payload["choices"][0]["message"]
+        message = payload["choices"][0]["message"]
     except Exception:
         fail("model API returned unexpected response shape")
+    return message, normalize_usage(payload.get("usage"))
 
 
 def tool_definitions(tool_scenario: dict[str, Any]) -> list[dict[str, Any]]:
@@ -199,6 +232,8 @@ def main() -> int:
     tool_calls: list[dict[str, Any]] = []
     tool_results_seen: list[dict[str, Any]] = []
     side_effect_ledger: list[dict[str, Any]] = []
+    usage_by_call: list[dict[str, int]] = []
+    usage_total = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "cached_input_tokens": 0}
 
     developer = (
         "You are the exact frozen Sales / Lead Conversion candidate under qualification. "
@@ -220,8 +255,12 @@ def main() -> int:
 
     final_response: Any = None
     termination_reason = "model_final"
-    for _ in range(MAX_STEPS):
-        msg = api_call(messages, tools)
+    for step in range(MAX_STEPS):
+        msg, usage = api_call(messages, tools)
+        usage_record = {"call_index": step + 1, **usage}
+        usage_by_call.append(usage_record)
+        add_usage(usage_total, usage)
+
         calls = msg.get("tool_calls") or []
         content = msg.get("content")
         assistant_message: dict[str, Any] = {"role": "assistant", "content": content}
@@ -271,10 +310,16 @@ def main() -> int:
         "resource_loads": [{"type": "frozen_core", "digest": FROZEN_DIGEST}],
         "checkpoint": raw.get("checkpoint"),
         "termination_reason": termination_reason,
+        "model_usage": {
+            "api_calls": len(usage_by_call),
+            **usage_total,
+            "calls": usage_by_call,
+            "pricing": "not_embedded_use_evaluator_price_table",
+        },
         "runtime_identity": {
             "provider": "openai-compatible-chat-completions",
             "model": os.environ.get("SALES_MODEL"),
-            "executor": "sales-lead-conversion/executor.py@v1",
+            "executor": "sales-lead-conversion/executor.py@v1.1-usage",
             "python": sys.version.split()[0],
         },
     }
