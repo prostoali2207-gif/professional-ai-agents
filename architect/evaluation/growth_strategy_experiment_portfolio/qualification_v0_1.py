@@ -31,7 +31,7 @@ def parse_json(text:str)->Any:
         raise
 
 async def ask(client:CopilotClient,system:str,user:str,sid:str)->str:
-    session=await client.create_session(model=MODEL,session_id=sid,mode='empty',tools=[],available_tools=[],system_message={'mode':'append','content':system},infinite_sessions={'enabled':False},memory={'enabled':False},enable_session_store=False,working_directory=str(OUT))
+    session=await client.create_session(model=MODEL,session_id=sid,tools=[],available_tools=[],system_message={'mode':'append','content':system},infinite_sessions={'enabled':False},memory={'enabled':False},enable_session_store=False,working_directory=str(OUT))
     try:
         r=await session.send_and_wait(user,timeout=180)
         return getattr(getattr(r,'data',None),'content','') or ''
