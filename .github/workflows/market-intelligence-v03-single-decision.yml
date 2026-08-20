@@ -1,0 +1,56 @@
+name: Market Intelligence v0.3 Single Decision Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/research/market-competitive-intelligence/**'
+      - 'architect/evaluation/market_competitive_intelligence/**'
+      - '.github/workflows/market-intelligence-v03-single-decision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-single:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight
+        run: |
+          python -m py_compile architect/evaluation/market_competitive_intelligence/run_v03_single_decision_gate.py
+          test "$(git hash-object architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md)" = "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
+          test "$(git hash-object architect/research/market-competitive-intelligence/epistemic-status-calibration-overlay-v0.1.md)" = "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21"
+          python - <<'PY'
+          import json
+          x=json.load(open('architect/evaluation/market_competitive_intelligence/v03_single_decision_heldout.json'))
+          assert len(x)==10 and len({c['id'] for c in x})==10
+          print('single-decision fixture OK')
+          PY
+      - name: Require Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY"
+      - name: Run fresh single-decision gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          MI_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          MI_TRIALS: '3'
+        run: |
+          rm -rf .tmp/market-competitive-intelligence-v03-single
+          python architect/evaluation/market_competitive_intelligence/run_v03_single_decision_gate.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-intelligence-v03-single-${{ github.sha }}
+          path: .tmp/market-competitive-intelligence-v03-single
+          if-no-files-found: ignore
