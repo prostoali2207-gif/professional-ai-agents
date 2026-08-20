@@ -1,0 +1,26 @@
+name: Sales candidate executor smoke
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/**'
+      - '.github/workflows/sales-candidate-executor-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Ensure frozen commit is available
+        run: git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+      - name: Run executor smoke tests
+        run: python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor.py
