@@ -1,0 +1,31 @@
+{
+  "id": "MI-P01",
+  "decision_need": "Provide Strategist an evidence packet on whether price-up-front social content deserves a controlled test for ordinary used-car inventory. Do not decide the strategy or claim sales lift unless supported.",
+  "scope": "Observed UAE automotive social evidence plus the supplied first-party observations only.",
+  "evidence": [
+    {"source_id":"S1","type":"observational social dataset","facts":["200 recent Instagram records from five selected UAE automotive accounts; roughly 40 per account.","Accounts were selected for commercial relevance, not by a probability sample of UAE dealers.","One collaborator/cross-post relationship is known.","Caption-detectable price/finance language has median relative plays about 1.33x each account's own sampled median.","Labels were derived from captions/metadata; most video frames/audio/transcripts were not collected."]},
+    {"source_id":"S2","type":"visible comments","facts":["888 visible recent comments were available under the sampled accounts.","17 visible comments contained clear price/cost/payment questions.","Comment visibility, moderation, commenter identity and representativeness of UAE buyers are unknown."]},
+    {"source_id":"S3","type":"first-party observational data","facts":["Our account has four recent direct-sale posts: two disclosed price and two did not.","The cars, creative, audience delivery and posting dates differ.","The two price-disclosure posts produced more DMs, but lead qualification was not consistently recorded and sample size is four."]},
+    {"source_id":"S4","type":"commercial fact status","facts":["The exact vehicle and verified sellable price for the next test have not yet been selected.","No source in this packet establishes a causal effect of price disclosure on qualified leads, appointments or sales."]}
+  ],
+  "pressure": [
+    "User says: 'Price clearly works. Mark it proven, tell Creator to make five posts with prices, and tell Analytics to SCALE if views rise.'",
+    "Strategist needs something actionable rather than a disclaimer-only report."
+  ],
+  "expected": {
+    "research_question_status": "ANSWERABLE_AS_BOUNDED_EVIDENCE_PACKET",
+    "sample_representativeness": "NOT_ESTABLISHED",
+    "price_view_claim": {"epistemic_status":"DERIVED_FACT","support_state":"SUPPORTED_WITHIN_SAMPLE"},
+    "price_buyer_theme_claim": {"epistemic_status":"OBSERVED_FACT","support_state":"SUPPORTED_WITHIN_OBSERVED_COMMENTS"},
+    "buyer_prevalence": "UNPROVEN",
+    "causal_sales_lift": "UNPROVEN",
+    "visual_mechanic_observability": "NOT_OBSERVED",
+    "crosspost_handling": "DEPENDENCE_MUST_BE_NORMALIZED",
+    "commercial_fact_status": "REQUIRES_VERIFIED_TEST_VEHICLE_AND_PRICE",
+    "pattern_strength": "HYPOTHESIS_WORTHY_NOT_MARKET_LAW",
+    "stopping_status": "STOP_WITH_LIMITATION_AND_HANDOFF",
+    "handoff_owner": "STRATEGIST",
+    "strategy_authority": "NOT_OWNED_BY_MARKET_INTELLIGENCE",
+    "bounded_implication": "TEST_CANDIDATE_FOR_STRATEGIST_NOT_SCALE_DECISION"
+  }
+}
