@@ -59,6 +59,7 @@ def build_envelope(harness_request: dict[str, Any]) -> dict[str, Any]:
         "task": harness_request.get("task", {}),
         "initial_state": harness_request.get("initial_state", {}),
         "tool_scenario": harness_request.get("tool_scenario", {}),
+        "checkpoint": harness_request.get("checkpoint"),
     }
 
 
