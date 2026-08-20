@@ -20,7 +20,7 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       SALES_MODEL: ${{ inputs.model }}
       SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor.py
-      SALES_CANDIDATE_MANIFEST: ${{ runner.temp }}/sales-candidate-manifest.json
+      SALES_CANDIDATE_MANIFEST: /tmp/sales-candidate-manifest.json
       SALES_CANDIDATE_TIMEOUT_SECONDS: '180'
       SALES_MODEL_TIMEOUT_SECONDS: '180'
 
