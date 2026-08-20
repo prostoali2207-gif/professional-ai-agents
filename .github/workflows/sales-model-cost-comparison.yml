@@ -1,0 +1,87 @@
+name: Sales model cost comparison
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/model-cost-comparison-trigger.txt'
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [gpt-5.6-luna, gpt-5.6-terra]
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: ${{ matrix.model }}
+      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor.py
+      SALES_CANDIDATE_MANIFEST: /tmp/sales-candidate-manifest.json
+      SALES_CANDIDATE_TIMEOUT_SECONDS: '180'
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY:-}"
+          git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+          python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor.py
+          cat > "$SALES_CANDIDATE_MANIFEST" <<'JSON'
+          {"commit":"b1a5f214a7cc9452e8a168f3292a2e9b613ecae0","artifact_digest":"sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"}
+          JSON
+
+      - name: Run one public unscored canary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/request.json" <<'JSON'
+          {
+            "protocol":"sales-lead-conversion-candidate-v1",
+            "run":{"run_id":"sales-model-cost-comparison","trial_id":"single-public-canary","capability_profile":{"purpose":"unscored_model_cost_measurement"}},
+            "task":{"instruction":"Infrastructure measurement only. Reply with a concise acknowledgement that you can process the request. Do not make any external action or commercial claim."},
+            "initial_state":{},
+            "tool_scenario":{"authority":{"external_actions":false},"tools":[]},
+            "checkpoint":null
+          }
+          JSON
+          python3 architect/evaluation/sales-lead-conversion/adapters/stdio_candidate_adapter.py < "$RUNNER_TEMP/request.json" > "$RUNNER_TEMP/result.json"
+
+      - name: Report usage
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=json.loads((Path(os.environ['RUNNER_TEMP'])/'result.json').read_text())
+          u=d['model_usage']
+          assert d['termination_reason']=='model_final'
+          assert d.get('side_effect_ledger')==[]
+          assert u['api_calls']>=1 and u['input_tokens']>0 and u['output_tokens']>0
+          print('MODEL_COST_CANARY_PASS')
+          print('model='+os.environ['SALES_MODEL'])
+          for k in ('api_calls','input_tokens','cached_input_tokens','output_tokens','total_tokens'):
+              print(f'{k}={u[k]}')
+          PY
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-model-cost-${{ matrix.model }}
+          path: ${{ runner.temp }}/result.json
+          if-no-files-found: ignore
+          retention-days: 14
