@@ -7,6 +7,12 @@ on:
     paths:
       - 'architect/research/growth-strategy-experiment-portfolio/**'
       - 'architect/evaluation/growth_strategy_experiment_portfolio/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/research/growth-strategy-experiment-portfolio/**'
+      - 'architect/evaluation/growth_strategy_experiment_portfolio/**'
   workflow_dispatch:
 
 permissions:
