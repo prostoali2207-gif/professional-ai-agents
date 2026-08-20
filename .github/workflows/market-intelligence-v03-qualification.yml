@@ -1,65 +1,13 @@
-name: Market Intelligence v0.3 Qualification
+name: Market Intelligence v0.3 Qualification (superseded multi-field diagnostic)
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'architect/research/market-competitive-intelligence/**'
-      - 'architect/evaluation/market_competitive_intelligence/**'
-      - '.github/workflows/market-intelligence-v03-qualification.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  qualify-v03:
+  superseded:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout candidate
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Deterministic preflight
-        run: |
-          python -m py_compile architect/evaluation/market_competitive_intelligence/run_v03_gate.py
-          test "$(git hash-object architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md)" = "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
-          test "$(git hash-object architect/research/market-competitive-intelligence/epistemic-status-calibration-overlay-v0.1.md)" = "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21"
-          python - <<'PY'
-          import json
-          x=json.load(open('architect/evaluation/market_competitive_intelligence/v03_fresh_cases.json'))
-          assert len(x)==6
-          assert len({c['id'] for c in x})==6
-          print('v0.3 fresh fixture contract OK')
-          PY
-
-      - name: Require Gemini credential
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY missing' >&2; exit 2)
-
-      - name: Run fresh v0.3 held-out qualification
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          MI_MODEL: gemini-3.1-flash-lite
-          GEMINI_THINKING_LEVEL: medium
-          MI_TRIALS: '3'
-        run: |
-          rm -rf .tmp/market-competitive-intelligence-v03
-          python architect/evaluation/market_competitive_intelligence/run_v03_gate.py
-
-      - name: Upload v0.3 evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: market-intelligence-v03-${{ github.sha }}
-          path: .tmp/market-competitive-intelligence-v03
-          if-no-files-found: ignore
+      - run: echo 'Superseded by v0.3 single-decision qualification. Manual diagnostic only.'
