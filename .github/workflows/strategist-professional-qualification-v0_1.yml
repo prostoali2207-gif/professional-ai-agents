@@ -39,12 +39,17 @@ jobs:
         run: python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/qualification_v0_1.py
       - name: Execute fresh held-out qualification
         id: qualification
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           STRATEGIST_EVAL_MODEL: auto
-        run: python architect/evaluation/growth_strategy_experiment_portfolio/qualification_v0_1.py
-      - name: Persist non-secret qualification summary on branch
+        run: |
+          set +e
+          mkdir -p .tmp/strategist-qualification-v0.1
+          python architect/evaluation/growth_strategy_experiment_portfolio/qualification_v0_1.py > .tmp/strategist-qualification-v0.1/runtime.log 2>&1
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Persist non-secret qualification summary and diagnostics on branch
         if: always() && github.event_name == 'push'
         run: |
           mkdir -p docs/qualification-results
@@ -53,10 +58,13 @@ jobs:
           else
             printf '{"heldout_round_pass":false,"infrastructure_error":true,"note":"qualification terminated before producing summary"}\n' > docs/qualification-results/strategist-v0.1-latest.json
           fi
+          if [ -f .tmp/strategist-qualification-v0.1/runtime.log ]; then
+            tail -n 80 .tmp/strategist-qualification-v0.1/runtime.log > docs/qualification-results/strategist-v0.1-runtime.log
+          fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add docs/qualification-results/strategist-v0.1-latest.json
-          git commit -m 'eval: record strategist v0.1 qualification summary' || exit 0
+          git add docs/qualification-results/strategist-v0.1-latest.json docs/qualification-results/strategist-v0.1-runtime.log || true
+          git commit -m 'eval: record strategist v0.1 qualification diagnostics' || exit 0
           git push origin HEAD:agent/strategist-professional-rebuild-2026-08-20
       - name: Upload qualification evidence
         if: always()
@@ -65,5 +73,5 @@ jobs:
           name: strategist-professional-qualification-v0_1-${{ github.sha }}
           path: .tmp/strategist-qualification-v0.1
       - name: Enforce qualification gate
-        if: steps.qualification.outcome != 'success'
+        if: steps.qualification.outputs.exit_code != '0'
         run: exit 1
