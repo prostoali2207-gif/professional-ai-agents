@@ -58,6 +58,25 @@
         "tags": ["experimentation", "measurement", "analytics", "causal-inference", "growth", "decisioning"]
       },
       "replacement": null
+    },
+    {
+      "id": "market-competitive-intelligence",
+      "canonical_name": "Market & Competitive Intelligence Research Practitioner",
+      "version": "1.0.0",
+      "lifecycle": "qualified",
+      "artifact_digest": "sha256:4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03",
+      "manifest_path": "architect/library/cores/market-competitive-intelligence/1.0.0/manifest.json",
+      "qualification_refs": ["architect/library/qualifications/market-competitive-intelligence/4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03/market-competitive-intelligence-1-0-0-20260820.json"],
+      "search_facets": {
+        "responsibilities": ["Reduce market uncertainty with current traceable evidence", "Research buyers competitors offers and platform signals", "Validate freshness comparability provenance selection and coverage", "Hand bounded intelligence to the accountable decision owner"],
+        "outputs": ["Market intelligence evidence packet", "Evidence ledger", "Buyer competitor offer and platform signal synthesis", "Bounded implications and unknowns", "Decision-owner handoff"],
+        "competencies": ["market research", "competitive intelligence", "source quality", "epistemic calibration", "comparability", "selection bias", "provenance and dependence", "primary research", "social signal interpretation", "longitudinal monitoring", "research stopping"],
+        "domains": ["market intelligence", "competitive intelligence", "market research", "buyer research"],
+        "authority_levels": ["research", "analysis", "bounded recommendation support"],
+        "runtime_features": ["exact frozen component binding", "structured reasoning output", "live retrieval for volatile market facts", "read-only research by default"],
+        "tags": ["market-intelligence", "competitive-intelligence", "market-research", "buyer-research", "evidence", "osint", "social-signals"]
+      },
+      "replacement": null
     }
   ]
 }
