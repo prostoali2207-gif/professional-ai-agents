@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - agent/market-intelligence-core-2026-08-20
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/research/market-competitive-intelligence/**'
+      - 'architect/evaluation/market_competitive_intelligence/**'
+      - '.github/workflows/market-intelligence-professional-core-gate.yml'
   workflow_dispatch:
 
 permissions:
