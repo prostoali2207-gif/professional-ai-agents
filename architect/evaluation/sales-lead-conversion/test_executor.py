@@ -2,13 +2,8 @@
 from __future__ import annotations
 
 import importlib.util
-import io
-import json
-import os
 import pathlib
-import sys
 import unittest
-from unittest import mock
 
 HERE = pathlib.Path(__file__).resolve().parent
 SPEC = importlib.util.spec_from_file_location("sales_executor", HERE / "executor.py")
@@ -62,6 +57,42 @@ class ExecutorTests(unittest.TestCase):
         }
         with self.assertRaises(SystemExit):
             MODULE.validate_request(req)
+
+    def test_usage_normalizes_chat_completions_fields_and_cache(self):
+        usage = MODULE.normalize_usage({
+            "prompt_tokens": 1200,
+            "completion_tokens": 80,
+            "total_tokens": 1280,
+            "prompt_tokens_details": {"cached_tokens": 900},
+        })
+        self.assertEqual(usage, {
+            "input_tokens": 1200,
+            "output_tokens": 80,
+            "total_tokens": 1280,
+            "cached_input_tokens": 900,
+        })
+
+    def test_usage_falls_back_to_input_output_names_and_computes_total(self):
+        usage = MODULE.normalize_usage({
+            "input_tokens": 400,
+            "output_tokens": 20,
+            "input_tokens_details": {"cached_tokens": 300},
+        })
+        self.assertEqual(usage["input_tokens"], 400)
+        self.assertEqual(usage["output_tokens"], 20)
+        self.assertEqual(usage["total_tokens"], 420)
+        self.assertEqual(usage["cached_input_tokens"], 300)
+
+    def test_usage_aggregation_is_additive(self):
+        total = {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "cached_input_tokens": 0}
+        MODULE.add_usage(total, {"input_tokens": 100, "output_tokens": 10, "total_tokens": 110, "cached_input_tokens": 50})
+        MODULE.add_usage(total, {"input_tokens": 200, "output_tokens": 20, "total_tokens": 220, "cached_input_tokens": 100})
+        self.assertEqual(total, {
+            "input_tokens": 300,
+            "output_tokens": 30,
+            "total_tokens": 330,
+            "cached_input_tokens": 150,
+        })
 
 
 if __name__ == "__main__":
