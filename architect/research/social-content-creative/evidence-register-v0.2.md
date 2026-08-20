@@ -1,0 +1,61 @@
+# Social Content Creative — Evidence Register v0.2
+
+Status: Architect research artifact. Not a SKILL. Not qualified.
+
+## Purpose
+Map material competency claims to authoritative evidence, source class, freshness, supported scope and transfer limits before candidate implementation.
+
+## Evidence rows
+
+| Evidence ID | Competency IDs | Claim / decision supported | Source / authority | Source class | Freshness | Supported scope | Transfer limits / notes |
+|---|---|---|---|---|---|---|---|
+| EV-UAE-01 | TR-01, TR-02, TR-03 | UAE consumer-facing advertising must not use false or misleading descriptions or misleading prices; misleading advertising includes misleading information or omission of fundamental/core information that affects contracting. | UAE Legislation: Federal Law No. 15 of 2020 on Consumer Protection, especially definitions, Art. 8 and Art. 17. | Jurisdiction / primary law | LIVE | UAE goods/services. | Legal interpretation escalates; core uses as risk/grounding constraint, not legal advice. |
+| EV-UAE-02 | TR-01, TR-02, PD-01 | Used/refurbished goods must have condition clearly disclosed without creating an untrue or misleading impression. | UAE Cabinet Resolution No. 66 of 2023, Art. 7. | Jurisdiction / primary regulation | LIVE | Used/refurbished goods in UAE. | Directly relevant to used vehicles; exact legal disclosure sufficiency may require legal review. |
+| EV-UAE-03 | TR-01, TR-02 | Advertising may be deceptive through false/misleading impression about characteristics, origin, warranty, price, payment type, quality marks or expected results. | UAE Cabinet Resolution No. 66 of 2023, Art. 8. | Jurisdiction / primary regulation | LIVE | UAE advertising/offers. | Supports implication-level review. |
+| EV-UAE-04 | TR-02, CP-01, BV-01 | UAE media advertising rules prohibit incorrect/misleading claims, exaggeration, false exclusivity and deceptive content. | UAE Cabinet Resolution No. 68 of 2024. | Jurisdiction / primary regulation | LIVE | UAE regulated media advertising. | Exact applicability to a given organic post is contextual/legal. |
+| EV-AD-CR-01 | CJ-01, CJ-02, CR-01, BR-01 | Advertising creativity is not novelty alone: stronger creative work combines originality/divergence with relevance/appropriateness to the communication problem. | Smith & Yang, “Toward a General Theory of Creativity in Advertising” (Marketing Theory, 2004); Kilgour & Koslow, JAMS 2009; Koslow et al./related JAMS professional advertising development research 2024. | Peer-reviewed advertising research | Stable principle | Creative advertising ideation and evaluation. | Does not prescribe one universal ideation method or prove a specific hook formula. |
+| EV-AD-CR-02 | CJ-01, CJ-02 | Divergent and convergent techniques have different effects depending on practitioner expertise/context; creative technique should not be treated as one-size-fits-all. | Kilgour & Koslow, “Why and how do creative thinking techniques work?” Journal of the Academy of Marketing Science 37(3), 2009. | Peer-reviewed experiment | Stable | Advertising ideation process. | Supports flexible decision policy rather than mandatory brainstorming ritual. |
+| EV-AD-CR-03 | CJ-01, CJ-02, BR-02 | Professional advertising development research operationalizes creative performance through originality plus effectiveness/strategy/relevance and examines consumer insight as an input to creative work. | Journal of the Academy of Marketing Science, “Creative performance in professional advertising development: The role of ideation templates, consumer insight, and intrinsic motivation”, 2024. | Peer-reviewed professional-domain research | Stable/slow | Advertising creative development. | Does not authorize Creator to invent audience insight; supports consuming approved insight well. |
+| EV-AD-MSG-01 | CP-01, BR-02, CJ-02 | Message execution details and even subtle wording can materially change consumer comprehension/persuasion; wording should therefore be tested/judged rather than treated as interchangeable decoration. | Funkhouser 1984 field experiment on disclosure wording; Jacoby, Nelson & Hoyer 1982 on consumer comprehension of disclosure language. | Peer-reviewed consumer/advertising research | Stable | Consumer-facing message wording/comprehension. | Older studies; use for stable principle that wording nuances affect understanding, not current channel-performance effect sizes. |
+| EV-AD-MSG-02 | BR-02, CP-01 | Persuasive message effectiveness depends partly on fit between audience goals/context and how concretely information is framed; “more concrete” is not universally superior. | Lee, Keller & Sternthal, Journal of Consumer Research 2010. | Peer-reviewed consumer research | Stable | Message framing/persuasion. | Supports contextual adaptation, not simplistic persona matching. |
+| EV-VID-01 | PD-01, PD-02, CR-02 | Pre-production planning, story development, shot composition and sequences are distinct professional stages; useful visual storytelling requires planned shots that serve the story. | National Geographic Education, “Creating a Video Story: Sandesh Kadur”; University of Florida IFAS, “Producing an Educational Video”. | Educational/practitioner guidance | Stable | Video story planning and production. | Educational examples, not advertising-specific performance evidence. |
+| EV-VID-02 | PD-01, CR-02 | Shot design should emphasize story/dramatic beats and be planned across angles/shot sizes/movement rather than defaulting to arbitrary coverage. | Kelly Gordon Brine, Oxford University Press, “Designing Shots for Storytelling”, 2020. | Professional/academic craft source | Stable | Film/video shot design. | Apply principle proportionately to short-form commercial content; do not force cinematic complexity. |
+| EV-YT-01 | CR-01, CR-02, PL-01 | YouTube says initial seconds are especially important for Shorts/long-form; intro should deliver on title/thumbnail promise quickly, and storytelling/retention should be evaluated from audience behavior. | YouTube Help, “Understand your content performance for YouTube’s recommendation system”. | Platform primary documentation | LIVE | YouTube content packaging and viewer retention guidance. | Platform guidance; refresh before qualification/deployment. Does not prove identical behavior on Instagram/Telegram. |
+| EV-YT-02 | PL-01, PD-02 | YouTube Shorts currently accept vertical or square videos up to 3 minutes; phone-only production is explicitly supported. | YouTube Help, Shorts upload/three-minute Shorts documentation. | Platform primary documentation | LIVE | YouTube Shorts capabilities. | Capability only, not a creative optimum. |
+| EV-YT-03 | AC-01, PL-01 | YouTube supports automatic captions but warns they can be inaccurate and recommends review/editing; captions improve accessibility. | YouTube Help, “Use automatic captioning”. | Platform primary documentation | LIVE | YouTube long-form and Shorts captions. | Platform-specific; does not establish universal subtitle styling. |
+| EV-META-01 | PL-01, AC-01, PD-01 | Meta’s current Reels guidance favors Reels-native execution: 9:16 vertical video, quality audio and key messages in safe zones; Meta reports better Reels-ad results for such execution in its cited split-test meta-analysis. | Meta for Business, “Instagram & Facebook Reels: Create Short Video Ads”. | Platform primary guidance + Meta internal study summary | LIVE | Reels ads. | Paid Reels evidence; do not generalize exact effect sizes to organic content or other markets without validation. |
+| EV-META-02 | PL-01 | Instagram currently requires boosted Reels to be full-screen 9:16 and under 90 seconds, with restrictions around copyrighted music/GIFs/stickers/third-party filters. | Instagram Help Center, “How to boost Instagram Reels”. | Platform primary documentation | LIVE | Boosted Instagram Reels. | Boost eligibility, not timeless organic-content doctrine. |
+| EV-W3C-01 | AC-01 | Prerecorded synchronized video should provide captions for audio content; captions should include meaningful audio information and should not obscure relevant video information. | W3C WAI, WCAG 2.2 Understanding SC 1.2.2, updated 2026. | Standards/accessibility guidance | Stable/versioned | General digital video accessibility. | WCAG applicability may differ by product/jurisdiction; use as strong accessibility principle, not automatic legal claim. |
+| EV-WIPO-01 | IP-01, CJ-01 | Copyright generally protects expression, not underlying ideas/methods; advertisements and audiovisual works may be protected. Reference mechanisms can be analyzed, but copying/adapting protected expression may require rights analysis. | WIPO, “What Can I Protect with a Copyright?” and copyright guidance. | International IP authority guidance | Stable/versioned | Copyright concepts. | Jurisdiction-specific exceptions/licensing/fair use/fair dealing require legal review. |
+| EV-TG-01 | PL-01, CP-02, HO-01 | Telegram channels are broadcast surfaces with view counters/admin controls and related channel capabilities. | Telegram Core API official documentation, Channels. | Platform primary documentation | LIVE | Telegram channel capability. | Capability, not creative-performance doctrine. |
+
+## Competency coverage assessment
+
+### Sufficiently evidenced for candidate implementation
+- CR-01 hook/payoff judgment: supported by advertising creativity research plus current YouTube promise/intro guidance; exact hook tactics remain context-dependent.
+- CP-01 message wording judgment: supported by consumer-comprehension/persuasion evidence plus truthfulness constraints.
+- CJ-01/CJ-02 divergence-selection judgment: supported by peer-reviewed advertising creativity research and Architect creative-profession methodology.
+- TR-01/TR-02/TR-03 truthfulness/claim calibration: strongly covered by UAE primary law/regulation plus profession-level deception evidence.
+- PD-01/PD-02 visual storytelling/shootability: supported sufficiently for a bounded light-production capability; actual rendered craft remains downstream Video Post-Production.
+- PL-01 platform adaptation: Meta and YouTube official evidence now present; Telegram primary capability evidence already present. Must remain LIVE.
+- AC-01 accessibility: W3C + YouTube caption evidence supports captions/non-obstruction principles; platform UI geometry remains LIVE.
+- IP-01 reference/IP boundary: WIPO supports idea-expression separation; legal rights decisions remain escalation.
+
+### Architecture-derived invariants requiring evaluation more than further literature
+- BR-01 brief fidelity / no silent strategy rewrite.
+- EX-01 experiment-lock preservation.
+- HO-01 handoff completeness/provenance.
+- AU-01 release-authority boundary.
+These derive primarily from system responsibility contracts, experiment validity, governance and evidence traceability. They must be tested behaviorally rather than padded with weak external citations.
+
+## Remaining limits before qualification
+1. Source evidence is adequate to author a **candidate core**, but not to qualify it.
+2. Creative quality claims remain partly tacit; candidate must be tested with comparative artifacts and multi-judge evaluation.
+3. Meta official evidence found here is strongest for Reels ads; organic Instagram adaptation must avoid pretending paid-study effect sizes transfer directly.
+4. Platform and UAE legal bindings must be refreshed at qualification/deployment time.
+5. The candidate must not absorb Content Analyst strategy/structure ownership simply because some craft sources discuss story structure; applied composition boundaries remain separately evaluated.
+
+## Gate decision
+**Evidence gate: PASS TO CANDIDATE IMPLEMENTATION.**
+
+This does not mean professional qualification. It means CORE and BOUNDARY-CRITICAL competency claims now have enough evidence/provenance to justify implementing a candidate for the already frozen qualification protocol. Next: assemble the candidate professional core on the isolated branch, preserve live-knowledge routing and boundaries, then run adversarial/held-out qualification without exposing hidden fixture payloads to the candidate.
