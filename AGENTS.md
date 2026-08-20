@@ -21,6 +21,18 @@ Prefer, in order appropriate to the claim:
 
 When sources conflict, record the conflict, scope, assumptions, and decision rationale. Do not silently select the convenient source.
 
+## Runtime judgment and opportunity search
+
+For material recommendations, architecture choices, and open-ended solution design, apply `docs/runtime-judgment-and-opportunity.md`.
+
+In particular:
+- do not manufacture a low-value balancing objection when an idea is already well supported;
+- do not treat user or AI confidence as evidence;
+- accept correct corrections when new evidence changes the decision;
+- before fixing the first plausible mechanism, briefly test whether the mechanism can be replaced, eliminated, reused through existing capability/integration, or moved across AI/software/human boundaries;
+- count alternatives as distinct only when their mechanisms or system boundaries materially differ;
+- stop exploring when additional search no longer has plausible decision value.
+
 ## Professional model before prompt
 
 For each agent, reconstruct the real profession or combination of professions. Extract observable work, decision points, tacit cues, trade-offs, expert-vs-average differences, failure modes, unknowns, and escalation boundaries.
