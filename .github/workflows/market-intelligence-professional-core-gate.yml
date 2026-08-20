@@ -1,9 +1,6 @@
 name: Market Intelligence Professional Core Gate
 
 on:
-  push:
-    branches:
-      - agent/market-intelligence-core-2026-08-20
   pull_request:
     branches:
       - main
@@ -12,6 +9,10 @@ on:
       - 'architect/evaluation/market_competitive_intelligence/**'
       - '.github/workflows/market-intelligence-professional-core-gate.yml'
   workflow_dispatch:
+
+concurrency:
+  group: market-intelligence-core-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -32,18 +33,19 @@ jobs:
 
       - name: Deterministic preflight
         run: |
-          python -m py_compile architect/evaluation/market_competitive_intelligence/run_v2_gate.py
+          python -m py_compile architect/evaluation/market_competitive_intelligence/run_release_gate.py
           python -m py_compile architect/evaluation/market_competitive_intelligence/run_practical_gate.py
           test "$(git hash-object architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md)" = "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
           python - <<'PY'
           import json
-          r=json.load(open('architect/evaluation/market_competitive_intelligence/semantic_cases.json'))
-          h=json.load(open('architect/evaluation/market_competitive_intelligence/v2_heldout_cases.json'))
+          h=json.load(open('architect/evaluation/market_competitive_intelligence/v3_fresh_heldout_cases.json'))
           p=json.load(open('architect/evaluation/market_competitive_intelligence/v2_practical_case.json'))
-          assert len(r)==16 and len(h)==8 and p['id']=='MI-P01'
-          ids=[c['id'] for c in r+h]
+          assert len(h)==12 and p['id']=='MI-P01'
+          ids=[c['id'] for c in h]
           assert len(ids)==len(set(ids))
-          print('v0.2 fixture contract OK')
+          for c in h:
+              assert c['allowed_actions'] and c['required_flags']
+          print('calibrated release fixture contract OK')
           PY
 
       - name: Require existing Gemini credential
@@ -52,16 +54,21 @@ jobs:
         run: |
           test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY is not configured; semantic calls were not attempted.' >&2; exit 2)
 
-      - name: Run regression and fresh held-out qualification
+      - name: Run fresh calibrated held-out qualification
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           MI_MODEL: gemini-3.1-flash-lite
           GEMINI_THINKING_LEVEL: medium
           MI_TRIALS: '3'
           MI_BATCH_SIZE: '4'
+          MI_CALL_PACE_SECONDS: '5'
+          MI_429_BACKOFF_SECONDS: '35'
         run: |
-          rm -rf .tmp/market-competitive-intelligence-v2
-          python architect/evaluation/market_competitive_intelligence/run_v2_gate.py
+          rm -rf .tmp/market-competitive-intelligence-release .tmp/market-competitive-intelligence-v2
+          python architect/evaluation/market_competitive_intelligence/run_release_gate.py
+
+      - name: Pace before practical work sample
+        run: sleep 10
 
       - name: Run end-to-end practical work sample
         env:
@@ -76,6 +83,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: market-intelligence-professional-core-v2-${{ github.sha }}
-          path: .tmp/market-competitive-intelligence-v2
+          name: market-intelligence-professional-core-release-${{ github.sha }}
+          path: |
+            .tmp/market-competitive-intelligence-release
+            .tmp/market-competitive-intelligence-v2
           if-no-files-found: ignore
