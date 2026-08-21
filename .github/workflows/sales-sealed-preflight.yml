@@ -17,8 +17,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -32,22 +30,27 @@ jobs:
           SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
         run: |
           python - <<'PY'
-          import hashlib, json, os, pathlib, subprocess, zipfile
+          import hashlib, json, os, pathlib, zipfile
           from cryptography.fernet import Fernet, InvalidToken
 
-          pack_path = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet')
-          expected_blob = 'a2ff26ccde23c0c28fa56dd6322afa6ff5280574'
-          actual_blob = subprocess.check_output(['git', 'hash-object', str(pack_path)], text=True).strip()
-          assert actual_blob == expected_blob, f'ciphertext blob mismatch: {actual_blob}'
+          parts_dir = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.parts')
+          parts = sorted(parts_dir.glob('[0-9][0-9]'))
+          if [p.name for p in parts] != [f'{i:02d}' for i in range(13)]:
+              raise SystemExit('sealed ciphertext parts missing or unexpected')
+          token = ''.join(p.read_text() for p in parts).encode()
+          if len(token) != 18040:
+              raise SystemExit(f'sealed ciphertext length mismatch: {len(token)}')
+          expected_ciphertext_sha256 = '5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62'
+          actual_ciphertext_sha256 = hashlib.sha256(token).hexdigest()
+          if actual_ciphertext_sha256 != expected_ciphertext_sha256:
+              raise SystemExit(f'sealed ciphertext sha256 mismatch: {actual_ciphertext_sha256}')
 
-          token = pack_path.read_bytes().strip()
           key = os.environ.get('SEALED_PACK_KEY', '').encode().strip()
           if not key:
               raise SystemExit('SALES_SEALED_PACK_KEY missing')
-
           expected_key_fingerprint = '438070a66cb91c908a6f9b2840fb3978241f0ab67589afae1e9215ea9af15b57'
-          actual_key_fingerprint = hashlib.sha256(key).hexdigest()
-          assert actual_key_fingerprint == expected_key_fingerprint, 'sealed key fingerprint mismatch'
+          if hashlib.sha256(key).hexdigest() != expected_key_fingerprint:
+              raise SystemExit('sealed key fingerprint mismatch')
 
           try:
               raw = Fernet(key).decrypt(token)
@@ -56,7 +59,8 @@ jobs:
 
           expected_zip = '11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab'
           actual_zip = hashlib.sha256(raw).hexdigest()
-          assert actual_zip == expected_zip, f'decrypted ZIP digest mismatch: {actual_zip}'
+          if actual_zip != expected_zip:
+              raise SystemExit(f'decrypted ZIP digest mismatch: {actual_zip}')
 
           tmp = pathlib.Path(os.environ['RUNNER_TEMP'])
           zpath = tmp / 'sales-sealed.zip'
@@ -68,10 +72,11 @@ jobs:
 
           freeze = json.loads((out / 'freeze-record.json').read_text())
           expected_pack = 'sha256:ae91ccef4bc48905c1970629a6ff8920e12d95db31b4d11b2325c691f0ad68d8'
-          assert freeze['pack_digest'] == expected_pack, 'frozen pack digest mismatch'
+          if freeze['pack_digest'] != expected_pack:
+              raise SystemExit('frozen pack digest mismatch')
 
           print('PRE-FLIGHT PASS')
-          print('ciphertext blob:', actual_blob)
+          print('ciphertext sha256:', actual_ciphertext_sha256)
           print('decrypted ZIP sha256:', actual_zip)
           print('pack digest:', freeze['pack_digest'])
           PY
