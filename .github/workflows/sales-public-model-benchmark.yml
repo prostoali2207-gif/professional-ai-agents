@@ -1,0 +1,53 @@
+name: Sales public model benchmark
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        model: [gpt-5.6-luna, gpt-5.6-terra]
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: ${{ matrix.model }}
+      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor.py
+      SALES_CANDIDATE_MANIFEST: /tmp/sales-candidate-manifest.json
+      SALES_CANDIDATE_TIMEOUT_SECONDS: '240'
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Preflight frozen identity and executor
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY:-}"
+          git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+          python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor.py
+          cat > "$SALES_CANDIDATE_MANIFEST" <<'JSON'
+          {"commit":"b1a5f214a7cc9452e8a168f3292a2e9b613ecae0","artifact_digest":"sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"}
+          JSON
+      - name: Run five public professional cases
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 architect/evaluation/sales-lead-conversion/public_model_benchmark.py | tee "$RUNNER_TEMP/public-model-benchmark.json"
+      - name: Upload public benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-public-benchmark-${{ matrix.model }}
+          path: ${{ runner.temp }}/public-model-benchmark.json
+          if-no-files-found: ignore
+          retention-days: 14
