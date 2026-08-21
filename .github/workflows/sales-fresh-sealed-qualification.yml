@@ -28,17 +28,23 @@ jobs:
         run: |
           python - <<'PY'
           import hashlib, os, pathlib, subprocess, zipfile
-          from cryptography.fernet import Fernet
+          from cryptography.fernet import Fernet, InvalidToken
           pack_path = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet')
           expected_blob = 'a2ff26ccde23c0c28fa56dd6322afa6ff5280574'
           actual_blob = subprocess.check_output(['git', 'hash-object', str(pack_path)], text=True).strip()
           if actual_blob != expected_blob:
               raise SystemExit('sealed ciphertext git-blob mismatch')
           token = pack_path.read_bytes().strip()
-          key = os.environ.get('SEALED_PACK_KEY','').encode()
+          key = os.environ.get('SEALED_PACK_KEY','').encode().strip()
           if not key:
               raise SystemExit('SALES_SEALED_PACK_KEY is missing')
-          raw = Fernet(key).decrypt(token)
+          expected_key_fingerprint = '438070a66cb91c908a6f9b2840fb3978241f0ab67589afae1e9215ea9af15b57'
+          if hashlib.sha256(key).hexdigest() != expected_key_fingerprint:
+              raise SystemExit('SALES_SEALED_PACK_KEY fingerprint mismatch; replace the repository secret with the frozen evaluator key')
+          try:
+              raw = Fernet(key).decrypt(token)
+          except (ValueError, InvalidToken) as exc:
+              raise SystemExit('sealed pack authentication/decryption failed after key fingerprint verification') from exc
           if hashlib.sha256(raw).hexdigest() != '11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab':
               raise SystemExit('decrypted sealed ZIP digest mismatch')
           out = pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-sealed-pack'
