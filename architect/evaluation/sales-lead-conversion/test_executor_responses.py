@@ -2,9 +2,12 @@
 from __future__ import annotations
 import importlib.util
 import pathlib
+import sys
 import unittest
 
 HERE = pathlib.Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
 SPEC = importlib.util.spec_from_file_location("sales_responses_executor", HERE / "executor_responses.py")
 MODULE = importlib.util.module_from_spec(SPEC)
 assert SPEC and SPEC.loader
