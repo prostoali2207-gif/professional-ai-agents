@@ -4,41 +4,61 @@ Status: qualification infrastructure. Not part of the frozen Sales candidate.
 
 ## Purpose
 
-Provide the concrete process behind `SALES_CANDIDATE_CMD` while preserving held-out integrity.
+Provide the concrete process behind the Sales qualification runtime while preserving held-out integrity.
 
-The sealed harness still owns fixtures, expected behavior, grading and thresholds. The executor receives exactly one candidate-visible request at a time.
+The evaluator-owned sealed harness owns fixtures, expected behavior, grading and thresholds. The executor receives exactly one candidate-visible request at a time.
+
+## Frozen target
+
+- candidate commit: `b1a5f214a7cc9452e8a168f3292a2e9b613ecae0`
+- candidate digest: `sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6`
+- reference runtime: OpenAI Responses API via `executor_responses.py`
+- reference model for the scored run: `gpt-5.6-terra`
 
 ## Required environment
 
-- repository checkout containing frozen commit `b1a5f214a7cc9452e8a168f3292a2e9b613ecae0`;
+- repository checkout containing the frozen candidate commit;
 - Python 3.11+;
 - `OPENAI_API_KEY` available only in executor environment;
-- `SALES_MODEL` set explicitly to the model used for the qualification run;
-- optional `OPENAI_BASE_URL`, default `https://api.openai.com/v1`;
-- `SALES_CANDIDATE_MANIFEST` pointing to evaluator-owned frozen identity JSON;
-- `SALES_CANDIDATE_CMD="python3 architect/evaluation/sales-lead-conversion/executor_responses.py"`.
+- `SALES_MODEL` set explicitly;
+- optional `OPENAI_BASE_URL`, default `https://api.openai.com/v1`.
 
-Do not commit provider credentials or evaluator-only sealed files.
+Do not commit provider credentials or plaintext evaluator-only sealed files.
 
 ## Model/runtime boundary
 
-The qualification executor uses the OpenAI Responses API custom-function-tool interface. This is the provider-backed runtime already validated by the public model-sensitivity benchmark for the exact frozen Sales candidate. It preserves the candidate protocol, deterministic harness-controlled tools, state before/after, side-effect ledger, resource-load evidence, and provider token accounting.
+The qualification executor uses the OpenAI Responses API custom-function-tool interface. It loads the exact artifact paths declared by the frozen manifest directly from the frozen Git commit and recomputes the artifact digest before any model invocation. If candidate identity or digest differs, execution terminates non-zero.
 
-Do not silently substitute the older Chat Completions executor for GPT-5.6 qualification. The public canary established that GPT-5.6 reasoning plus function tools requires the Responses path unless reasoning is explicitly disabled; changing that setting would change the runtime being qualified.
+## Fresh sealed cycle (2026-08-21)
 
-The executor loads the exact artifact paths declared by the frozen manifest directly from frozen commit `b1a5f214a7cc9452e8a168f3292a2e9b613ecae0` and recomputes artifact digest `sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6` before any model invocation. If candidate identity or digest differs, execution terminates non-zero.
+The original evaluator-owned 45-fixture pack became non-recoverable and was invalidated as future release evidence. A fresh post-freeze cycle was created against the unchanged candidate.
 
-## Qualification model policy
+Public repository storage contains only an authenticated encrypted pack:
 
-Professional-core qualification should first minimize model-capability confounding. For the decisive sealed release run, freeze one reference runtime before scoring and keep it unchanged for the entire run.
+`architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet`
 
-Current reference choice: `gpt-5.6-terra` through `executor_responses.py`.
+The plaintext fixtures, grader and runner are not committed. The ciphertext is decrypted only inside the manual GitHub Actions run by `.github/workflows/sales-fresh-sealed-qualification.yml` using repository secret `SALES_SEALED_PACK_KEY`.
 
-Rationale: the public 10-case benchmark showed both Luna and Terra can satisfy the exposed Sales invariants, so public evidence does not justify weakening the reference runtime merely to reduce cost. Terra is therefore used for the core qualification gate; Luna remains a separate deployment-compatibility/cost candidate after the core itself is qualified. A Luna compatibility run must not be represented as the original sealed release qualification unless it was preregistered as such.
+Frozen evaluator references before any scored call:
+
+- 45 fixtures, 15 required families, 3 trials/family;
+- 3 restart/stateful sequence fixtures in the state-supersession family;
+- sealed pack digest: `sha256:ae91ccef4bc48905c1970629a6ff8920e12d95db31b4d11b2325c691f0ad68d8`;
+- encrypted ciphertext digest: `sha256:5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62`;
+- decrypted ZIP digest: `sha256:11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab`;
+- fixtures digest: `sha256:c81d2ab8cf6dc9c0bb66299ff42dbc10bbb9a3102fce873e449ce0379c9c3ce0`;
+- grader digest: `sha256:80aa871f81951348f332061f8cd2b4ebabe98592754d8d346b1dae213e1eb9a0`;
+- runner digest: `sha256:4e80d6b8e5e18e57b6c5bf32fe0b14568e2b61f8caa2b544de59cae8f97f50b8`.
+
+The workflow verifies ciphertext, decrypted ZIP and pack freeze digests before the first model call. The evaluator secret is used only during the decryption step; candidate runtime receives only candidate-visible task/state/tool/authority data.
+
+### Scored-run stop policy
+
+Before scoring, the stop condition is frozen as follows: if a critical hard-fail is observed, the release verdict is already `REVISE`, so the runner stops rather than spending remaining API quota merely to reconfirm a failed release gate. Runtime failure yields `NOT_EXECUTABLE`. Otherwise all 45 fixtures execute.
 
 ## Harness request shape
 
-The existing stdio adapter forwards:
+The executor receives:
 
 ```json
 {
@@ -62,85 +82,16 @@ The existing stdio adapter forwards:
 }
 ```
 
-The evaluator may add hidden content inside `task`, `initial_state`, `tool_scenario` and `checkpoint`; the executor does not inspect any grader-side material because none should be passed to it.
+The evaluator may add hidden content inside `task`, `initial_state`, `tool_scenario` and `checkpoint`; grader-side expectations are never passed to the executor.
 
-## Controlled tool schema
+## Controlled tools and observables
 
-Each harness tool is deterministic and declared per fixture:
+Each harness tool is deterministic and declared per fixture. Consequential simulated actions carry an explicit authorization bit. If a candidate attempts an unauthorized side effect, the environment records the attempt and blocks the external action. Tool availability is not authority.
 
-```json
-{
-  "name": "verify_price",
-  "description": "Return authoritative current price",
-  "kind": "read",
-  "parameters": {"type": "object", "properties": {}},
-  "result": {"price": 54000, "currency": "AED", "verified": true},
-  "state_patch": {"facts": {"price": 54000}}
-}
-```
-
-A consequential simulated action is declared with `kind: side_effect` and an explicit authorization bit:
-
-```json
-{
-  "name": "send_message",
-  "kind": "side_effect",
-  "effect_type": "external_send",
-  "authorized": false,
-  "result": {"status": "sent"}
-}
-```
-
-If the candidate attempts that action while `authorized=false`, the environment records the attempt and returns `BLOCKED_UNAUTHORIZED`; no external action occurs.
-
-This mechanism is intentionally deterministic. Tool availability is not authority.
-
-## Observable output
-
-The executor returns the contract-required fields:
-
-- exact candidate identity;
-- final candidate response;
-- tool calls and hashes of results seen;
-- state before/after;
-- side-effect ledger;
-- resource loads;
-- checkpoint metadata;
-- termination reason;
-- provider/model/executor identity;
-- provider-reported input/output/total/cached token usage.
-
-No hidden chain-of-thought is emitted.
-
-## Pre-sealed smoke regression
-
-Run before the sealed qualification:
-
-```bash
-python3 -m unittest \
-  architect/evaluation/sales-lead-conversion/test_executor.py \
-  architect/evaluation/sales-lead-conversion/test_executor_responses.py
-```
-
-This smoke suite verifies only infrastructure invariants: exact frozen digest loading, wrong-candidate rejection, deterministic state patching, mechanical blocking/recording of unauthorized side effects, Responses function-call extraction, and usage normalization. It contains no held-out Sales answers.
-
-The public benchmark is development evidence only. Do not rerun or tune against public cases as a substitute for the sealed gate once the launch configuration is frozen.
-
-## Sealed launch gate
-
-Before the first scored fixture is sent to the model, the independent evaluator must verify and record:
-
-1. candidate commit and digest exactly match the preregistration;
-2. sealed pack, grader, expected-answer and threshold hashes match the already frozen evaluator-owned artifacts;
-3. `SALES_MODEL=gpt-5.6-terra`;
-4. `SALES_CANDIDATE_CMD=python3 architect/evaluation/sales-lead-conversion/executor_responses.py`;
-5. smoke regression passes;
-6. no candidate, sealed fixture, grader, expected answer, threshold or runtime mutation is permitted after scored output is observed.
-
-If the sealed pack is unavailable to the execution environment, report `NOT EXECUTABLE` and the exact missing dependency. Do not recreate a new pack from the public development cases.
+The executor returns exact candidate identity, final response, tool calls, hashes of tool results seen, state before/after, side-effect ledger, resource loads, checkpoint metadata, termination reason, provider/model/executor identity and provider-reported token usage. No hidden chain-of-thought is emitted.
 
 ## Qualification rule
 
-Do not change the candidate, sealed fixtures, expected answers, grader, preregistered thresholds, model, or executor after seeing scored output.
+Do not change the candidate, sealed fixtures, grader, thresholds, runtime/model identity or stop policy after seeing scored output. Any behavior-relevant candidate repair after scored output requires a new held-out cycle.
 
-If a fixture requires a runtime observable this executor does not expose, return `NOT EXECUTABLE` for that fixture/family rather than synthesizing evidence.
+If a fixture requires a runtime observable that cannot be exposed, return `NOT EXECUTABLE` rather than synthesizing evidence.
