@@ -1,0 +1,78 @@
+name: Sales fresh sealed qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install evaluator crypto dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+
+      - name: Decrypt and verify evaluator-owned sealed pack
+        env:
+          SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
+        run: |
+          python - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          from cryptography.fernet import Fernet
+          token = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet').read_bytes().strip()
+          if hashlib.sha256(token).hexdigest() != '5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62':
+              raise SystemExit('sealed ciphertext digest mismatch')
+          key = os.environ.get('SEALED_PACK_KEY','').encode()
+          if not key:
+              raise SystemExit('SALES_SEALED_PACK_KEY is missing')
+          raw = Fernet(key).decrypt(token)
+          if hashlib.sha256(raw).hexdigest() != '11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab':
+              raise SystemExit('decrypted sealed ZIP digest mismatch')
+          out = pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-sealed-pack'
+          out.mkdir(parents=True, exist_ok=False)
+          z = pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-sealed.zip'
+          z.write_bytes(raw)
+          with zipfile.ZipFile(z) as zz:
+              zz.extractall(out)
+          freeze = __import__('json').loads((out/'freeze-record.json').read_text())
+          if freeze['pack_digest'] != 'sha256:ae91ccef4bc48905c1970629a6ff8920e12d95db31b4d11b2325c691f0ad68d8':
+              raise SystemExit('sealed pack freeze digest mismatch')
+          print('sealed pack verified:', freeze['pack_digest'])
+          PY
+
+      - name: Run scored qualification
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SALES_MODEL: gpt-5.6-terra
+        run: |
+          set +e
+          PACK="$RUNNER_TEMP/sales-sealed-pack"
+          python "$PACK/runner.py" \
+            --pack-dir "$PACK" \
+            --executor-cmd "python3 architect/evaluation/sales-lead-conversion/executor_responses.py" \
+            --model "$SALES_MODEL" \
+            --out "$RUNNER_TEMP/sales-qualification-report.json"
+          code=$?
+          echo "qualification_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Publish sanitized report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-fresh-sealed-qualification-report
+          path: ${{ runner.temp }}/sales-qualification-report.json
+          retention-days: 14
+
+      - name: Enforce qualification verdict
+        run: |
+          test "${qualification_exit_code}" = "0"
