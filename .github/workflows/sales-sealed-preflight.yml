@@ -33,13 +33,42 @@ jobs:
           import hashlib, json, os, pathlib, zipfile
           from cryptography.fernet import Fernet, InvalidToken
 
+          expected_part_hashes = [
+              '2de933e395bd1c46bf03fb5263275cd788db478fbeaa72f10f2253f388789601',
+              '2d104623028dd853b5cf7158bb40a72db4462ea6cc5b02d3134ae4f2fc0d3de2',
+              '9d703c690c558d6272f826c2dbd617807fa0c79c651f7558f79c613db6e74b2b',
+              'a4d0cb1670aa711845c20478b24927bf79d32d716979bc845a0ceee8331b3c3e',
+              'b2b9c8a7d2a1272e5c5b7440ca7b13ac917a95506977fe3c6f74fe7a5242a243',
+              'ae8062fdf295cbc6b9865ce897b7df29271ff1867d90b376ca11277132dcdda8',
+              '26967db91e6a8cfb0c086fd9e2336b97ab9bd467a6a90117b92f90a90f3efe48',
+              '8cd740569325021b6038d1672b1f984545b8248876d3517d9a0df03429ebcf0e',
+              'f3f58837dd67e9e63032b42c1598b10c1ed72b26c2d7549bb49d60ca524a07c0',
+              'ef4964d750d48f6a80895f8b628effa0ca9efa8567515ae910376227c79ddb99',
+              'b5d335a7a1a4ea5b8d6a98d59d60710ea30678a21fcd987932dedd10b9426901',
+              '47b76f8229bc29c93f4fb9840bf6838b3aca0eb5c32a39d798e011bbecf28dd3',
+              '464b634bf6175b8512eb59b666ad7841093f00712fdef83d312f130d8058d7d6',
+          ]
+          expected_lengths = [1500] * 12 + [40]
+
           parts_dir = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.parts')
           parts = sorted(parts_dir.glob('[0-9][0-9]'))
           if [p.name for p in parts] != [f'{i:02d}' for i in range(13)]:
               raise SystemExit('sealed ciphertext parts missing or unexpected')
-          token = ''.join(p.read_text() for p in parts).encode()
-          if len(token) != 18040:
-              raise SystemExit(f'sealed ciphertext length mismatch: {len(token)}')
+
+          bad = []
+          texts = []
+          for i, p in enumerate(parts):
+              text = p.read_text()
+              digest = hashlib.sha256(text.encode()).hexdigest()
+              texts.append(text)
+              if len(text) != expected_lengths[i] or digest != expected_part_hashes[i]:
+                  bad.append((p.name, len(text), digest))
+          if bad:
+              for name, length, digest in bad:
+                  print(f'BAD PART {name}: length={length} sha256={digest}')
+              raise SystemExit('sealed ciphertext chunk integrity failure')
+
+          token = ''.join(texts).encode()
           expected_ciphertext_sha256 = '5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62'
           actual_ciphertext_sha256 = hashlib.sha256(token).hexdigest()
           if actual_ciphertext_sha256 != expected_ciphertext_sha256:
