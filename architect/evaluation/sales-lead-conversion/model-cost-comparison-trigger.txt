@@ -1,0 +1,1 @@
+One-shot public canary comparison trigger: 2026-08-20.
