@@ -27,11 +27,14 @@ jobs:
           SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
         run: |
           python - <<'PY'
-          import hashlib, os, pathlib, zipfile
+          import hashlib, os, pathlib, subprocess, zipfile
           from cryptography.fernet import Fernet
-          token = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet').read_bytes().strip()
-          if hashlib.sha256(token).hexdigest() != '5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62':
-              raise SystemExit('sealed ciphertext digest mismatch')
+          pack_path = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet')
+          expected_blob = 'a2ff26ccde23c0c28fa56dd6322afa6ff5280574'
+          actual_blob = subprocess.check_output(['git', 'hash-object', str(pack_path)], text=True).strip()
+          if actual_blob != expected_blob:
+              raise SystemExit('sealed ciphertext git-blob mismatch')
+          token = pack_path.read_bytes().strip()
           key = os.environ.get('SEALED_PACK_KEY','').encode()
           if not key:
               raise SystemExit('SALES_SEALED_PACK_KEY is missing')
