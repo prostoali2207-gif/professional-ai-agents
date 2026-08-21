@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   benchmark:
@@ -54,3 +55,63 @@ jobs:
           path: ${{ runner.temp }}/public-model-benchmark.json
           if-no-files-found: ignore
           retention-days: 14
+      - name: Publish sanitized machine-readable summary
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUMMARY_ISSUE: '43'
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          RESULT="$RUNNER_TEMP/public-model-benchmark.json"
+          SUMMARY="$RUNNER_TEMP/public-model-benchmark-summary.md"
+          python3 - "$RESULT" "$SUMMARY" <<'PY'
+          import json, os, pathlib, sys
+
+          result_path = pathlib.Path(sys.argv[1])
+          summary_path = pathlib.Path(sys.argv[2])
+          model = os.environ.get("SALES_MODEL")
+          payload = {}
+          if result_path.exists() and result_path.stat().st_size:
+              try:
+                  payload = json.loads(result_path.read_text(encoding="utf-8"))
+              except Exception:
+                  payload = {}
+
+          cases = []
+          for row in payload.get("cases", []) if isinstance(payload, dict) else []:
+              if not isinstance(row, dict):
+                  continue
+              cases.append({
+                  "case": row.get("case"),
+                  "pass": bool(row.get("pass")),
+                  "status": row.get("status", "unknown"),
+              })
+
+          usage_raw = payload.get("usage", {}) if isinstance(payload, dict) else {}
+          usage = {
+              key: int(usage_raw.get(key, 0) or 0)
+              for key in ("api_calls", "input_tokens", "cached_input_tokens", "output_tokens", "total_tokens")
+          }
+          sanitized = {
+              "schema": "public-eval-summary-v1",
+              "benchmark": "sales-public-model-benchmark",
+              "public_unscored": True,
+              "run_id": os.environ.get("RUN_ID"),
+              "run_attempt": os.environ.get("RUN_ATTEMPT"),
+              "commit": os.environ.get("RUN_SHA"),
+              "model": model,
+              "passed": int(payload.get("passed", 0) or 0) if isinstance(payload, dict) else 0,
+              "attempted": int(payload.get("attempted", len(cases)) or 0) if isinstance(payload, dict) else len(cases),
+              "planned_total": int(payload.get("planned_total", 5) or 5) if isinstance(payload, dict) else 5,
+              "cases": cases,
+              "usage": usage,
+          }
+          text = "### Public benchmark summary\n\n```json\n" + json.dumps(sanitized, ensure_ascii=False, indent=2) + "\n```\n"
+          summary_path.write_text(text, encoding="utf-8")
+          PY
+          gh issue comment "$SUMMARY_ISSUE" --repo "$REPOSITORY" --body-file "$SUMMARY"
