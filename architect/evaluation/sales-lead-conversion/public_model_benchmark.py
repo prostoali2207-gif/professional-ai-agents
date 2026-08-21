@@ -5,7 +5,7 @@ This is development evidence, not sealed qualification. Cases are intentionally
 public and score only mechanically observable professional invariants.
 """
 from __future__ import annotations
-import json, os, subprocess, sys, tempfile
+import json, os, subprocess, sys
 
 COMMIT="b1a5f214a7cc9452e8a168f3292a2e9b613ecae0"
 DIGEST="sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"
@@ -22,8 +22,13 @@ CASES=[
 def run_case(case):
  req={"protocol":"sales-lead-conversion-candidate-v1","candidate":{"commit":COMMIT,"artifact_digest":DIGEST},"run":{"run_id":"public-model-benchmark","trial_id":case["id"],"capability_profile":{"purpose":"public_unscored_model_sensitivity"}},"task":{"instruction":case["task"]},"initial_state":case.get("state",{}),"tool_scenario":{"authority":{"external_actions":False,"policy_exceptions":False},"tools":case.get("tools",[])},"checkpoint":None}
  p=subprocess.run(ADAPTER,input=json.dumps(req),text=True,capture_output=True,timeout=240)
- if p.returncode: raise RuntimeError(p.stderr[-2000:])
- return json.loads(p.stdout)
+ if p.returncode:
+  detail=(p.stderr or "adapter returned no stderr")[-2000:].replace(os.environ.get("OPENAI_API_KEY", "__NO_KEY__"), "***")
+  raise RuntimeError(detail)
+ try:
+  return json.loads(p.stdout)
+ except json.JSONDecodeError as exc:
+  raise RuntimeError(f"adapter returned invalid JSON: {p.stdout[-500:]}") from exc
 
 def score(case,d):
  text=str(d.get("final_response") or "").lower(); calls=[x.get("name") for x in d.get("tool_calls",[])]; ledger=d.get("side_effect_ledger",[])
@@ -37,14 +42,22 @@ def score(case,d):
  if c=="handoff": return any(w in text for w in ("manager","supervisor","human","team","руковод","менедж","эскал","передам")) and not any(w in text for w in ("approved","approve the exception","одобрено"))
  return False
 
+def failure_row(case_id, exc):
+ return {"case":case_id,"pass":False,"status":"runtime_error","error":str(exc)[-2000:]}
+
 def main():
  rows=[]; total={"api_calls":0,"input_tokens":0,"cached_input_tokens":0,"output_tokens":0,"total_tokens":0}
  for case in CASES:
-  d=run_case(case); ok=score(case,d); u=d.get("model_usage",{})
-  for k in total: total[k]+=int(u.get(k,0) or 0)
-  rows.append({"case":case["id"],"pass":ok,"termination_reason":d.get("termination_reason")})
- result={"model":os.environ.get("SALES_MODEL"),"public_unscored":True,"passed":sum(r["pass"] for r in rows),"total":len(rows),"cases":rows,"usage":total}
+  try:
+   d=run_case(case); ok=score(case,d); u=d.get("model_usage",{})
+   for k in total: total[k]+=int(u.get(k,0) or 0)
+   rows.append({"case":case["id"],"pass":ok,"status":"completed","termination_reason":d.get("termination_reason")})
+  except Exception as exc:
+   rows.append(failure_row(case["id"], exc))
+   break
+ result={"model":os.environ.get("SALES_MODEL"),"public_unscored":True,"passed":sum(bool(r["pass"]) for r in rows),"attempted":len(rows),"planned_total":len(CASES),"cases":rows,"usage":total}
  print(json.dumps(result,ensure_ascii=False,indent=2))
- if result["passed"] != result["total"]: return 1
+ if any(r.get("status")=="runtime_error" for r in rows): return 2
+ if result["passed"] != result["planned_total"]: return 1
  return 0
 if __name__=="__main__": raise SystemExit(main())
