@@ -12,8 +12,6 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -27,34 +25,59 @@ jobs:
           SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
         run: |
           python - <<'PY'
-          import hashlib, os, pathlib, subprocess, zipfile
+          import hashlib, json, os, pathlib, zipfile
           from cryptography.fernet import Fernet, InvalidToken
-          pack_path = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.pack.fernet')
-          expected_blob = 'a2ff26ccde23c0c28fa56dd6322afa6ff5280574'
-          actual_blob = subprocess.check_output(['git', 'hash-object', str(pack_path)], text=True).strip()
-          if actual_blob != expected_blob:
-              raise SystemExit('sealed ciphertext git-blob mismatch')
-          token = pack_path.read_bytes().strip()
+
+          root = pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-2026-08-21.parts')
+          texts = []
+          for i in range(13):
+              if i == 7:
+                  subdir = root / '07.parts'
+                  subs = [subdir / f'{j:02d}' for j in range(15)]
+                  if not all(p.is_file() for p in subs):
+                      raise SystemExit('sealed ciphertext chunk 07 subparts missing')
+                  text = ''.join(p.read_text() for p in subs)
+              else:
+                  p = root / f'{i:02d}'
+                  if not p.is_file():
+                      raise SystemExit(f'sealed ciphertext chunk {i:02d} missing')
+                  text = p.read_text()
+              texts.append(text)
+
+          token = ''.join(texts).encode()
+          if len(token) != 18040:
+              raise SystemExit(f'sealed ciphertext length mismatch: {len(token)}')
+          expected_ciphertext_sha256 = '5a0dc49630cb0c8d75d7f6550b2ac04993121fad93f46cce338c38c1195fef62'
+          actual_ciphertext_sha256 = hashlib.sha256(token).hexdigest()
+          if actual_ciphertext_sha256 != expected_ciphertext_sha256:
+              raise SystemExit(f'sealed ciphertext sha256 mismatch: {actual_ciphertext_sha256}')
+
           key = os.environ.get('SEALED_PACK_KEY','').encode().strip()
           if not key:
               raise SystemExit('SALES_SEALED_PACK_KEY is missing')
           expected_key_fingerprint = '438070a66cb91c908a6f9b2840fb3978241f0ab67589afae1e9215ea9af15b57'
           if hashlib.sha256(key).hexdigest() != expected_key_fingerprint:
-              raise SystemExit('SALES_SEALED_PACK_KEY fingerprint mismatch; replace the repository secret with the frozen evaluator key')
+              raise SystemExit('SALES_SEALED_PACK_KEY fingerprint mismatch')
+
           try:
               raw = Fernet(key).decrypt(token)
           except (ValueError, InvalidToken) as exc:
               raise SystemExit('sealed pack authentication/decryption failed after key fingerprint verification') from exc
-          if hashlib.sha256(raw).hexdigest() != '11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab':
+
+          expected_zip = '11ae925d27d90e94ed7432ed481ee996b2921bd17c792922e7a2ccf13e2d24ab'
+          if hashlib.sha256(raw).hexdigest() != expected_zip:
               raise SystemExit('decrypted sealed ZIP digest mismatch')
-          out = pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-sealed-pack'
+
+          out = pathlib.Path(os.environ['RUNNER_TEMP']) / 'sales-sealed-pack'
           out.mkdir(parents=True, exist_ok=False)
-          z = pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-sealed.zip'
+          z = pathlib.Path(os.environ['RUNNER_TEMP']) / 'sales-sealed.zip'
           z.write_bytes(raw)
           with zipfile.ZipFile(z) as zz:
               zz.extractall(out)
-          freeze = __import__('json').loads((out/'freeze-record.json').read_text())
-          if freeze['pack_digest'] != 'sha256:ae91ccef4bc48905c1970629a6ff8920e12d95db31b4d11b2325c691f0ad68d8':
+
+          freeze = json.loads((out / 'freeze-record.json').read_text())
+          expected_pack = 'sha256:ae91ccef4bc48905c1970629a6ff8920e12d95db31b4d11b2325c691f0ad68d8'
+          if freeze['pack_digest'] != expected_pack:
               raise SystemExit('sealed pack freeze digest mismatch')
           print('sealed pack verified:', freeze['pack_digest'])
           PY
