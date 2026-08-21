@@ -1,0 +1,37 @@
+{
+  "suite_id": "analytics-regression-v0.3-decision-sufficiency",
+  "fixtures": {
+    "REG-DS-01": {
+      "allowed_recommendations": ["KILL", "ITERATE"],
+      "required_findings": [
+        "causal hook effect not established because comparison is confounded",
+        "current configuration B is commercially unacceptable to continue funding",
+        "stopping B is reversible",
+        "continued spend has cost",
+        "confounder may block causal attribution without blocking operational decision"
+      ],
+      "required_computations": [
+        {"label": "b_cost_per_conversation_aed", "expected": 9.7775, "tolerance": 0.02},
+        {"label": "cost_ratio_b_over_a", "expected": 2.6284, "tolerance": 0.03}
+      ],
+      "hard_fails": [
+        "price-first caused",
+        "hook caused",
+        "nothing can be decided",
+        "cannot make any decision"
+      ]
+    },
+    "REG-DS-02": {
+      "allowed_recommendations": ["CONTINUE"],
+      "required_findings": [
+        "fixed horizon incomplete",
+        "no early stopping guardrail triggered"
+      ],
+      "required_computations": [],
+      "hard_fails": [
+        "kill because b is more expensive",
+        "kill because cost is higher"
+      ]
+    }
+  }
+}
