@@ -12,10 +12,29 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Verify frozen candidate checkout
+        run: |
+          git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+          python - <<'PY'
+          import pathlib, sys
+          sys.path.insert(0, str(pathlib.Path('architect/evaluation/sales-lead-conversion').resolve()))
+          import executor
+          manifest, candidate_text = executor.load_and_verify_candidate()
+          if executor.FROZEN_COMMIT != 'b1a5f214a7cc9452e8a168f3292a2e9b613ecae0':
+              raise SystemExit('frozen candidate commit mismatch')
+          if executor.FROZEN_DIGEST != 'sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6':
+              raise SystemExit('frozen candidate digest mismatch')
+          if not candidate_text:
+              raise SystemExit('frozen candidate content missing')
+          print('frozen candidate checkout verified')
+          PY
 
       - name: Install evaluator crypto dependency
         run: python -m pip install --disable-pip-version-check cryptography
