@@ -1,0 +1,58 @@
+name: Shared qualification master-key smoke
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/qualification-platform/sealed_pack_keys.py'
+      - 'architect/evaluation/qualification-platform/qualification_preflight.py'
+      - 'architect/evaluation/qualification-platform/qualification-manifest.schema.json'
+      - 'architect/evaluation/qualification-platform/test_shared_master_key_derivation.py'
+      - '.github/workflows/qualification-preflight-reusable.yml'
+      - '.github/workflows/shared-qualification-master-key-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Compile qualification platform
+        run: |
+          python -m py_compile architect/evaluation/qualification-platform/sealed_pack_keys.py
+          python -m py_compile architect/evaluation/qualification-platform/qualification_preflight.py
+          python -m py_compile architect/evaluation/qualification-platform/test_shared_master_key_derivation.py
+      - name: Test shared master and legacy key modes
+        run: python architect/evaluation/qualification-platform/test_shared_master_key_derivation.py
+      - name: Validate schema accepts both key modes
+        run: |
+          python - <<'PY'
+          import json
+          from copy import deepcopy
+          from jsonschema import Draft202012Validator
+          schema=json.load(open('architect/evaluation/qualification-platform/qualification-manifest.schema.json'))
+          base={
+            'version':2,'cycle_id':'smoke',
+            'candidate':{'commit':'0'*40,'digest':'sha256:'+'0'*64,'manifest_path':'manifest.json'},
+            'runtime':{'executor_path':'x','executor_cmd':'x','protocol':'x','provider':'x','model':'x','credential_env':'OPENAI_API_KEY','candidate_timeout_seconds':3,'model_timeout_seconds':1,'workflow_timeout_seconds':4,'contract_probe_argv':['x'],'tool_protocol':'x','state_protocol':'x','observable_protocol':'x','canary_required':False},
+            'sealed_pack':{'parts_dir':'x','part_count':1,'ciphertext_length':1,'ciphertext_sha256':'0'*64,'key_fingerprint_sha256':'0'*64,'decrypted_zip_sha256':'0'*64,'pack_digest':'sha256:'+'0'*64,'required_files':['a','b','c','d']},
+            'evaluation':{'fixture_count':1,'family_count':1,'per_family':1,'fixtures_file':'a','grader_file':'b','runner_file':'c','freeze_record_file':'d'},
+            'report':{'sanitized_required':True,'artifact_required':True,'validator_path':'x','release_ledger_required':True},
+            'verdict':{'runner_exit_zero_required':True,'missing_report_is_failure':True,'report_validation_required':True,'artifact_upload_required':True}
+          }
+          legacy=deepcopy(base); legacy['sealed_pack']['key_env']='LEGACY_KEY'
+          derived=deepcopy(base); derived['sealed_pack']['key_derivation']={'scheme':'hkdf-sha256-v1','master_env':'QUALIFICATION_SEALED_PACK_MASTER_KEY','context':'smoke-cycle'}
+          both=deepcopy(derived); both['sealed_pack']['key_env']='LEGACY_KEY'
+          v=Draft202012Validator(schema)
+          assert not list(v.iter_errors(legacy))
+          assert not list(v.iter_errors(derived))
+          assert list(v.iter_errors(both)), 'schema must reject ambiguous dual key mode'
+          print('schema smoke PASS')
+          PY
