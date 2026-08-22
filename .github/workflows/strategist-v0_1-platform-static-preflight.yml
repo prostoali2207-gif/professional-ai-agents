@@ -1,0 +1,59 @@
+name: Strategist v0.1 platform static preflight
+
+on:
+  push:
+    branches:
+      - eval/strategist-v0_1-platform-2026-08-22
+    paths:
+      - 'architect/research/growth-strategy-experiment-portfolio/**'
+      - 'architect/evaluation/growth_strategy_experiment_portfolio/**'
+      - '.github/workflows/strategist-v0_1-platform-static-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile exact executor
+        run: python3 -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py
+      - name: Verify frozen candidate identity and executor contract without API
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          commit='0c92e9dc6dc4e3b6841956fab0552439def3960d'
+          path='architect/research/growth-strategy-experiment-portfolio/candidate-professional-model-v0.1.md'
+          manifest_path='architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json'
+          expected='sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92'
+          original_blob='b22bac7a4deed11c466c014f41960f5e2deec2d1'
+          manifest=json.loads(subprocess.check_output(['git','show',f'{commit}:{manifest_path}'],text=True))
+          paths=manifest['artifact']['paths']
+          canonical=''
+          for p in paths:
+              blob=subprocess.check_output(['git','rev-parse',f'{commit}:{p}'],text=True).strip()
+              canonical += f'{p}:{blob}\n'
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual == expected == manifest['artifact']['content_digest'], (actual, expected)
+          blob=subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()
+          assert blob == original_blob, (blob, original_blob)
+          raw=subprocess.check_output(['python3','architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py','--qualification-contract'],text=True)
+          c=json.loads(raw)
+          assert c['contract_version']==1
+          assert c['candidate_commit']==commit
+          assert c['candidate_digest']==expected
+          assert c['provider']=='gemini-interactions-api'
+          assert c['input_protocol']=='growth-strategy-experiment-portfolio-candidate-v1'
+          assert c['tool_protocol']=='none-v1'
+          assert c['state_protocol']=='stateless-v1'
+          assert c['observable_protocol']=='final-output-only-v1'
+          print(json.dumps({'status':'PASS','api_calls':0,'candidate_commit':commit,'candidate_digest':expected,'candidate_blob':blob}))
+          PY
