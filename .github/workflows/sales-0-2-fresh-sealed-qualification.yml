@@ -2,6 +2,9 @@ name: Sales 0.2 fresh sealed qualification
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - eval/sales-0.2-run-once-2026-08-22
 
 permissions:
   contents: read
