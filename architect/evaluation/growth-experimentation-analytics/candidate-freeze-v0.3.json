@@ -1,0 +1,20 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.3-decision-sufficiency",
+  "lifecycle": "frozen-candidate",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    }
+  ],
+  "assembly_digest": "sha256:9e503603ec80290b349b523f95c1037ce89daa91de3815d01afbfc928eee46db",
+  "qualification_scope": "targeted decision-sufficiency regression; not library-admitted until fresh held-out qualification passes"
+}
