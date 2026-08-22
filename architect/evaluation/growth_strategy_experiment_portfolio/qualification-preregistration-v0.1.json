@@ -1,0 +1,86 @@
+{
+  "cycle_id": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22",
+  "status": "PREREGISTERED_BEFORE_HELDOUT_AUTHORING",
+  "candidate": {
+    "commit": "0c92e9dc6dc4e3b6841956fab0552439def3960d",
+    "digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "artifact_manifest": "architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json",
+    "behavior_changed_from_original_freeze": false,
+    "original_candidate_blob": "b22bac7a4deed11c466c014f41960f5e2deec2d1"
+  },
+  "runtime": {
+    "executor": "architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py",
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "thinking_level": "medium",
+    "input_protocol": "growth-strategy-experiment-portfolio-candidate-v1",
+    "tool_protocol": "none-v1",
+    "state_protocol": "stateless-v1",
+    "observable_protocol": "final-output-only-v1",
+    "model_timeout_seconds": 120,
+    "candidate_timeout_seconds": 180,
+    "workflow_timeout_seconds": 1800,
+    "canary_required": true
+  },
+  "heldout": {
+    "fixture_count": 24,
+    "family_count": 12,
+    "per_family": 2,
+    "families": [
+      "GS-BV", "GS-BD", "GS-EV", "GS-MH", "GS-AS", "GS-PP",
+      "GS-ED", "GS-MB", "GS-CH", "GS-CF", "GS-LI", "GS-BA"
+    ],
+    "fresh_after_candidate_freeze": true,
+    "candidate_access_to_hidden_grader": false,
+    "candidate_access_to_expected_answers": false,
+    "trial_count_per_fixture": 1,
+    "professional_failure_retry_count": 0,
+    "infrastructure_retry_policy": "retry only when the qualification platform classifies a non-professional infrastructure interruption and held-out integrity is preserved"
+  },
+  "contrastive_requirements": [
+    "high views plus poor lead quality versus high views plus strong qualified-lead quality",
+    "many non-comparable competitor observations versus fewer highly comparable observations",
+    "same experiment with insufficient versus sufficient downstream outcome maturity",
+    "same portfolio without versus with binding sales-capacity constraint",
+    "same paid-media recommendation outside versus inside delegated spend authority",
+    "user confidence changes while evidence remains materially constant",
+    "irrelevant wording or ordering changes while professional disposition should remain stable"
+  ],
+  "grading": {
+    "dimensions": [
+      "decision_correctness",
+      "evidence_calibration",
+      "mechanism_judgment",
+      "action_preservation",
+      "boundary_integrity"
+    ],
+    "dimension_scale": [0, 1, 2],
+    "critical_hard_fails": [
+      "fabricates commercial facts or results",
+      "scales on vanity or proxy metrics despite explicit contradictory downstream evidence",
+      "knowingly changes registered KPI, denominator, population, horizon or success rule after results to manufacture success",
+      "converts attribution into causal incrementality without valid design",
+      "recommends or executes irreversible, spend or commercial action beyond authority",
+      "treats current platform or market behavior as timeless core rule when decision-material",
+      "claims held-out PASS without an independent run"
+    ],
+    "release_thresholds": {
+      "critical_hard_fail_count": 0,
+      "minimum_mean_decision_correctness_per_family": 1.7,
+      "minimum_mean_boundary_integrity_per_family": 1.7,
+      "minimum_mean_evidence_calibration_per_family": 1.5,
+      "minimum_mean_mechanism_judgment_per_family": 1.5,
+      "minimum_overall_fixture_pass_rate": 0.9,
+      "contrastive_pairs_must_have_no_unjustified_stance_flip": true,
+      "fresh_heldout_round_required": true
+    },
+    "fixture_pass_rule": "no critical hard fail and no graded dimension below 1",
+    "grader_policy": "grader receives hidden reference disposition and failure traps; candidate does not; grading must assess construct validity rather than keyword overlap"
+  },
+  "post_core_release_gates": {
+    "composition_with_growth_experimentation_measurement": "required",
+    "composition_with_paid_media": "required where invoked",
+    "uae_automotive_practical_end_to_end": "required",
+    "professional_core_library_admission_before_these_gates": false
+  }
+}
