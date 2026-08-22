@@ -2,7 +2,9 @@ name: Sales 0.3 fresh independent held-out qualification
 
 on:
   push:
-    branches: [eval/sales-0.3-fresh-qualification-2026-08-22]
+    branches:
+      - main
+      - eval/sales-0.3-fresh-qualification-2026-08-22
     paths:
       - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.qualification.json'
       - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.preregistration.json'
