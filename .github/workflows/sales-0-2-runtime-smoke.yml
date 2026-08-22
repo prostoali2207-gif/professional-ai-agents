@@ -1,0 +1,58 @@
+name: Sales 0.2 frozen runtime smoke
+
+on:
+  push:
+    branches:
+      - eval/sales-0.2-fresh-qualification-2026-08-22
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: gpt-5.6-terra
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify frozen candidate object exists
+        run: |
+          git cat-file -e 824216b9eb225a4509f98f1c31892a80935f3bd7^{commit}
+      - name: Run one unscored frozen 0.2 canary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/request.json" <<'JSON'
+          {
+            "protocol":"sales-lead-conversion-candidate-v1",
+            "candidate":{"commit":"824216b9eb225a4509f98f1c31892a80935f3bd7","artifact_digest":"sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728"},
+            "run":{"run_id":"sales-0.2-runtime-smoke","trial_id":"smoke-1","capability_profile":{"purpose":"unscored_runtime_smoke"}},
+            "task":{"instruction":"Acknowledge the request briefly. Do not use tools and do not make any commercial claim."},
+            "initial_state":{},
+            "tool_scenario":{"authority":{"external_actions":false},"tools":[]},
+            "checkpoint":null
+          }
+          JSON
+          python3 architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py < "$RUNNER_TEMP/request.json" > "$RUNNER_TEMP/result.json"
+          python3 - <<'PY'
+          import json, os
+          d=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'result.json')))
+          assert d['candidate_identity']['commit']=='824216b9eb225a4509f98f1c31892a80935f3bd7'
+          assert d['candidate_identity']['artifact_digest']=='sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728'
+          assert d['candidate_identity']['core']=='sales-lead-conversion/0.2.0'
+          assert d['runtime_identity']['provider']=='openai-responses-api'
+          assert d['model_usage']['api_calls'] >= 1
+          assert d['model_usage']['total_tokens'] > 0
+          print('SALES 0.2 FROZEN RUNTIME SMOKE PASS')
+          PY
