@@ -3,7 +3,7 @@
   "fixtures": [
     {
       "fixture_id": "REG-DS-01",
-      "instruction": "Evaluate the evidence and return one operational recommendation. Keep causal attribution separate from the immediate business action.",
+      "instruction": "Evaluate the evidence and return one operational recommendation. Keep causal attribution separate from the immediate business action. Include computations named exactly b_cost_per_conversation_aed and cost_ratio_b_over_a so deterministic grading can verify the arithmetic without interpreting prose.",
       "case": {
         "decision_question": "Should the business continue funding configuration B in its current form, and did the nominal hook cause the observed difference?",
         "primary_kpi": "messaging_conversations_started",
