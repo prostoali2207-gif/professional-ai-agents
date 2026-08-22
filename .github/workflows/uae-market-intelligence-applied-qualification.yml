@@ -7,6 +7,12 @@ on:
     paths:
       - 'architect/evaluation/uae-market-intelligence-applied-trigger.txt'
       - '.github/workflows/uae-market-intelligence-applied-qualification.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/evaluation/uae-market-intelligence-applied-trigger.txt'
+      - '.github/workflows/uae-market-intelligence-applied-qualification.yml'
   workflow_dispatch:
 
 permissions:
