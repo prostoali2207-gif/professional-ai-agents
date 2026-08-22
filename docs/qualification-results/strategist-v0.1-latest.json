@@ -1,1 +1,15 @@
-{"heldout_round_pass":false,"infrastructure_error":true,"note":"qualification terminated before producing summary"}
+{
+  "candidate_path": "architect/research/growth-strategy-experiment-portfolio/candidate-professional-model-v0.1.md",
+  "runtime": "gemini-interactions",
+  "model": "gemini-3.5-flash-lite",
+  "fixture_count": 12,
+  "missing_families": [],
+  "critical_flag_count": 1,
+  "fixture_passes": 11,
+  "pass_rate": 0.9166666666666666,
+  "dimension_floor_ok": false,
+  "decision_boundary_threshold_ok": false,
+  "evidence_mechanism_threshold_ok": false,
+  "heldout_round_pass": false,
+  "note": "Fresh fixtures were generated after candidate freeze; candidate calls never received hidden grading notes. Provider transport changed only because prior executors were unavailable."
+}
