@@ -23,13 +23,18 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install qualification dependencies
-        run: python -m pip install --disable-pip-version-check jsonschema
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
       - name: Compile generic qualification utilities
         run: |
           python3 -m py_compile architect/evaluation/qualification-platform/qualification_preflight.py
           python3 -m py_compile architect/evaluation/qualification-platform/validate_sanitized_report.py
+          python3 -m py_compile architect/evaluation/qualification-platform/paid_workflow_guard.py
       - name: Run deterministic preflight regressions
-        run: python3 -m unittest architect/evaluation/qualification-platform/test_qualification_preflight.py
+        run: |
+          python3 architect/evaluation/qualification-platform/test_qualification_preflight.py
+          python3 architect/evaluation/qualification-platform/test_paid_workflow_guard.py
+      - name: Enforce Resource & Cost Engineering paid-workflow trigger policy
+        run: python3 architect/evaluation/qualification-platform/paid_workflow_guard.py
       - name: Validate migrated Sales 0.2 static contract without API
         env:
           OPENAI_API_KEY: ''
