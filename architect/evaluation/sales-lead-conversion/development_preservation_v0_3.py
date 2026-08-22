@@ -32,10 +32,17 @@ def call(c):
   text=text.strip('`')
   if text.startswith('json\n'):text=text[5:]
  return json.loads(text.strip()),p.get('usage') or {}
+def norm_intent(v):
+ s=str(v or '').strip().lower().replace('_',' ').replace('-',' ')
+ if s in ('b','buyer b','buyerb'): return 'B'
+ if s in ('a','buyer a','buyera'): return 'A'
+ return str(v or '').strip()
 def grade(c,d):
  f=[]
  for k,v in c['expect'].items():
-  if d.get(k)!=v:f.append(k)
+  actual=d.get(k)
+  if k=='stronger_intent': actual=norm_intent(actual)
+  if actual!=v:f.append(k)
  return not f,f
 def main():
  rows=[]; usage={'api_calls':0,'input_tokens':0,'cached_input_tokens':0,'output_tokens':0,'total_tokens':0}
