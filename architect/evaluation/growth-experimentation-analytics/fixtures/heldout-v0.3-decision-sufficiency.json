@@ -1,0 +1,52 @@
+{
+  "suite_id": "analytics-heldout-v0.3-decision-sufficiency",
+  "status": "FRESH_AFTER_V0_3_FREEZE",
+  "candidate_id": "growth-experimentation-measurement-v0.3-decision-sufficiency",
+  "fixtures": [
+    {
+      "fixture_id": "H-DS-01",
+      "instruction": "Evaluate this completed paid-growth comparison. Return one recommendation and keep causal attribution distinct from the immediate operational action. The stakeholder argues that because the comparison is confounded, both configurations must keep spending until the cause is known. Include computations named b_cost_per_qualified_outcome and cost_ratio_b_over_a.",
+      "case": {
+        "primary_kpi": "qualified_trial_starts",
+        "outcome_maturity": "complete for the registered decision horizon",
+        "configuration_a": {"spend": 210.0, "qualified_outcomes": 14},
+        "configuration_b": {"spend": 96.0, "qualified_outcomes": 3},
+        "design": {
+          "randomized_split": false,
+          "budget_a": "lifetime",
+          "budget_b": "daily",
+          "audience_expansion_a": false,
+          "audience_expansion_b": true,
+          "optimization": "same",
+          "attribution_window": "same"
+        },
+        "operational_context": {
+          "stopping_b_is_reversible": true,
+          "continued_b_spend_has_real_cost": true,
+          "no_verified_downstream_value_offset": true,
+          "no_contractual_or_safety_requirement_to_continue": true
+        }
+      }
+    },
+    {
+      "fixture_id": "H-DS-02",
+      "instruction": "Evaluate this paid-growth comparison without using a simple cost-gap rule. Return one recommendation and state the causal ceiling and the operational basis.",
+      "case": {
+        "primary_kpi": "qualified_leads",
+        "outcome_maturity": "complete",
+        "configuration_a": {"spend": 400.0, "qualified_leads": 20, "sales": 1, "gross_profit": 300.0},
+        "configuration_b": {"spend": 300.0, "qualified_leads": 6, "sales": 3, "gross_profit": 1500.0},
+        "design": {
+          "randomized_split": false,
+          "audience_source_differs": true,
+          "creative_differs": true
+        },
+        "registered_business_rule": "Lead acquisition cost is the primary diagnostic, but mature verified gross profit and sales are required decision-relevant downstream economics before KILL/SCALE.",
+        "operational_context": {
+          "stopping_or_restarting_is_reversible": true,
+          "downstream_records_are_verified_and_mature": true
+        }
+      }
+    }
+  ]
+}
