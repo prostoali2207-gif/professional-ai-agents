@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import os
 from pathlib import Path
 import tempfile
@@ -13,18 +14,23 @@ SPEC.loader.exec_module(qp)
 
 def base_manifest():
     return {
-        "version": 1,
+        "version": 2,
         "cycle_id": "test-cycle",
         "candidate": {"commit": "0" * 40, "digest": "sha256:" + "0" * 64, "manifest_path": "x.json"},
         "runtime": {
             "executor_path": str(HERE / "qualification_preflight.py"),
             "executor_cmd": "python qualification_preflight.py",
             "protocol": "test-v1",
+            "provider": "test-provider",
             "model": "test-model",
             "credential_env": "TEST_API_KEY",
             "candidate_timeout_seconds": 20,
             "model_timeout_seconds": 10,
             "workflow_timeout_seconds": 60,
+            "contract_probe_argv": ["python3", "-c", "import json; print(json.dumps({'contract_version':1,'candidate_commit':'" + "0" * 40 + "','candidate_digest':'sha256:" + "0" * 64 + "','provider':'test-provider','input_protocol':'test-v1','tool_protocol':'tools-v1','state_protocol':'state-v1','observable_protocol':'obs-v1'}))"],
+            "tool_protocol": "tools-v1",
+            "state_protocol": "state-v1",
+            "observable_protocol": "obs-v1",
             "canary_required": False,
         },
         "sealed_pack": {
@@ -36,7 +42,7 @@ def base_manifest():
             "key_fingerprint_sha256": "0" * 64,
             "decrypted_zip_sha256": "0" * 64,
             "pack_digest": "sha256:" + "0" * 64,
-            "required_files": ["fixtures.json"],
+            "required_files": ["fixtures.json", "grader.json", "runner.py", "freeze-record.json"],
         },
         "evaluation": {
             "fixture_count": 1,
@@ -47,19 +53,28 @@ def base_manifest():
             "runner_file": "runner.py",
             "freeze_record_file": "freeze-record.json",
         },
-        "report": {"sanitized_required": True, "artifact_required": True},
-        "verdict": {"runner_exit_zero_required": True, "missing_report_is_failure": True},
+        "report": {
+            "sanitized_required": True,
+            "artifact_required": True,
+            "validator_path": str(HERE / "validate_sanitized_report.py"),
+            "release_ledger_required": True,
+        },
+        "verdict": {
+            "runner_exit_zero_required": True,
+            "missing_report_is_failure": True,
+            "report_validation_required": True,
+            "artifact_upload_required": True,
+        },
     }
 
 
 class QualificationPreflightTests(unittest.TestCase):
-    def test_manifest_requires_fail_closed_report_and_verdict(self):
+    def test_manifest_schema_rejects_open_release_gate(self):
         m = base_manifest()
-        qp.validate_manifest_shape(m)
         m["verdict"]["missing_report_is_failure"] = False
         with self.assertRaises(qp.PreflightError) as ctx:
-            qp.validate_manifest_shape(m)
-        self.assertEqual(ctx.exception.code, "VERDICT_ENFORCEMENT_FAILED")
+            qp.validate_manifest_schema(m, HERE / "qualification-manifest.schema.json")
+        self.assertEqual(ctx.exception.code, "RUNTIME_CONTRACT_MISMATCH")
 
     def test_timeout_nesting_is_rejected_before_api(self):
         m = base_manifest()
@@ -75,6 +90,18 @@ class QualificationPreflightTests(unittest.TestCase):
         with self.assertRaises(qp.PreflightError) as ctx:
             qp.verify_runtime_static(m, True)
         self.assertEqual(ctx.exception.code, "CREDENTIAL_MISSING")
+
+    def test_contract_probe_passes_without_runtime_credential(self):
+        m = base_manifest()
+        os.environ.pop("TEST_API_KEY", None)
+        qp.verify_runtime_contract_probe(m)
+
+    def test_contract_probe_detects_protocol_drift(self):
+        m = base_manifest()
+        m["runtime"]["tool_protocol"] = "tools-v2"
+        with self.assertRaises(qp.PreflightError) as ctx:
+            qp.verify_runtime_contract_probe(m)
+        self.assertEqual(ctx.exception.code, "RUNTIME_CONTRACT_MISMATCH")
 
     def test_safe_extract_rejects_path_traversal(self):
         with tempfile.TemporaryDirectory() as td:
