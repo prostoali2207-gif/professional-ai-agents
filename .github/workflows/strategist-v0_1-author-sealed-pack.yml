@@ -36,9 +36,9 @@ jobs:
           python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack_v0_1.py
           test "$(git rev-parse 4b84ef258b5d3d2b3fbc9549e77176b3359a501e:architect/research/growth-strategy-experiment-portfolio/candidate-professional-model-v0.1.md)" = "b22bac7a4deed11c466c014f41960f5e2deec2d1"
           python architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py --qualification-contract > "$RUNNER_TEMP/strategist-contract.json"
-          python - <<'PY'
-          import json, pathlib
-          p=json.loads(pathlib.Path("$RUNNER_TEMP/strategist-contract.json").read_text())
+          CONTRACT_PATH="$RUNNER_TEMP/strategist-contract.json" python - <<'PY'
+          import json, os, pathlib
+          p=json.loads(pathlib.Path(os.environ["CONTRACT_PATH"]).read_text())
           assert p["candidate_commit"]=="4b84ef258b5d3d2b3fbc9549e77176b3359a501e"
           assert p["candidate_digest"]=="sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92"
           assert p["provider"]=="gemini-interactions-api"
