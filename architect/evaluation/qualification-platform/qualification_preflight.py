@@ -205,7 +205,11 @@ def verify_sealed_pack(m: dict, output_dir: Path) -> None:
     if freeze.get("model") != m["runtime"]["model"]:
         fail("RUNTIME_CONTRACT_MISMATCH", "freeze record model differs from runtime model")
 
-    component_fields = {e["fixtures_file"]: "fixtures_sha256", e["grader_file"]: "grader_sha256", e["runner_file"]: "runner_sha256"}
+    component_fields = {
+        e["fixtures_file"]: "fixtures_sha256",
+        e["grader_file"]: "grader_sha256",
+        e["runner_file"]: "runner_sha256",
+    }
     hashes: dict[str, str] = {}
     for name, field in component_fields.items():
         h = sha256_bytes((output_dir / name).read_bytes())
