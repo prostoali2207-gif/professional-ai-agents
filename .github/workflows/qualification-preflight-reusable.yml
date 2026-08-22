@@ -9,8 +9,11 @@ on:
         type: string
     secrets:
       sealed_pack_key:
-        description: Evaluator-owned sealed pack key
-        required: true
+        description: Legacy evaluator-owned per-pack key
+        required: false
+      sealed_pack_master_key:
+        description: Shared evaluator-owned master key for derived pack keys
+        required: false
 
 permissions:
   contents: read
@@ -21,6 +24,7 @@ jobs:
     timeout-minutes: 10
     env:
       SEALED_PACK_KEY_VALUE: ${{ secrets.sealed_pack_key }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.sealed_pack_master_key }}
       OPENAI_API_KEY: ''
     steps:
       - uses: actions/checkout@v4
@@ -36,13 +40,19 @@ jobs:
           python3 architect/evaluation/qualification-platform/qualification_preflight.py \
             --manifest "${{ inputs.manifest_path }}" \
             --phase static
-      - name: Bind evaluator-owned sealed key and verify held-out pack
+      - name: Bind legacy key when required and verify held-out pack
         shell: bash
         run: |
           set -euo pipefail
-          KEY_ENV=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sealed_pack"]["key_env"])' "${{ inputs.manifest_path }}")
-          printf -v "$KEY_ENV" '%s' "$SEALED_PACK_KEY_VALUE"
-          export "$KEY_ENV"
+          MODE=$(python3 -c 'import json,sys; s=json.load(open(sys.argv[1]))["sealed_pack"]; print("derived" if "key_derivation" in s else "legacy")' "${{ inputs.manifest_path }}")
+          if [ "$MODE" = "legacy" ]; then
+            test -n "$SEALED_PACK_KEY_VALUE" || { echo 'legacy sealed_pack_key missing'; exit 22; }
+            KEY_ENV=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["sealed_pack"]["key_env"])' "${{ inputs.manifest_path }}")
+            printf -v "$KEY_ENV" '%s' "$SEALED_PACK_KEY_VALUE"
+            export "$KEY_ENV"
+          else
+            test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'shared sealed_pack_master_key missing'; exit 23; }
+          fi
           python3 architect/evaluation/qualification-platform/qualification_preflight.py \
             --manifest "${{ inputs.manifest_path }}" \
             --phase sealed \
