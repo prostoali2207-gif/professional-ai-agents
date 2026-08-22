@@ -1,0 +1,48 @@
+name: Strategist v0.1 authoring preflight diagnostic
+
+on:
+  push:
+    branches:
+      - eval/strategist-v0_1-sealed-qualification-2026-08-22
+    paths:
+      - '.github/workflows/strategist-v0_1-authoring-preflight-diagnostic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Write non-secret preflight status
+        run: |
+          set +e
+          python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_template_v0_1.py architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack_v0_1.py
+          compile_ok=$?
+          git cat-file -e 4b84ef258b5d3d2b3fbc9549e77176b3359a501e^{commit}
+          freeze_ok=$?
+          master=false; [ -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" ] && master=true
+          gemini=false; [ -n "$GEMINI_API_KEY" ] && gemini=true
+          mkdir -p docs/qualification-results
+          printf '{"compile_ok":%s,"freeze_commit_available":%s,"master_key_present":%s,"gemini_key_present":%s,"model_calls":0}\n' \
+            "$([ "$compile_ok" = 0 ] && echo true || echo false)" \
+            "$([ "$freeze_ok" = 0 ] && echo true || echo false)" \
+            "$master" "$gemini" > docs/qualification-results/strategist-v0.1-authoring-preflight.json
+      - name: Persist diagnostic
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/qualification-results/strategist-v0.1-authoring-preflight.json
+          git commit -m 'eval: record Strategist authoring preflight' || exit 0
+          git push origin HEAD:eval/strategist-v0_1-sealed-qualification-2026-08-22
