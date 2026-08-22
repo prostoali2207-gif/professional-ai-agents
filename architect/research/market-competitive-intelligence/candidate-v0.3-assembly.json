@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "candidate": "market-competitive-intelligence-v0.3",
+  "status": "FROZEN_CANDIDATE_NOT_QUALIFIED",
+  "ordered_components": [
+    {
+      "path": "architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md",
+      "git_blob_sha": "7af5b93c1a4d499b5972a0dd20aec8e4253a9651",
+      "role": "base_professional_model"
+    },
+    {
+      "path": "architect/research/market-competitive-intelligence/epistemic-status-calibration-overlay-v0.1.md",
+      "git_blob_sha": "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21",
+      "role": "normative_epistemic_calibration_overlay"
+    }
+  ],
+  "qualification_rule": "The runtime candidate is the exact UTF-8 concatenation of the ordered component contents separated by two newlines. Qualification applies only to this pinned assembly and qualifying environment.",
+  "repair_reason": "v0.2 practical diagnostic preserved safety and authority boundaries but intermittently demoted valid bounded observations/derived statistics to INFERENCE/HYPOTHESIS. v0.3 separates epistemic status from external validity, support scope and causal validity.",
+  "integrity": {
+    "v0.2_immutable": true,
+    "prior_v0.2_failures_not_regraded": true,
+    "fresh_heldout_required": true
+  }
+}

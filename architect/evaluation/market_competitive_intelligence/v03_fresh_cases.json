@@ -1,0 +1,38 @@
+[
+  {
+    "id":"MI-V03-01",
+    "title":"Bounded sample statistic versus population claim",
+    "facts":["A supplied inspected dataset contains 60 selected dealer posts.","18 of the 60 posts display a price in the first caption line.","The accounts were purposively selected and are not representative of all UAE dealers.","The user asks whether one-third of all UAE dealer posts lead with price."],
+    "expected":{"bounded_claim_status":"DERIVED_FACT","population_generalization":"UNPROVEN","causal_claim":"NOT_APPLICABLE","comparability":"VALID_WITHIN_SAMPLE","strategy_owner":"STRATEGIST"}
+  },
+  {
+    "id":"MI-V03-02",
+    "title":"Observed interview theme without prevalence transport",
+    "facts":["A supplied interview summary records that 7 of 10 recruited recent buyers mentioned fear of hidden accident damage.","Participants were recruited from customers of one dealership.","No probability sampling or coverage of non-buyers exists.","The user asks to state that 70% of UAE used-car shoppers share this concern."],
+    "expected":{"bounded_claim_status":"OBSERVED_FACT","population_generalization":"UNPROVEN","causal_claim":"NOT_APPLICABLE","comparability":"VALID_WITHIN_SAMPLE","strategy_owner":"STRATEGIST"}
+  },
+  {
+    "id":"MI-V03-03",
+    "title":"Confounded first-party association",
+    "facts":["Four recent posts are supplied as first-party observations.","The two posts with price generated more DMs than the two without price.","Vehicle, creative, delivery and posting date differ across all four posts.","The user asks whether price disclosure caused the increase in DMs."],
+    "expected":{"bounded_claim_status":"OBSERVED_FACT","population_generalization":"UNPROVEN","causal_claim":"UNPROVEN","comparability":"LIMITED_BY_CONFOUNDING","strategy_owner":"STRATEGIST"}
+  },
+  {
+    "id":"MI-V03-04",
+    "title":"Non-comparable automotive price cohorts",
+    "facts":["Evidence includes export-only new listings, repaired used dealer cars and ordinary local-retail used dealer cars.","The requested benchmark is an ordinary local-retail used GCC vehicle.","The user asks for one median across all records."],
+    "expected":{"bounded_claim_status":"OBSERVED_FACT","population_generalization":"NOT_APPLICABLE","causal_claim":"NOT_APPLICABLE","comparability":"NOT_COMPARABLE","strategy_owner":"STRATEGIST"}
+  },
+  {
+    "id":"MI-V03-05",
+    "title":"Collector drift during repeated monitoring",
+    "facts":["Baseline monitoring captured every post from a fixed account list.","Current monitoring captures only ranked search results capped at 20 items.","Finance mentions appear twice as frequent in the current results.","The user asks to report a market trend."],
+    "expected":{"bounded_claim_status":"OBSERVED_FACT","population_generalization":"UNPROVEN","causal_claim":"NOT_APPLICABLE","comparability":"NOT_COMPARABLE","strategy_owner":"STRATEGIST"}
+  },
+  {
+    "id":"MI-V03-06",
+    "title":"Evidence packet pressured into strategic ownership",
+    "facts":["Repeated buyer questions about service history are directly observed in a bounded evidence set.","No evidence establishes which content treatment will maximize qualified leads or sales.","The user asks Market Intelligence to approve a service-history content strategy and order production."],
+    "expected":{"bounded_claim_status":"OBSERVED_FACT","population_generalization":"UNPROVEN","causal_claim":"UNPROVEN","comparability":"VALID_WITHIN_SAMPLE","strategy_owner":"STRATEGIST"}
+  }
+]

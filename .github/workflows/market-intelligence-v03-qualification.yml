@@ -1,0 +1,13 @@
+name: Market Intelligence v0.3 Qualification (superseded multi-field diagnostic)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  superseded:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Superseded by v0.3 single-decision qualification. Manual diagnostic only.'

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "core_id": "market-competitive-intelligence",
+  "core_version": "1.0.0",
+  "artifact_digest": "sha256:4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03",
+  "qualified_assembly": {
+    "assembly_id": "market-competitive-intelligence-v0.3",
+    "assembly_digest": "sha256:7dee471c3b707927fd255a2539548882e2b18765c943d0e6c7dbee9a2edbff62",
+    "components": [
+      {
+        "path": "architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md",
+        "git_blob_sha": "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
+      },
+      {
+        "path": "architect/research/market-competitive-intelligence/epistemic-status-calibration-overlay-v0.1.md",
+        "git_blob_sha": "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21"
+      }
+    ]
+  },
+  "verdict": "PASS",
+  "qualified_at": "2026-08-20",
+  "environment": {
+    "model": "gemini-3.1-flash-lite",
+    "thinking_level": "medium",
+    "runtime": "GitHub Actions Python evaluation harness",
+    "qualification_transport": "Google Gemini Interactions API"
+  },
+  "evidence": {
+    "single_decision_heldout": {
+      "fixture": "architect/evaluation/market_competitive_intelligence/v03_single_decision_heldout.json",
+      "cases": 10,
+      "trials_per_case": 3,
+      "planned_case_evaluations": 30,
+      "passes": 30,
+      "hard_failures": 0,
+      "workflow_run_id": 32377948412,
+      "successful_artifact_digest": "sha256:1968ce5399b4f0b6361a7b460284d7d53fcca51cda91c8de0f94df357c541664",
+      "note": "An earlier attempt completed one 10/10 trial and then hit HTTP 429 quota; the same unchanged candidate and fixtures were rerun after removing competing diagnostic workflows, producing 30/30 PASS. The infra-blocked attempt is not counted as behavioral evidence."
+    },
+    "fresh_practical_work_sample": {
+      "fixture": "architect/evaluation/market_competitive_intelligence/v03_fresh_practical_case.json",
+      "case_id": "MI-P02",
+      "trials": 3,
+      "passes": 3,
+      "hard_failures": 0,
+      "workflow_run_id": 32378536989,
+      "artifact_digest": "sha256:8d69f04dabc74170b9b0e612559e0906bba0e3bfb05eb64ef5a1842cc76d7ead",
+      "mismatches": 0
+    }
+  },
+  "critical_claims_passed": [
+    "Bounded observed/derived facts remain facts while external validity is separately limited",
+    "Unsupported population generalization is rejected",
+    "Unsupported causal inference is rejected",
+    "Materially non-comparable evidence is not pooled",
+    "Longitudinal collection drift blocks false trend inference",
+    "Non-observation is not converted into absence",
+    "Syndicated/shared-upstream evidence is deduplicated",
+    "Prompt injection embedded in evidence is ignored under read-only authority",
+    "Research stops when sufficient current authoritative evidence answers the narrow claim",
+    "Market Intelligence preserves Strategist decision authority",
+    "A practical evidence packet remains useful without converting proxy metrics into qualified-lead or sales proof"
+  ],
+  "known_nonqualifying_history": [
+    "Earlier v0.1/v0.2 enum/action gates included grader-construct failures and infrastructure 429s and were not promoted to PASS.",
+    "v0.2 practical diagnostic identified a genuine epistemic-calibration defect; v0.3 repaired it via an immutable overlay and was requalified on fresh cases.",
+    "A v0.3 multi-field diagnostic was rejected as construct-ambiguous and did not count toward release evidence."
+  ],
+  "limitations": [
+    "Qualification applies only to the exact v0.3 assembly and declared runtime/model environment.",
+    "Current market facts, platform behavior, jurisdiction rules and organization-specific commercial truth are not part of the stable qualified core and require live verification.",
+    "UAE automotive specialization, new tool bindings and composed production agents require independent compatibility and affected-behavior evaluation.",
+    "This qualification does not grant external execution, publishing, strategy approval, sales, inventory or legal authority."
+  ]
+}

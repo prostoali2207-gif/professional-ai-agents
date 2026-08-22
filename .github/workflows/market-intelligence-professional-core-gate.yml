@@ -1,0 +1,13 @@
+name: Market Intelligence Professional Core Gate (superseded diagnostic)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  superseded:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Superseded by Market Intelligence v0.3 single-decision qualification. Manual diagnostic only.'

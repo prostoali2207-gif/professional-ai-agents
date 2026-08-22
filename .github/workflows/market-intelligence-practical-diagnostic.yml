@@ -1,0 +1,13 @@
+name: Market Intelligence Practical Diagnostic (superseded)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  superseded:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'Superseded diagnostic. Manual only.'
