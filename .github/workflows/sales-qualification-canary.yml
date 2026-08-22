@@ -19,9 +19,9 @@ jobs:
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       SALES_MODEL: ${{ inputs.model }}
-      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor.py
+      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor_responses.py
       SALES_CANDIDATE_MANIFEST: /tmp/sales-candidate-manifest.json
-      SALES_CANDIDATE_TIMEOUT_SECONDS: '180'
+      SALES_CANDIDATE_TIMEOUT_SECONDS: '240'
       SALES_MODEL_TIMEOUT_SECONDS: '180'
 
     steps:
@@ -42,12 +42,14 @@ jobs:
             exit 2
           fi
 
-      - name: Verify frozen candidate and local executor invariants
+      - name: Verify frozen candidate and Responses executor invariants
         shell: bash
         run: |
           set -euo pipefail
           git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
-          python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor.py
+          python3 -m unittest \
+            architect/evaluation/sales-lead-conversion/test_executor.py \
+            architect/evaluation/sales-lead-conversion/test_executor_responses.py
 
       - name: Create evaluator-owned frozen identity manifest
         shell: bash
@@ -112,6 +114,8 @@ jobs:
           assert data.get('side_effect_ledger') == []
           runtime = data.get('runtime_identity') or {}
           assert runtime.get('model') == os.environ['SALES_MODEL']
+          assert runtime.get('provider') == 'openai-responses-api'
+          assert runtime.get('executor') == 'sales-lead-conversion/executor_responses.py@v1'
 
           usage = data.get('model_usage') or {}
           assert usage.get('api_calls', 0) >= 1
@@ -122,6 +126,7 @@ jobs:
 
           print('CANARY PASS')
           print('candidate_commit=' + data['candidate_identity']['commit'])
+          print('provider=' + str(runtime.get('provider')))
           print('model=' + str(runtime.get('model')))
           print('termination_reason=' + data['termination_reason'])
           print('side_effects=0')
