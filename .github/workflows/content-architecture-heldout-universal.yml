@@ -24,6 +24,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Fail-closed credential preflight
+        shell: bash
+        run: |
+          test -n "$OPENAI_API_KEY" || { echo 'OPENAI_API_KEY missing'; exit 21; }
+          test -n "$CONTENT_ARCHITECTURE_SEALED_PACK_KEY" || { echo 'CONTENT_ARCHITECTURE_SEALED_PACK_KEY missing'; exit 22; }
+          echo 'qualification credentials available (values not disclosed)'
+      - name: Pre-run resource gate
+        run: |
+          echo 'objective=complete preregistered universal held-out gate F1-F12'
+          echo 'candidate_blob=67ac707be93cd46c0303c54eef3d73122c72c876'
+          echo 'model=gpt-5.4-mini'
+          echo 'stop_conditions=credential failure, pack-integrity failure, candidate-identity mismatch, harness/execution failure'
+          echo 'retry_policy=no blind retries; diagnose root cause before any rerun'
       - name: Install runtime dependencies
         run: python -m pip install --disable-pip-version-check openai cryptography
       - name: Fetch exact candidate ref
@@ -65,6 +78,26 @@ jobs:
                       raise SystemExit("candidate identity mismatch")
           print(json.dumps({"status":"PASS","runs":len(rows),"candidate_sha":expected}))
           PY
+      - name: Post-run accounting summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/content-architecture-heldout-results/summary.json" ]; then
+            python - <<'PY'
+          import json, pathlib
+          p=pathlib.Path("${{ runner.temp }}/content-architecture-heldout-results/summary.json")
+          rows=json.loads(p.read_text())
+          print(json.dumps({
+            "run_records": len(rows),
+            "execution_errors": sum(1 for r in rows if r.get("error")),
+            "duration_seconds_total": round(sum(float(r.get("duration_s",0)) for r in rows),3),
+            "candidate_sha": "67ac707be93cd46c0303c54eef3d73122c72c876",
+            "model": "gpt-5.4-mini"
+          }))
+          PY
+          else
+            echo '{"run_records":0,"reason":"summary unavailable before execution"}'
+          fi
       - name: Upload evaluator-visible run evidence
         if: always()
         uses: actions/upload-artifact@v4
