@@ -72,9 +72,8 @@ jobs:
 
           root = Path('.')
           suite_path = root / 'architect/evaluation/growth-experimentation-analytics/fixtures/regression-v0.3-decision-sufficiency.json'
-          key_path = root / 'architect/evaluation/growth-experimentation-analytics/grader-regression-v0.3-decision-sufficiency.json'
           adapter = root / 'architect/evaluation/growth-experimentation-analytics/adapters/stdio_candidate_adapter.py'
-          grader = root / 'architect/evaluation/growth-experimentation-analytics/grader.py'
+          grader = root / 'architect/evaluation/growth-experimentation-analytics/grader_decision_sufficiency_v03.py'
           suite = json.loads(suite_path.read_text())
           outdir = Path(os.environ['RUNNER_TEMP']) / 'analytics-v03'
 
@@ -97,7 +96,7 @@ jobs:
               result_path = outdir / f'{fixture_id}.json'
               result_path.write_text(proc.stdout, encoding='utf-8')
               grade = subprocess.run(
-                  ['python3', str(grader), str(suite_path), str(key_path), str(result_path)],
+                  ['python3', str(grader), str(result_path)],
                   text=True,
                   stdout=subprocess.PIPE,
                   stderr=subprocess.PIPE,
