@@ -1,0 +1,40 @@
+name: Read latest Sales sealed report
+
+on:
+  push:
+    branches:
+      - diag/read-latest-sales-sealed-report-2026-08-22
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect latest Sales sealed qualification report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_id=$(gh run list --repo "$REPO" --workflow sales-fresh-sealed-qualification.yml --limit 1 --json databaseId --jq '.[0].databaseId')
+          echo "latest_run_id=$run_id"
+          mkdir -p "$RUNNER_TEMP/report"
+          gh run download "$run_id" --repo "$REPO" --name sales-fresh-sealed-qualification-report --dir "$RUNNER_TEMP/report"
+          python3 - <<'PY'
+          import json, os, pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'report'
+          files=list(root.rglob('*.json'))
+          if not files:
+              raise SystemExit('report json missing')
+          d=json.loads(files[0].read_text())
+          allow=['verdict','attempted','passed','planned','critical_hard_fail_count','family_summary','usage','stopped_early','execution_complete','model','candidate_commit','candidate_digest','pack_digest','grader_sha256','fixtures_sha256','elapsed_seconds']
+          print('SANITIZED_REPORT')
+          print(json.dumps({k:d.get(k) for k in allow if k in d}, ensure_ascii=False, indent=2, sort_keys=True))
+          PY
