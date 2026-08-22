@@ -1,6 +1,12 @@
+import importlib.util
+import pathlib
 import unittest
 
-from architect.evaluation.qualification_platform import paid_workflow_guard as g
+MODULE_PATH = pathlib.Path(__file__).with_name("paid_workflow_guard.py")
+spec = importlib.util.spec_from_file_location("paid_workflow_guard", MODULE_PATH)
+g = importlib.util.module_from_spec(spec)
+assert spec.loader is not None
+spec.loader.exec_module(g)
 
 
 class PaidWorkflowGuardTests(unittest.TestCase):
