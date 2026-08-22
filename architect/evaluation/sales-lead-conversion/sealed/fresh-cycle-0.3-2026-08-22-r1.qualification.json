@@ -1,0 +1,67 @@
+{
+  "candidate": {
+    "commit": "5adc0d315f6f63bc92df0a921040954a3541ef89",
+    "digest": "sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.3.0/manifest.json"
+  },
+  "cycle_id": "sales-0.3-fresh-independent-2026-08-22-r1",
+  "evaluation": {
+    "family_count": 12,
+    "fixture_count": 36,
+    "fixtures_file": "fixtures.json",
+    "freeze_record_file": "freeze.json",
+    "grader_file": "grader.json",
+    "per_family": 3,
+    "runner_file": "runner.py"
+  },
+  "report": {
+    "artifact_required": true,
+    "release_ledger_required": true,
+    "sanitized_required": true,
+    "validator_path": "architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py"
+  },
+  "runtime": {
+    "canary_cmd": "python architect/evaluation/sales-lead-conversion/canary_v0_3.py",
+    "canary_required": true,
+    "candidate_timeout_seconds": 180,
+    "contract_probe_argv": [
+      "python",
+      "architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py",
+      "--qualification-contract"
+    ],
+    "credential_env": "OPENAI_API_KEY",
+    "executor_cmd": "python architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py",
+    "executor_path": "architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py",
+    "model": "gpt-5.6-terra",
+    "model_timeout_seconds": 120,
+    "observable_protocol": "sales-observable-ledger-v1",
+    "protocol": "sales-lead-conversion-candidate-v1",
+    "provider": "openai-responses-api",
+    "state_protocol": "sales-state-checkpoint-v1",
+    "tool_protocol": "sales-deterministic-tools-v1",
+    "workflow_timeout_seconds": 5400
+  },
+  "sealed_pack": {
+    "ciphertext_length": 16612,
+    "ciphertext_sha256": "4ad6d1c55c0f523a8a39b2f2af2f439113ef61a00a65893b13a9523eff51f97e",
+    "decrypted_zip_sha256": "d05ff1bc244e5a3f17a3bdde342be7cb3a250c1a6393405dbddc6f94bc82c81f",
+    "key_env": "SALES_0_3_FRESH_EVAL_KEY",
+    "key_fingerprint_sha256": "e24b5e2c8b6da4fa040bfe5255d13a42629da3dbbb094d7a8de5025018fb4a4f",
+    "pack_digest": "sha256:9ddbf3d6ff47677243f9fa0ca1a2b84e887ae87aacf9c35dcb1306b0e2cbcf46",
+    "part_count": 4,
+    "parts_dir": "architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.parts",
+    "required_files": [
+      "fixtures.json",
+      "grader.json",
+      "runner.py",
+      "freeze.json"
+    ]
+  },
+  "verdict": {
+    "artifact_upload_required": true,
+    "missing_report_is_failure": true,
+    "report_validation_required": true,
+    "runner_exit_zero_required": true
+  },
+  "version": 2
+}
