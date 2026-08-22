@@ -1,0 +1,74 @@
+name: Strategist v0.1 independent sealed-pack authoring
+
+on:
+  push:
+    branches:
+      - eval/strategist-v0_1-sealed-qualification-2026-08-22
+    paths:
+      - '.github/workflows/strategist-v0_1-author-sealed-pack.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  author-and-seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      QUALIFICATION_MANIFEST: architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.qualification.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install evaluator-only dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Deterministic pre-authoring freeze and runtime checks
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py
+          python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_template_v0_1.py
+          python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack_v0_1.py
+          test "$(git rev-parse 4b84ef258b5d3d2b3fbc9549e77176b3359a501e:architect/research/growth-strategy-experiment-portfolio/candidate-professional-model-v0.1.md)" = "b22bac7a4deed11c466c014f41960f5e2deec2d1"
+          python architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py --qualification-contract > "$RUNNER_TEMP/strategist-contract.json"
+          python - <<'PY'
+          import json, pathlib
+          p=json.loads(pathlib.Path("$RUNNER_TEMP/strategist-contract.json").read_text())
+          assert p["candidate_commit"]=="4b84ef258b5d3d2b3fbc9549e77176b3359a501e"
+          assert p["candidate_digest"]=="sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92"
+          assert p["provider"]=="gemini-interactions-api"
+          assert p["input_protocol"]=="growth-strategy-experiment-portfolio-candidate-v1"
+          print("pre-authoring frozen contract PASS")
+          PY
+      - name: Require evaluator-owned credentials before any held-out model call
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY is not configured; no held-out authoring call attempted.' >&2; exit 21; }
+          test -n "$GEMINI_API_KEY" || { echo 'GEMINI_API_KEY is not configured; no held-out authoring call attempted.' >&2; exit 22; }
+      - name: Independently author and immediately seal held-out pack
+        run: python architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack_v0_1.py
+      - name: Fail-closed static platform preflight on authored manifest
+        run: |
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$QUALIFICATION_MANIFEST" \
+            --phase static
+      - name: Fail-closed sealed transport and pack-integrity preflight
+        run: |
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$QUALIFICATION_MANIFEST" \
+            --phase sealed \
+            --out-dir "$RUNNER_TEMP/strategist-sealed-preflight"
+      - name: Commit encrypted transport only
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.parts \
+                  architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.qualification.json
+          git diff --cached --quiet && { echo 'No sealed outputs generated'; exit 23; }
+          git commit -m 'eval: add independently authored sealed Strategist v0.1 heldout pack'
+          git push origin HEAD:eval/strategist-v0_1-sealed-qualification-2026-08-22
