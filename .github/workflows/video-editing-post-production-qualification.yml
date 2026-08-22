@@ -1,18 +1,19 @@
 name: Video Editing Post-Production Qualification
 
 on:
-  push:
-    branches:
-      - agent/video-editing-post-production-core
-    paths:
-      - architect/evaluation/video_editing_post_production/qualification-trigger.txt
   workflow_dispatch:
+    inputs:
+      confirm_paid_run:
+        description: 'Type RUN_PAID_QUALIFICATION to authorize paid model calls'
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   qualify:
+    if: ${{ inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout candidate
@@ -39,7 +40,6 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: test -n "$GEMINI_API_KEY" || (echo 'GEMINI_API_KEY missing; semantic calls were not attempted.' >&2; exit 2)
       - name: Critical reliability gate — exactly 3 model calls
-        if: ${{ !contains(github.event.head_commit.message, '[full-only]') }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           VE_MODEL: gemini-3.1-flash-lite
