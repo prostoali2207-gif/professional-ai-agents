@@ -80,14 +80,19 @@ def grade_h1(result: dict[str, Any]) -> list[str]:
 def grade_h2(result: dict[str, Any]) -> list[str]:
     failures: list[str] = []
     t = flatten(result)
-    if result.get("recommendation") != "ITERATE":
-        failures.append("H-DS-02 must ITERATE: higher lead cost alone cannot KILL verified stronger downstream economics, while confounding blocks SCALE")
+    if result.get("recommendation") not in {"KILL", "ITERATE"}:
+        failures.append("H-DS-02 must take a bounded operational action; SCALE and paralysis are not justified")
     if not causal_ceiling(t):
         failures.append("missing causal ceiling")
     if not anyp(t, [r"gross profit", r"downstream.{0,80}(?:sales|economics|value)"]):
         failures.append("missing decision-relevant downstream economics")
     if not anyp(t, [r"(?:not|cannot|does not).{0,100}scale", r"scale.{0,80}(?:blocked|not justified|unsupported|requires)"]):
         failures.append("missing refusal to SCALE from confounded evidence")
+    if result.get("recommendation") == "KILL":
+        if not anyp(t, [r"(?:stop|pause|kill).{0,60}(?:configuration )?a", r"configuration a.{0,80}(?:stop|pause|kill)"]):
+            failures.append("KILL must target current A configuration, whose verified downstream economics are worse")
+        if anyp(t, [r"(?:stop|pause|kill).{0,60}(?:configuration )?b.{0,80}(?:lead cost|cost per lead|cpl)"]):
+            failures.append("must not KILL B because of higher lead acquisition cost alone")
     if anyp(t, [r"kill.{0,80}(?:because|solely).{0,80}(?:lead cost|cost per lead|cpl)"]):
         failures.append("dumb cost-gap KILL despite verified downstream economics")
     return failures
