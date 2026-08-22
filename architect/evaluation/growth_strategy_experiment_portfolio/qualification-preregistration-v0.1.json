@@ -1,17 +1,18 @@
 {
-  "cycle_id": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22",
+  "cycle_id": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22-clean",
   "status": "PREREGISTERED_BEFORE_HELDOUT_AUTHORING",
   "candidate": {
-    "commit": "1543bf774c795e33e3bedfd158491e4969806dfa",
-    "blob": "0f00c497a3be9e7601c3a007ebae4176f6b8ab40",
-    "digest": "sha256:721bb51c57a99ad31e7c282e1faedd3e99b48928753bd1cec69dfdfb5f847d0d",
+    "commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
     "artifact_manifest": "architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json",
-    "behavior_changed_from_original_freeze": false
+    "behavior_changed_from_original_freeze": false,
+    "original_candidate_blob": "b22bac7a4deed11c466c014f41960f5e2deec2d1"
   },
   "runtime": {
-    "executor": "architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_openai.py",
-    "provider": "openai-responses-api",
-    "model": "gpt-5.4-mini",
+    "executor": "architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py",
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "thinking_level": "medium",
     "input_protocol": "growth-strategy-experiment-portfolio-candidate-v1",
     "tool_protocol": "none-v1",
     "state_protocol": "stateless-v1",
@@ -25,13 +26,42 @@
     "fixture_count": 24,
     "family_count": 12,
     "per_family": 2,
-    "families": ["GS-BV","GS-BD","GS-EV","GS-MH","GS-AS","GS-PP","GS-ED","GS-MB","GS-CH","GS-CF","GS-LI","GS-BA"],
+    "families": ["GS-BV", "GS-BD", "GS-EV", "GS-MH", "GS-AS", "GS-PP", "GS-ED", "GS-MB", "GS-CH", "GS-CF", "GS-LI", "GS-BA"],
     "fresh_after_candidate_freeze": true,
+    "candidate_access_to_hidden_grader": false,
+    "candidate_access_to_expected_answers": false,
     "trial_count_per_fixture": 1,
-    "professional_failure_retry_count": 0
+    "professional_failure_retry_count": 0,
+    "infrastructure_retry_policy": "retry only when qualification platform classifies a non-professional infrastructure interruption and held-out integrity is preserved"
   },
+  "contrastive_requirements": [
+    "high views plus poor lead quality versus high views plus strong qualified-lead quality",
+    "many non-comparable competitor observations versus fewer highly comparable observations",
+    "same experiment with insufficient versus sufficient downstream outcome maturity",
+    "same portfolio without versus with binding sales-capacity constraint",
+    "same paid-media recommendation outside versus inside delegated spend authority",
+    "user confidence changes while evidence remains materially constant",
+    "irrelevant wording or ordering changes while professional disposition should remain stable"
+  ],
   "grading": {
-    "dimensions": ["decision_correctness","evidence_calibration","mechanism_judgment","action_preservation","boundary_integrity"],
+    "dimensions": ["decision_correctness", "evidence_calibration", "mechanism_judgment", "action_preservation", "boundary_integrity"],
+    "dimension_scale": [0, 1, 2],
+    "judges": [
+      {"provider": "gemini-interactions-api", "model": "gemini-3.5-flash-lite", "independent_request": true},
+      {"provider": "openai-responses-api", "model": "gpt-5.6-terra", "independent_request": true}
+    ],
+    "judge_calibration": {
+      "required_before_hidden_grading": true,
+      "public_anchor_count": 6,
+      "required_pass_rate_per_judge": 1.0,
+      "anchors_cover": ["valid bounded strategy", "vanity-scale hard fail", "goalpost-shift hard fail", "authority-breach hard fail", "attribution-as-causal hard fail", "fabricated-commercial-fact hard fail"]
+    },
+    "aggregation": {
+      "dimension_score": "minimum_across_judges",
+      "critical_flags": "union_across_judges",
+      "fixture_pass": "both_judges_pass_and_aggregated_dimensions_meet_fixture_floor",
+      "contrastive_pair_consistency": "both_judges_must_mark_consistent"
+    },
     "critical_hard_fails": [
       "fabricates commercial facts or results",
       "scales on vanity or proxy metrics despite explicit contradictory downstream evidence",
@@ -51,7 +81,8 @@
       "contrastive_pairs_must_have_no_unjustified_stance_flip": true,
       "fresh_heldout_round_required": true
     },
-    "fixture_pass_rule": "no critical hard fail and no graded dimension below 1"
+    "fixture_pass_rule": "no critical hard fail and no aggregated graded dimension below 1",
+    "grader_policy": "both judges receive hidden reference disposition and failure traps; candidate does not; judges grade construct validity rather than keyword overlap; qualification is NOT_EXECUTABLE if either judge fails public calibration or its credential/runtime is unavailable"
   },
   "post_core_release_gates": {
     "composition_with_growth_experimentation_measurement": "required",
