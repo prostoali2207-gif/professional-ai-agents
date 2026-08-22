@@ -12,6 +12,14 @@ Any stage that can consume paid model/provider quota — including runtime canar
 
 The manual gate is an execution authorization, not evidence. It must not change the frozen candidate, hidden fixtures, grader, thresholds, model/runtime identity, or preregistered qualification protocol.
 
+## Deterministic enforcement
+
+`paid_workflow_guard.py` scans GitHub Actions workflows during the qualification-platform static preflight.
+
+A workflow that injects a known model/provider credential and also exposes `push` or `pull_request` is rejected by default. A narrow exception is allowed only when the automatic path itself is demonstrably non-generative/no-paid-execution and the reviewed invariants are declared in `paid-workflow-exceptions.json`.
+
+Exceptions fail closed when their required invariants disappear and stale exceptions must be removed. This prevents the policy from depending on humans remembering to audit every new workflow.
+
 ## Required order
 
 `static/no-API -> sealed/no-API -> explicit paid-run authorization -> smallest valid runtime canary when needed -> scored release run`
