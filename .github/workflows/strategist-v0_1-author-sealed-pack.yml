@@ -1,9 +1,9 @@
 name: Strategist v0.1 independent sealed-pack authoring
 
 on:
-  push:
+  pull_request:
     branches:
-      - eval/strategist-v0_1-sealed-qualification-2026-08-22
+      - infra/shared-qualification-master-key-2026-08
     paths:
       - '.github/workflows/strategist-v0_1-author-sealed-pack.yml'
   workflow_dispatch:
