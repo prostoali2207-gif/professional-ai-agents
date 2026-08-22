@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, hashlib, json, os, zipfile
+import argparse, base64, hashlib, json, os, zipfile
 from pathlib import Path
 from cryptography.fernet import Fernet, InvalidToken
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 EXPECTED = {
   "preregistration-v0.1.json":"9038358b8c372e0f1ac2ece6313b4a2f4e7d97fbde08c57f753472d65ef92e13",
@@ -11,21 +13,33 @@ EXPECTED = {
 }
 CANDIDATE_SHA="67ac707be93cd46c0303c54eef3d73122c72c876"
 STOCHASTIC={"F2","F5","F6","F11","F12"}
+MASTER_FINGERPRINT="ccff6d8c8c8f3b6ddffc5e4809b993dee5e80425d9bab39400f7e47ed0381b71"
+WRAP_CONTEXT=b"legacy-wrap/content-architecture-heldout-v0.1"
+WRAP_SALT=b"professional-ai-agents/qualification-sealed-pack/v1"
+WRAPPED_PACK_KEY=b"gAAAAABqiYLEQoJsdCf_R-WNHcOPys-gTz0S9Ry6T-fcjGgB63AyPi83Rmqk0PKG2RjaozUcitaGHNJR_FcMvjq7S-bLcRDvi62h3HICxzhQElJ7ydeqPKqfmOeFnqsUol77eCXdaKmU"
 
 def sha(path: Path)->str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def unwrap_pack_key(master: bytes)->bytes:
+    if hashlib.sha256(master).hexdigest()!=MASTER_FINGERPRINT:
+        raise SystemExit("QUALIFICATION_SEALED_PACK_MASTER_KEY fingerprint mismatch")
+    raw=HKDF(algorithm=hashes.SHA256(),length=32,salt=WRAP_SALT,info=WRAP_CONTEXT).derive(master)
+    wrapping_key=base64.urlsafe_b64encode(raw)
+    try:
+        return Fernet(wrapping_key).decrypt(WRAPPED_PACK_KEY)
+    except (InvalidToken, ValueError):
+        raise SystemExit("wrapped legacy pack key authentication failed")
 
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--parts-dir", required=True)
     ap.add_argument("--out", required=True)
     args=ap.parse_args()
-    # Migration compatibility: this already-frozen transport predates shared-key
-    # derivation. It consumes the single repository-wide master secret directly;
-    # new sealed transports derive unique per-pack keys from that master.
-    key=os.environ.get("QUALIFICATION_SEALED_PACK_MASTER_KEY","").strip().encode()
-    if not key:
+    master=os.environ.get("QUALIFICATION_SEALED_PACK_MASTER_KEY","").strip().encode()
+    if not master:
         raise SystemExit("QUALIFICATION_SEALED_PACK_MASTER_KEY missing")
+    key=unwrap_pack_key(master)
     parts_dir=Path(args.parts_dir)
     token=b"".join(p.read_bytes() for p in sorted(parts_dir.iterdir()) if p.is_file())
     if hashlib.sha256(token).hexdigest()!="d1d0fff046dfe0dae03e27a33cb5393a9d7e74b9a10d08bf4c20cf22a2f2b679":
