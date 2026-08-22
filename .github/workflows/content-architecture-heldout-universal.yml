@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - eval/content-architecture-heldout-2026-08
+  pull_request:
+    branches:
+      - infra/generic-frozen-artifact-eval-adapter-2026-08
   workflow_dispatch:
 
 permissions:
