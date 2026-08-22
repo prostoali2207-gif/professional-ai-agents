@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "cycle_id": "sales-lead-conversion-0.2-fresh-2026-08-22",
   "candidate": {
     "commit": "824216b9eb225a4509f98f1c31892a80935f3bd7",
@@ -10,14 +10,17 @@
     "executor_path": "architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py",
     "executor_cmd": "python3 architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py",
     "protocol": "sales-lead-conversion-candidate-v1",
+    "provider": "openai-responses-api",
     "model": "gpt-5.6-terra",
     "credential_env": "OPENAI_API_KEY",
     "candidate_timeout_seconds": 240,
     "model_timeout_seconds": 180,
     "workflow_timeout_seconds": 1800,
-    "canary_required": false,
-    "tool_protocol": "sales deterministic tool scenario + observable side-effect ledger",
-    "state_protocol": "initial_state/checkpoint + observable state transitions"
+    "contract_probe_argv": ["python3", "architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py", "--qualification-contract"],
+    "tool_protocol": "sales-deterministic-tools-v1",
+    "state_protocol": "sales-state-checkpoint-v1",
+    "observable_protocol": "sales-observable-ledger-v1",
+    "canary_required": false
   },
   "sealed_pack": {
     "parts_dir": "architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.2-2026-08-22.parts",
@@ -41,10 +44,14 @@
   },
   "report": {
     "sanitized_required": true,
-    "artifact_required": true
+    "artifact_required": true,
+    "validator_path": "architect/evaluation/qualification-platform/validate_sanitized_report.py",
+    "release_ledger_required": true
   },
   "verdict": {
     "runner_exit_zero_required": true,
-    "missing_report_is_failure": true
+    "missing_report_is_failure": true,
+    "report_validation_required": true,
+    "artifact_upload_required": true
   }
 }
