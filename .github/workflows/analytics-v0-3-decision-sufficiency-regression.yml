@@ -1,0 +1,117 @@
+name: Analytics v0.3 decision sufficiency regression
+
+on:
+  push:
+    branches:
+      - fix/analytics-decision-sufficiency-2026-08
+    paths:
+      - 'architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md'
+      - 'architect/evaluation/growth-experimentation-analytics/**'
+      - '.github/workflows/analytics-v0-3-decision-sufficiency-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANALYTICS_MODEL: gpt-5.6-terra
+      ANALYTICS_CANDIDATE_CMD: python3 architect/evaluation/growth-experimentation-analytics/executor_responses.py
+      ANALYTICS_CANDIDATE_MANIFEST: architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json
+      ANALYTICS_CANDIDATE_TIMEOUT_SECONDS: '240'
+      ANALYTICS_MODEL_TIMEOUT_SECONDS: '180'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify API credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY:-}" || { echo 'OPENAI_API_KEY missing' >&2; exit 2; }
+
+      - name: Verify frozen candidate component hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          manifest = json.loads(Path('architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json').read_text())
+          for component in manifest['assembly']:
+              actual = subprocess.check_output(['git','hash-object',component['path']], text=True).strip()
+              assert actual == component['git_blob_sha'], (component['path'], actual, component['git_blob_sha'])
+          print('FROZEN COMPONENT HASHES PASS')
+          PY
+
+      - name: Run targeted provider-backed regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/analytics-v03"
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+
+          root = Path('.')
+          suite_path = root / 'architect/evaluation/growth-experimentation-analytics/fixtures/regression-v0.3-decision-sufficiency.json'
+          key_path = root / 'architect/evaluation/growth-experimentation-analytics/grader-regression-v0.3-decision-sufficiency.json'
+          adapter = root / 'architect/evaluation/growth-experimentation-analytics/adapters/stdio_candidate_adapter.py'
+          grader = root / 'architect/evaluation/growth-experimentation-analytics/grader.py'
+          suite = json.loads(suite_path.read_text())
+          outdir = Path(os.environ['RUNNER_TEMP']) / 'analytics-v03'
+
+          failures = []
+          for fixture in suite['fixtures']:
+              fixture_id = fixture['fixture_id']
+              proc = subprocess.run(
+                  ['python3', str(adapter)],
+                  input=json.dumps(fixture),
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+                  env=os.environ.copy(),
+                  timeout=300,
+              )
+              if proc.returncode != 0:
+                  print(proc.stderr)
+                  failures.append(f'{fixture_id}: executor failed')
+                  continue
+              result_path = outdir / f'{fixture_id}.json'
+              result_path.write_text(proc.stdout, encoding='utf-8')
+              grade = subprocess.run(
+                  ['python3', str(grader), str(suite_path), str(key_path), str(result_path)],
+                  text=True,
+                  stdout=subprocess.PIPE,
+                  stderr=subprocess.PIPE,
+              )
+              print(f'--- {fixture_id} result ---')
+              print(proc.stdout)
+              print(f'--- {fixture_id} grade ---')
+              print(grade.stdout)
+              if grade.returncode != 0:
+                  failures.append(f'{fixture_id}: behavioral regression failed')
+
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          print('ANALYTICS V0.3 TARGETED REGRESSION PASS')
+          PY
+
+      - name: Preserve regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-v0-3-decision-sufficiency-regression
+          path: ${{ runner.temp }}/analytics-v03/*.json
+          if-no-files-found: ignore
+          retention-days: 14
