@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -117,7 +116,9 @@ def grade_ds02(result: dict[str, Any]) -> list[str]:
         failures.append("missing fixed-horizon stopping-rule recognition")
     if not has_any(t, [
         r"no.{0,50}(?:safety|operational).{0,50}guardrail.{0,50}(?:trigger|reported)",
-        r"none.{0,40}(?:guardrail).{0,40}(?:trigger|reported)",
+        r"none.{0,40}guardrail.{0,40}(?:trigger|reported)",
+        r"no such guardrail.{0,30}(?:trigger|reported)",
+        r"guardrail.{0,40}(?:none|not).{0,40}(?:trigger|reported)",
     ]):
         failures.append("missing no-guardrail-trigger finding")
     if has_any(t, [r"kill b now", r"stop b now"]) and not has_any(t, [r"do not kill b now", r"should not .*kill", r"not .*early .*stop"]):
