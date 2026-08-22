@@ -40,18 +40,32 @@
     },
     "sealed_pack": {
       "type": "object", "additionalProperties": false,
-      "required": ["parts_dir", "part_count", "ciphertext_length", "ciphertext_sha256", "key_env", "key_fingerprint_sha256", "decrypted_zip_sha256", "pack_digest", "required_files"],
+      "required": ["parts_dir", "part_count", "ciphertext_length", "ciphertext_sha256", "key_fingerprint_sha256", "decrypted_zip_sha256", "pack_digest", "required_files"],
       "properties": {
         "parts_dir": {"type": "string", "minLength": 1},
         "part_count": {"type": "integer", "minimum": 1},
         "ciphertext_length": {"type": "integer", "minimum": 1},
         "ciphertext_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "key_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"},
+        "key_derivation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scheme", "master_env", "context"],
+          "properties": {
+            "scheme": {"const": "hkdf-sha256-v1"},
+            "master_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"},
+            "context": {"type": "string", "minLength": 1}
+          }
+        },
         "key_fingerprint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "decrypted_zip_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "pack_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "required_files": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
-      }
+      },
+      "oneOf": [
+        {"required": ["key_env"], "not": {"required": ["key_derivation"]}},
+        {"required": ["key_derivation"], "not": {"required": ["key_env"]}}
+      ]
     },
     "evaluation": {
       "type": "object", "additionalProperties": false,

@@ -12,6 +12,8 @@ import tempfile
 import zipfile
 from collections import Counter
 
+from sealed_pack_keys import SealedKeyError, key_fingerprint_sha256, resolve_effective_key
+
 
 class PreflightError(RuntimeError):
     def __init__(self, code: str, message: str):
@@ -164,11 +166,14 @@ def verify_sealed_pack(m: dict, output_dir: Path) -> None:
     if sha256_bytes(token) != s["ciphertext_sha256"]:
         fail("SEALED_TRANSPORT_INVALID", "ciphertext sha256 mismatch")
 
-    key = os.environ.get(s["key_env"], "").encode().strip()
-    if not key:
-        fail("CREDENTIAL_MISSING", f"sealed pack key missing: {s['key_env']}")
-    if sha256_bytes(key) != s["key_fingerprint_sha256"]:
-        fail("SEALED_KEY_MISMATCH", "sealed key fingerprint mismatch")
+    try:
+        key = resolve_effective_key(s)
+    except SealedKeyError as exc:
+        message = str(exc)
+        failure_class = "CREDENTIAL_MISSING" if "missing" in message else "SEALED_KEY_DERIVATION_INVALID"
+        fail(failure_class, message)
+    if key_fingerprint_sha256(key) != s["key_fingerprint_sha256"]:
+        fail("SEALED_KEY_MISMATCH", "effective sealed-pack key fingerprint mismatch")
     try:
         raw = Fernet(key).decrypt(token)
     except (InvalidToken, ValueError):
