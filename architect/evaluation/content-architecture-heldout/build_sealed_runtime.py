@@ -20,9 +20,12 @@ def main():
     ap.add_argument("--parts-dir", required=True)
     ap.add_argument("--out", required=True)
     args=ap.parse_args()
-    key=os.environ.get("CONTENT_ARCHITECTURE_SEALED_PACK_KEY","").strip().encode()
+    # Migration compatibility: this already-frozen transport predates shared-key
+    # derivation. It consumes the single repository-wide master secret directly;
+    # new sealed transports derive unique per-pack keys from that master.
+    key=os.environ.get("QUALIFICATION_SEALED_PACK_MASTER_KEY","").strip().encode()
     if not key:
-        raise SystemExit("CONTENT_ARCHITECTURE_SEALED_PACK_KEY missing")
+        raise SystemExit("QUALIFICATION_SEALED_PACK_MASTER_KEY missing")
     parts_dir=Path(args.parts_dir)
     token=b"".join(p.read_bytes() for p in sorted(parts_dir.iterdir()) if p.is_file())
     if hashlib.sha256(token).hexdigest()!="d1d0fff046dfe0dae03e27a33cb5393a9d7e74b9a10d08bf4c20cf22a2f2b679":
