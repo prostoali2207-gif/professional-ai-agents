@@ -105,6 +105,8 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           SALES_MODEL: gpt-5.6-terra
+          SALES_CANDIDATE_TIMEOUT_SECONDS: '240'
+          SALES_MODEL_TIMEOUT_SECONDS: '180'
         run: |
           set +e
           PACK="$RUNNER_TEMP/sales-sealed-pack"
