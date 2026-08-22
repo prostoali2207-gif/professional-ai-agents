@@ -8,6 +8,13 @@ on:
       - 'architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md'
       - 'architect/evaluation/growth-experimentation-analytics/**'
       - '.github/workflows/analytics-v0-3-decision-sufficiency-regression.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md'
+      - 'architect/evaluation/growth-experimentation-analytics/**'
+      - '.github/workflows/analytics-v0-3-decision-sufficiency-regression.yml'
   workflow_dispatch:
 
 permissions:
