@@ -53,3 +53,62 @@ jobs:
       - name: Enforce verdict
         if: always()
         run: test "${qualification_exit_code:-missing}" = "0"
+
+  durable-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout evaluator
+        uses: actions/checkout@v4
+        with:
+          path: evaluator
+      - name: Checkout frozen Workflow Controller
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-sales-growth-system
+          ref: d7430fa99c10cfc89dd0f12872970e4b629bf9e6
+          path: candidate
+          fetch-depth: 1
+      - name: Checkout real historical Elantra experiment artifacts
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-sales-growth-system
+          ref: e864b2975eea12bfe2d6c0eaa636ba21e764c8c0
+          path: experiment
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify exact inputs
+        run: |
+          test "$(git -C candidate rev-parse HEAD)" = "d7430fa99c10cfc89dd0f12872970e4b629bf9e6"
+          test "$(git -C experiment rev-parse HEAD)" = "e864b2975eea12bfe2d6c0eaa636ba21e764c8c0"
+      - name: Start shadow run and persist checkpoint
+        run: |
+          node evaluator/architect/evaluation/workflow-controller/independent-heldout/run_shadow_replay.mjs \
+            start candidate experiment \
+            "$RUNNER_TEMP/workflow-controller-shadow.jsonl" \
+            "$RUNNER_TEMP/workflow-controller-shadow-checkpoint.json"
+      - name: Resume in a fresh process after durable checkpoint
+        run: |
+          node evaluator/architect/evaluation/workflow-controller/independent-heldout/run_shadow_replay.mjs \
+            resume candidate experiment \
+            "$RUNNER_TEMP/workflow-controller-shadow.jsonl" \
+            "$RUNNER_TEMP/workflow-controller-shadow-checkpoint.json"
+      - name: Independently replay full ledger
+        run: |
+          node evaluator/architect/evaluation/workflow-controller/independent-heldout/run_shadow_replay.mjs \
+            replay candidate experiment \
+            "$RUNNER_TEMP/workflow-controller-shadow.jsonl" \
+            "$RUNNER_TEMP/workflow-controller-shadow-checkpoint.json" \
+            "$RUNNER_TEMP/workflow-controller-shadow-report.json"
+      - name: Publish sanitized shadow evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-controller-durable-shadow-evidence
+          path: |
+            ${{ runner.temp }}/workflow-controller-shadow-report.json
+            ${{ runner.temp }}/workflow-controller-shadow.jsonl
+            ${{ runner.temp }}/workflow-controller-shadow-checkpoint.json
+          if-no-files-found: error
+          retention-days: 14
