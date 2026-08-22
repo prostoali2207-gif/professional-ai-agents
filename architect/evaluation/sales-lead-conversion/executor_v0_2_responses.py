@@ -3,7 +3,9 @@
 
 This wrapper reuses the already-qualified Responses execution mechanism while
 rebinding only the frozen candidate identity. It does not read grader data or
-sealed fixtures.
+sealed fixtures. ``--qualification-contract`` is a deterministic no-API probe
+used by qualification infrastructure to prove runtime/protocol compatibility
+before any scored model call.
 """
 from __future__ import annotations
 import io, json, sys
@@ -15,8 +17,26 @@ common.MANIFEST_PATH = "architect/library/cores/sales-lead-conversion/0.2.0/mani
 
 import executor_responses as impl
 
+CONTRACT = {
+    "contract_version": 1,
+    "candidate_commit": common.FROZEN_COMMIT,
+    "candidate_digest": common.FROZEN_DIGEST,
+    "core": "sales-lead-conversion/0.2.0",
+    "executor": "sales-lead-conversion/executor_v0_2_responses.py@v1",
+    "provider": "openai-responses-api",
+    "input_protocol": "sales-lead-conversion-candidate-v1",
+    "tool_protocol": "sales-deterministic-tools-v1",
+    "state_protocol": "sales-state-checkpoint-v1",
+    "observable_protocol": "sales-observable-ledger-v1",
+}
+
 
 def main() -> int:
+    if len(sys.argv) == 2 and sys.argv[1] == "--qualification-contract":
+        json.dump(CONTRACT, sys.stdout, ensure_ascii=False, sort_keys=True)
+        sys.stdout.write("\n")
+        return 0
+
     original = sys.stdout
     buf = io.StringIO()
     sys.stdout = buf
