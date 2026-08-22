@@ -8,89 +8,12 @@
   "properties": {
     "version": {"const": 2},
     "cycle_id": {"type": "string", "minLength": 1},
-    "candidate": {
-      "type": "object", "additionalProperties": false,
-      "required": ["commit", "digest", "manifest_path"],
-      "properties": {
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-        "manifest_path": {"type": "string", "minLength": 1}
-      }
-    },
-    "runtime": {
-      "type": "object", "additionalProperties": false,
-      "required": ["executor_path", "executor_cmd", "protocol", "provider", "model", "credential_env", "candidate_timeout_seconds", "model_timeout_seconds", "workflow_timeout_seconds", "contract_probe_argv", "tool_protocol", "state_protocol", "observable_protocol", "canary_required"],
-      "properties": {
-        "executor_path": {"type": "string", "minLength": 1},
-        "executor_cmd": {"type": "string", "minLength": 1},
-        "protocol": {"type": "string", "minLength": 1},
-        "provider": {"type": "string", "minLength": 1},
-        "model": {"type": "string", "minLength": 1},
-        "credential_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"},
-        "candidate_timeout_seconds": {"type": "integer", "minimum": 2},
-        "model_timeout_seconds": {"type": "integer", "minimum": 1},
-        "workflow_timeout_seconds": {"type": "integer", "minimum": 3},
-        "contract_probe_argv": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-        "tool_protocol": {"type": "string", "minLength": 1},
-        "state_protocol": {"type": "string", "minLength": 1},
-        "observable_protocol": {"type": "string", "minLength": 1},
-        "canary_required": {"type": "boolean"},
-        "canary_cmd": {"type": "string", "minLength": 1}
-      }
-    },
-    "sealed_pack": {
-      "type": "object", "additionalProperties": false,
-      "required": ["parts_dir", "part_count", "ciphertext_length", "ciphertext_sha256", "key_env", "key_fingerprint_sha256", "decrypted_zip_sha256", "pack_digest", "required_files"],
-      "properties": {
-        "parts_dir": {"type": "string", "minLength": 1},
-        "part_count": {"type": "integer", "minimum": 1},
-        "ciphertext_length": {"type": "integer", "minimum": 1},
-        "ciphertext_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "key_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"},
-        "key_fingerprint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "decrypted_zip_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "pack_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-        "required_files": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
-      }
-    },
-    "evaluation": {
-      "type": "object", "additionalProperties": false,
-      "required": ["fixture_count", "family_count", "per_family", "fixtures_file", "grader_file", "runner_file", "freeze_record_file"],
-      "properties": {
-        "fixture_count": {"type": "integer", "minimum": 1},
-        "family_count": {"type": "integer", "minimum": 1},
-        "per_family": {"type": "integer", "minimum": 1},
-        "fixtures_file": {"type": "string", "minLength": 1},
-        "grader_file": {"type": "string", "minLength": 1},
-        "runner_file": {"type": "string", "minLength": 1},
-        "freeze_record_file": {"type": "string", "minLength": 1}
-      }
-    },
-    "report": {
-      "type": "object", "additionalProperties": false,
-      "required": ["sanitized_required", "artifact_required", "validator_path", "release_ledger_required"],
-      "properties": {
-        "sanitized_required": {"const": true},
-        "artifact_required": {"const": true},
-        "validator_path": {"type": "string", "minLength": 1},
-        "release_ledger_required": {"const": true}
-      }
-    },
-    "verdict": {
-      "type": "object", "additionalProperties": false,
-      "required": ["runner_exit_zero_required", "missing_report_is_failure", "report_validation_required", "artifact_upload_required"],
-      "properties": {
-        "runner_exit_zero_required": {"const": true},
-        "missing_report_is_failure": {"const": true},
-        "report_validation_required": {"const": true},
-        "artifact_upload_required": {"const": true}
-      }
-    }
+    "candidate": {"type": "object", "additionalProperties": false, "required": ["commit", "digest", "manifest_path"], "properties": {"commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "manifest_path": {"type": "string", "minLength": 1}}},
+    "runtime": {"type": "object", "additionalProperties": false, "required": ["executor_path", "executor_cmd", "protocol", "provider", "model", "credential_env", "candidate_timeout_seconds", "model_timeout_seconds", "workflow_timeout_seconds", "contract_probe_argv", "tool_protocol", "state_protocol", "observable_protocol", "canary_required"], "properties": {"executor_path": {"type": "string", "minLength": 1}, "executor_cmd": {"type": "string", "minLength": 1}, "protocol": {"type": "string", "minLength": 1}, "provider": {"type": "string", "minLength": 1}, "model": {"type": "string", "minLength": 1}, "credential_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"}, "candidate_timeout_seconds": {"type": "integer", "minimum": 2}, "model_timeout_seconds": {"type": "integer", "minimum": 1}, "workflow_timeout_seconds": {"type": "integer", "minimum": 3}, "contract_probe_argv": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}, "tool_protocol": {"type": "string", "minLength": 1}, "state_protocol": {"type": "string", "minLength": 1}, "observable_protocol": {"type": "string", "minLength": 1}, "canary_required": {"type": "boolean"}, "canary_cmd": {"type": "string", "minLength": 1}}},
+    "sealed_pack": {"type": "object", "additionalProperties": false, "required": ["parts_dir", "part_count", "ciphertext_length", "ciphertext_sha256", "key_fingerprint_sha256", "decrypted_zip_sha256", "pack_digest", "required_files"], "properties": {"parts_dir": {"type": "string", "minLength": 1}, "part_count": {"type": "integer", "minimum": 1}, "ciphertext_length": {"type": "integer", "minimum": 1}, "ciphertext_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "key_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"}, "key_derivation": {"type": "object", "additionalProperties": false, "required": ["scheme", "master_env", "context"], "properties": {"scheme": {"const": "hkdf-sha256-v1"}, "master_env": {"type": "string", "pattern": "^[A-Z_][A-Z0-9_]*$"}, "context": {"type": "string", "minLength": 1}}}, "key_fingerprint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "decrypted_zip_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "pack_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "required_files": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}, "oneOf": [{"required": ["key_env"], "not": {"required": ["key_derivation"]}}, {"required": ["key_derivation"], "not": {"required": ["key_env"]}}]},
+    "evaluation": {"type": "object", "additionalProperties": false, "required": ["fixture_count", "family_count", "per_family", "fixtures_file", "grader_file", "runner_file", "freeze_record_file"], "properties": {"fixture_count": {"type": "integer", "minimum": 1}, "family_count": {"type": "integer", "minimum": 1}, "per_family": {"type": "integer", "minimum": 1}, "fixtures_file": {"type": "string", "minLength": 1}, "grader_file": {"type": "string", "minLength": 1}, "runner_file": {"type": "string", "minLength": 1}, "freeze_record_file": {"type": "string", "minLength": 1}}},
+    "report": {"type": "object", "additionalProperties": false, "required": ["sanitized_required", "artifact_required", "validator_path", "release_ledger_required"], "properties": {"sanitized_required": {"const": true}, "artifact_required": {"const": true}, "validator_path": {"type": "string", "minLength": 1}, "release_ledger_required": {"const": true}}},
+    "verdict": {"type": "object", "additionalProperties": false, "required": ["runner_exit_zero_required", "missing_report_is_failure", "report_validation_required", "artifact_upload_required"], "properties": {"runner_exit_zero_required": {"const": true}, "missing_report_is_failure": {"const": true}, "report_validation_required": {"const": true}, "artifact_upload_required": {"const": true}}}
   },
-  "allOf": [
-    {
-      "if": {"properties": {"runtime": {"properties": {"canary_required": {"const": true}}}}},
-      "then": {"properties": {"runtime": {"required": ["canary_cmd"]}}}
-    }
-  ]
+  "allOf": [{"if": {"properties": {"runtime": {"properties": {"canary_required": {"const": true}}}}}, "then": {"properties": {"runtime": {"required": ["canary_cmd"]}}}}]
 }
