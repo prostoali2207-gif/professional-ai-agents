@@ -8,7 +8,6 @@ import os
 from pathlib import Path, PurePosixPath
 import py_compile
 import subprocess
-import sys
 import tempfile
 import zipfile
 from collections import Counter
@@ -35,28 +34,21 @@ def git(*args: str) -> str:
         fail("CANDIDATE_UNAVAILABLE", exc.output.strip() or "git object unavailable")
 
 
-def validate_manifest_shape(m: dict) -> None:
-    required = {"version", "cycle_id", "candidate", "runtime", "sealed_pack", "evaluation", "report", "verdict"}
-    missing = required - set(m)
-    if missing:
-        fail("RUNTIME_CONTRACT_MISMATCH", f"manifest missing keys: {sorted(missing)}")
-    if m.get("version") != 1:
-        fail("RUNTIME_CONTRACT_MISMATCH", "unsupported qualification manifest version")
-    c = m["candidate"]
-    if len(c.get("commit", "")) != 40 or not c.get("digest", "").startswith("sha256:"):
-        fail("RUNTIME_CONTRACT_MISMATCH", "invalid candidate identity declaration")
-    r = m["runtime"]
-    for key in ("executor_path", "executor_cmd", "protocol", "model", "credential_env"):
-        if not r.get(key):
-            fail("RUNTIME_CONTRACT_MISMATCH", f"runtime.{key} missing")
-    s = m["sealed_pack"]
-    for key in ("parts_dir", "key_env", "ciphertext_sha256", "key_fingerprint_sha256", "decrypted_zip_sha256", "pack_digest"):
-        if not s.get(key):
-            fail("RUNTIME_CONTRACT_MISMATCH", f"sealed_pack.{key} missing")
-    if m["report"].get("sanitized_required") is not True or m["report"].get("artifact_required") is not True:
-        fail("REPORT_INVALID", "sanitized report and artifact publication must be mandatory")
-    if m["verdict"].get("runner_exit_zero_required") is not True or m["verdict"].get("missing_report_is_failure") is not True:
-        fail("VERDICT_ENFORCEMENT_FAILED", "fail-closed verdict contract required")
+def validate_manifest_schema(m: dict, schema_path: Path) -> None:
+    try:
+        import jsonschema
+    except ImportError:
+        fail("RUNTIME_CONTRACT_MISMATCH", "jsonschema dependency missing")
+    try:
+        schema = json.loads(schema_path.read_text())
+        jsonschema.Draft202012Validator(schema).validate(m)
+    except OSError as exc:
+        fail("RUNTIME_CONTRACT_MISMATCH", f"qualification schema unavailable: {exc}")
+    except json.JSONDecodeError as exc:
+        fail("RUNTIME_CONTRACT_MISMATCH", f"qualification schema invalid JSON: {exc}")
+    except jsonschema.ValidationError as exc:
+        location = ".".join(str(x) for x in exc.absolute_path) or "$"
+        fail("RUNTIME_CONTRACT_MISMATCH", f"manifest schema violation at {location}: {exc.message}")
 
 
 def verify_candidate(m: dict) -> None:
@@ -77,7 +69,7 @@ def verify_candidate(m: dict) -> None:
     for path in paths:
         try:
             blob = subprocess.check_output(["git", "rev-parse", f"{commit}:{path}"], text=True).strip()
-        except subprocess.CalledProcessError as exc:
+        except subprocess.CalledProcessError:
             fail("CANDIDATE_UNAVAILABLE", f"candidate artifact path unavailable: {path}")
         canonical += f"{path}:{blob}\n"
     actual = "sha256:" + hashlib.sha256(canonical.encode()).hexdigest()
@@ -90,12 +82,16 @@ def verify_runtime_static(m: dict, require_runtime_secret: bool) -> None:
     path = Path(r["executor_path"])
     if not path.is_file():
         fail("RUNTIME_CONTRACT_MISMATCH", f"executor missing: {path}")
-    if path.suffix == ".py":
-        try:
-            with tempfile.TemporaryDirectory() as td:
-                py_compile.compile(str(path), cfile=str(Path(td) / "executor.pyc"), doraise=True)
-        except py_compile.PyCompileError as exc:
-            fail("RUNTIME_CONTRACT_MISMATCH", f"executor syntax invalid: {exc.msg}")
+    report_validator = Path(m["report"]["validator_path"])
+    if not report_validator.is_file():
+        fail("REPORT_INVALID", f"report validator missing: {report_validator}")
+    for script in (path, report_validator):
+        if script.suffix == ".py":
+            try:
+                with tempfile.TemporaryDirectory() as td:
+                    py_compile.compile(str(script), cfile=str(Path(td) / "compiled.pyc"), doraise=True)
+            except py_compile.PyCompileError as exc:
+                fail("RUNTIME_CONTRACT_MISMATCH", f"python syntax invalid in {script}: {exc.msg}")
     model_timeout = int(r["model_timeout_seconds"])
     candidate_timeout = int(r["candidate_timeout_seconds"])
     workflow_timeout = int(r["workflow_timeout_seconds"])
@@ -107,6 +103,40 @@ def verify_runtime_static(m: dict, require_runtime_secret: bool) -> None:
         fail("RUNTIME_CONTRACT_MISMATCH", "canary required but canary_cmd missing")
     if require_runtime_secret and not os.environ.get(r["credential_env"], "").strip():
         fail("CREDENTIAL_MISSING", f"required runtime credential missing: {r['credential_env']}")
+
+
+def verify_runtime_contract_probe(m: dict) -> None:
+    r = m["runtime"]
+    try:
+        proc = subprocess.run(
+            r["contract_probe_argv"],
+            text=True,
+            capture_output=True,
+            check=True,
+            timeout=min(30, int(r["candidate_timeout_seconds"])),
+            env={k: v for k, v in os.environ.items() if k != r["credential_env"]},
+        )
+        observed = json.loads(proc.stdout)
+    except subprocess.TimeoutExpired:
+        fail("RUNTIME_CONTRACT_MISMATCH", "runtime contract probe timed out")
+    except subprocess.CalledProcessError as exc:
+        fail("RUNTIME_CONTRACT_MISMATCH", f"runtime contract probe failed: {exc.stderr.strip()}")
+    except json.JSONDecodeError:
+        fail("RUNTIME_CONTRACT_MISMATCH", "runtime contract probe did not return JSON")
+    expected = {
+        "candidate_commit": m["candidate"]["commit"],
+        "candidate_digest": m["candidate"]["digest"],
+        "provider": r["provider"],
+        "input_protocol": r["protocol"],
+        "tool_protocol": r["tool_protocol"],
+        "state_protocol": r["state_protocol"],
+        "observable_protocol": r["observable_protocol"],
+    }
+    for key, value in expected.items():
+        if observed.get(key) != value:
+            fail("RUNTIME_CONTRACT_MISMATCH", f"runtime contract mismatch for {key}: expected {value!r}, got {observed.get(key)!r}")
+    if observed.get("contract_version") != 1:
+        fail("RUNTIME_CONTRACT_MISMATCH", "unsupported executor qualification contract version")
 
 
 def safe_extract(zf: zipfile.ZipFile, target: Path) -> None:
@@ -141,7 +171,7 @@ def verify_sealed_pack(m: dict, output_dir: Path) -> None:
         fail("SEALED_KEY_MISMATCH", "sealed key fingerprint mismatch")
     try:
         raw = Fernet(key).decrypt(token)
-    except (InvalidToken, ValueError) as exc:
+    except (InvalidToken, ValueError):
         fail("SEALED_AUTH_FAILED", "sealed authentication/decryption failed")
     if sha256_bytes(raw) != s["decrypted_zip_sha256"]:
         fail("PACK_INTEGRITY_INVALID", "decrypted zip sha256 mismatch")
@@ -160,9 +190,8 @@ def verify_sealed_pack(m: dict, output_dir: Path) -> None:
         fail("PACK_INTEGRITY_INVALID", "required sealed pack file missing")
 
     e = m["evaluation"]
-    freeze_path = output_dir / e["freeze_record_file"]
     try:
-        freeze = json.loads(freeze_path.read_text())
+        freeze = json.loads((output_dir / e["freeze_record_file"]).read_text())
     except (OSError, json.JSONDecodeError) as exc:
         fail("PACK_INTEGRITY_INVALID", f"invalid freeze record: {exc}")
 
@@ -219,16 +248,18 @@ def run_canary(m: dict) -> None:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--manifest", required=True)
+    p.add_argument("--schema", default="architect/evaluation/qualification-platform/qualification-manifest.schema.json")
     p.add_argument("--phase", choices=("static", "sealed", "canary", "all"), default="all")
     p.add_argument("--require-runtime-secret", action="store_true")
     p.add_argument("--out-dir")
     args = p.parse_args()
     try:
         m = json.loads(Path(args.manifest).read_text())
-        validate_manifest_shape(m)
+        validate_manifest_schema(m, Path(args.schema))
         if args.phase in ("static", "all"):
             verify_candidate(m)
             verify_runtime_static(m, args.require_runtime_secret)
+            verify_runtime_contract_probe(m)
         if args.phase in ("sealed", "all"):
             out = Path(args.out_dir or tempfile.mkdtemp(prefix="qualification-pack-"))
             verify_sealed_pack(m, out)
