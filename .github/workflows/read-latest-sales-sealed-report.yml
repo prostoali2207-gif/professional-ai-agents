@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - diag/read-latest-sales-sealed-report-2026-08-22
+  pull_request:
+    branches:
+      - main
 
 permissions:
   actions: read
