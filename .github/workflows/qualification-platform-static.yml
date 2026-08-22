@@ -24,6 +24,8 @@ jobs:
           python-version: '3.11'
       - name: Compile generic preflight
         run: python3 -m py_compile architect/evaluation/qualification-platform/qualification_preflight.py
+      - name: Run deterministic preflight regressions
+        run: python3 -m unittest architect/evaluation/qualification-platform/test_qualification_preflight.py
       - name: Validate migrated Sales 0.2 static contract without API
         run: |
           python3 architect/evaluation/qualification-platform/qualification_preflight.py \
