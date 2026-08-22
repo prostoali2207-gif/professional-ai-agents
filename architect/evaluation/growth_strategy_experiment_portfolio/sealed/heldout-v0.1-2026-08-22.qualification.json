@@ -1,0 +1,71 @@
+{
+  "candidate": {
+    "commit": "4b84ef258b5d3d2b3fbc9549e77176b3359a501e",
+    "digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "manifest_path": "architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json"
+  },
+  "cycle_id": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22",
+  "evaluation": {
+    "family_count": 12,
+    "fixture_count": 24,
+    "fixtures_file": "fixtures.json",
+    "freeze_record_file": "freeze-record.json",
+    "grader_file": "grader.json",
+    "per_family": 2,
+    "runner_file": "runner.py"
+  },
+  "report": {
+    "artifact_required": true,
+    "release_ledger_required": true,
+    "sanitized_required": true,
+    "validator_path": "architect/evaluation/qualification-platform/validate_sanitized_report.py"
+  },
+  "runtime": {
+    "canary_cmd": "python3 architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py --canary",
+    "canary_required": true,
+    "candidate_timeout_seconds": 180,
+    "contract_probe_argv": [
+      "python3",
+      "architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py",
+      "--qualification-contract"
+    ],
+    "credential_env": "GEMINI_API_KEY",
+    "executor_cmd": "python3 architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py",
+    "executor_path": "architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py",
+    "model": "gemini-3.5-flash-lite",
+    "model_timeout_seconds": 120,
+    "observable_protocol": "final-output-only-v1",
+    "protocol": "growth-strategy-experiment-portfolio-candidate-v1",
+    "provider": "gemini-interactions-api",
+    "state_protocol": "stateless-v1",
+    "tool_protocol": "none-v1",
+    "workflow_timeout_seconds": 1800
+  },
+  "sealed_pack": {
+    "ciphertext_length": 15244,
+    "ciphertext_sha256": "f77aee4d0a8901023c8c7d9fb468f3021c2b404d040ae495c8157657e257ca22",
+    "decrypted_zip_sha256": "a9ed99c194ba48bc04f4f0f9b860cd8d7b3a98409e3cb611999affd3b807f084",
+    "key_derivation": {
+      "context": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22",
+      "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
+      "scheme": "hkdf-sha256-v1"
+    },
+    "key_fingerprint_sha256": "c72f83daad0b2943892b32dd5809b84a0806d1d224c5f7fb729db61f483bd532",
+    "pack_digest": "sha256:87282caa1d50535db72bec6ffb4f58c0b5d3ebbe2c124979b72c3bbd0ecbd815",
+    "part_count": 5,
+    "parts_dir": "architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.parts",
+    "required_files": [
+      "fixtures.json",
+      "grader.json",
+      "runner.py",
+      "freeze-record.json"
+    ]
+  },
+  "verdict": {
+    "artifact_upload_required": true,
+    "missing_report_is_failure": true,
+    "report_validation_required": true,
+    "runner_exit_zero_required": true
+  },
+  "version": 2
+}
