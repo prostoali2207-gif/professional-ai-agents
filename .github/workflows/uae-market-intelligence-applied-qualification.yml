@@ -1,0 +1,73 @@
+name: UAE Market Intelligence Applied Qualification
+
+on:
+  push:
+    branches:
+      - agent/market-intelligence-core-2026-08-20
+    paths:
+      - 'architect/evaluation/uae-market-intelligence-applied-trigger.txt'
+      - '.github/workflows/uae-market-intelligence-applied-qualification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify-applied:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Architect repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Checkout pinned applied candidate branch
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-sales-growth-system
+          ref: agent/market-intelligence-specialization-2026-08-20
+          path: applied
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Deterministic preflight
+        working-directory: applied
+        run: |
+          python -m py_compile evaluation/market-intelligence/run-qualification.py
+          python - <<'PY'
+          import json
+          s=json.load(open('data-schemas/market-intelligence-report.schema.json'))
+          assert 'test_candidates' not in json.dumps(s)
+          assert s['properties']['research_contract']['properties']['downstream_owner']['const']=='STRATEGIST'
+          assert s['properties']['strategist_handoff']['properties']['owner']['const']=='STRATEGIST'
+          print('applied deterministic contract OK')
+          PY
+
+      - name: Require existing Architect Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY" || (echo 'Architect GEMINI_API_KEY missing; semantic calls not attempted.' >&2; exit 2)
+
+      - name: Run UAE applied delta and practical qualification
+        working-directory: applied
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          UAE_MI_MODEL: gemini-3.1-flash-lite
+          GEMINI_THINKING_LEVEL: medium
+          UAE_MI_TRIALS: '3'
+          UAE_MI_429_BACKOFF_SECONDS: '35'
+        run: |
+          rm -rf .tmp/uae-market-intelligence
+          python evaluation/market-intelligence/run-qualification.py
+
+      - name: Upload sealed applied evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uae-market-intelligence-applied-${{ github.sha }}
+          path: applied/.tmp/uae-market-intelligence
+          if-no-files-found: ignore
