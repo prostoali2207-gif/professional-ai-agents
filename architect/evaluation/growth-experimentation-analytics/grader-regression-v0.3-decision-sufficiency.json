@@ -4,7 +4,7 @@
     "REG-DS-01": {
       "allowed_recommendations": ["KILL", "ITERATE"],
       "required_findings": [
-        "causal effect not established because comparison is confounded",
+        "causal question unresolved",
         "current configuration B commercially unacceptable to continue funding",
         "stopping B reversible",
         "continued spend has cost",
