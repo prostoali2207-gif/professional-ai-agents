@@ -1,18 +1,19 @@
 name: External Automotive Video Qualification
 
 on:
-  push:
-    branches:
-      - agent/video-editing-post-production-core
-    paths:
-      - architect/evaluation/external_automotive_video_qualification_trigger.txt
   workflow_dispatch:
+    inputs:
+      confirm_paid_run:
+        description: 'Type RUN_PAID_QUALIFICATION to authorize paid model calls'
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   qualify:
+    if: ${{ inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout evaluator repository
