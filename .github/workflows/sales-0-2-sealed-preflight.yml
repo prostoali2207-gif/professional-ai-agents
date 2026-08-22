@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - eval/sales-0.2-sealed-pack-2026-08-22
+      - infra/generic-qualification-platform-2026-08-22
   pull_request:
     branches:
       - main
@@ -16,6 +17,8 @@ jobs:
   preflight:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      SALES_SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,71 +26,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify frozen Sales 0.2 candidate
-        shell: bash
-        run: |
-          set -euo pipefail
-          git cat-file -e 824216b9eb225a4509f98f1c31892a80935f3bd7^{commit}
-          python3 - <<'PY'
-          import hashlib, json, subprocess
-          commit='824216b9eb225a4509f98f1c31892a80935f3bd7'
-          expected='sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728'
-          path='architect/library/cores/sales-lead-conversion/0.2.0/manifest.json'
-          manifest=json.loads(subprocess.check_output(['git','show',f'{commit}:{path}'],text=True))
-          paths=manifest['artifact']['paths']
-          canonical=''.join(f"{p}:{subprocess.check_output(['git','rev-parse',f'{commit}:{p}'],text=True).strip()}\n" for p in paths)
-          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
-          assert actual==expected==manifest['artifact']['content_digest'], (actual,expected)
-          print('frozen Sales 0.2 candidate verified')
-          PY
       - name: Install evaluator crypto dependency
         run: python -m pip install --disable-pip-version-check cryptography
-      - name: Reconstruct decrypt and verify fresh sealed pack
-        env:
-          SEALED_PACK_KEY: ${{ secrets.SALES_SEALED_PACK_KEY }}
-        shell: bash
+      - name: Static qualification preflight
         run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import hashlib, json, os, pathlib, zipfile
-          from cryptography.fernet import Fernet, InvalidToken
-          root=pathlib.Path('architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.2-2026-08-22.parts')
-          parts=[root/f'{i:02d}' for i in range(9)]
-          if not all(p.is_file() for p in parts): raise SystemExit('sealed chunk missing')
-          token=''.join(p.read_text() for p in parts).encode()
-          if len(token)!=13324: raise SystemExit(f'ciphertext length mismatch: {len(token)}')
-          if hashlib.sha256(token).hexdigest()!='ba9d90a56b64e328f049eac887a35a96206debe6a2016fb92c995d3fabf8b21c': raise SystemExit('ciphertext sha256 mismatch')
-          key=os.environ.get('SEALED_PACK_KEY','').encode().strip()
-          if not key: raise SystemExit('SALES_SEALED_PACK_KEY missing')
-          if hashlib.sha256(key).hexdigest()!='438070a66cb91c908a6f9b2840fb3978241f0ab67589afae1e9215ea9af15b57': raise SystemExit('sealed key fingerprint mismatch')
-          try: raw=Fernet(key).decrypt(token)
-          except (InvalidToken,ValueError) as exc: raise SystemExit('sealed authentication/decryption failed') from exc
-          if hashlib.sha256(raw).hexdigest()!='5d8ad328c2ba3b4b9fdd2ffd2bf690f5c2b8bea7a30c83803194e04a64c70e9a': raise SystemExit('decrypted zip sha256 mismatch')
-          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-0.2-sealed-pack'
-          out.mkdir()
-          z=pathlib.Path(os.environ['RUNNER_TEMP'])/'sales-0.2-sealed.zip'; z.write_bytes(raw)
-          with zipfile.ZipFile(z) as zz: zz.extractall(out)
-          required=['fixtures.json','grader.json','runner.py','freeze-record.json']
-          if not all((out/x).is_file() for x in required): raise SystemExit('sealed pack file missing')
-          freeze=json.loads((out/'freeze-record.json').read_text())
-          def h(name): return hashlib.sha256((out/name).read_bytes()).hexdigest()
-          assert freeze['candidate_commit']=='824216b9eb225a4509f98f1c31892a80935f3bd7'
-          assert freeze['candidate_digest']=='sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728'
-          assert freeze['model']=='gpt-5.6-terra'
-          assert freeze['fixtures_sha256']=='sha256:'+h('fixtures.json')
-          assert freeze['grader_sha256']=='sha256:'+h('grader.json')
-          assert freeze['runner_sha256']=='sha256:'+h('runner.py')
-          hashes={n:h(n) for n in ('fixtures.json','grader.json','runner.py')}
-          canonical=''.join(f'{n}:{hashes[n]}\n' for n in sorted(hashes))
-          actual_pack='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
-          assert actual_pack==freeze['pack_digest']=='sha256:a348ddbdb732b9dc21df0e89c7ef5c3182593ed2adb8faa2970a91c3998c291b'
-          fixtures=json.loads((out/'fixtures.json').read_text()); grader=json.loads((out/'grader.json').read_text())
-          assert len(fixtures)==45 and len(grader)==45
-          ids=[x['id'] for x in fixtures]
-          assert len(ids)==len(set(ids))==45 and set(ids)==set(grader)
-          from collections import Counter
-          c=Counter(x['family'] for x in fixtures)
-          assert len(c)==15 and set(c.values())=={3}
-          print('SALES 0.2 SEALED PREFLIGHT PASS')
-          print('pack_digest='+actual_pack)
-          PY
+          python3 architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.2-2026-08-22.qualification.json \
+            --phase static
+      - name: Sealed held-out integrity preflight
+        run: |
+          python3 architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.2-2026-08-22.qualification.json \
+            --phase sealed \
+            --out-dir "$RUNNER_TEMP/sales-0.2-sealed-pack"
