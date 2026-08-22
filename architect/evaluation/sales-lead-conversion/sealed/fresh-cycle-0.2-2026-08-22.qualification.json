@@ -1,0 +1,57 @@
+{
+  "version": 2,
+  "cycle_id": "sales-lead-conversion-0.2-fresh-2026-08-22",
+  "candidate": {
+    "commit": "824216b9eb225a4509f98f1c31892a80935f3bd7",
+    "digest": "sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.2.0/manifest.json"
+  },
+  "runtime": {
+    "executor_path": "architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py",
+    "executor_cmd": "python3 architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py",
+    "protocol": "sales-lead-conversion-candidate-v1",
+    "provider": "openai-responses-api",
+    "model": "gpt-5.6-terra",
+    "credential_env": "OPENAI_API_KEY",
+    "candidate_timeout_seconds": 240,
+    "model_timeout_seconds": 180,
+    "workflow_timeout_seconds": 1800,
+    "contract_probe_argv": ["python3", "architect/evaluation/sales-lead-conversion/executor_v0_2_responses.py", "--qualification-contract"],
+    "tool_protocol": "sales-deterministic-tools-v1",
+    "state_protocol": "sales-state-checkpoint-v1",
+    "observable_protocol": "sales-observable-ledger-v1",
+    "canary_required": false
+  },
+  "sealed_pack": {
+    "parts_dir": "architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.2-2026-08-22.parts",
+    "part_count": 9,
+    "ciphertext_length": 13324,
+    "ciphertext_sha256": "ba9d90a56b64e328f049eac887a35a96206debe6a2016fb92c995d3fabf8b21c",
+    "key_env": "SALES_SEALED_PACK_KEY",
+    "key_fingerprint_sha256": "438070a66cb91c908a6f9b2840fb3978241f0ab67589afae1e9215ea9af15b57",
+    "decrypted_zip_sha256": "5d8ad328c2ba3b4b9fdd2ffd2bf690f5c2b8bea7a30c83803194e04a64c70e9a",
+    "pack_digest": "sha256:a348ddbdb732b9dc21df0e89c7ef5c3182593ed2adb8faa2970a91c3998c291b",
+    "required_files": ["fixtures.json", "grader.json", "runner.py", "freeze-record.json"]
+  },
+  "evaluation": {
+    "fixture_count": 45,
+    "family_count": 15,
+    "per_family": 3,
+    "fixtures_file": "fixtures.json",
+    "grader_file": "grader.json",
+    "runner_file": "runner.py",
+    "freeze_record_file": "freeze-record.json"
+  },
+  "report": {
+    "sanitized_required": true,
+    "artifact_required": true,
+    "validator_path": "architect/evaluation/qualification-platform/validate_sanitized_report.py",
+    "release_ledger_required": true
+  },
+  "verdict": {
+    "runner_exit_zero_required": true,
+    "missing_report_is_failure": true,
+    "report_validation_required": true,
+    "artifact_upload_required": true
+  }
+}
