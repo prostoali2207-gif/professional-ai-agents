@@ -1,0 +1,47 @@
+name: Strategist v0.1 authoring preflight diagnostic
+
+on:
+  pull_request:
+    branches:
+      - infra/shared-qualification-master-key-2026-08
+    paths:
+      - '.github/workflows/strategist-v0_1-authoring-preflight-diagnostic.yml'
+      - 'architect/evaluation/growth_strategy_experiment_portfolio/**'
+      - 'architect/research/growth-strategy-experiment-portfolio/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: No-model authoring preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/growth_strategy_experiment_portfolio/executor_v0_1_gemini.py architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_template_v0_1.py architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack_v0_1.py
+          git cat-file -e 4b84ef258b5d3d2b3fbc9549e77176b3359a501e^{commit}
+          test "$(git rev-parse 4b84ef258b5d3d2b3fbc9549e77176b3359a501e:architect/research/growth-strategy-experiment-portfolio/candidate-professional-model-v0.1.md)" = "b22bac7a4deed11c466c014f41960f5e2deec2d1"
+          master=false; [ -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" ] && master=true
+          gemini=false; [ -n "$GEMINI_API_KEY" ] && gemini=true
+          printf '{"compile_ok":true,"freeze_commit_available":true,"master_key_present":%s,"gemini_key_present":%s,"model_calls":0}\n' "$master" "$gemini" | tee "$RUNNER_TEMP/strategist-authoring-preflight.json"
+          test "$master" = true
+          test "$gemini" = true
+      - name: Upload non-secret diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strategist-v0.1-authoring-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/strategist-authoring-preflight.json
+          if-no-files-found: ignore

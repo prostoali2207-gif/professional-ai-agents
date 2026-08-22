@@ -1,0 +1,48 @@
+name: Strategist v0.1 author sealed heldout
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack.py'
+      - '.github/workflows/strategist-v0_1-author-sealed-heldout.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  author-seal:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic crypto dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Fail closed before hidden authoring if evaluator secrets are absent
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$OPENAI_API_KEY" || { echo 'OPENAI_API_KEY missing'; exit 21; }
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY missing'; exit 22; }
+      - name: Author fresh heldout and seal immediately
+        run: python3 architect/evaluation/growth_strategy_experiment_portfolio/author_sealed_pack.py
+      - name: Commit only sealed transport and public manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.parts \
+                  architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22.qualification.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Eval: seal fresh Strategist v0.1 held-out pack'
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
