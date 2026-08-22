@@ -1,0 +1,72 @@
+name: Sales Responses runtime diagnostic
+
+on:
+  push:
+    branches:
+      - diag/sales-responses-runtime-2026-08-22
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: gpt-5.6-terra
+      SALES_CANDIDATE_CMD: python3 architect/evaluation/sales-lead-conversion/executor_responses.py
+      SALES_CANDIDATE_MANIFEST: /tmp/sales-candidate-manifest.json
+      SALES_CANDIDATE_TIMEOUT_SECONDS: '240'
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify secret and frozen runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${OPENAI_API_KEY:-}"
+          git cat-file -e b1a5f214a7cc9452e8a168f3292a2e9b613ecae0^{commit}
+          python3 -m unittest architect/evaluation/sales-lead-conversion/test_executor_responses.py
+          cat > "$SALES_CANDIDATE_MANIFEST" <<'JSON'
+          {"commit":"b1a5f214a7cc9452e8a168f3292a2e9b613ecae0","artifact_digest":"sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6"}
+          JSON
+      - name: Run one unscored Responses canary
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/request.json" <<'JSON'
+          {
+            "protocol":"sales-lead-conversion-candidate-v1",
+            "run":{"run_id":"responses-runtime-diagnostic","trial_id":"diag-1","capability_profile":{"purpose":"unscored_runtime_diagnostic"}},
+            "task":{"instruction":"Reply with a concise acknowledgement only. Do not use tools or make any claim beyond acknowledging the request."},
+            "initial_state":{},
+            "tool_scenario":{"authority":{"external_actions":false},"tools":[]},
+            "checkpoint":null
+          }
+          JSON
+          python3 architect/evaluation/sales-lead-conversion/adapters/stdio_candidate_adapter.py < "$RUNNER_TEMP/request.json" > "$RUNNER_TEMP/result.json"
+      - name: Validate runtime evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'result.json'
+          d=json.loads(p.read_text())
+          assert d['termination_reason']=='model_final'
+          assert d['runtime_identity']['provider']=='openai-responses-api'
+          assert d['runtime_identity']['model']==os.environ['SALES_MODEL']
+          u=d['model_usage']
+          assert u['api_calls'] >= 1
+          assert u['total_tokens'] > 0
+          print('RESPONSES RUNTIME DIAGNOSTIC PASS')
+          print('api_calls=',u['api_calls'])
+          print('total_tokens=',u['total_tokens'])
+          PY
