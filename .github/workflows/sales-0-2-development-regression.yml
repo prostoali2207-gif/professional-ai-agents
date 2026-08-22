@@ -41,7 +41,10 @@ jobs:
           print('candidate digest declaration verified',actual)
           PY
       - name: Run targeted public development regression
-        run: python3 architect/evaluation/sales-lead-conversion/development_regression_v0_2.py | tee "$RUNNER_TEMP/sales-0.2-development.json"
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 architect/evaluation/sales-lead-conversion/development_regression_v0_2.py | tee "$RUNNER_TEMP/sales-0.2-development.json"
       - name: Publish development report
         if: always()
         uses: actions/upload-artifact@v4
