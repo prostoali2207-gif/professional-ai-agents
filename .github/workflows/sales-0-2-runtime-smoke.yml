@@ -1,18 +1,20 @@
 name: Sales 0.2 frozen runtime smoke
 
 on:
-  push:
-    branches:
-      - eval/sales-0.2-fresh-qualification-2026-08-22
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      confirm_paid_run:
+        description: 'Type RUN_PAID_CANARY to allow the one-call API smoke test'
+        required: true
+        default: 'NO'
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   smoke:
+    if: ${{ inputs.confirm_paid_run == 'RUN_PAID_CANARY' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
