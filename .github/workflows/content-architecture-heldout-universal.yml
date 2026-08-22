@@ -18,7 +18,7 @@ jobs:
     timeout-minutes: 45
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      CONTENT_ARCHITECTURE_SEALED_PACK_KEY: ${{ secrets.CONTENT_ARCHITECTURE_SEALED_PACK_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       FROZEN_ARTIFACT_MODEL: gpt-5.4-mini
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
         shell: bash
         run: |
           test -n "$OPENAI_API_KEY" || { echo 'OPENAI_API_KEY missing'; exit 21; }
-          test -n "$CONTENT_ARCHITECTURE_SEALED_PACK_KEY" || { echo 'CONTENT_ARCHITECTURE_SEALED_PACK_KEY missing'; exit 22; }
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY missing'; exit 22; }
           echo 'qualification credentials available (values not disclosed)'
       - name: Pre-run resource gate
         run: |
