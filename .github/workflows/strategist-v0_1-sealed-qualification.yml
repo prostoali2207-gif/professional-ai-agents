@@ -1,17 +1,19 @@
 name: Strategist v0.1 sealed qualification
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/strategist-v0_1-sealed-qualification.yml'
   workflow_dispatch:
+    inputs:
+      confirm_paid_run:
+        description: 'Type RUN_PAID_QUALIFICATION to authorize paid held-out authoring and scoring'
+        required: true
+        type: string
 
 permissions:
   contents: write
 
 jobs:
   qualify:
+    if: ${{ inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
