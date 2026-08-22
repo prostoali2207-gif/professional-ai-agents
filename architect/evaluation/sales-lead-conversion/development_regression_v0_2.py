@@ -7,7 +7,7 @@ asked for a compact JSON professional decision so mechanically observable
 invariants can be graded without exposing chain-of-thought.
 """
 from __future__ import annotations
-import json, os, pathlib, sys, urllib.request, urllib.error
+import json, os, pathlib, urllib.request, urllib.error
 
 MODEL_PATH=pathlib.Path('architect/library/cores/sales-lead-conversion/0.2.0/professional-model.md')
 EVIDENCE_PATH=pathlib.Path('architect/library/cores/sales-lead-conversion/0.2.0/evidence-and-reuse.md')
@@ -74,8 +74,7 @@ def call(case):
  text='\n'.join(texts).strip()
  if text.startswith('```'):
   text=text.strip('`').replace('json\n','',1).strip()
- data=json.loads(text)
- return data,p.get('usage') or {}
+ return json.loads(text),p.get('usage') or {}
 
 def norm_owner(v):
  s=str(v or '').lower()
@@ -83,16 +82,23 @@ def norm_owner(v):
   if x in s:return x
  return s
 
+def owner_for_workstream(obw, needles):
+ if not isinstance(obw,dict): return ''
+ for k,v in obw.items():
+  lk=str(k).lower()
+  if any(n in lk for n in needles): return norm_owner(v)
+ return ''
+
 def grade(case,d):
  e=case['expect']; failures=[]
  if 'primary_owner_in' in e and norm_owner(d.get('primary_owner')) not in e['primary_owner_in']: failures.append('primary_owner')
  if 'sales_progression_allowed' in e and d.get('sales_progression_allowed') is not e['sales_progression_allowed']: failures.append('sales_progression_allowed')
  if e.get('mixed') is True and d.get('mixed') is not True: failures.append('mixed')
  if 'complaint_owner_in' in e:
-  obw=d.get('owner_by_workstream') or {}; owner=norm_owner(obw.get('complaint') or obw.get('support') or obw.get('reputation'))
+  owner=owner_for_workstream(d.get('owner_by_workstream'),('complaint','support','reputation','service'))
   if owner not in e['complaint_owner_in']: failures.append('complaint_owner')
  if 'purchase_owner' in e:
-  obw=d.get('owner_by_workstream') or {}; owner=norm_owner(obw.get('purchase') or obw.get('sales') or obw.get('commercial'))
+  owner=owner_for_workstream(d.get('owner_by_workstream'),('purchase','sales','commercial','buy'))
   if owner != e['purchase_owner']: failures.append('purchase_owner')
  for k in ('sales_must_not_resolve_complaint','duplicate_owner','refund_promise_by_sales','appointment_now','ask_extra_qualification','old_superseded','reconfirm_required','overwrite_by_recency','conflict_or_verify','preserve_both','supersession','replan_required','old_draft_safe_to_send'):
   if k in e and d.get(k) is not e[k]: failures.append(k)
@@ -109,7 +115,9 @@ def main():
    for k in ('input_tokens','cached_input_tokens','output_tokens','total_tokens'):
     if k=='cached_input_tokens': totals[k]+=int(((u.get('input_tokens_details') or {}).get('cached_tokens')) or 0)
     else: totals[k]+=int(u.get(k,0) or 0)
-   rows.append({'id':c['id'],'family':c['family'],'pass':ok,'failures':failures})
+   row={'id':c['id'],'family':c['family'],'pass':ok,'failures':failures}
+   if not ok: row['decision']=d
+   rows.append(row)
   except Exception as exc:
    rows.append({'id':c['id'],'family':c['family'],'pass':False,'runtime_error':str(exc)[-1000:]})
  result={'development_only':True,'candidate':'sales-lead-conversion/0.2.0 working tree','model':MODEL,'planned':len(CASES),'passed':sum(r['pass'] for r in rows),'rows':rows,'usage':totals}
