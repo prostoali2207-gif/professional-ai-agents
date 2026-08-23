@@ -1,0 +1,232 @@
+name: Sales 0.3 fresh held-out r4 Gemini
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/run-trigger-v0_3-r4-gemini.txt'
+      - '.github/workflows/sales-0-3-gemini-r4.yml'
+      - 'architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py'
+      - 'architect/evaluation/sales-lead-conversion/canary_v0_3_gemini.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py'
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r4-gemini.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CYCLE_ID: sales-0.3-fresh-independent-2026-08-23-r4-gemini
+  CANDIDATE_COMMIT: 5adc0d315f6f63bc92df0a921040954a3541ef89
+  CANDIDATE_DIGEST: sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2
+  SALES_MODEL: gemini-3.5-flash-lite
+  SALES_GRADER_MODEL: gemini-3.5-flash-lite
+  SALES_MODEL_TIMEOUT_SECONDS: '120'
+  SOURCE_RUN_ID: '32613730757'
+  SOURCE_PACK_DIGEST: sha256:8dc25edffbc7069be283f00e0aa50ec4ffd0c918657a9239a2d68c98f95e1253
+  SOURCE_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r3/qualification.json
+  QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r4-gemini/qualification.json
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py
+      SANITIZED_REPORT_PATH: sales-r4-gemini-report.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Deterministic preregistration and frozen-runtime checks
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py
+          python -m py_compile architect/evaluation/sales-lead-conversion/canary_v0_3_gemini.py
+          python -m py_compile architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py
+          python - <<'PY'
+          import json, os, subprocess
+          p=json.load(open('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r4-gemini.json'))
+          assert p['cycle_id']==os.environ['CYCLE_ID']
+          assert p['scope']['decision']=='FULL' and p['scope']['full_release_required'] is True
+          assert p['fixture_count']==36 and p['per_family']==3 and len(p['families'])==12
+          assert p['thresholds']['release_tasks_passed_min']==34
+          assert p['thresholds']['per_family_tasks_passed_min']==2
+          assert p['thresholds']['critical_hard_fails_max']==0
+          assert p['resource_gate']['authoring_calls']==0
+          contract=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py','--qualification-contract'],text=True))
+          assert contract['candidate_commit']==os.environ['CANDIDATE_COMMIT']
+          assert contract['candidate_digest']==os.environ['CANDIDATE_DIGEST']
+          assert contract['provider']=='gemini-interactions-api'
+          assert contract['tool_protocol']=='sales-deterministic-tools-v1'
+          assert contract['state_protocol']=='sales-state-checkpoint-v1'
+          assert contract['observable_protocol']=='sales-observable-ledger-v1'
+          print('PREREG_RUNTIME_STATIC_PASS')
+          PY
+
+      - name: Require evaluator credentials before provider calls
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'CREDENTIAL_MISSING: QUALIFICATION_SEALED_PACK_MASTER_KEY; zero provider calls.' >&2; exit 21; }
+          test -n "$GEMINI_API_KEY" || { echo 'CREDENTIAL_MISSING: GEMINI_API_KEY; zero provider calls.' >&2; exit 22; }
+
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+
+      - name: Download exact fresh unscored r3 encrypted corpus
+        uses: actions/download-artifact@v4
+        with:
+          name: sales-0.3-r3-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r3
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+
+      - name: Verify and decrypt source corpus without revealing hidden content
+        run: |
+          python - <<'PY'
+          import json,os
+          m=json.load(open(os.environ['SOURCE_MANIFEST']))
+          assert m['candidate']['commit']==os.environ['CANDIDATE_COMMIT']
+          assert m['candidate']['digest']==os.environ['CANDIDATE_DIGEST']
+          assert m['sealed_pack']['pack_digest']==os.environ['SOURCE_PACK_DIGEST']
+          assert m['cycle_id']=='sales-0.3-fresh-independent-2026-08-23-r3'
+          print('SOURCE_R3_BINDING_PASS')
+          PY
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$SOURCE_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-r3-source"
+
+      - name: Re-seal unchanged hidden corpus under Gemini r4 runtime contract
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,shutil,sys,tempfile,zipfile
+          from pathlib import Path
+          from cryptography.fernet import Fernet
+          root=Path.cwd(); cycle=os.environ['CYCLE_ID']; model=os.environ['SALES_MODEL']
+          source=Path(os.environ['RUNNER_TEMP'])/'sales-r3-source'
+          fixtures=(source/'fixtures.json').read_bytes(); grader=(source/'grader.json').read_bytes()
+          sys.path.insert(0,str(root/'architect/evaluation/qualification-platform'))
+          from sealed_pack_keys import derive_fernet_key,key_fingerprint_sha256
+          master=os.environ['QUALIFICATION_SEALED_PACK_MASTER_KEY'].encode().strip()
+          out=root/'architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r4-gemini'
+          if out.exists(): shutil.rmtree(out)
+          parts=out/'parts'; parts.mkdir(parents=True)
+          with tempfile.TemporaryDirectory(prefix='sales-r4-gemini-') as td:
+              p=Path(td); (p/'fixtures.json').write_bytes(fixtures); (p/'grader.json').write_bytes(grader)
+              shutil.copyfile(root/'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py',p/'runner.py')
+              h=lambda b:hashlib.sha256(b).hexdigest()
+              hashes={n:h((p/n).read_bytes()) for n in ('fixtures.json','grader.json','runner.py')}
+              canonical=''.join(f'{n}:{hashes[n]}\n' for n in sorted(hashes))
+              pack_digest='sha256:'+h(canonical.encode())
+              fx=json.loads(fixtures); repeat_ids=sorted(x['id'] for x in fx if x.get('repeat_required'))
+              freeze={
+                'cycle_id':cycle,'candidate_commit':os.environ['CANDIDATE_COMMIT'],'candidate_digest':os.environ['CANDIDATE_DIGEST'],
+                'model':model,'fixture_count':36,'family_count':12,'per_family':3,'repeat_fixture_count':6,
+                'repeat_fixture_ids':repeat_ids,'expected_candidate_runs_if_full':42,
+                'fixtures_sha256':'sha256:'+hashes['fixtures.json'],'grader_sha256':'sha256:'+hashes['grader.json'],
+                'runner_sha256':'sha256:'+hashes['runner.py'],'pack_digest':pack_digest,
+                'release_tasks_passed_min':34,'per_family_min':2,'critical_hard_fails_max':0,'professional_failure_retry':0,
+                'source_hidden_pack_digest':os.environ['SOURCE_PACK_DIGEST'],'hidden_corpus_semantics_modified':False
+              }
+              (p/'freeze-record.json').write_text(json.dumps(freeze,indent=2,sort_keys=True)+'\n')
+              zp=p/'pack.zip'
+              with zipfile.ZipFile(zp,'w',compression=zipfile.ZIP_DEFLATED) as z:
+                  for n in ('fixtures.json','grader.json','runner.py','freeze-record.json'): z.write(p/n,arcname=n)
+              raw=zp.read_bytes(); key=derive_fernet_key(master,cycle); token=Fernet(key).encrypt(raw)
+          text=token.decode('ascii'); chunks=[text[i:i+4000] for i in range(0,len(text),4000)]
+          for i,c in enumerate(chunks): (parts/f'{i:02d}').write_text(c)
+          manifest={
+            'version':2,'cycle_id':cycle,
+            'candidate':{'commit':os.environ['CANDIDATE_COMMIT'],'digest':os.environ['CANDIDATE_DIGEST'],'manifest_path':'architect/library/cores/sales-lead-conversion/0.3.0/manifest.json'},
+            'runtime':{
+              'executor_path':'architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py',
+              'executor_cmd':'python architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py',
+              'protocol':'sales-lead-conversion-candidate-v1','provider':'gemini-interactions-api','model':model,
+              'credential_env':'GEMINI_API_KEY','candidate_timeout_seconds':180,'model_timeout_seconds':120,'workflow_timeout_seconds':5400,
+              'contract_probe_argv':['python','architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py','--qualification-contract'],
+              'tool_protocol':'sales-deterministic-tools-v1','state_protocol':'sales-state-checkpoint-v1','observable_protocol':'sales-observable-ledger-v1',
+              'canary_required':True,'canary_cmd':'python architect/evaluation/sales-lead-conversion/canary_v0_3_gemini.py'
+            },
+            'sealed_pack':{
+              'parts_dir':str(parts.relative_to(root)),'part_count':len(chunks),'ciphertext_length':len(token),'ciphertext_sha256':h(token),
+              'key_derivation':{'scheme':'hkdf-sha256-v1','master_env':'QUALIFICATION_SEALED_PACK_MASTER_KEY','context':cycle},
+              'key_fingerprint_sha256':key_fingerprint_sha256(key),'decrypted_zip_sha256':h(raw),'pack_digest':pack_digest,
+              'required_files':['fixtures.json','grader.json','runner.py','freeze-record.json']
+            },
+            'evaluation':{'fixture_count':36,'family_count':12,'per_family':3,'fixtures_file':'fixtures.json','grader_file':'grader.json','runner_file':'runner.py','freeze_record_file':'freeze-record.json'},
+            'report':{'sanitized_required':True,'artifact_required':True,'validator_path':'architect/evaluation/qualification-platform/validate_sanitized_report.py','release_ledger_required':True},
+            'verdict':{'runner_exit_zero_required':True,'missing_report_is_failure':True,'report_validation_required':True,'artifact_upload_required':True}
+          }
+          (out/'qualification.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          print(json.dumps({'status':'SEALED','cycle_id':cycle,'pack_digest':pack_digest,'fixture_count':36,'source_hidden_pack_digest':os.environ['SOURCE_PACK_DIGEST'],'hidden_content_printed':False}))
+          PY
+
+      - name: Generic r4 static preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+
+      - name: Generic r4 sealed no-API preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-r4-gemini-pack"
+
+      - name: Preserve encrypted r4 held-out evidence before scoring
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.3-r4-gemini-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r4-gemini
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Exact-runtime one-call Gemini canary
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase canary --require-runtime-secret
+
+      - name: Run preregistered full scored qualification
+        id: scored
+        shell: bash
+        run: |
+          set +e
+          python "$RUNNER_TEMP/sales-r4-gemini-pack/runner.py"
+          code=$?
+          echo "qualification_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Resolve r4 pack digest
+        if: always()
+        run: |
+          if test -f "$QUALIFICATION_MANIFEST"; then
+            echo "R4_PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["QUALIFICATION_MANIFEST"]))["sealed_pack"]["pack_digest"])')" >> "$GITHUB_ENV"
+          fi
+
+      - name: Validate sanitized report and release ledger
+        if: always()
+        id: validate
+        shell: bash
+        run: |
+          test -n "${R4_PACK_DIGEST:-}" || exit 2
+          python architect/evaluation/qualification-platform/validate_sanitized_report.py \
+            --report "$SANITIZED_REPORT_PATH" --cycle-id "$CYCLE_ID" \
+            --candidate-commit "$CANDIDATE_COMMIT" --candidate-digest "$CANDIDATE_DIGEST" \
+            --pack-digest "$R4_PACK_DIGEST" --model "$SALES_MODEL" \
+            --runner-exit-code "${qualification_exit_code:-255}" --ledger-out sales-r4-gemini-release-evidence.json
+
+      - name: Upload sanitized qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.3-r4-gemini-sanitized-qualification-evidence
+          path: |
+            sales-r4-gemini-report.json
+            sales-r4-gemini-release-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce release verdict
+        if: always()
+        run: |
+          test "${{ steps.validate.outcome }}" = "success"
+          test "${{ steps.upload.outcome }}" = "success"
+          test "${qualification_exit_code:-missing}" = "0"
