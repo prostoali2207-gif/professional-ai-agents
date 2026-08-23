@@ -42,17 +42,17 @@
     "workflow_timeout_seconds": 1800
   },
   "sealed_pack": {
-    "ciphertext_length": 15736,
-    "ciphertext_sha256": "c2942585832faa22295f7520d0edf3fdf6f7e838d57de8feb914777936e8f643",
-    "decrypted_zip_sha256": "d0f0276f1ca71d605556e087728f7c18d4a7db4f923c3e7ef760054470a21f7c",
+    "ciphertext_length": 17380,
+    "ciphertext_sha256": "5921e6b4b9edae4e19f7c06b2ab7c07c89929a0c9ae4e13a3012c50f3714c2f7",
+    "decrypted_zip_sha256": "b6a695cef855290c5c3336aaeb455bbc95bf672a0faa5ac79dffcf76b27c2eb4",
     "key_derivation": {
       "context": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-22-clean",
       "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
       "scheme": "hkdf-sha256-v1"
     },
     "key_fingerprint_sha256": "ddcca041b74e78b13c13d43f4f818e55e1972d11b15c5ca1f9a32897c8940ef8",
-    "pack_digest": "sha256:55068f0cdf99186418f1f63de0207c91be5f38318d59daca8524b09ae3d880eb",
-    "part_count": 4,
+    "pack_digest": "sha256:d9cb1d24b7b24bde51b489e12172bac4716994edde2f3934112ba2af13243b65",
+    "part_count": 5,
     "parts_dir": "architect/evaluation/growth_strategy_experiment_portfolio/sealed/heldout-v0.1-2026-08-22-clean.parts",
     "required_files": [
       "fixtures.json",
