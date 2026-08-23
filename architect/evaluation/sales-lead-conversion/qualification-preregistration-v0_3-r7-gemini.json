@@ -1,0 +1,12 @@
+{
+  "cycle_id":"sales-0.3-fresh-independent-2026-08-23-r7-gemini",
+  "frozen_candidate":{"commit":"5adc0d315f6f63bc92df0a921040954a3541ef89","artifact_digest":"sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2"},
+  "scope":{"purpose":"release","change_surface":"shared","decision":"FULL"},
+  "source_hidden_corpus":{"cycle":"sales-0.3-fresh-independent-2026-08-23-r5-gemini","run_id":32636050789,"pack_digest":"sha256:6f8bef618d61890c8789f4dbe172c2f02eb38e28e4a2835e50b466ebd8158be7","reuse":"fixtures and hidden grader references byte-for-byte; no scored fixture has run in r4/r5/r6"},
+  "families":["OWN","LIFE","MIX","SEC","FACT","INTENT","OBJ","NEXT","FUP","STATE","ID","OPS"],
+  "fixture_count":36,"per_family":3,"critical_repeat_slots":6,
+  "thresholds":{"task_pass_score_min":5,"release_tasks_passed_min":34,"per_family_tasks_passed_min":2,"critical_hard_fails_max":0,"professional_failure_retry":0},
+  "runtime_contract":{"provider":"gemini-interactions-api","candidate_model":"gemini-3.5-flash-lite","grader_model":"gemini-3.5-flash-lite","credential_env":"GEMINI_API_KEY","tool_protocol":"sales-deterministic-tools-v1","state_protocol":"sales-state-checkpoint-v1","observable_protocol":"sales-observable-ledger-v1","one_call_canary":true},
+  "repair_scope":"deterministic packaging path normalization only; structured grader transport from r6 retained; professional exam semantics unchanged",
+  "resource_gate":{"authoring_calls":0,"canary_calls":1,"grader_calibration_calls":3,"candidate_scored_trials_max":42,"grader_scored_calls_max":42}
+}
