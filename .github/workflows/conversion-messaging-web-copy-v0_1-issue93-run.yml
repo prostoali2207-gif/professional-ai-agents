@@ -1,0 +1,129 @@
+name: Conversion Messaging Web Copy v0.1 issue-93 qualification
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  qualify:
+    if: ${{ github.event.issue.number == 93 && github.event.comment.body == 'RUN_PAID_QUALIFICATION_V0_1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      MESSAGING_MODEL: gpt-5.6-terra
+      MESSAGING_MODEL_TIMEOUT_SECONDS: '120'
+      QUALIFICATION_MANIFEST: architect/evaluation/conversion_messaging_web_copy/sealed/heldout-v0.1-2026-08-23-r1.qualification.json
+      CYCLE_ID: conversion-messaging-web-copy-v0.1-heldout-2026-08-23-r1
+      CANDIDATE_COMMIT: 7019f6717b1b61806f4a221a297d049a4ad3b8cb
+      CANDIDATE_DIGEST: sha256:da7662f95dcf132d9a9875849b7bb5d5d831d1d54821f0b109b543a1f299e1d2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Zero-API evaluator and frozen-runtime preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/executor_v0_1_responses.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/canary_v0_1.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/author_sealed_pack_v0_1.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/sealed_runner_template_v0_1.py
+          git cat-file -e "$CANDIDATE_COMMIT^{commit}"
+          python architect/evaluation/conversion_messaging_web_copy/executor_v0_1_responses.py --qualification-contract > "$RUNNER_TEMP/messaging-contract.json"
+          python - <<'PY'
+          import json, os
+          p=json.load(open(os.environ['RUNNER_TEMP']+'/messaging-contract.json'))
+          assert p['candidate_commit']==os.environ['CANDIDATE_COMMIT']
+          assert p['candidate_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['provider']=='openai-responses-api'
+          assert p['input_protocol']=='conversion-messaging-web-copy-candidate-v1'
+          assert p['tool_protocol']=='none-v1'
+          assert p['state_protocol']=='stateless-v1'
+          PY
+      - name: Deterministic qualification scope gate
+        run: |
+          set -euo pipefail
+          python architect/evaluation/qualification-platform/qualification_scope_gate.py architect/evaluation/conversion_messaging_web_copy/scope-request-v0.1.json > "$RUNNER_TEMP/scope.json"
+          python - <<'PY'
+          import json, os
+          p=json.load(open(os.environ['RUNNER_TEMP']+'/scope.json'))
+          assert p['scope']=='FULL'
+          assert p['paid_scored_run_allowed'] is True
+          assert p['release_pass_allowed_from_this_scope'] is True
+          PY
+      - name: Require all secrets before hidden authoring
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'CREDENTIAL_MISSING: QUALIFICATION_SEALED_PACK_MASTER_KEY; zero model calls attempted.' >&2; exit 21; }
+          test -n "$GEMINI_API_KEY" || { echo 'CREDENTIAL_MISSING: GEMINI_API_KEY; zero model calls attempted.' >&2; exit 22; }
+          test -n "$OPENAI_API_KEY" || { echo 'CREDENTIAL_MISSING: OPENAI_API_KEY; zero model calls attempted.' >&2; exit 23; }
+      - name: Independently author review and immediately seal held-out pack
+        run: python architect/evaluation/conversion_messaging_web_copy/author_sealed_pack_v0_1.py
+      - name: Generic static qualification preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+      - name: Generic sealed no-API preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/messaging-sealed-pack"
+      - name: Freeze encrypted transport before candidate execution
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add architect/evaluation/conversion_messaging_web_copy/sealed/heldout-v0.1-2026-08-23-r1.parts architect/evaluation/conversion_messaging_web_copy/sealed/heldout-v0.1-2026-08-23-r1.qualification.json
+          git commit -m 'eval: freeze encrypted messaging v0.1 heldout pack' || true
+          git push origin HEAD:main
+      - name: Exact-runtime one-call unscored canary
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase canary --require-runtime-secret
+      - name: Run scored frozen held-out qualification
+        id: scored
+        shell: bash
+        run: |
+          set +e
+          python "$RUNNER_TEMP/messaging-sealed-pack/runner.py" --pack-dir "$RUNNER_TEMP/messaging-sealed-pack" --executor-cmd "python3 architect/evaluation/conversion_messaging_web_copy/executor_v0_1_responses.py" --model "$MESSAGING_MODEL" --out "$RUNNER_TEMP/messaging-v0.1-report.json"
+          code=$?
+          echo "qualification_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+      - name: Validate sanitized report and write release ledger
+        if: always()
+        id: validate
+        shell: bash
+        run: |
+          PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["QUALIFICATION_MANIFEST"]))["sealed_pack"]["pack_digest"])')
+          python architect/evaluation/qualification-platform/validate_sanitized_report.py --report "$RUNNER_TEMP/messaging-v0.1-report.json" --cycle-id "$CYCLE_ID" --candidate-commit "$CANDIDATE_COMMIT" --candidate-digest "$CANDIDATE_DIGEST" --pack-digest "$PACK_DIGEST" --model "$MESSAGING_MODEL" --runner-exit-code "${qualification_exit_code:-255}" --ledger-out "$RUNNER_TEMP/messaging-v0.1-release-evidence.json"
+      - name: Publish sanitized qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: conversion-messaging-web-copy-v0.1-sealed-qualification-evidence
+          path: |
+            ${{ runner.temp }}/messaging-v0.1-report.json
+            ${{ runner.temp }}/messaging-v0.1-release-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Persist sanitized verdict
+        if: always() && steps.validate.outcome == 'success'
+        run: |
+          set -euo pipefail
+          mkdir -p docs/qualification-results
+          cp "$RUNNER_TEMP/messaging-v0.1-report.json" docs/qualification-results/conversion-messaging-web-copy-v0.1-sealed-report.json
+          cp "$RUNNER_TEMP/messaging-v0.1-release-evidence.json" docs/qualification-results/conversion-messaging-web-copy-v0.1-release-evidence.json
+          git pull --rebase origin main
+          git add docs/qualification-results/conversion-messaging-web-copy-v0.1-sealed-report.json docs/qualification-results/conversion-messaging-web-copy-v0.1-release-evidence.json
+          git commit -m 'eval: record messaging v0.1 sanitized qualification verdict' || true
+          git push origin HEAD:main
+      - name: Enforce qualification verdict fail-closed
+        if: always()
+        run: |
+          test "${qualification_exit_code:-missing}" = "0"
+          test "${{ steps.validate.outcome }}" = "success"
+          test "${{ steps.upload.outcome }}" = "success"
