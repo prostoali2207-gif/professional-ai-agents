@@ -46,15 +46,13 @@ jobs:
           test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing' >&2; exit 2; }
           python3 - <<'PY'
           import json, os, sys, urllib.error, urllib.request
-          req = urllib.request.Request(
-              'https://api.groq.com/openai/v1/models',
-              headers={
-                  'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  'User-Agent': 'professional-ai-agents-groq-canary/1.0',
-              },
-          )
+          headers = {
+              'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'User-Agent': 'professional-ai-agents-groq-canary/1.0',
+          }
+          req = urllib.request.Request('https://api.groq.com/openai/v1/models', headers=headers)
           try:
               with urllib.request.urlopen(req, timeout=30) as r:
                   payload = json.loads(r.read().decode('utf-8'))
@@ -68,4 +66,40 @@ jobs:
               print('Available models:', ', '.join(sorted(x for x in ids if isinstance(x, str))))
               raise SystemExit(f'model unavailable for this account: {target}')
           print('GROQ CREDENTIAL + MODEL ACCESS PASS')
+          PY
+
+      - name: Minimal Qwen completion smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, sys, urllib.error, urllib.request
+          body = {
+              'model': os.environ['ANALYTICS_MODEL'],
+              'messages': [{'role': 'user', 'content': 'Reply with exactly OK'}],
+              'temperature': 0,
+              'max_completion_tokens': 8,
+          }
+          req = urllib.request.Request(
+              'https://api.groq.com/openai/v1/chat/completions',
+              data=json.dumps(body).encode('utf-8'),
+              headers={
+                  'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'User-Agent': 'professional-ai-agents-groq-canary/1.0',
+              },
+              method='POST',
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  payload = json.loads(r.read().decode('utf-8'))
+          except urllib.error.HTTPError as exc:
+              body = exc.read().decode('utf-8', 'replace')
+              print(f'GROQ COMPLETION HTTP {exc.code}: {body[:2000]}', file=sys.stderr)
+              raise SystemExit(2)
+          text = payload.get('choices', [{}])[0].get('message', {}).get('content', '').strip()
+          if text != 'OK':
+              raise SystemExit(f'unexpected completion response: {text[:200]}')
+          print('GROQ QWEN COMPLETION PASS')
           PY
