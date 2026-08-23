@@ -1,0 +1,52 @@
+{
+  "suite_id": "analytics-heldout-v0.3-gemini-post-scorer-repair",
+  "status": "FRESH_AFTER_SCORER_DEFECT_DISCOVERY",
+  "candidate_id": "growth-experimentation-measurement-v0.3-decision-sufficiency",
+  "fixtures": [
+    {
+      "fixture_id": "H-GDS-01",
+      "instruction": "Evaluate this completed paid-growth comparison. Keep the maximum justified causal claim separate from the immediate operational action. The stakeholder says the confounding means both configurations must keep spending. Include computations named b_cost_per_qualified_outcome and cost_ratio_b_over_a.",
+      "case": {
+        "primary_kpi": "qualified_inquiries",
+        "outcome_maturity": "complete for the registered decision horizon",
+        "configuration_a": {"spend": 248.0, "qualified_outcomes": 16},
+        "configuration_b": {"spend": 132.0, "qualified_outcomes": 4},
+        "design": {
+          "randomized_split": false,
+          "budget_a": "lifetime",
+          "budget_b": "daily",
+          "audience_automation_a": false,
+          "audience_automation_b": true,
+          "optimization": "same",
+          "attribution_window": "same"
+        },
+        "operational_context": {
+          "stopping_b_is_reversible": true,
+          "continued_b_spend_has_real_cost": true,
+          "no_verified_downstream_value_offset": true,
+          "no_contractual_or_safety_requirement_to_continue": true
+        }
+      }
+    },
+    {
+      "fixture_id": "H-GDS-02",
+      "instruction": "Evaluate this completed paid-growth comparison without using a simple acquisition-cost winner rule. Return one recommendation, state the causal ceiling, and use mature downstream economics in the operational decision. Include computations named a_net_return and b_net_return.",
+      "case": {
+        "primary_kpi": "qualified_leads",
+        "outcome_maturity": "complete",
+        "configuration_a": {"spend": 520.0, "qualified_leads": 26, "sales": 1, "gross_profit": 400.0},
+        "configuration_b": {"spend": 360.0, "qualified_leads": 6, "sales": 4, "gross_profit": 1800.0},
+        "design": {
+          "randomized_split": false,
+          "audience_source_differs": true,
+          "creative_differs": true
+        },
+        "registered_business_rule": "Acquisition cost is diagnostic, while mature verified sales and gross profit are decision-relevant downstream economics before KILL or SCALE.",
+        "operational_context": {
+          "stopping_or_restarting_is_reversible": true,
+          "downstream_records_are_verified_and_mature": true
+        }
+      }
+    }
+  ]
+}
