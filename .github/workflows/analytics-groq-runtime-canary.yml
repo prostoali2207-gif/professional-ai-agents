@@ -45,16 +45,25 @@ jobs:
           set -euo pipefail
           test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing' >&2; exit 2; }
           python3 - <<'PY'
-          import json, os, urllib.request
+          import json, os, sys, urllib.error, urllib.request
           req = urllib.request.Request(
               'https://api.groq.com/openai/v1/models',
-              headers={'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}"},
+              headers={
+                  'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
+                  'Content-Type': 'application/json',
+              },
           )
-          with urllib.request.urlopen(req, timeout=30) as r:
-              payload = json.loads(r.read().decode('utf-8'))
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  payload = json.loads(r.read().decode('utf-8'))
+          except urllib.error.HTTPError as exc:
+              body = exc.read().decode('utf-8', 'replace')
+              print(f'GROQ HTTP {exc.code}: {body[:2000]}', file=sys.stderr)
+              raise SystemExit(2)
           ids = {m.get('id') for m in payload.get('data', []) if isinstance(m, dict)}
           target = os.environ['ANALYTICS_MODEL']
           if target not in ids:
+              print('Available models:', ', '.join(sorted(x for x in ids if isinstance(x, str))))
               raise SystemExit(f'model unavailable for this account: {target}')
           print('GROQ CREDENTIAL + MODEL ACCESS PASS')
           PY
