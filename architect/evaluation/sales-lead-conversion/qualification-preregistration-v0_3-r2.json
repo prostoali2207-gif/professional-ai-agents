@@ -129,6 +129,25 @@
     "workflow_timeout_seconds": 5400,
     "one_call_canary": "required because exact executor/tool/state path must be proven after secrets and sealed pack preflight"
   },
+  "resource_budget_gate": {
+    "objective": "obtain independent release evidence for Sales 0.3.0 without using scored calls for infrastructure diagnosis",
+    "maximum_provider_calls_if_full": 91,
+    "call_budget_breakdown": {
+      "heldout_authoring_calls": 3,
+      "exact_runtime_canary_calls": 1,
+      "candidate_scored_calls": 42,
+      "grader_calibration_calls": 3,
+      "grader_scored_calls": 42
+    },
+    "eligibility_order": "deterministic compile/freeze checks -> secret presence -> fresh author+seal -> generic static preflight -> sealed no-API preflight -> exact one-call canary -> scored qualification",
+    "stop_conditions": [
+      "Do not author fixtures if the master sealed-pack secret or OpenAI credential is absent.",
+      "Do not call the candidate if static or sealed preflight fails.",
+      "Stop scored execution immediately on a critical hard fail because release verdict is already REVISE.",
+      "Do not repeat professional failures outside the six preregistered stochastic repeat slots."
+    ],
+    "pricing_policy": "Do not embed or invent volatile dollar pricing; report provider token usage and call counts, and use account/provider evidence separately if exact cost is needed."
+  },
   "sealed_transport_contract": {
     "scheme": "hkdf-sha256-v1",
     "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
