@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm_paid_run:
-        description: 'Type RUN_PAID_QUALIFICATION to authorize the single preregistered paid qualification cycle'
+        description: 'Type RUN_PAID_QUALIFICATION to authorize the single preregistered qualification cycle'
         required: true
         type: string
 
@@ -18,9 +18,11 @@ jobs:
     timeout-minutes: 40
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       SOCIAL_CONTENT_MODEL: gemini-3.5-flash-lite
+      SOCIAL_CONTENT_AUTHOR_MODEL: qwen/qwen3.6-27b
+      SOCIAL_CONTENT_GROQ_JUDGE_MODEL: qwen/qwen3.6-27b
       SOCIAL_CONTENT_MIN_REQUEST_INTERVAL: '13'
       CYCLE_ID: social-content-creative-0.1.0-heldout-2026-08-23
       CANDIDATE_COMMIT: 163f68671288fe5035a8d09197334ec9df728b93
@@ -40,9 +42,9 @@ jobs:
         run: |
           echo 'objective=independent release qualification of frozen Social Content Creative 0.1.0'
           echo 'decision_impact=PASS permits qualified-core promotion; REVISE keeps candidate status'
-          echo 'maximum planned provider calls=29 (1 author + 24 candidate + 4 batched judge calls)'
+          echo 'maximum planned completion calls=29 (1 Groq author + 24 Gemini candidate + 2 Gemini batched judge + 2 Groq batched judge)'
           echo 'protected rule=no scored calls before static/secrets/sealed checks; no professional-failure retry'
-          echo 'stop condition=any preflight failure, missing secret, canary failure, pack integrity failure, or first completed two-trial release verdict'
+          echo 'stop condition=any preflight failure, missing secret, canary failure, pack integrity failure, or completed two-trial release verdict'
       - name: Frozen candidate and evaluator static preflight
         run: |
           set -euo pipefail
@@ -61,11 +63,37 @@ jobs:
           assert p['tool_protocol']=='none-v1' and p['state_protocol']=='stateless-v1'
           print('frozen runtime contract PASS')
           PY
-      - name: Require evaluator-owned secrets before any paid call
+      - name: Require evaluator-owned secrets before any provider call
         run: |
-          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'master sealed-pack key missing; zero paid calls attempted' >&2; exit 21; }
-          test -n "$GEMINI_API_KEY" || { echo 'Gemini credential missing; zero paid calls attempted' >&2; exit 22; }
-          test -n "$OPENAI_API_KEY" || { echo 'OpenAI credential missing; zero paid calls attempted' >&2; exit 23; }
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'master sealed-pack key missing; zero provider calls attempted' >&2; exit 21; }
+          test -n "$GEMINI_API_KEY" || { echo 'Gemini credential missing; zero provider calls attempted' >&2; exit 22; }
+          test -n "$GROQ_API_KEY" || { echo 'Groq credential missing; zero provider calls attempted' >&2; exit 23; }
+      - name: Verify Groq credential and Qwen model access without completion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, sys, urllib.error, urllib.request
+          target=os.environ['SOCIAL_CONTENT_AUTHOR_MODEL']
+          req=urllib.request.Request(
+              'https://api.groq.com/openai/v1/models',
+              headers={
+                  'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
+                  'Accept': 'application/json',
+                  'User-Agent': 'professional-ai-agents-social-content-preflight/1.0',
+              },
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  payload=json.loads(r.read().decode('utf-8'))
+          except urllib.error.HTTPError as exc:
+              print(f'Groq preflight HTTP {exc.code}: {exc.read().decode("utf-8","replace")[:1000]}', file=sys.stderr)
+              raise SystemExit(2)
+          ids={m.get('id') for m in payload.get('data',[]) if isinstance(m,dict)}
+          if target not in ids:
+              raise SystemExit(f'Groq model unavailable for this account: {target}')
+          print('GROQ CREDENTIAL + QWEN MODEL ACCESS PASS')
+          PY
       - name: Independently author and immediately seal fresh held-out pack
         run: python architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py
       - name: Generic static qualification-platform preflight
@@ -86,7 +114,7 @@ jobs:
                   architect/evaluation/social_content_creative/sealed/heldout-v0.1-2026-08-23.qualification.json
           git commit -m 'eval: freeze encrypted Social Content Creative heldout pack' || true
           git push origin HEAD:architect/social-content-creative-core-2026-08-23
-      - name: Exact-runtime unscored canary
+      - name: Exact-runtime unscored Gemini candidate canary
         run: |
           sleep 13
           python architect/evaluation/qualification-platform/qualification_preflight.py \
@@ -144,7 +172,10 @@ jobs:
       - name: Post-run accounting
         if: always()
         run: |
-          echo "planned_max_provider_calls=29"
+          echo 'planned_max_completion_calls=29'
+          echo 'author_provider=groq/qwen'
+          echo 'candidate_provider=gemini'
+          echo 'judges=gemini+groq/qwen'
           echo "qualification_exit_code=${qualification_exit_code:-not_started}"
           echo 'raw hidden content was not intentionally printed or published'
       - name: Enforce qualification verdict
