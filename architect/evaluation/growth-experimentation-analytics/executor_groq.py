@@ -69,6 +69,7 @@ def api_call(candidate_text: str, task: dict[str, Any]) -> str:
             {"role": "user", "content": json.dumps(task, ensure_ascii=False)},
         ],
         "response_format": {"type": "json_object"},
+        "reasoning_format": "hidden",
         "reasoning_effort": "default",
         "temperature": 0,
     }
