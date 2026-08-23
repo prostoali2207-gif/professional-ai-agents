@@ -51,6 +51,8 @@ jobs:
               headers={
                   'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}",
                   'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'User-Agent': 'professional-ai-agents-groq-canary/1.0',
               },
           )
           try:
