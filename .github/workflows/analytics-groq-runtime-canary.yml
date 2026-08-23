@@ -79,6 +79,7 @@ jobs:
               'messages': [{'role': 'user', 'content': 'Reply with exactly OK'}],
               'temperature': 0,
               'max_completion_tokens': 16,
+              'reasoning_effort': 'none',
               'reasoning_format': 'hidden',
           }
           req = urllib.request.Request(
