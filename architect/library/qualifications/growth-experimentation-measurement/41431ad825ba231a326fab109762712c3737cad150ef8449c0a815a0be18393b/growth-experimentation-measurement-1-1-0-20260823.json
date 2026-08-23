@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "growth-experimentation-measurement-1-1-0-20260823",
+  "core_id": "growth-experimentation-measurement",
+  "core_version": "1.1.0",
+  "artifact_digest": "sha256:41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b",
+  "status": "pass",
+  "claims": [
+    {"id": "GEM-C1", "statement": "Preserves pre-registered KPI, population, denominator, window, threshold and stopping rule and does not replace a corrupted registered estimand post-hoc.", "criticality": "P0"},
+    {"id": "GEM-C2", "statement": "Blocks unsupported causal winner and SCALE decisions when experiment or measurement integrity is materially unresolved.", "criticality": "P0"},
+    {"id": "GEM-C3", "statement": "Reconciles duplicate entity and outcome records to canonical real-world entities without subtracting entire duplicate clusters.", "criticality": "P0"},
+    {"id": "GEM-C4", "statement": "Keeps delayed or immature outcomes distinct from observed zero outcomes and evaluates matured cohorts using the registered denominator.", "criticality": "P0"},
+    {"id": "GEM-C5", "statement": "Distinguishes deterministic journey attribution from causal incrementality and requires a credible counterfactual for incremental causal claims.", "criticality": "P0"},
+    {"id": "GEM-C6", "statement": "Separates causal-identification sufficiency from reversible operational-decision sufficiency and does not convert low causal confidence into automatic decision paralysis.", "criticality": "P0"},
+    {"id": "GEM-C7", "statement": "Uses KPI maturity, materiality, reversibility, continued-spend or waiting cost, downstream economics and confounder action relevance to choose a bounded operational action without weakening causal or SCALE safeguards.", "criticality": "P1"}
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "architect/library/qualifications/growth-experimentation-measurement/91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c/growth-experimentation-measurement-1-0-0-20260819.json#inherited-unchanged-invariants",
+      "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-decision-sufficiency.json",
+      "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-fresh.json",
+      "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream-fresh.json"
+    ],
+    "grader_refs": [
+      "architect/evaluation/growth-experimentation-analytics/grader_heldout_decision_sufficiency_v03.py",
+      "architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_fresh_v03.py",
+      "architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_fresh_v03.py"
+    ],
+    "thresholds": [
+      "Unchanged 1.0.0 invariants retain supporting qualification evidence only because the exact v0.1 and v0.2 components and relevant assumptions remain unchanged",
+      "Confounded comparisons must preserve the causal ceiling and must not declare the nominal treatment a causal winner",
+      "When mature business evidence is materially adverse and stopping is bounded/reversible, unresolved causal attribution must not force continued spend or universal INCONCLUSIVE",
+      "A simple upstream cost gap must not override mature verified downstream economics",
+      "SCALE remains blocked when its stricter evidence and integrity requirements are not satisfied",
+      "Affected decision-sufficiency behavior must pass fresh executable checks on at least two independent capable model families"
+    ],
+    "reliability_trials": 2,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "Provider-backed frozen-candidate executable qualification with independent OpenAI and Gemini model families",
+    "model_or_executor": "OpenAI executor_responses.py plus Gemini executor_gemini.py; exact model identifiers are preserved in workflow run evidence",
+    "tools": ["Frozen v0.1 candidate", "Frozen v0.2 overlay", "Frozen v0.3 overlay", "result.schema.json", "stdio candidate adapter", "deterministic Python graders"],
+    "state_contract": "Each scored run verified the exact candidate component Git blob SHAs before execution. Fresh Gemini cases were created after scorer-construct defects were identified; burned diagnostic cases were not retroactively promoted to PASS.",
+    "authority_scope": "Analytical and recommendation capability only; campaign spend changes, commercial truth, legal decisions and platform execution remain outside the reusable core authority."
+  },
+  "evidence": {
+    "run_refs": [
+      "github-actions:32563140932/job/97007724416",
+      "github-actions:32563284789/job/97008206844",
+      "github-actions:32621655293/job/97150580735",
+      "architect/library/qualifications/growth-experimentation-measurement/91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c/growth-experimentation-measurement-1-0-0-20260819.json"
+    ],
+    "artifact_refs": [
+      "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json",
+      "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "architect/library/cores/growth-experimentation-measurement/1.1.0/professional-model.md",
+      "architect/library/cores/growth-experimentation-measurement/1.1.0/evidence-and-reuse.md"
+    ],
+    "provenance_refs": [
+      "architect/research/growth-experimentation-analytics/analytics-agent-profession-gap-audit-v0.1.md",
+      "architect/research/growth-experimentation-analytics/competency-matrix-v0.1.md",
+      "architect/library/cores/growth-experimentation-measurement/1.1.0/evidence-and-reuse.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact 1.1.0 artifact digest and exact frozen v0.1 + v0.2 + v0.3 assembly.",
+    "Historical 1.0.0 PASS evidence supports only unchanged invariants whose implementation and relevant assumptions remain unchanged.",
+    "Fresh independent-model evidence specifically qualifies the decision-sufficiency delta; it does not establish universal behavior across every provider/model/runtime.",
+    "The core does not supply live platform definitions, organization-specific economics, legal interpretation, campaign execution authority or advanced statistical methods outside its validated boundary."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional rules remain qualified while the exact 1.1.0 artifact digest, frozen component SHAs, critical decision policies and declared evaluation assumptions are unchanged; volatile business/platform/legal facts require live context at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to one of the three frozen normative components or the library assembly contract",
+      "A repeated production failure on a P0 qualified claim",
+      "Material change in model/runtime/tool behavior that can affect the qualified claims",
+      "Material new experimentation or causal-inference evidence invalidating a stable professional rule",
+      "Hidden coupling discovered during specialization or composition"
+    ]
+  },
+  "qualified_at": "2026-08-23T10:06:43+04:00"
+}
