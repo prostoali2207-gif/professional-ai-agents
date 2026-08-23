@@ -1,0 +1,130 @@
+name: Content Architecture v0.4 Gemini resume H20
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type RUN_PAID_QUALIFICATION to authorize one missing scored run
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  resume:
+    if: ${{ inputs.confirmation == 'RUN_PAID_QUALIFICATION' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_GEMINI_MODEL: gemini-3.5-flash-lite
+      FROZEN_ARTIFACT_GEMINI_TIMEOUT: '120'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pre-run resume gate
+        run: |
+          echo 'objective=resume only missing H20/F10 from run 32635329000'
+          echo 'candidate_blob=5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          echo 'provider=gemini-interactions-api'
+          echo 'model=gemini-3.5-flash-lite'
+          echo 'planned_scored_runs=1'
+          echo 'prior_valid_runs_preserved=35'
+          echo 'prior_failure=429 free-tier request quota; retry-after was ~26s'
+          echo 'retry_limit=0 blind retries'
+
+      - name: Install deterministic dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+
+      - name: Fetch and verify exact v0.4 blob
+        run: |
+          git fetch origin agent/content-architecture-core-2026-08
+          test "$(git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d)" = "blob"
+
+      - name: Restore existing sealed corpus and isolate H20 only
+        run: |
+          python architect/evaluation/content-architecture-heldout/build_sealed_runtime.py \
+            --parts-dir architect/evaluation/content-architecture-heldout/sealed.parts \
+            --out "$RUNNER_TEMP/content-architecture-v04-h20"
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04-h20'/'manifest.json'
+          m=json.loads(p.read_text())
+          rows=[x for x in m['fixtures'] if x.get('fixture_id')=='H20']
+          if len(rows)!=1:
+              raise SystemExit(f'expected exactly one H20 fixture, got {len(rows)}')
+          row=dict(rows[0])
+          row['trial_count']=1
+          row['regression_scope']='RESUME_MISSING_ONLY'
+          m['candidate_sha']='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          m['fixtures']=[row]
+          m['evaluator_class']='independent-held-out-regression-resume'
+          m['resume_policy']={
+            'source_run_id':32635329000,
+            'preserved_valid_runs':35,
+            'missing_run_id':'H20-t1',
+            'reason':'provider 429 quota exhaustion'
+          }
+          p.write_text(json.dumps(m, ensure_ascii=False, indent=2, sort_keys=True))
+          print(json.dumps({'status':'PASS','fixture_id':'H20','family':row.get('family'),'trial_count':1}))
+          PY
+
+      - name: Fail-closed credential preflight
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo 'GEMINI_API_KEY missing'; exit 31; }
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY missing'; exit 32; }
+
+      - name: Execute only missing H20 run
+        id: run_eval
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/harness/runner.py \
+            --manifest "$RUNNER_TEMP/content-architecture-v04-h20/manifest.json" \
+            --candidate-command "python architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py" \
+            --out "$RUNNER_TEMP/content-architecture-v04-h20-results" \
+            --timeout 240
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Verify resumed evidence
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04-h20-results'/'summary.json'
+          if not p.exists(): raise SystemExit('summary missing')
+          rows=json.loads(p.read_text())
+          if len(rows)!=1: raise SystemExit(f'expected 1 run, got {len(rows)}')
+          row=rows[0]
+          if row.get('error'): raise SystemExit('execution error: '+str(row['error']))
+          if row.get('fixture_id')!='H20': raise SystemExit('unexpected fixture')
+          for step in row.get('steps',{}).values():
+              if step.get('candidate_identity',{}).get('sha')!='5d440e1bf3e20fbd35c6ab276310a904e36cc06d':
+                  raise SystemExit('candidate identity mismatch')
+          print(json.dumps({'status':'PASS','run_id':row.get('run_id'),'candidate_sha':'5d440e1bf3e20fbd35c6ab276310a904e36cc06d'}))
+          PY
+
+      - name: Upload resumed evaluator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-gemini-resume-h20
+          path: |
+            ${{ runner.temp }}/content-architecture-v04-h20-results/summary.json
+            ${{ runner.temp }}/content-architecture-v04-h20-results/runs.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce executable resume
+        if: always()
+        run: test "${{ steps.run_eval.outputs.exit_code }}" = "0"
