@@ -1,0 +1,106 @@
+name: Analytics v0.3 fresh decision sufficiency heldout Gemini
+
+on:
+  push:
+    branches:
+      - fix/analytics-gemini-qualification-2026-08-23
+    paths:
+      - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
+      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json'
+      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py'
+      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
+  pull_request:
+    branches:
+      - fix/analytics-decision-sufficiency-2026-08
+    paths:
+      - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
+      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json'
+      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py'
+      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  heldout-gemini:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      ANALYTICS_MODEL: gemini-3.5-flash-lite
+      GEMINI_THINKING_LEVEL: medium
+      ANALYTICS_CANDIDATE_CMD: python3 architect/evaluation/growth-experimentation-analytics/executor_gemini.py
+      ANALYTICS_CANDIDATE_MANIFEST: architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json
+      ANALYTICS_CANDIDATE_TIMEOUT_SECONDS: '240'
+      ANALYTICS_MODEL_TIMEOUT_SECONDS: '180'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify frozen candidate and Gemini credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing' >&2; exit 2; }
+          python3 -m py_compile architect/evaluation/growth-experimentation-analytics/executor_gemini.py
+          python3 -m py_compile architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py
+          python3 - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          m = json.loads(Path('architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json').read_text())
+          for c in m['assembly']:
+              actual = subprocess.check_output(['git','hash-object',c['path']], text=True).strip()
+              assert actual == c['git_blob_sha'], (c['path'], actual, c['git_blob_sha'])
+          print('FROZEN CANDIDATE VERIFIED')
+          PY
+
+      - name: Run final fresh downstream heldout on Gemini
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/analytics-v03-heldout-gemini"
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          suite = json.loads(Path('architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json').read_text())
+          adapter = Path('architect/evaluation/growth-experimentation-analytics/adapters/stdio_candidate_adapter.py')
+          grader = Path('architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py')
+          outdir = Path(os.environ['RUNNER_TEMP']) / 'analytics-v03-heldout-gemini'
+          failures = []
+          for fixture in suite['fixtures']:
+              fid = fixture['fixture_id']
+              proc = subprocess.run(['python3', str(adapter)], input=json.dumps(fixture), text=True,
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    env=os.environ.copy(), timeout=300)
+              if proc.returncode != 0:
+                  print(proc.stderr)
+                  failures.append(f'{fid}: executor failed')
+                  continue
+              rp = outdir / f'{fid}.json'
+              rp.write_text(proc.stdout, encoding='utf-8')
+              grade = subprocess.run(['python3', str(grader), str(rp)], text=True,
+                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              print(f'--- {fid} grade ---')
+              print(grade.stdout)
+              if grade.returncode != 0:
+                  failures.append(f'{fid}: heldout behavioral failure')
+          if failures:
+              raise SystemExit('\n'.join(failures))
+          print('ANALYTICS V0.3 GEMINI FINAL DOWNSTREAM HELDOUT PASS')
+          PY
+
+      - name: Preserve Gemini heldout evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-v0-3-final-downstream-heldout-gemini
+          path: ${{ runner.temp }}/analytics-v03-heldout-gemini/*.json
+          if-no-files-found: ignore
+          retention-days: 14

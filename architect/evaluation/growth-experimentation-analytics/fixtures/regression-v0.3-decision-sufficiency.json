@@ -1,0 +1,44 @@
+{
+  "suite_id": "analytics-regression-v0.3-decision-sufficiency",
+  "fixtures": [
+    {
+      "fixture_id": "REG-DS-01",
+      "instruction": "Evaluate the evidence and return one operational recommendation. Keep causal attribution separate from the immediate business action. Include computations named exactly b_cost_per_conversation_aed and cost_ratio_b_over_a so deterministic grading can verify the arithmetic without interpreting prose.",
+      "case": {
+        "decision_question": "Should the business continue funding configuration B in its current form, and did the nominal hook cause the observed difference?",
+        "primary_kpi": "messaging_conversations_started",
+        "outcome_maturity": "complete for registered decision horizon",
+        "variant_a": {"spend_aed": 100.45, "conversations": 27, "cost_per_conversation_aed": 3.72},
+        "variant_b": {"spend_aed": 39.11, "conversations": 4, "cost_per_conversation_aed": 9.78},
+        "design": {
+          "official_split_test": false,
+          "optimization": "CONVERSATIONS for both",
+          "attribution": "1d_view_7d_click for both",
+          "placements": "materially same",
+          "budget_a": "lifetime 174.51 AED",
+          "budget_b": "daily 11.07 AED",
+          "targeting_automation_difference": "A geo=0; B geo=1"
+        },
+        "action_properties": {
+          "stopping_b_is_reversible": true,
+          "continued_b_spend_has_real_cost": true,
+          "no_verified_downstream_evidence_reverses_current_cost_result": true
+        }
+      }
+    },
+    {
+      "fixture_id": "REG-DS-02",
+      "instruction": "Evaluate the evidence and return one operational recommendation. Do not use a simple percentage-gap rule.",
+      "case": {
+        "decision_question": "Should B be killed now?",
+        "primary_kpi": "qualified_leads",
+        "variant_a": {"spend_aed": 40, "qualified_leads": 4},
+        "variant_b": {"spend_aed": 24, "qualified_leads": 1},
+        "outcome_maturity": "registered horizon only 35% complete",
+        "registered_rule": "fixed horizon; no early stop except safety/operational guardrail",
+        "confounding": "none known",
+        "action_properties": {"no_safety_or_operational_guardrail_triggered": true}
+      }
+    }
+  ]
+}

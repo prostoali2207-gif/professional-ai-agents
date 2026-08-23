@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "growth-experimentation-measurement-v0.3",
+  "candidate_composite_digest_sha256": "9e503603ec80290b349b523f95c1037ce89daa91de3815d01afbfc928eee46db",
+  "status": "CANDIDATE_NOT_LIBRARY_ADMITTED",
+  "decision": "DO_NOT_PROMOTE",
+  "reason": "Affected behavior has executable provider-backed evidence on the available OpenAI runtime, but the prior Analytics release discipline requires fresh independent cross-model evidence and the current repository exposes no executable Gemini or Claude provider path.",
+  "executable_evidence": [
+    {
+      "family": "targeted_decision_sufficiency_regression",
+      "runtime": "OpenAI gpt-5.6-terra",
+      "result": "PASS",
+      "workflow_run_id": 32563140932,
+      "job_id": 97007724416
+    },
+    {
+      "family": "fresh_post_freeze_adversarial_heldout",
+      "runtime": "OpenAI gpt-5.6-terra",
+      "result": "PASS",
+      "workflow_run_id": 32563284789,
+      "job_id": 97008206844
+    }
+  ],
+  "release_gate": {
+    "required_model_families": ["ChatGPT/OpenAI", "Gemini", "Claude"],
+    "openai": "PASS",
+    "gemini": "NOT_EXECUTABLE",
+    "claude": "NOT_EXECUTABLE",
+    "not_executable_reason": "No automated Gemini/Claude executor or credential path is present in the current repository. Manual clean-chat transport exists but was not executed in this run.",
+    "claim_boundary": "Do not describe v0.3 as qualified, released, or library-admitted. Do not mutate qualified core 1.0.0 on the basis of this evidence alone."
+  },
+  "integrity": {
+    "candidate_changed_after_freeze": false,
+    "development_regression_separate_from_heldout": true,
+    "fresh_heldout_created_post_freeze": true,
+    "grader_repairs_did_not_modify_frozen_candidate": true
+  },
+  "next_release_action": "Obtain fresh clean execution of the exact frozen candidate on Gemini and Claude, preserve raw outputs unchanged, grade them against the frozen held-out rules, and promote only if the preregistered release threshold is satisfied."
+}
