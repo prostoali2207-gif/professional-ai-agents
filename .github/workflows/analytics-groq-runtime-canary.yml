@@ -1,0 +1,54 @@
+name: Analytics Groq runtime canary
+
+on:
+  push:
+    branches:
+      - infra/analytics-groq-qualification-runtime-2026-08-23
+    paths:
+      - 'architect/evaluation/growth-experimentation-analytics/executor_groq.py'
+      - '.github/workflows/analytics-groq-runtime-canary.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  groq-canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      ANALYTICS_MODEL: qwen/qwen3.6-27b
+      ANALYTICS_MODEL_TIMEOUT_SECONDS: '120'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Static executor check
+        run: python3 -m py_compile architect/evaluation/growth-experimentation-analytics/executor_groq.py
+
+      - name: Verify Groq credential and model access
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing' >&2; exit 2; }
+          python3 - <<'PY'
+          import json, os, urllib.request
+          req = urllib.request.Request(
+              'https://api.groq.com/openai/v1/models',
+              headers={'Authorization': f"Bearer {os.environ['GROQ_API_KEY']}"},
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+              payload = json.loads(r.read().decode('utf-8'))
+          ids = {m.get('id') for m in payload.get('data', []) if isinstance(m, dict)}
+          target = os.environ['ANALYTICS_MODEL']
+          if target not in ids:
+              raise SystemExit(f'model unavailable for this account: {target}')
+          print('GROQ CREDENTIAL + MODEL ACCESS PASS')
+          PY
