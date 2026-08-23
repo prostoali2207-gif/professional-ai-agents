@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, json, pathlib, subprocess, sys, tempfile
 
-V03_SHA = "dff87c22a4c39cf6300dc3b36b6cedfc7448c47d"
+V04_SHA = "5d440e1bf3e20fbd35c6ab276310a904e36cc06d"
 TARGET = {"F2", "F5", "F6", "F7", "F12"}
 STOCHASTIC = {"F2", "F5", "F6", "F11", "F12"}
 P0_EXTRA = {"F1", "F4", "F8", "F9", "F10"}
@@ -34,13 +34,11 @@ def main() -> int:
 
     full = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     ordered = []
-    # F5/F6/F7/F12 are direct repair targets. F2 is retained because the v0.3
-    # cross-cutting commercial-truth firewall and hook rule can affect this family.
     for src in full["fixtures"]:
         if src["family"] in TARGET:
             row = dict(src)
             row["trial_count"] = 3 if row["family"] in STOCHASTIC else 1
-            row["regression_scope"] = "TARGETED_OR_COUPLED"
+            row["regression_scope"] = "TARGETED"
             ordered.append(row)
     for src in full["fixtures"]:
         if src["family"] in P0_EXTRA:
@@ -49,22 +47,21 @@ def main() -> int:
             row["regression_scope"] = "P0_EXTRA"
             ordered.append(row)
 
-    full["candidate_sha"] = V03_SHA
+    full["candidate_sha"] = V04_SHA
     full["fixtures"] = ordered
     full["evaluator_class"] = "independent-held-out-regression"
     full["regression_policy"] = {
-        "direct_target_families": ["F5", "F6", "F7", "F12"],
-        "coupled_target_families": ["F2"],
+        "target_families": sorted(TARGET),
         "stochastic_repeats": 3,
         "p0_extra_families": sorted(P0_EXTRA),
-        "candidate": V03_SHA,
+        "candidate": V04_SHA,
     }
     (out / "manifest.json").write_text(
         json.dumps(full, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8"
     )
     print(json.dumps({
         "status": "PASS",
-        "candidate_sha": V03_SHA,
+        "candidate_sha": V04_SHA,
         "fixture_records": len(ordered),
         "run_count": sum(int(x.get("trial_count", 1)) for x in ordered),
         "target_families": sorted(TARGET),
