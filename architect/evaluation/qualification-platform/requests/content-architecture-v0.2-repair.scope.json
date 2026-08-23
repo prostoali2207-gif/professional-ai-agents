@@ -1,0 +1,9 @@
+{
+  "purpose": "repair",
+  "change_surface": "local",
+  "existing_evidence": "incompatible",
+  "affected_families": ["F2", "F5", "F6", "F7", "F12"],
+  "full_release_required": false,
+  "runtime_uncertainty": true,
+  "professional_behavior_changed": true
+}
