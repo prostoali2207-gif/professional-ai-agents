@@ -111,7 +111,7 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py
-      SANITIZED_REPORT_PATH: ${{ runner.temp }}/sales-r2-report.json
+      SANITIZED_REPORT_PATH: sales-r2-report.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -162,14 +162,14 @@ jobs:
         run: |
           PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["QUALIFICATION_MANIFEST"]))["sealed_pack"]["pack_digest"])')
           python architect/evaluation/qualification-platform/validate_sanitized_report.py \
-            --report "$RUNNER_TEMP/sales-r2-report.json" \
+            --report "$SANITIZED_REPORT_PATH" \
             --cycle-id "$CYCLE_ID" \
             --candidate-commit "$CANDIDATE_COMMIT" \
             --candidate-digest "$CANDIDATE_DIGEST" \
             --pack-digest "$PACK_DIGEST" \
             --model "$SALES_MODEL" \
             --runner-exit-code "${qualification_exit_code:-255}" \
-            --ledger-out "$RUNNER_TEMP/sales-r2-release-evidence.json"
+            --ledger-out sales-r2-release-evidence.json
       - name: Upload sanitized qualification evidence
         if: always() && steps.validate.outcome == 'success'
         id: upload
@@ -177,8 +177,8 @@ jobs:
         with:
           name: sales-0.3-r2-sanitized-qualification-evidence
           path: |
-            ${{ runner.temp }}/sales-r2-report.json
-            ${{ runner.temp }}/sales-r2-release-evidence.json
+            sales-r2-report.json
+            sales-r2-release-evidence.json
           if-no-files-found: error
           retention-days: 14
       - name: Enforce release verdict
