@@ -1,0 +1,189 @@
+name: Sales 0.3 fresh independent held-out r2
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r2.json'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py'
+      - 'architect/evaluation/sales-lead-conversion/run-trigger-v0_3-r2.txt'
+      - '.github/workflows/sales-0-3-fresh-independent-r2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.3-fresh-independent-2026-08-23-r2
+  CANDIDATE_COMMIT: 5adc0d315f6f63bc92df0a921040954a3541ef89
+  CANDIDATE_DIGEST: sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2
+  SALES_MODEL: gpt-5.6-terra
+  SALES_GRADER_MODEL: gpt-5.6-terra
+  SALES_MODEL_TIMEOUT_SECONDS: '120'
+  QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r2/qualification.json
+
+jobs:
+  deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile evaluator and exact runtime
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py
+          python -m py_compile architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py
+          python -m py_compile architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py
+          python -m py_compile architect/evaluation/sales-lead-conversion/canary_v0_3.py
+          python -m py_compile architect/evaluation/qualification-platform/qualification_preflight.py
+      - name: Validate preregistration structure
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r2.json'))
+          assert p['cycle_id']=='sales-0.3-fresh-independent-2026-08-23-r2'
+          assert p['frozen_candidate']['commit']=='5adc0d315f6f63bc92df0a921040954a3541ef89'
+          assert p['frozen_candidate']['artifact_digest']=='sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2'
+          assert len(p['construct']['families'])==12
+          assert p['fixture_design']['fixture_count']==36 and p['fixture_design']['per_family']==3
+          assert p['thresholds']['release_tasks_passed_min']==34
+          assert p['thresholds']['critical_hard_fails_max']==0
+          assert p['stochastic_retry_policy']['professional_failure_retry']==0
+          assert p['resource_budget_gate']['maximum_provider_calls_if_full']==91
+          print('PREREGISTRATION_STATIC_PASS')
+          PY
+      - name: Verify exact frozen candidate artifact digest
+        run: |
+          git cat-file -e "$CANDIDATE_COMMIT^{commit}"
+          python - <<'PY'
+          import hashlib, json, os, subprocess
+          commit=os.environ['CANDIDATE_COMMIT']; expected=os.environ['CANDIDATE_DIGEST']
+          path='architect/library/cores/sales-lead-conversion/0.3.0/manifest.json'
+          m=json.loads(subprocess.check_output(['git','show',f'{commit}:{path}'],text=True))
+          canonical=''
+          for p in m['artifact']['paths']:
+              blob=subprocess.check_output(['git','rev-parse',f'{commit}:{p}'],text=True).strip()
+              canonical += f'{p}:{blob}\n'
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual==expected==m['artifact']['content_digest'], (actual, expected)
+          print('FROZEN_CANDIDATE_PASS')
+          PY
+      - name: Exact runtime contract probe without API
+        run: |
+          python architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py --qualification-contract > "$RUNNER_TEMP/contract.json"
+          python - <<'PY'
+          import json, os
+          p=json.load(open(os.environ['RUNNER_TEMP']+'/contract.json'))
+          assert p['candidate_commit']==os.environ['CANDIDATE_COMMIT']
+          assert p['candidate_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['provider']=='openai-responses-api'
+          assert p['input_protocol']=='sales-lead-conversion-candidate-v1'
+          assert p['tool_protocol']=='sales-deterministic-tools-v1'
+          assert p['state_protocol']=='sales-state-checkpoint-v1'
+          assert p['observable_protocol']=='sales-observable-ledger-v1'
+          print('RUNTIME_CONTRACT_PASS')
+          PY
+
+  secret_gate:
+    needs: deterministic
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - name: Require evaluator-owned secrets before any provider call
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'CREDENTIAL_MISSING: QUALIFICATION_SEALED_PACK_MASTER_KEY; zero provider calls attempted.' >&2; exit 21; }
+          test -n "$OPENAI_API_KEY" || { echo 'CREDENTIAL_MISSING: OPENAI_API_KEY; zero provider calls attempted.' >&2; exit 22; }
+          echo 'SECRET_GATE_PASS'
+
+  qualify:
+    needs: secret_gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py
+      SANITIZED_REPORT_PATH: ${{ runner.temp }}/sales-r2-report.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Fresh held-out authoring and immediate sealing
+        run: python architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py
+      - name: Generic static preflight after pack freeze
+        run: |
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+      - name: Sealed no-API transport and structure preflight
+        run: |
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$QUALIFICATION_MANIFEST" --phase sealed \
+            --out-dir "$RUNNER_TEMP/sales-r2-pack"
+      - name: Preserve encrypted evaluator evidence before scoring
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.3-r2-encrypted-heldout-pack
+          path: |
+            architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r2/qualification.json
+            architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r2/parts
+          if-no-files-found: error
+          retention-days: 14
+      - name: Exact-runtime one-call canary
+        run: |
+          python architect/evaluation/qualification-platform/qualification_preflight.py \
+            --manifest "$QUALIFICATION_MANIFEST" --phase canary --require-runtime-secret
+      - name: Run preregistered scored qualification
+        id: scored
+        shell: bash
+        run: |
+          set +e
+          python "$RUNNER_TEMP/sales-r2-pack/runner.py"
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          echo "qualification_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+      - name: Validate sanitized report and release ledger
+        if: always()
+        id: validate
+        shell: bash
+        run: |
+          PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["QUALIFICATION_MANIFEST"]))["sealed_pack"]["pack_digest"])')
+          python architect/evaluation/qualification-platform/validate_sanitized_report.py \
+            --report "$RUNNER_TEMP/sales-r2-report.json" \
+            --cycle-id "$CYCLE_ID" \
+            --candidate-commit "$CANDIDATE_COMMIT" \
+            --candidate-digest "$CANDIDATE_DIGEST" \
+            --pack-digest "$PACK_DIGEST" \
+            --model "$SALES_MODEL" \
+            --runner-exit-code "${qualification_exit_code:-255}" \
+            --ledger-out "$RUNNER_TEMP/sales-r2-release-evidence.json"
+      - name: Upload sanitized qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.3-r2-sanitized-qualification-evidence
+          path: |
+            ${{ runner.temp }}/sales-r2-report.json
+            ${{ runner.temp }}/sales-r2-release-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce release verdict
+        if: always()
+        run: |
+          test "${{ steps.validate.outcome }}" = "success"
+          test "${{ steps.upload.outcome }}" = "success"
+          test "${qualification_exit_code:-missing}" = "0"
