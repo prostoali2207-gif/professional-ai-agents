@@ -7,6 +7,12 @@ on:
     paths:
       - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
       - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
+  pull_request:
+    branches:
+      - fix/analytics-decision-sufficiency-2026-08
+    paths:
+      - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
+      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
   workflow_dispatch:
 
 permissions:
