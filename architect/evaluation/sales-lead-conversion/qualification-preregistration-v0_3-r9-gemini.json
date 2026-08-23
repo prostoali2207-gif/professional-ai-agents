@@ -1,0 +1,12 @@
+{
+  "cycle_id":"sales-0.3-fresh-independent-2026-08-23-r9-gemini-paced",
+  "frozen_candidate":{"commit":"5adc0d315f6f63bc92df0a921040954a3541ef89","artifact_digest":"sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2"},
+  "scope":{"purpose":"release","decision":"FULL"},
+  "source_hidden_corpus":{"cycle":"sales-0.3-fresh-independent-2026-08-23-r7-gemini","run_id":32636298928,"pack_digest":"sha256:000f65db6fa3870bfcfc18e92a6549a17ffd0eac1e1fea528a1f868d8b5030a5","reuse":"fixtures and hidden grader references byte-for-byte; no scored fixture executed in source cycle"},
+  "families":["OWN","LIFE","MIX","SEC","FACT","INTENT","OBJ","NEXT","FUP","STATE","ID","OPS"],
+  "fixture_count":36,"per_family":3,"critical_repeat_slots":6,
+  "thresholds":{"task_pass_score_min":5,"release_tasks_passed_min":34,"per_family_tasks_passed_min":2,"critical_hard_fails_max":0,"professional_failure_retry":0},
+  "runtime_contract":{"provider":"gemini-interactions-api","candidate_model":"gemini-3.5-flash-lite","grader_model":"gemini-3.5-flash-lite","qualification_contract_version":1,"candidate_executor_behavior":"v2-paced","minimum_seconds_between_requests":6.0,"http_429_retry_max":1,"retry_only_when_no_model_result_exists":true},
+  "repair_scope":"qualification contract handshake compatibility only; r8 pacing, structured grader transport, candidate, hidden corpus, thresholds, rubric, hard-fail and stochastic policies unchanged",
+  "resource_gate":{"authoring_calls":0,"canary_calls":1,"grader_calibration_calls":3,"candidate_scored_trials_max":42,"grader_scored_calls_max":42,"paced_max_nominal_requests_per_minute":10}
+}
