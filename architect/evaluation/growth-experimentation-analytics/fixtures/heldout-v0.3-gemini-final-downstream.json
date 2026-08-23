@@ -1,0 +1,27 @@
+{
+  "suite_id": "analytics-heldout-v0.3-gemini-final-downstream",
+  "status": "FRESH_AFTER_RECOMMENDATION-SEMANTICS_GRADER_REPAIR",
+  "candidate_id": "growth-experimentation-measurement-v0.3-decision-sufficiency",
+  "fixtures": [
+    {
+      "fixture_id": "H-GFD-01",
+      "instruction": "Evaluate this completed paid-growth comparison. Acquisition cost is a diagnostic proxy, not the sole business decision metric. Use mature downstream economics, preserve the causal ceiling, and choose the justified operational recommendation. Include computations named a_net_return and b_net_return.",
+      "case": {
+        "primary_kpi": "qualified_leads",
+        "outcome_maturity": "complete",
+        "configuration_a": {"spend": 680.0, "qualified_leads": 34, "sales": 1, "gross_profit": 500.0},
+        "configuration_b": {"spend": 450.0, "qualified_leads": 8, "sales": 4, "gross_profit": 2070.0},
+        "design": {
+          "randomized_split": false,
+          "audience_source_differs": true,
+          "creative_differs": true
+        },
+        "registered_business_rule": "Acquisition cost is diagnostic, while mature verified sales and gross profit are decision-relevant downstream economics before KILL, ITERATE, or SCALE.",
+        "operational_context": {
+          "stopping_or_restarting_is_reversible": true,
+          "downstream_records_are_verified_and_mature": true
+        }
+      }
+    }
+  ]
+}
