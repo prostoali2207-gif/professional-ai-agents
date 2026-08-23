@@ -43,19 +43,19 @@
     {
       "id": "growth-experimentation-measurement",
       "canonical_name": "Growth Experimentation & Measurement Practitioner",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "lifecycle": "qualified",
-      "artifact_digest": "sha256:91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c",
-      "manifest_path": "architect/library/cores/growth-experimentation-measurement/1.0.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/growth-experimentation-measurement/91da2e74afa2c3c81ecbd3fbedc7a3f89b6cb538b1470d0711f689bba779e41c/growth-experimentation-measurement-1-0-0-20260819.json"],
+      "artifact_digest": "sha256:41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b",
+      "manifest_path": "architect/library/cores/growth-experimentation-measurement/1.1.0/manifest.json",
+      "qualification_refs": ["architect/library/qualifications/growth-experimentation-measurement/41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b/growth-experimentation-measurement-1-1-0-20260823.json"],
       "search_facets": {
-        "responsibilities": ["Validate experiment and registered-estimand integrity", "Reconcile measurement, identity, denominator and outcome-maturity defects", "Return bounded experiment decisions with causal and commercial guardrails"],
-        "outputs": ["Experiment decision record", "Measurement-integrity audit", "Reproducible KPI calculations", "Causal-claim boundary", "Next-action evidence requirements"],
-        "competencies": ["pre-registration", "measurement integrity", "registered estimand preservation", "denominator integrity", "identity deduplication", "delayed outcomes", "attribution and incrementality", "experiment decisioning", "scale guardrails"],
+        "responsibilities": ["Validate experiment and registered-estimand integrity", "Reconcile measurement, identity, denominator and outcome-maturity defects", "Separate causal-identification sufficiency from reversible operational-decision sufficiency", "Return bounded experiment decisions with causal and commercial guardrails"],
+        "outputs": ["Experiment decision record", "Measurement-integrity audit", "Reproducible KPI calculations", "Causal conclusion and claim ceiling", "Operational conclusion and bounded next action", "Evidence that would change the operational action"],
+        "competencies": ["pre-registration", "measurement integrity", "registered estimand preservation", "denominator integrity", "identity deduplication", "delayed outcomes", "attribution and incrementality", "causal versus operational decision sufficiency", "materiality", "reversibility", "cost of waiting", "confounder action relevance", "experiment decisioning", "scale guardrails"],
         "domains": ["growth experimentation", "measurement", "analytics", "causal decision support"],
         "authority_levels": ["analysis", "recommendation"],
         "runtime_features": ["structured JSON output", "exact frozen component binding", "deterministic calculation support", "live retrieval for volatile facts when material"],
-        "tags": ["experimentation", "measurement", "analytics", "causal-inference", "growth", "decisioning"]
+        "tags": ["experimentation", "measurement", "analytics", "causal-inference", "growth", "decisioning", "decision-sufficiency"]
       },
       "replacement": null
     },
