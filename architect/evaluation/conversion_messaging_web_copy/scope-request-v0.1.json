@@ -1,0 +1,9 @@
+{
+  "purpose": "release",
+  "change_surface": "unknown",
+  "existing_evidence": "incompatible",
+  "affected_families": [],
+  "full_release_required": true,
+  "runtime_uncertainty": true,
+  "professional_behavior_changed": true
+}
