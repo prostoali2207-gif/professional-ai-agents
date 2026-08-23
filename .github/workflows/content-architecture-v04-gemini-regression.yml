@@ -1,0 +1,177 @@
+name: Content Architecture v0.4 Gemini targeted regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type RUN_PAID_QUALIFICATION to authorize provider-backed canary and scored regression
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    if: ${{ inputs.confirmation == 'RUN_PAID_QUALIFICATION' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_GEMINI_MODEL: gemini-3.5-flash-lite
+      FROZEN_ARTIFACT_GEMINI_TIMEOUT: '120'
+    steps:
+      - name: Checkout evaluator transport
+        uses: actions/checkout@v4
+        with:
+          ref: eval/content-architecture-v04-gemini-runtime-2026-08
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pre-run budget gate
+        run: |
+          echo 'objective=v0.4 targeted F2/F5/F6/F7/F12 plus P0 preservation'
+          echo 'candidate_blob=5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          echo 'provider=gemini-interactions-api'
+          echo 'model=gemini-3.5-flash-lite'
+          echo 'planned_provider_calls=1 unscored tool-canary + up to 36 scored candidate runs; extra tool rounds only when fixture behavior requires them'
+          echo 'reusable_evidence=v0.3/v0.4 OpenAI infrastructure evidence retained; no behavioral PASS reused across provider switch'
+          echo 'stop_conditions=sealed integrity failure, credential failure, canary failure, execution failure, targeted/P0 professional failure'
+          echo 'retry_limit=0 blind retries'
+          echo 'provider_quota_state=unknown; fail closed on quota/rate/auth error'
+
+      - name: Install deterministic/sealed dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+
+      - name: Fetch and verify exact v0.4 blob
+        run: |
+          git fetch origin agent/content-architecture-core-2026-08 main
+          test "$(git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d)" = "blob"
+
+      - name: Restore and verify existing sealed regression corpus
+        run: |
+          python architect/evaluation/content-architecture-heldout/build_sealed_runtime.py \
+            --parts-dir architect/evaluation/content-architecture-heldout/sealed.parts \
+            --out "$RUNNER_TEMP/content-architecture-v04"
+
+      - name: Install reviewed Gemini adapter from main
+        run: |
+          git show origin/main:architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py \
+            > architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py
+          python -m py_compile architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py
+
+      - name: Fail-closed credential preflight
+        run: |
+          test -n "$GEMINI_API_KEY" || { echo 'GEMINI_API_KEY missing'; exit 31; }
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY missing'; exit 32; }
+          echo 'qualification credentials available (values not disclosed)'
+
+      - name: One-call unscored Gemini tool canary
+        run: |
+          mkdir -p "$RUNNER_TEMP/gemini-canary"
+          cat > "$RUNNER_TEMP/gemini-canary-payload.json" <<'JSON'
+          {
+            "protocol_version": 2,
+            "candidate_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+            "workspace": "__WORKSPACE__",
+            "input": {
+              "task": "Unscored runtime canary only. Use the observed_state tool once to inspect evaluator state, then report only whether the state says canary_ok=true. Do not make any commercial claim.",
+              "observed_state": {"canary_ok": true},
+              "allowed_resources": [],
+              "fixture_tools": {},
+              "max_tool_rounds": 2
+            }
+          }
+          JSON
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'gemini-canary-payload.json'
+          x=json.loads(p.read_text())
+          x['workspace']=str(pathlib.Path(os.environ['RUNNER_TEMP'])/'gemini-canary')
+          p.write_text(json.dumps(x))
+          PY
+          python architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py \
+            < "$RUNNER_TEMP/gemini-canary-payload.json" \
+            > "$RUNNER_TEMP/gemini-canary-output.json"
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'gemini-canary-output.json'
+          x=json.loads(p.read_text())
+          assert x['status']=='completed'
+          assert x['candidate_identity']['sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          calls=x.get('observable',{}).get('tool_calls',[])
+          assert any(c.get('tool')=='observed_state' and c.get('result',{}).get('ok') is True for c in calls)
+          print(json.dumps({'status':'PASS','provider':x['candidate_identity'].get('provider'),'model':x['candidate_identity'].get('model'),'observable_tool_canary':True}))
+          PY
+
+      - name: Execute targeted and P0 regression
+        id: run_eval
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/harness/runner.py \
+            --manifest "$RUNNER_TEMP/content-architecture-v04/manifest.json" \
+            --candidate-command "python architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py" \
+            --out "$RUNNER_TEMP/content-architecture-v04-results" \
+            --timeout 240
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Verify exact candidate identity and executable evidence chain
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04-results'/'summary.json'
+          if not p.exists(): raise SystemExit('summary missing')
+          rows=json.loads(p.read_text())
+          expected='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          if not rows: raise SystemExit('no runs')
+          errors=[]
+          for row in rows:
+              if row.get('error'): errors.append(row['error'])
+              for step in row.get('steps',{}).values():
+                  if step.get('candidate_identity',{}).get('sha')!=expected:
+                      raise SystemExit('candidate identity mismatch')
+          print(json.dumps({'runs':len(rows),'execution_errors':len(errors),'candidate_sha':expected}))
+          if errors: raise SystemExit('execution errors present')
+          PY
+
+      - name: Post-run accounting
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04-results'/'summary.json'
+          rows=json.loads(p.read_text()) if p.exists() else []
+          print(json.dumps({
+            'planned_scored_runs':36,
+            'actual_run_records':len(rows),
+            'execution_errors':sum(1 for r in rows if r.get('error')),
+            'duration_seconds_total':round(sum(float(r.get('duration_s',0)) for r in rows),3),
+            'candidate_sha':'5d440e1bf3e20fbd35c6ab276310a904e36cc06d',
+            'provider':'gemini-interactions-api',
+            'model':'gemini-3.5-flash-lite'
+          }))
+          PY
+
+      - name: Upload evaluator-visible evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-gemini-targeted-run
+          path: |
+            ${{ runner.temp }}/gemini-canary-output.json
+            ${{ runner.temp }}/content-architecture-v04-results/summary.json
+            ${{ runner.temp }}/content-architecture-v04-results/runs.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce executable regression
+        if: always()
+        run: test "${{ steps.run_eval.outputs.exit_code }}" = "0"
