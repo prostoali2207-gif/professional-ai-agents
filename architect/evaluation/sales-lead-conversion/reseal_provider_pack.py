@@ -9,7 +9,7 @@ from cryptography.fernet import Fernet
 def main() -> int:
     ap=argparse.ArgumentParser()
     ap.add_argument('--source-dir',required=True); ap.add_argument('--runner',required=True); ap.add_argument('--out',required=True); ap.add_argument('--cycle-id',required=True)
-    args=ap.parse_args(); root=Path.cwd(); source=Path(args.source_dir); out=Path(args.out); runner=Path(args.runner)
+    args=ap.parse_args(); root=Path.cwd().resolve(); source=Path(args.source_dir).resolve(); out=Path(args.out).resolve(); runner=Path(args.runner).resolve()
     fixtures=(source/'fixtures.json').read_bytes(); grader=(source/'grader.json').read_bytes()
     sys.path.insert(0,str(root/'architect/evaluation/qualification-platform'))
     from sealed_pack_keys import derive_fernet_key,key_fingerprint_sha256
