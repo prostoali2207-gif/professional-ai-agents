@@ -7,6 +7,12 @@ on:
     paths:
       - 'architect/evaluation/growth-experimentation-analytics/executor_groq.py'
       - '.github/workflows/analytics-groq-runtime-canary.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'architect/evaluation/growth-experimentation-analytics/executor_groq.py'
+      - '.github/workflows/analytics-groq-runtime-canary.yml'
   workflow_dispatch:
 
 permissions:
