@@ -76,7 +76,12 @@ def api_call(candidate_text: str, task: dict[str, Any]) -> str:
     request = urllib.request.Request(
         os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions",
         data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "professional-ai-agents-groq-executor/1.0",
+        },
         method="POST",
     )
     try:
