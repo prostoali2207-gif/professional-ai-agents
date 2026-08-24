@@ -1,13 +1,6 @@
 name: Sales 0.3 fresh independent held-out r3
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r3.json'
-      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r3.py'
-      - 'architect/evaluation/sales-lead-conversion/run-trigger-v0_3-r3.txt'
-      - '.github/workflows/sales-0-3-fresh-independent-r3.yml'
   workflow_dispatch:
 
 permissions:
