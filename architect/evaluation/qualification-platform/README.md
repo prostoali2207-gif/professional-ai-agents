@@ -1,6 +1,6 @@
 # Professional Agent Qualification Platform
 
-Status: infrastructure architecture for reusable qualification cycles. This does not replace profession-specific evaluation design.
+Status: reusable qualification infrastructure. **Maintenance mode by default after issue #129 r9-class startup closure.** This does not replace profession-specific evaluation design.
 
 ## Decision
 
@@ -128,6 +128,12 @@ Retry policy is bounded:
 - scored-run infrastructure interruption: resume/retry only if evaluator protocol preserves held-out integrity and stochastic policy;
 - professional failure: do not rerun the same sealed pack merely to seek a better score unless preregistered repeated-trial policy requires it.
 
+## Maintenance stop-rule
+
+The issue #129 evidence-based stop condition is now the default governance rule: optional tooling discovery or generic improvement ideas do not reopen qualification-platform engineering. Resume generic platform work only with concrete repository evidence of a new generic infrastructure blind spot, paid/scored spend used solely to discover a deterministically detectable infrastructure defect, fail-open behavior in an existing generic control, or a repeated infrastructure class spanning multiple profession-specific evaluators.
+
+Provider outages/rate limits, profession-specific grader construct defects, candidate professional failures and optional tooling are not sufficient reopen evidence by themselves.
+
 ## Senior-practitioner red-team repairs included
 
 A senior ML evaluator would object if infrastructure standardization silently standardized constructs: profession-specific fixture/grader/threshold ownership remains explicit.
@@ -138,4 +144,4 @@ A release/cost owner would object to paying for held-out calls before proving ex
 
 ## Migration rule
 
-Existing profession workflows can migrate incrementally. Future cycles should create one public qualification manifest and invoke the generic validator rather than copy inline shell/Python checks. The qualification-platform is in maintenance mode by default after the issue #129 r9-class cold-start closure; new platform work requires concrete reopen evidence rather than optional-tool discovery alone.
+Existing profession workflows can migrate incrementally. Future cycles should create one public qualification manifest and invoke the generic validator rather than copy inline shell/Python checks. Legacy workflow trigger drift is a repository maintenance/cost-safety concern enforced by `paid_workflow_guard.py`; it does not by itself reopen generic qualification-platform architecture when the guard fails closed as designed.
