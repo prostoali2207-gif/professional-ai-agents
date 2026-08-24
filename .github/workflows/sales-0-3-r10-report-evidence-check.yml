@@ -1,0 +1,122 @@
+name: Sales 0.3 r10 sanitized report evidence check
+
+# Runs the cycle-bound sanitized-report validator against the sanitized evidence
+# archived by both r10 scored runs, and prints only family_level_aggregate.
+#
+# No provider secret, no provider call, and no sealed-pack read: only the
+# `*-sanitized-qualification-evidence` artifacts are downloaded, never the
+# `*-encrypted-heldout-pack` ones, and the job asserts that.
+#
+# The evidence artifacts are retained for a fixed window. Past that window there
+# is nothing left to verify and the job reports so instead of failing, so it
+# cannot rot into a permanently red check.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py'
+      - 'architect/evaluation/sales-lead-conversion/test_validate_sanitized_report_v0_3.py'
+      - '.github/workflows/sales-0-3-r10-report-evidence-check.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  R10_PREREGISTRATION: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r10-gemini.json
+  CANDIDATE_COMMIT: 5adc0d315f6f63bc92df0a921040954a3541ef89
+  CANDIDATE_DIGEST: sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2
+  REPORT_NAME: sales-r10-gemini-report.json
+  EVIDENCE_EXPIRES_AT: '2026-09-06'
+
+jobs:
+  verify-r10-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ''
+      GEMINI_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check whether the archived evidence is still retained
+        id: window
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$(date -u +%Y-%m-%d)" \> "$EVIDENCE_EXPIRES_AT" ]; then
+            echo "retained=false" >> "$GITHUB_OUTPUT"
+            echo "r10 sanitized evidence artifacts expired on $EVIDENCE_EXPIRES_AT; nothing to verify." \
+              | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "retained=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download r10 run 1 sanitized evidence
+        if: steps.window.outputs.retained == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: sales-0.3-r10-gemini-sanitized-qualification-evidence
+          path: evidence/run-32636661187
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: '32636661187'
+
+      - name: Download r10 run 2 sanitized evidence
+        if: steps.window.outputs.retained == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: sales-0.3-r10-gemini-sanitized-qualification-evidence
+          path: evidence/run-32636679740
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: '32636679740'
+
+      - name: Assert no sealed-pack material was fetched
+        if: steps.window.outputs.retained == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find evidence -type f ! -name '*.json' | grep -q .; then
+            echo 'unexpected non-JSON file in the sanitized evidence set'; exit 1
+          fi
+          if find evidence \( -type d -name parts \
+               -o -type f -name 'runner.py' \
+               -o -type f -name 'fixtures.json' \
+               -o -type f -name 'grader.json' \
+               -o -type f -name 'freeze-record.json' \
+               -o -type f -name 'qualification.json' \) | grep -q .; then
+            echo 'sealed-pack material present in the evidence set'; exit 1
+          fi
+          find evidence -type f | sort
+
+      - name: Validate both r10 sanitized reports and emit family_level_aggregate
+        if: steps.window.outputs.retained == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for run in 32636661187 32636679740; do
+            report="evidence/run-$run/$REPORT_NAME"
+            python architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py \
+              --report "$report" \
+              --preregistration "$R10_PREREGISTRATION" \
+              --candidate-commit "$CANDIDATE_COMMIT" \
+              --candidate-digest "$CANDIDATE_DIGEST" >/dev/null
+            {
+              echo "## run $run family_level_aggregate"
+              echo '```json'
+              python architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py \
+                --report "$report" \
+                --preregistration "$R10_PREREGISTRATION" \
+                --candidate-commit "$CANDIDATE_COMMIT" \
+                --candidate-digest "$CANDIDATE_DIGEST" \
+                --emit-family-aggregate
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          done

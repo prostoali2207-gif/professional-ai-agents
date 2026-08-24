@@ -39,6 +39,9 @@ env:
   SALES_MODEL: gpt-5.6-terra
   SALES_GRADER_MODEL: gpt-5.6-terra
   SALES_MODEL_TIMEOUT_SECONDS: '120'
+  R1_PREREGISTRATION: architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.preregistration.json
+  CANDIDATE_COMMIT: 5adc0d315f6f63bc92df0a921040954a3541ef89
+  CANDIDATE_DIGEST: sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2
 
 jobs:
   static:
@@ -113,7 +116,12 @@ jobs:
           echo "runner_exit=$code" >> "$GITHUB_OUTPUT"
           exit 0
       - name: Validate sanitized report
-        run: python architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py sanitized-report.json
+        run: |
+          python architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py \
+            --report sanitized-report.json \
+            --preregistration "$R1_PREREGISTRATION" \
+            --candidate-commit "$CANDIDATE_COMMIT" \
+            --candidate-digest "$CANDIDATE_DIGEST"
       - name: Upload sanitized report
         if: always()
         uses: actions/upload-artifact@v4
