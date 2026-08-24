@@ -13,6 +13,7 @@ import zipfile
 from collections import Counter
 
 from sealed_pack_keys import SealedKeyError, key_fingerprint_sha256, resolve_effective_key
+from sealed_runner_startup_preflight import probe as probe_sealed_runner_startup
 
 
 class PreflightError(RuntimeError):
@@ -236,6 +237,14 @@ def verify_sealed_pack(m: dict, output_dir: Path) -> None:
         fail("PACK_STRUCTURE_INVALID", "family count mismatch")
     if set(families.values()) != {int(e["per_family"])}:
         fail("PACK_STRUCTURE_INVALID", "per-family cardinality mismatch")
+
+    try:
+        probe_sealed_runner_startup(
+            output_dir / e["runner_file"],
+            timeout=min(30, int(m["runtime"]["candidate_timeout_seconds"])),
+        )
+    except RuntimeError as exc:
+        fail("SEALED_RUNNER_STARTUP_INVALID", str(exc))
 
 
 def run_canary(m: dict) -> None:
