@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - '.github/workflows/maintenance-disable-legacy-paid-auto-triggers-134.yml'
 
 permissions:
   contents: write
@@ -43,6 +41,7 @@ jobs:
               '.github/workflows/sales-0-3-r3-resume.yml',
           ]
 
+          changed = 0
           for raw_path in paths:
               p = Path(raw_path)
               text = p.read_text(encoding='utf-8')
@@ -58,21 +57,28 @@ jobs:
                       break
                   end += 1
               old_block = '\n'.join(lines[start:end])
-              if 'push:' not in old_block and 'pull_request:' not in old_block:
-                  raise SystemExit(f'{raw_path}: no automatic trigger found; refusing unexpected rewrite')
               if 'workflow_dispatch:' not in old_block:
                   raise SystemExit(f'{raw_path}: workflow_dispatch missing; refusing rewrite')
+              if 'push:' not in old_block and 'pull_request:' not in old_block:
+                  print(f'ALREADY_MANUAL_ONLY {raw_path}')
+                  continue
               new_lines = lines[:start] + ['on:', '  workflow_dispatch:'] + lines[end:]
               p.write_text('\n'.join(new_lines) + '\n', encoding='utf-8')
+              changed += 1
               print(f'MANUAL_ONLY {raw_path}')
+          print(f'CHANGED_COUNT={changed}')
           PY
       - name: Verify paid workflow guard after rewrite
         run: python architect/evaluation/qualification-platform/paid_workflow_guard.py
-      - name: Commit maintenance cleanup
+      - name: Commit maintenance cleanup if needed
         run: |
           set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add .github/workflows
+          if git diff --cached --quiet; then
+            echo 'NO_CHANGES'
+            exit 0
+          fi
           git commit -m 'Maintenance: make legacy provider workflows manual-only (#134)'
           git push origin HEAD:infra/qualification-sealed-runner-preflight-129
