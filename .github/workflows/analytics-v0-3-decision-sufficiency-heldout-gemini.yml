@@ -1,22 +1,6 @@
 name: Analytics v0.3 fresh decision sufficiency heldout Gemini
 
 on:
-  push:
-    branches:
-      - fix/analytics-gemini-qualification-2026-08-23
-    paths:
-      - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
-      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json'
-      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py'
-      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
-  pull_request:
-    branches:
-      - fix/analytics-decision-sufficiency-2026-08
-    paths:
-      - 'architect/evaluation/growth-experimentation-analytics/executor_gemini.py'
-      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json'
-      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_gemini_final_downstream_v03.py'
-      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout-gemini.yml'
   workflow_dispatch:
 
 permissions:
