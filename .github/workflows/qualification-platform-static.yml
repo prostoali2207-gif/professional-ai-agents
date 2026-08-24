@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install qualification dependencies
-        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema pyyaml
       - name: Compile generic qualification utilities
         run: |
           python3 -m py_compile architect/evaluation/qualification-platform/qualification_preflight.py
@@ -31,6 +31,7 @@ jobs:
           python3 -m py_compile architect/evaluation/qualification-platform/validate_sanitized_report.py
           python3 -m py_compile architect/evaluation/qualification-platform/paid_workflow_guard.py
           python3 -m py_compile architect/evaluation/qualification-platform/qualification_scope_gate.py
+          python3 -m py_compile architect/evaluation/qualification-platform/deterministic_preflight.py
       - name: Run deterministic preflight regressions
         working-directory: architect/evaluation/qualification-platform
         run: |
@@ -38,8 +39,13 @@ jobs:
           python3 test_sealed_runner_startup_preflight.py
           python3 test_paid_workflow_guard.py
           python3 test_qualification_scope_gate.py
+          python3 test_deterministic_preflight.py
       - name: Enforce Resource & Cost Engineering paid-workflow trigger policy
         run: python3 architect/evaluation/qualification-platform/paid_workflow_guard.py
+      - name: Run the Sales 0.3 r10 deterministic preflight without API
+        run: |
+          python3 architect/evaluation/qualification-platform/deterministic_preflight.py \
+            --spec architect/evaluation/sales-lead-conversion/preflight/sales-0_3-r10-gemini.json
       - name: Validate migrated Sales 0.2 static contract without API
         env:
           OPENAI_API_KEY: ''
