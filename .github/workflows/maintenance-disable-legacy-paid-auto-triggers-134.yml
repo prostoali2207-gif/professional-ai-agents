@@ -57,9 +57,9 @@ jobs:
                       break
                   end += 1
               old_block = '\n'.join(lines[start:end])
-              if 'workflow_dispatch:' not in old_block:
-                  raise SystemExit(f'{raw_path}: workflow_dispatch missing; refusing rewrite')
               if 'push:' not in old_block and 'pull_request:' not in old_block:
+                  if 'workflow_dispatch:' not in old_block:
+                      raise SystemExit(f'{raw_path}: unexpected non-automatic trigger block')
                   print(f'ALREADY_MANUAL_ONLY {raw_path}')
                   continue
               new_lines = lines[:start] + ['on:', '  workflow_dispatch:'] + lines[end:]
