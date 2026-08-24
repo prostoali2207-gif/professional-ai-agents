@@ -1,9 +1,9 @@
 name: Maintenance disable legacy paid auto triggers 134
 
 on:
-  push:
+  pull_request:
     branches:
-      - infra/qualification-sealed-runner-preflight-129
+      - main
     paths:
       - '.github/workflows/maintenance-disable-legacy-paid-auto-triggers-134.yml'
 
