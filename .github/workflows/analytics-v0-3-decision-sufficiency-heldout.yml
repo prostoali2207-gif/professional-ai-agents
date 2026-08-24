@@ -1,24 +1,6 @@
 name: Analytics v0.3 fresh decision sufficiency heldout
 
 on:
-  push:
-    branches:
-      - fix/analytics-decision-sufficiency-2026-08
-    paths:
-      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-decision-sufficiency.json'
-      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_decision_sufficiency_v03.py'
-      - 'architect/evaluation/growth-experimentation-analytics/executor_responses.py'
-      - 'architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json'
-      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-decision-sufficiency.json'
-      - 'architect/evaluation/growth-experimentation-analytics/grader_heldout_decision_sufficiency_v03.py'
-      - 'architect/evaluation/growth-experimentation-analytics/executor_responses.py'
-      - 'architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.3.json'
-      - '.github/workflows/analytics-v0-3-decision-sufficiency-heldout.yml'
   workflow_dispatch:
 
 permissions:
