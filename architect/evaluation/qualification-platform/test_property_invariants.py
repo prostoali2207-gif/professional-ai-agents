@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import contextlib
 import io
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -37,28 +39,30 @@ def test_sealed_key_derivation_is_deterministic_and_context_separated(master, co
     candidate_timeout=st.integers(min_value=1, max_value=500),
     workflow_timeout=st.integers(min_value=1, max_value=1000),
 )
-def test_runtime_timeout_gate_matches_strict_nesting(tmp_path, monkeypatch, model_timeout, candidate_timeout, workflow_timeout):
-    monkeypatch.chdir(tmp_path)
-    Path("executor.py").write_text("print('ok')\n")
-    Path("validator.py").write_text("print('ok')\n")
-    manifest = {
-        "runtime": {
-            "executor_path": "executor.py",
-            "model_timeout_seconds": model_timeout,
-            "candidate_timeout_seconds": candidate_timeout,
-            "workflow_timeout_seconds": workflow_timeout,
-            "canary_required": False,
-            "credential_env": "PROPERTY_TEST_UNUSED_SECRET",
-        },
-        "report": {"validator_path": "validator.py"},
-    }
-    valid = model_timeout < candidate_timeout < workflow_timeout
-    if valid:
-        preflight.verify_runtime_static(manifest, require_runtime_secret=False)
-    else:
-        with pytest.raises(preflight.PreflightError) as exc:
-            preflight.verify_runtime_static(manifest, require_runtime_secret=False)
-        assert exc.value.code == "TIMEOUT_INCOMPATIBLE"
+def test_runtime_timeout_gate_matches_strict_nesting(model_timeout, candidate_timeout, workflow_timeout):
+    with tempfile.TemporaryDirectory(prefix="qualification-timeout-property-") as td:
+        root = Path(td)
+        (root / "executor.py").write_text("print('ok')\n")
+        (root / "validator.py").write_text("print('ok')\n")
+        manifest = {
+            "runtime": {
+                "executor_path": "executor.py",
+                "model_timeout_seconds": model_timeout,
+                "candidate_timeout_seconds": candidate_timeout,
+                "workflow_timeout_seconds": workflow_timeout,
+                "canary_required": False,
+                "credential_env": "PROPERTY_TEST_UNUSED_SECRET",
+            },
+            "report": {"validator_path": "validator.py"},
+        }
+        valid = model_timeout < candidate_timeout < workflow_timeout
+        with contextlib.chdir(root):
+            if valid:
+                preflight.verify_runtime_static(manifest, require_runtime_secret=False)
+            else:
+                with pytest.raises(preflight.PreflightError) as exc:
+                    preflight.verify_runtime_static(manifest, require_runtime_secret=False)
+                assert exc.value.code == "TIMEOUT_INCOMPATIBLE"
 
 
 UNSAFE_NAMES = st.one_of(
@@ -70,14 +74,15 @@ UNSAFE_NAMES = st.one_of(
 
 
 @given(name=UNSAFE_NAMES)
-def test_safe_extract_rejects_path_traversal(tmp_path, name):
+def test_safe_extract_rejects_path_traversal(name):
     archive = io.BytesIO()
     with zipfile.ZipFile(archive, "w") as zf:
         zf.writestr(name, "x")
     archive.seek(0)
-    with zipfile.ZipFile(archive) as zf:
-        with pytest.raises(preflight.PreflightError) as exc:
-            preflight.safe_extract(zf, tmp_path / "out")
+    with tempfile.TemporaryDirectory(prefix="qualification-archive-property-") as td:
+        with zipfile.ZipFile(archive) as zf:
+            with pytest.raises(preflight.PreflightError) as exc:
+                preflight.safe_extract(zf, Path(td) / "out")
     assert exc.value.code == "PACK_INTEGRITY_INVALID"
 
 
