@@ -1,12 +1,5 @@
 name: Sales 0.3 fresh held-out r10 Gemini paced
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/sales-lead-conversion/run-trigger-v0_3-r10-gemini.txt'
-      - '.github/workflows/sales-0-3-gemini-r10.yml'
-      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py'
-      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r10-gemini.json'
   workflow_dispatch:
 permissions: {contents: read, actions: read}
 env:
