@@ -1,6 +1,6 @@
 # Professional Agent Qualification Platform
 
-Status: infrastructure architecture for reusable qualification cycles. This does not replace profession-specific evaluation design.
+Status: reusable qualification infrastructure. **Maintenance mode by default after issue #129 r9-class startup closure.** This does not replace profession-specific evaluation design.
 
 ## Decision
 
@@ -17,6 +17,7 @@ Generic platform responsibilities:
 - fixture/grader cardinality and family-structure invariants declared by the evaluator;
 - runner/executor protocol compatibility declarations;
 - state/checkpoint/tool-protocol capability declarations;
+- deterministic cold-start validation of the actual extracted sealed runner before provider canary/scoring;
 - one-call unscored runtime canary gating when provider/runtime uncertainty remains;
 - sanitized report presence/shape checks;
 - artifact publication requirements;
@@ -36,7 +37,7 @@ A universal grader or universal fixture schema would create false universality. 
 
 ## Required lifecycle
 
-`candidate freeze -> static validation -> no-API preflight -> optional one-call runtime canary -> sealed held-out verification -> scored qualification -> sanitized report -> release verdict`
+`candidate freeze -> static validation -> no-API sealed preflight (including sealed-runner cold start) -> optional one-call runtime canary -> scored qualification -> sanitized report -> release verdict`
 
 Every stage is fail-closed. A later stage must not run when an earlier required stage fails.
 
@@ -52,6 +53,7 @@ Every stage is fail-closed. A later stage must not run when an earlier required 
 - `SEALED_AUTH_FAILED`: authenticated decryption fails.
 - `PACK_INTEGRITY_INVALID`: decrypted archive or component digests differ from freeze record.
 - `PACK_STRUCTURE_INVALID`: fixture/grader IDs, cardinality or family invariants differ from preregistration.
+- `SEALED_RUNNER_STARTUP_INVALID`: the extracted sealed runner cannot cold-start/import or expose callable `main()` in a fresh no-provider interpreter.
 - `RUNNER_CONTRACT_MISMATCH`: runner interface is incompatible with the declared executor/report contract.
 - `CANARY_FAILED`: one unscored provider invocation cannot exercise the exact scored runtime.
 - `QUALIFICATION_NOT_EXECUTABLE`: scored evidence cannot validly run for an infrastructure reason.
@@ -73,7 +75,7 @@ Validate manifest/schema, referenced files, Python syntax where applicable, cand
 
 ### 3. Sealed preflight — no scored API
 
-Using the evaluator-owned key: verify chunk set, ciphertext length/digest, key fingerprint, authenticated decryption, archive digest, safe extraction, freeze-record bindings, component digests, pack digest, fixture/grader ID correspondence, declared cardinality and family structure. Hidden content is not printed.
+Using the evaluator-owned key: verify chunk set, ciphertext length/digest, key fingerprint, authenticated decryption, archive digest, safe extraction, freeze-record bindings, component digests, pack digest, fixture/grader ID correspondence, declared cardinality and family structure. Then cold-start the **actual extracted sealed runner** in a fresh interpreter with provider API keys/tokens stripped, executing top-level imports/bindings but not calling `main()`. Hidden content is not printed. This closes the Sales r9 class where static/sealed integrity and provider canary passed but the sealed runner later failed before fixture loading due to import-path/bootstrap dependencies.
 
 ### 4. Runtime-secret preflight — no API
 
@@ -83,7 +85,7 @@ Verify required provider credential is present. Do not print secret values. Mode
 
 Run one unscored, non-held-out provider call through the **exact executor/runtime/model/tool/state path** used by qualification. Use when provider model availability, tool protocol, SDK/API behavior, state/checkpoint transport or timeout behavior cannot be established statically. A legacy or different executor is not a valid canary.
 
-The canary may prove executability; it cannot prove professional quality.
+The canary may prove provider/runtime executability; it cannot prove professional quality and it no longer substitutes for deterministic sealed-runner cold-start validation.
 
 ### 6. Scored qualification
 
@@ -112,11 +114,12 @@ Specific systemic causes:
 7. `NOT_EXECUTABLE` had multiple causes but no stable failure taxonomy;
 8. diagnosis required manual workflow reruns rather than deterministic preflight output;
 9. sanitized-report publication existed as a workflow behavior rather than a reusable release contract;
-10. there was no explicit distinction between infrastructure executability evidence and profession-specific qualification evidence.
+10. there was no explicit distinction between infrastructure executability evidence and profession-specific qualification evidence;
+11. sealed-pack integrity did not prove that the extracted runner could cold-start with its real import/bootstrap dependencies before provider use.
 
 ## Cost/reliability policy
 
-Do not run a scored held-out suite to diagnose infrastructure. Required order is deterministic/static evidence first, then sealed no-score checks, then at most the smallest valid runtime canary, then the preregistered full scored run.
+Do not run a scored held-out suite to diagnose infrastructure. Required order is deterministic/static evidence first, then sealed no-score checks (including sealed-runner cold start), then at most the smallest valid runtime canary, then the preregistered full scored run.
 
 Retry policy is bounded:
 
@@ -125,14 +128,20 @@ Retry policy is bounded:
 - scored-run infrastructure interruption: resume/retry only if evaluator protocol preserves held-out integrity and stochastic policy;
 - professional failure: do not rerun the same sealed pack merely to seek a better score unless preregistered repeated-trial policy requires it.
 
+## Maintenance stop-rule
+
+The issue #129 evidence-based stop condition is now the default governance rule: optional tooling discovery or generic improvement ideas do not reopen qualification-platform engineering. Resume generic platform work only with concrete repository evidence of a new generic infrastructure blind spot, paid/scored spend used solely to discover a deterministically detectable infrastructure defect, fail-open behavior in an existing generic control, or a repeated infrastructure class spanning multiple profession-specific evaluators.
+
+Provider outages/rate limits, profession-specific grader construct defects, candidate professional failures and optional tooling are not sufficient reopen evidence by themselves.
+
 ## Senior-practitioner red-team repairs included
 
 A senior ML evaluator would object if infrastructure standardization silently standardized constructs: profession-specific fixture/grader/threshold ownership remains explicit.
 
-A reliability engineer would object to fail-open steps, unsafe archive extraction, implicit timeout nesting and unclassified retries: platform contract requires fail-closed stages, safe extraction, timeout arithmetic and bounded retry classes.
+A reliability engineer would object to fail-open steps, unsafe archive extraction, implicit timeout nesting, runner cold-start blind spots and unclassified retries: platform contract requires fail-closed stages, safe extraction, deterministic sealed-runner startup validation, timeout arithmetic and bounded retry classes.
 
-A release/cost owner would object to paying for held-out calls before proving executability: no scored API call is eligible until deterministic and sealed preflight pass; one-call canary is used only for uncertainty that static checks cannot resolve.
+A release/cost owner would object to paying for held-out calls before proving executability: no scored API call is eligible until deterministic and sealed preflight pass; one-call canary is used only for uncertainty that static/no-provider checks cannot resolve.
 
 ## Migration rule
 
-Existing profession workflows can migrate incrementally. The first migration target is Sales 0.2 because its incidents provide concrete regression evidence. Future cycles should create one public qualification manifest and invoke the generic validator rather than copy inline shell/Python checks.
+Existing profession workflows can migrate incrementally. Future cycles should create one public qualification manifest and invoke the generic validator rather than copy inline shell/Python checks. Legacy workflow trigger drift is a repository maintenance/cost-safety concern enforced by `paid_workflow_guard.py`; it does not by itself reopen generic qualification-platform architecture when the guard fails closed as designed.

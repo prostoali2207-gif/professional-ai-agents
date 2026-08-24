@@ -1,14 +1,6 @@
 name: Sales 0.3 fresh independent held-out r2
 
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r2.json'
-      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py'
-      - 'architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py'
-      - 'architect/evaluation/sales-lead-conversion/run-trigger-v0_3-r2.txt'
-      - '.github/workflows/sales-0-3-fresh-independent-r2.yml'
   workflow_dispatch:
 
 permissions:
