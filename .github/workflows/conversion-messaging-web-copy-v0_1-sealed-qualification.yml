@@ -1,10 +1,7 @@
 name: Conversion Messaging Web Copy v0.1 sealed qualification
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/conversion_messaging_web_copy/RUN-QUALIFICATION-v0.1'
+  workflow_dispatch:
 
 permissions:
   contents: write
