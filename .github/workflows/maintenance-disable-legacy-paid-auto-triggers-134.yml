@@ -1,0 +1,78 @@
+name: Maintenance disable legacy paid auto triggers 134
+
+on:
+  push:
+    branches:
+      - infra/qualification-sealed-runner-preflight-129
+    paths:
+      - '.github/workflows/maintenance-disable-legacy-paid-auto-triggers-134.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rewrite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: infra/qualification-sealed-runner-preflight-129
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Rewrite only flagged legacy workflow triggers to manual-only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          paths = [
+              '.github/workflows/analytics-v0-3-decision-sufficiency-heldout.yml',
+              '.github/workflows/analytics-v0-3-decision-sufficiency-regression.yml',
+              '.github/workflows/conversion-messaging-web-copy-v0_1-sealed-qualification.yml',
+              '.github/workflows/sales-0-3-fresh-independent-r2.yml',
+              '.github/workflows/sales-0-3-fresh-independent-r3.yml',
+              '.github/workflows/sales-0-3-gemini-r10.yml',
+              '.github/workflows/sales-0-3-gemini-r4.yml',
+              '.github/workflows/sales-0-3-gemini-r5.yml',
+              '.github/workflows/sales-0-3-gemini-r6.yml',
+              '.github/workflows/sales-0-3-gemini-r7.yml',
+              '.github/workflows/sales-0-3-gemini-r8.yml',
+              '.github/workflows/sales-0-3-gemini-r9.yml',
+              '.github/workflows/sales-0-3-r3-resume.yml',
+          ]
+
+          for raw_path in paths:
+              p = Path(raw_path)
+              text = p.read_text(encoding='utf-8')
+              lines = text.splitlines()
+              try:
+                  start = lines.index('on:')
+              except ValueError:
+                  raise SystemExit(f'{raw_path}: missing top-level on block')
+              end = start + 1
+              while end < len(lines):
+                  line = lines[end]
+                  if line and not line.startswith((' ', '\t')):
+                      break
+                  end += 1
+              old_block = '\n'.join(lines[start:end])
+              if 'push:' not in old_block and 'pull_request:' not in old_block:
+                  raise SystemExit(f'{raw_path}: no automatic trigger found; refusing unexpected rewrite')
+              if 'workflow_dispatch:' not in old_block:
+                  raise SystemExit(f'{raw_path}: workflow_dispatch missing; refusing rewrite')
+              new_lines = lines[:start] + ['on:', '  workflow_dispatch:'] + lines[end:]
+              p.write_text('\n'.join(new_lines) + '\n', encoding='utf-8')
+              print(f'MANUAL_ONLY {raw_path}')
+          PY
+      - name: Verify paid workflow guard after rewrite
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py
+      - name: Commit maintenance cleanup
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .github/workflows
+          git commit -m 'Maintenance: make legacy provider workflows manual-only (#134)'
+          git push origin HEAD:infra/qualification-sealed-runner-preflight-129
