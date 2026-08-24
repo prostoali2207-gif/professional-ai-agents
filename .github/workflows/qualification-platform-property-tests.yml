@@ -1,0 +1,29 @@
+name: Qualification platform zero-call property tests
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/qualification-platform/**'
+      - '.github/workflows/qualification-platform-property-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/qualification-platform/**'
+      - '.github/workflows/qualification-platform-property-tests.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  property-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic test dependencies
+        run: python -m pip install --disable-pip-version-check pytest hypothesis cryptography jsonschema
+      - name: Run qualification-platform property tests
+        run: pytest -q architect/evaluation/qualification-platform/test_property_invariants.py
