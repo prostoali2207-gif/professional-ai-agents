@@ -1,0 +1,98 @@
+{
+  "spec_version": 1,
+  "cycle_id": "sales-0.3-fresh-independent-2026-08-23-r10-gemini-paced",
+  "description": "Deterministic preflight for the Sales 0.3 r10 held-out cycle. Runs before evaluator credentials are bound and before any paid provider call.",
+  "preregistration_path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r10-gemini.json",
+
+  "compile_paths": [
+    "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py",
+    "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py",
+    "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py",
+    "architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py",
+    "architect/evaluation/sales-lead-conversion/executor_v0_3_gemini_contract_v1.py",
+    "architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py",
+    "architect/evaluation/sales-lead-conversion/gemini_rate_limiter.py",
+    "architect/evaluation/sales-lead-conversion/reseal_provider_pack.py",
+    "architect/evaluation/sales-lead-conversion/canary_v0_3_gemini.py",
+    "architect/evaluation/qualification-platform/qualification_preflight.py",
+    "architect/evaluation/qualification-platform/validate_sanitized_report.py"
+  ],
+
+  "sealed_runner": {
+    "runner_path": "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py",
+    "loader_chain": [
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py"
+    ],
+    "probe_timeout_seconds": 60
+  },
+
+  "contract": {
+    "probe_argv": [
+      "python",
+      "architect/evaluation/sales-lead-conversion/executor_v0_3_gemini_contract_v1.py",
+      "--qualification-contract"
+    ],
+    "credential_env": "GEMINI_API_KEY",
+    "probe_timeout_seconds": 60,
+    "preregistration_bindings": {
+      "contract_version": ["runtime_contract", "qualification_contract_version"],
+      "provider": ["runtime_contract", "provider"]
+    }
+  },
+
+  "cycle_env": {
+    "workflow_path": ".github/workflows/sales-0-3-gemini-r10.yml",
+    "job": "qualify",
+    "preregistration_invariants": {
+      "scope_decision_is_full": {"pointer": ["scope", "decision"], "equals": "FULL"},
+      "scope_purpose_is_release": {"pointer": ["scope", "purpose"], "equals": "release"},
+      "per_family_cardinality": {"pointer": ["per_family"], "equals": 3},
+      "candidate_commit_is_frozen": {
+        "pointer": ["frozen_candidate", "commit"],
+        "equals": "5adc0d315f6f63bc92df0a921040954a3541ef89"
+      }
+    },
+    "bindings": {
+      "CYCLE_ID": ["cycle_id"],
+      "CANDIDATE_COMMIT": ["frozen_candidate", "commit"],
+      "CANDIDATE_DIGEST": ["frozen_candidate", "artifact_digest"],
+      "SALES_MODEL": ["runtime_contract", "candidate_model"],
+      "SALES_GRADER_MODEL": ["runtime_contract", "grader_model"],
+      "QUALIFICATION_FIXTURE_COUNT": ["fixture_count"],
+      "QUALIFICATION_RELEASE_TASKS_PASSED_MIN": ["thresholds", "release_tasks_passed_min"],
+      "QUALIFICATION_PER_FAMILY_TASKS_PASSED_MIN": ["thresholds", "per_family_tasks_passed_min"],
+      "QUALIFICATION_TASK_PASS_SCORE_MIN": ["thresholds", "task_pass_score_min"],
+      "QUALIFICATION_CRITICAL_HARD_FAILS_MAX": ["thresholds", "critical_hard_fails_max"]
+    }
+  },
+
+  "manifest_references": {
+    "manifest_path": "architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r10-gemini/qualification.json",
+    "required_paths": [
+      "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r10-gemini.json",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini.py",
+      "architect/evaluation/sales-lead-conversion/sealed_runner_template_v0_3_r2.py",
+      "architect/evaluation/sales-lead-conversion/executor_v0_3_gemini_contract_v1.py",
+      "architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py",
+      "architect/evaluation/sales-lead-conversion/gemini_rate_limiter.py",
+      "architect/evaluation/sales-lead-conversion/reseal_provider_pack.py",
+      "architect/evaluation/sales-lead-conversion/canary_v0_3_gemini.py",
+      "architect/evaluation/qualification-platform/qualification_preflight.py",
+      "architect/evaluation/qualification-platform/validate_sanitized_report.py",
+      "architect/evaluation/qualification-platform/qualification-manifest.schema.json"
+    ]
+  },
+
+  "pacing": {
+    "workflow_path": ".github/workflows/sales-0-3-gemini-r10.yml",
+    "job": "qualify",
+    "min_interval_env": "GEMINI_MIN_INTERVAL_SECONDS",
+    "pace_file_env": "GEMINI_PACE_FILE",
+    "preregistration_pointer": ["runtime_contract", "minimum_seconds_between_requests"]
+  }
+}

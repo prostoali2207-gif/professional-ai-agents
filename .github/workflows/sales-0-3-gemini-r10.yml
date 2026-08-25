@@ -15,8 +15,26 @@ env:
   SOURCE_PACK_DIGEST: sha256:66dc3287a217fe77c4d9b8d266d81951cc10231d0b69bad3a816c857dda4fb0f
   SOURCE_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r9-gemini/qualification.json
   QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.3-r10-gemini/qualification.json
+  QUALIFICATION_PREFLIGHT_SPEC: architect/evaluation/sales-lead-conversion/preflight/sales-0_3-r10-gemini.json
+  # Mirrors of the r10 preregistration. These are not new policy: the
+  # deterministic preflight fails the cycle if any of them drifts from
+  # qualification-preregistration-v0_3-r10-gemini.json.
+  QUALIFICATION_FIXTURE_COUNT: '36'
+  QUALIFICATION_TASK_PASS_SCORE_MIN: '5'
+  QUALIFICATION_RELEASE_TASKS_PASSED_MIN: '34'
+  QUALIFICATION_PER_FAMILY_TASKS_PASSED_MIN: '2'
+  QUALIFICATION_CRITICAL_HARD_FAILS_MAX: '0'
 jobs:
+  # Deterministic, zero-provider-call gate. It runs in a job that is never
+  # passed a secret, so it completes before any credential is bound and before
+  # any paid call is possible.
+  preflight:
+    uses: ./.github/workflows/qualification-deterministic-preflight-reusable.yml
+    with:
+      spec_path: architect/evaluation/sales-lead-conversion/preflight/sales-0_3-r10-gemini.json
+
   qualify:
+    needs: preflight
     runs-on: ubuntu-latest
     timeout-minutes: 100
     env:
@@ -29,20 +47,13 @@ jobs:
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - name: Deterministic preregistration and runtime checks
-        run: |
-          python -m py_compile architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r10.py architect/evaluation/sales-lead-conversion/executor_v0_3_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/executor_v0_3_gemini.py architect/evaluation/sales-lead-conversion/gemini_rate_limiter.py architect/evaluation/sales-lead-conversion/reseal_provider_pack.py
-          python - <<'PY'
-          import json,os,subprocess,sys,importlib.util,pathlib
-          p=json.load(open('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_3-r10-gemini.json'))
-          assert p['cycle_id']==os.environ['CYCLE_ID'] and p['scope']['decision']=='FULL'
-          assert p['fixture_count']==36 and p['thresholds']['release_tasks_passed_min']==34 and p['thresholds']['critical_hard_fails_max']==0
-          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_3_gemini_contract_v1.py','--qualification-contract'],text=True))
-          assert c['contract_version']==1 and c['provider']=='gemini-interactions-api'
-          d=str(pathlib.Path('architect/evaluation/sales-lead-conversion').resolve()); sys.path.insert(0,d)
-          spec=importlib.util.spec_from_file_location('import_probe','architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py'); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
-          print('R10_STATIC_IMPORT_PASS')
-          PY
+      # py_compile, sealed-runner import resolution, the --qualification-contract
+      # handshake, preregistration <-> env correspondence, manifest reference
+      # existence and pacing configuration are all enforced by the `preflight`
+      # job above, before this job's credentials exist. Re-running them here
+      # would only duplicate the gate with weaker checks.
+      - name: Confirm deterministic preflight gate
+        run: echo "deterministic preflight passed for cycle ${{ needs.preflight.outputs.cycle_id }}"
       - name: Require evaluator credentials
         run: |
           test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 21

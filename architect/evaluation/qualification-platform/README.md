@@ -8,6 +8,10 @@ Use a **hybrid architecture**.
 
 Generic platform responsibilities:
 
+- deterministic pre-credential preflight: compilation, sealed-runner import
+  resolution and pack-root resolution, qualification-contract handshake,
+  preregistration/env correspondence, manifest reference existence and pacing
+  configuration, with a distinct exit code per failure class;
 - frozen candidate identity and artifact digest verification;
 - checkout/history availability;
 - runtime/executor contract validation;
@@ -37,7 +41,7 @@ A universal grader or universal fixture schema would create false universality. 
 
 ## Required lifecycle
 
-`candidate freeze -> static validation -> no-API sealed preflight (including sealed-runner cold start) -> optional one-call runtime canary -> scored qualification -> sanitized report -> release verdict`
+`candidate freeze -> deterministic pre-credential preflight -> static validation -> no-API sealed preflight (including sealed-runner cold start) -> optional one-call runtime canary -> scored qualification -> sanitized report -> release verdict`
 
 Every stage is fail-closed. A later stage must not run when an earlier required stage fails.
 
@@ -68,6 +72,27 @@ Infrastructure failures must never be reported as professional candidate failure
 ### 1. Candidate freeze
 
 Evaluator records immutable candidate commit, artifact digest algorithm, artifact manifest/path set, runtime/model assumptions and evaluation-cycle identity. Qualification code must resolve the exact commit, not merely the current branch.
+
+### 1b. Deterministic pre-credential preflight — no API, no sealed reads
+
+Runs in a job that holds no secret at all, so it completes before any credential
+is bound and before any paid call is possible. It compiles every declared
+runner/executor/wrapper; walks the sealed runner's full loader chain from a
+staging directory that stands in for an extracted pack, proving both that the
+chain's imports resolve and that it resolves its pack data inside the pack;
+checks the `--qualification-contract` handshake against the preregistration;
+checks that the cycle workflow's env matches the preregistered cycle_id,
+cardinality and thresholds; checks that every path the manifest and spec
+reference exists; and checks that a non-zero minimum request interval is both
+preregistered and configured.
+
+It never opens sealed-pack ciphertext, keys or hidden content, and outbound
+sockets are blocked inside every probe interpreter. Each failure class has its
+own exit code; see `preflight-failure-codes.md`.
+
+Consumed through `.github/workflows/qualification-deterministic-preflight-reusable.yml`,
+which declares no `secrets:` block. Cycle-specific configuration lives in a
+per-cycle spec JSON, not in workflow-inline Python.
 
 ### 2. Static validation — no API
 
@@ -115,7 +140,9 @@ Specific systemic causes:
 8. diagnosis required manual workflow reruns rather than deterministic preflight output;
 9. sanitized-report publication existed as a workflow behavior rather than a reusable release contract;
 10. there was no explicit distinction between infrastructure executability evidence and profession-specific qualification evidence;
-11. sealed-pack integrity did not prove that the extracted runner could cold-start with its real import/bootstrap dependencies before provider use.
+11. sealed-pack integrity did not prove that the extracted runner could cold-start with its real import/bootstrap dependencies before provider use;
+12. the deterministic checks that did exist ran inside the same job that already held provider credentials, so an infrastructure defect could only be found after the cycle had become able to spend quota;
+13. each cycle re-implemented its deterministic checks inline in its own workflow YAML, so a defect fixed in one round was not carried forward as a gate for the next.
 
 ## Cost/reliability policy
 
