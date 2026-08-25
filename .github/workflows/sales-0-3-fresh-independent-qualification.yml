@@ -1,28 +1,24 @@
 name: Sales 0.3 fresh independent held-out qualification
 
+# INOPERABLE - MANUAL DISPATCH ONLY.
+#
+# This workflow cannot succeed. Its first real step, "Reconstruct sealed pack",
+# needs the repository secret SALES_0_3_FRESH_EVAL_KEY, which has never existed:
+# every one of the 11 runs since the workflow was created has failed with
+#   {"status": "FAIL", "failure_class": "CREDENTIAL_MISSING",
+#    "message": "sealed pack key missing: SALES_0_3_FRESH_EVAL_KEY"}
+# including run 6 and run 10 on main. No other workflow references that secret.
+#
+# It is legacy from the r1 cycle (sales-0.3-fresh-independent-2026-08-22-r1) and
+# is kept only for its structure, which later cycles reuse. The automatic push
+# and pull_request triggers were removed so it stops reporting a permanent red
+# check on unrelated pull requests; nothing else about the workflow changed.
+#
+# To revive it: provision SALES_0_3_FRESH_EVAL_KEY (or migrate the cycle to the
+# shared QUALIFICATION_SEALED_PACK_MASTER_KEY derivation that later cycles use),
+# then restore whichever triggers are wanted.
+
 on:
-  push:
-    branches:
-      - main
-      - eval/sales-0.3-fresh-qualification-2026-08-22
-    paths:
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.qualification.json'
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.preregistration.json'
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.parts/**'
-      - 'architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py'
-      - 'architect/evaluation/sales-lead-conversion/canary_v0_3.py'
-      - 'architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py'
-      - '.github/workflows/sales-0-3-fresh-independent-qualification.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.qualification.json'
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.preregistration.json'
-      - 'architect/evaluation/sales-lead-conversion/sealed/fresh-cycle-0.3-2026-08-22-r1.parts/**'
-      - 'architect/evaluation/sales-lead-conversion/executor_v0_3_responses.py'
-      - 'architect/evaluation/sales-lead-conversion/canary_v0_3.py'
-      - 'architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py'
-      - '.github/workflows/sales-0-3-fresh-independent-qualification.yml'
   workflow_dispatch:
     inputs:
       confirm_paid_run:
