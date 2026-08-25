@@ -8,14 +8,6 @@
         "if: github.event_name == 'workflow_dispatch'",
         "Run exactly two frozen cross-layer semantic cases"
       ]
-    },
-    ".github/workflows/sales-0-3-fresh-independent-qualification.yml": {
-      "reason": "Automatic events retain only static/sealed no-API stages; the provider-backed runtime job is gated by workflow_dispatch plus explicit paid-run confirmation.",
-      "required_substrings": [
-        "if: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}",
-        "OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}",
-        "One-call exact-runtime canary"
-      ]
     }
   }
 }

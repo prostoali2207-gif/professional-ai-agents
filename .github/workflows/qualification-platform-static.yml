@@ -40,6 +40,10 @@ jobs:
           python3 test_paid_workflow_guard.py
           python3 test_qualification_scope_gate.py
           python3 test_deterministic_preflight.py
+      - name: Run cycle-bound sanitized report validator regressions
+        run: |
+          python3 -m py_compile architect/evaluation/sales-lead-conversion/validate_sanitized_report_v0_3.py
+          python3 architect/evaluation/sales-lead-conversion/test_validate_sanitized_report_v0_3.py
       - name: Enforce Resource & Cost Engineering paid-workflow trigger policy
         run: python3 architect/evaluation/qualification-platform/paid_workflow_guard.py
       - name: Run the Sales 0.3 r10 deterministic preflight without API
