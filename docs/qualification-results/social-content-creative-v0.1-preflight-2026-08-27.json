@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "record_kind": "qualification-preflight-execution-record",
+  "record_id": "social-content-creative-0-1-0-preflight-20260827",
+  "core_id": "social-content-creative",
+  "core_version": "0.1.0",
+  "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
+  "candidate": {
+    "commit": "163f68671288fe5035a8d09197334ec9df728b93",
+    "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "digest_independently_recomputed": true,
+    "branch": "architect/social-content-creative-core-2026-08-23",
+    "candidate_modified": false,
+    "competency_matrix_modified": false,
+    "qualification_protocol_modified": false,
+    "thresholds_modified": false,
+    "hard_fail_rules_modified": false
+  },
+  "status": "QUALIFICATION_NOT_EXECUTABLE",
+  "verdict_scope": "infrastructure only; no professional verdict was produced and none may be inferred",
+  "executed_stages": {
+    "deterministic_precredential_preflight": "PASS",
+    "static_validation": "PASS",
+    "sealed_transport_and_pack_preflight": "FAIL -> repaired -> PASS (offline rehearsal pack only)",
+    "sealed_runner_cold_start": "PASS",
+    "candidate_canary": "NOT_RUN",
+    "scored_heldout_qualification": "NOT_RUN",
+    "judgment_evaluation": "NOT_RUN"
+  },
+  "blocking_failures": [
+    {
+      "id": "SCC-INFRA-1",
+      "failure_class": "RUNTIME_CONTRACT_MISMATCH",
+      "stage": "sealed preflight",
+      "deterministic": true,
+      "message": "freeze record model differs from runtime model",
+      "root_cause": "author_sealed_pack_v0_1.py writes the freeze record key 'candidate_model'; qualification_preflight.verify_sealed_pack requires freeze['model'] == manifest.runtime.model. The key is absent, so the comparison is None != 'gemini-3.5-flash-lite' on every run.",
+      "cost_of_not_catching_it": "the failure occurs after the paid Gemini held-out authoring call has already been spent",
+      "repair": "architect/evaluation/social_content_creative/repairs/freeze-record-model-key-2026-08-27.patch",
+      "repair_layer": "cycle authoring infrastructure",
+      "repair_touches_candidate_or_protocol": false,
+      "repair_applies_to_branch": "architect/social-content-creative-core-2026-08-23",
+      "repair_landed": false
+    },
+    {
+      "id": "SCC-ENV-1",
+      "failure_class": "CREDENTIAL_MISSING",
+      "stage": "runtime-secret preflight",
+      "deterministic": true,
+      "message": "GEMINI_API_KEY, GROQ_API_KEY and QUALIFICATION_SEALED_PACK_MASTER_KEY are all absent from this Cloud Code session",
+      "root_cause": "the cycle's credentials are GitHub Actions repository secrets; they are not bound to an interactive remote session"
+    },
+    {
+      "id": "SCC-ENV-2",
+      "failure_class": "QUALIFICATION_NOT_EXECUTABLE",
+      "stage": "judgment evaluation",
+      "deterministic": true,
+      "message": "api.groq.com is denied by this session's egress policy (gateway 403 to CONNECT)",
+      "root_cause": "the frozen protocol requires two independent calibrated judges (Gemini + Groq/Qwen); the Groq judge host is unreachable from this environment regardless of credentials"
+    }
+  ],
+  "runtime_substitution_considered_and_rejected": {
+    "considered": "run the candidate and/or judges on the Claude runtime available in this session",
+    "rejected_because": [
+      "the frozen executor declares provider 'gemini-interactions-api' and the qualification-contract handshake is bound to it; substituting a provider requires a new executor and a new cycle preregistration, i.e. a new test rather than the frozen one",
+      "no Anthropic/Claude executor adapter is preregistered anywhere in the repository",
+      "evaluator independence would be destroyed: the same model would author the held-out pack, answer as the candidate, and serve as both calibrated judges"
+    ]
+  },
+  "resource_accounting": {
+    "paid_provider_calls_made": 0,
+    "completion_calls_made": 0,
+    "provider_credentials_used": "none",
+    "unauthenticated_reachability_probes": 2,
+    "offline_rehearsal_provider_calls": 0,
+    "runtime": "Claude Code remote session, Python 3.11.15, local venv (cryptography 50.0.1, jsonschema, pyyaml, pytest, hypothesis)",
+    "planned_cost_of_a_real_cycle_if_authorized": {
+      "gemini_completion_calls": "1 author + 1 canary + 24 candidate + 1 calibration + 2 judge = 29",
+      "groq_completion_calls": "1 calibration + 2 judge = 3",
+      "note": "the workflow's pre-run budget gate states 29 total and predates the move of the author to Gemini and the addition of judge calibration; it under-counts the actual envelope by 3 calls"
+    }
+  },
+  "adjacent_findings": [
+    {
+      "id": "PLATFORM-1",
+      "location": "architect/evaluation/qualification-platform/validate_sanitized_report.py",
+      "introduced_by": "71add9a",
+      "severity": "blocking for every cycle that uses the shared validator",
+      "message": "SyntaxError: def walk(value, path=\"$\": str). The module cannot be imported and tests/test_validate_sanitized_report.py cannot be collected.",
+      "repaired_in_this_record": true
+    },
+    {
+      "id": "PLATFORM-2",
+      "location": ".github/workflows/sales-0-3-gemini-r10.yml",
+      "introduced_by": "71add9a",
+      "severity": "regression of the #136 pre-credential gate for the Sales r10 cycle",
+      "message": "the reusable deterministic-preflight job and the QUALIFICATION_* preregistration mirrors were removed and replaced by inline checks inside the credential-bearing job; test_deterministic_preflight.py::test_repaired_r10_passes fails with PREREGISTRATION_ENV_MISMATCH (exit 15)",
+      "repaired_in_this_record": false,
+      "reason_not_repaired": "outside the Social Content Creative qualification path; reverting or re-integrating #136 for r10 is an evaluator decision"
+    }
+  ],
+  "evidence_integrity": {
+    "hidden_fixtures_read": false,
+    "grader_secrets_read": false,
+    "hidden_fixtures_modified": false,
+    "sealed_ciphertext_opened": false,
+    "note": "no held-out pack exists yet for this cycle; the pack is authored fresh at run time. The offline rehearsal used obvious synthetic placeholder fixtures and its outputs are not qualification evidence."
+  },
+  "recorded_at": "2026-08-27T09:12:00Z"
+}

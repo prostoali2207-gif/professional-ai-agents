@@ -1,0 +1,32 @@
+diff --git a/architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py b/architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py
+index cd26cde..79262eb 100644
+--- a/architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py
++++ b/architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py
+@@ -10,7 +10,8 @@ ROOT=Path.cwd()
+ CYCLE="social-content-creative-0.1.0-heldout-2026-08-23"
+ COMMIT="163f68671288fe5035a8d09197334ec9df728b93"
+ DIGEST="sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f"
+-AUTHOR_MODEL=os.environ.get("SOCIAL_CONTENT_AUTHOR_MODEL","gemini-3.5-flash-lite")
++CANDIDATE_MODEL="gemini-3.5-flash-lite"
++AUTHOR_MODEL=os.environ.get("SOCIAL_CONTENT_AUTHOR_MODEL",CANDIDATE_MODEL)
+ GEMINI_ENDPOINT="https://generativelanguage.googleapis.com/v1beta/interactions"
+ FAMILIES=["Q-BR","Q-CR","Q-CP","Q-CJ","Q-TR","Q-PD","Q-PL","Q-IP","Q-EX","Q-HO","Q-AU","Q-BD"]
+ BASE=ROOT/"architect/evaluation/social_content_creative"
+@@ -104,7 +105,7 @@ def build(cases:list[dict],d:Path)->tuple[bytes,dict]:
+     shutil.copyfile(RUNNER,d/"runner.py")
+     hashes={n:h((d/n).read_bytes()) for n in ["fixtures.json","grader.json","runner.py"]}
+     canonical="".join(f"{n}:{hashes[n]}\n" for n in sorted(hashes)); pack_digest="sha256:"+h(canonical.encode())
+-    freeze={"cycle_id":CYCLE,"candidate_commit":COMMIT,"candidate_digest":DIGEST,"candidate_model":"gemini-3.5-flash-lite","author_model":AUTHOR_MODEL,"fixture_count":12,"family_count":12,"per_family":1,"trial_count_per_fixture":2,"professional_failure_retry_count":0,"fixtures_sha256":"sha256:"+hashes["fixtures.json"],"grader_sha256":"sha256:"+hashes["grader.json"],"runner_sha256":"sha256:"+hashes["runner.py"],"pack_digest":pack_digest}
++    freeze={"cycle_id":CYCLE,"candidate_commit":COMMIT,"candidate_digest":DIGEST,"model":CANDIDATE_MODEL,"candidate_model":CANDIDATE_MODEL,"author_model":AUTHOR_MODEL,"fixture_count":12,"family_count":12,"per_family":1,"trial_count_per_fixture":2,"professional_failure_retry_count":0,"fixtures_sha256":"sha256:"+hashes["fixtures.json"],"grader_sha256":"sha256:"+hashes["grader.json"],"runner_sha256":"sha256:"+hashes["runner.py"],"pack_digest":pack_digest}
+     (d/"freeze-record.json").write_text(json.dumps(freeze,indent=2,sort_keys=True)+"\n")
+     z=d.parent/"pack.zip"
+     with zipfile.ZipFile(z,"w",compression=zipfile.ZIP_DEFLATED) as q:
+@@ -125,7 +126,7 @@ def main()->int:
+     for i,c in enumerate(chunks): (PARTS/f"{i:02d}").write_text(c)
+     m={"version":2,"cycle_id":CYCLE,
+        "candidate":{"commit":COMMIT,"digest":DIGEST,"manifest_path":"architect/library/cores/social-content-creative/0.1.0/manifest.json"},
+-       "runtime":{"executor_path":"architect/evaluation/social_content_creative/executor_v0_1_gemini.py","executor_cmd":"python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py","protocol":"social-content-creative-candidate-v1","provider":"gemini-interactions-api","model":"gemini-3.5-flash-lite","credential_env":"GEMINI_API_KEY","candidate_timeout_seconds":180,"model_timeout_seconds":120,"workflow_timeout_seconds":2400,"contract_probe_argv":["python3","architect/evaluation/social_content_creative/executor_v0_1_gemini.py","--qualification-contract"],"tool_protocol":"none-v1","state_protocol":"stateless-v1","observable_protocol":"final-output-only-v1","canary_required":True,"canary_cmd":"python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py --canary --model-timeout 120"},
++       "runtime":{"executor_path":"architect/evaluation/social_content_creative/executor_v0_1_gemini.py","executor_cmd":"python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py","protocol":"social-content-creative-candidate-v1","provider":"gemini-interactions-api","model":CANDIDATE_MODEL,"credential_env":"GEMINI_API_KEY","candidate_timeout_seconds":180,"model_timeout_seconds":120,"workflow_timeout_seconds":2400,"contract_probe_argv":["python3","architect/evaluation/social_content_creative/executor_v0_1_gemini.py","--qualification-contract"],"tool_protocol":"none-v1","state_protocol":"stateless-v1","observable_protocol":"final-output-only-v1","canary_required":True,"canary_cmd":"python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py --canary --model-timeout 120"},
+        "sealed_pack":{"parts_dir":str(PARTS.relative_to(ROOT)),"part_count":len(chunks),"ciphertext_length":len(token),"ciphertext_sha256":h(token),"key_derivation":{"scheme":"hkdf-sha256-v1","master_env":"QUALIFICATION_SEALED_PACK_MASTER_KEY","context":CYCLE},"key_fingerprint_sha256":key_fingerprint_sha256(key),"decrypted_zip_sha256":h(raw),"pack_digest":freeze["pack_digest"],"required_files":["fixtures.json","grader.json","runner.py","freeze-record.json"]},
+        "evaluation":{"fixture_count":12,"family_count":12,"per_family":1,"fixtures_file":"fixtures.json","grader_file":"grader.json","runner_file":"runner.py","freeze_record_file":"freeze-record.json"},
+        "report":{"sanitized_required":True,"artifact_required":True,"validator_path":"architect/evaluation/qualification-platform/validate_sanitized_report.py","release_ledger_required":True},
