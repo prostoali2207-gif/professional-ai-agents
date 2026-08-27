@@ -1,0 +1,36 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.4-structured-decision-record",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-27",
+  "supersedes": "growth-experimentation-measurement-v0.3-decision-sufficiency",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+      "git_blob_sha": "330f32325a1071baf38f8d36d67931c0d519ae40"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v2.schema.json",
+  "output_contract_git_blob_sha": "4dbdfa8ab9c17289517433067e495e2df4de2e93",
+  "assembly_digest": "sha256:db2a519bf6d67080b915581cd02d003965487cb2b8e4f1e401ac901df63b7f47",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the four overlay components in order, then the output contract",
+  "why_the_contract_is_inside_the_freeze": "v0.3 froze only the three markdown components while the executors injected schemas/result.schema.json at runtime. The output contract is behavior-relevant, so a schema edit could change candidate behavior without changing the frozen digest. v0.4 binds the contract into the assembly and the executors read its path from this manifest.",
+  "qualification_scope": "stability and construct-validity repair cycle; NOT library-admitted. No qualification claim until the preregistered repeated-trial gate passes.",
+  "freeze_rules": [
+    "Do not edit any frozen component or the bound output contract during a scored cycle.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh case.",
+    "Fixtures authored by the party performing the repair are development/regression evidence, never held-out qualification evidence.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ]
+}
