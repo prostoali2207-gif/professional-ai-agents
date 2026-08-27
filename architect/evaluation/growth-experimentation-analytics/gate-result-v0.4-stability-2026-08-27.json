@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "gate_id": "analytics-v0.4-stability-2026-08-27",
+  "preregistration_ref": "architect/evaluation/growth-experimentation-analytics/preregistration-v0.4-stability-2026-08-27.json",
+  "candidate_assembly_digest": "sha256:db2a519bf6d67080b915581cd02d003965487cb2b8e4f1e401ac901df63b7f47",
+  "executed_at": "2026-08-27T13:18:27Z",
+  "verdict": "FAIL",
+  "openai_quota_consumed": false,
+
+  "families": {
+    "Gemini": {
+      "model": "gemini-3.5-flash-lite",
+      "workflow_run": "github-actions:33076139535/job/98530709179",
+      "trials_per_fixture": 3,
+      "retries_used": 0,
+      "executed": 27,
+      "passed": 20,
+      "failed": 7,
+      "per_fixture": {
+        "H-DS-01":   ["PASS", "PASS", "PASS"],
+        "H-DS-02":   ["PASS", "PASS", "FAIL"],
+        "H-GF-01":   ["PASS", "PASS", "PASS"],
+        "H-GF-02":   ["FAIL", "PASS", "PASS"],
+        "H-GFD-01":  ["PASS", "FAIL", "PASS"],
+        "H-GDS-01":  ["PASS", "PASS", "PASS"],
+        "H-GDS-02":  ["PASS", "FAIL", "FAIL"],
+        "REG-DS-01": ["FAIL", "FAIL", "PASS"],
+        "REG-DS-02": ["PASS", "PASS", "FAIL"]
+      },
+      "discordant_fixtures": ["H-DS-02", "H-GDS-02", "H-GF-02", "H-GFD-01", "REG-DS-01", "REG-DS-02"]
+    },
+    "Groq/Qwen": {
+      "model": "qwen/qwen3.6-27b",
+      "workflow_run": "github-actions:33076147012/job/98530736812",
+      "executed": 0,
+      "result": "NOT_EXECUTED",
+      "reason": "All 27 trials returned EXECUTION_ERROR before any model output was graded. The runner recorded the executor stderr only in the run summary and printed no diagnostic to the job log, and the summary artifact is not retrievable from this environment, so the cause is unresolved. This is an infrastructure/observability failure, not evidence about the candidate. The Groq credential and model access were confirmed live by the runtime canary at run 33074242391 twenty minutes earlier.",
+      "counts_as_candidate_evidence": false
+    }
+  },
+
+  "burned_cases": [
+    {
+      "fixture_id": "REG-DS-01",
+      "trials": [1, 2],
+      "status": "INVALID_CONSTRUCT_BURNED",
+      "reason": "Grader construct defect, not candidate behavior. The REG-DS-01 fixture names its arms `variant_a` and `variant_b`. The candidate answered `operational.target: \"variant_b\"` -- exactly the fixture's own naming -- and the grader's identify_arm() helper returned None, because its pattern special-cased only `configuration_([ab])` and its `\\b([ab])\\b` alternative cannot match after an underscore. The decision was correct and was scored as a failure by the instrument.",
+      "not_used_as_candidate_failure_evidence": true,
+      "required_next_action": "REG-DS-01 is burned for this cycle. A fresh case plus a repaired arm-identification contract are required in the next candidate cycle. The grader was NOT edited inside this gate."
+    }
+  ],
+
+  "genuine_behavioral_failures": [
+    {
+      "fixture_id": "H-GDS-02",
+      "trial": 2,
+      "failure": "operational.target names arm B, but the justified action targets arm A",
+      "criticality": "P0",
+      "claim": "GEM-C7 / downstream-economics primacy",
+      "analysis": "Configuration A carries spend 520 against gross profit 400 (net -120); configuration B carries spend 360 against gross profit 1800 (net +1440). The fixture's registered business rule makes mature verified sales and gross profit decision-relevant and acquisition cost merely diagnostic. Directing the stop at B is the acquisition-cost-gap failure mode this fixture exists to catch. This is the same failure class as the original H-GF-02 defect and it ends the candidate cycle."
+    },
+    {
+      "fixture_ids": ["H-DS-02", "H-GF-02", "H-GFD-01", "H-GDS-02"],
+      "trials": ["H-DS-02 t3", "H-GF-02 t1", "H-GFD-01 t2", "H-GDS-02 t3"],
+      "failure": "operational.target does not identify exactly one arm",
+      "observed_targets": [
+        "Configuration A and Configuration B comparison setup",
+        "configuration_a and configuration_b comparison",
+        "configuration_a and configuration_b comparison",
+        "Configuration A and B paid acquisition setup"
+      ],
+      "criticality": "P1",
+      "analysis": "Under the frozen v0.4 contract these are candidate failures: the overlay states that `target` is the arm the action applies to and that an action aimed at the wrong arm is a wrong decision. An action cannot be applied to 'a comparison setup'. The same fixtures passed on other trials, so this is output variance in contract compliance rather than a grader defect. Root cause is most likely contract comprehension rather than professional judgment -- see the design lesson below."
+    }
+  ],
+
+  "unresolved_adjudication": [
+    {
+      "fixture_id": "REG-DS-02",
+      "trial": 3,
+      "failure": "claim_ceiling 'INCREMENTAL_CAUSAL' exceeds the ceiling this design supports (max DIRECTIONAL_ASSOCIATION)",
+      "note": "REG-DS-02 states `confounding: none known` but supplies no randomization evidence, immature outcomes at 35% of the registered horizon, and counts of 4 versus 1 qualified leads. The evaluator's DIRECTIONAL_ASSOCIATION ceiling is defensible on those grounds, but the ceiling for a fixture whose confounding is declared absent is an evaluator judgment that should be stated explicitly in the fixture rather than only in the grader table."
+    }
+  ],
+
+  "design_lesson": {
+    "finding": "Six of the seven Gemini failures are `operational.target` defects, and `target` is the single field left as a free-text string inside an otherwise closed-vocabulary decision record.",
+    "implication": "The v0.4 repair moved P0 claims off prose, and the instability moved with the one field that stayed prose. Structuring the decision was correct and insufficient: any field a P0 assertion depends on must be closed-vocabulary.",
+    "required_next_change": "In the next candidate cycle constrain the action target to an identifier drawn from the fixture's own arm names, so arm identification is a lookup rather than a parse."
+  },
+
+  "cycle_disposition": {
+    "status": "CYCLE_CLOSED_FAIL",
+    "rule_applied": "The preregistration requires every fixture to pass every trial on every executed family, forbids best-of-N, and permits zero retries. 20/27 passed and six of nine fixtures produced discordant trials.",
+    "no_rerun_performed": "This gate was not re-run and the grader was not edited after observing candidate output. Repair requires a new candidate version and a new freeze, per candidate-freeze-v0.4.json.",
+    "library_effect": "None. growth-experimentation-measurement 1.1.0 remains quarantined. Nothing in this cycle supports any qualified claim."
+  }
+}
