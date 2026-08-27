@@ -11,6 +11,9 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 
+LEGACY_OUTPUT_CONTRACT = "architect/evaluation/growth-experimentation-analytics/schemas/result.schema.json"
+
+
 def fail(message: str) -> NoReturn:
     print(f"executor_error: {message}", file=sys.stderr)
     raise SystemExit(2)
@@ -45,15 +48,31 @@ def load_candidate(manifest: dict[str, Any]) -> str:
     return "\n\n".join(chunks)
 
 
-def api_call(candidate_text: str, task: dict[str, Any]) -> str:
+def load_output_contract(manifest: dict[str, Any]) -> str:
+    """Read the output contract bound by the frozen manifest.
+
+    v0.3 and earlier froze only the markdown components while the executor injected
+    schemas/result.schema.json from a hardcoded path, so a contract edit could change
+    candidate behavior without changing the frozen digest. v0.4 manifests bind the
+    contract; its hash is verified like any other frozen component.
+    """
+    path = manifest.get("output_contract_path")
+    if not isinstance(path, str) or not path:
+        return Path(LEGACY_OUTPUT_CONTRACT).read_text(encoding="utf-8")
+    expected = manifest.get("output_contract_git_blob_sha")
+    if isinstance(expected, str) and expected:
+        actual = git_blob_sha(path)
+        if actual != expected:
+            fail(f"output contract hash mismatch for {path}: {actual} != {expected}")
+    return Path(path).read_text(encoding="utf-8")
+
+
+def api_call(candidate_text: str, schema: str, task: dict[str, Any]) -> str:
     key = os.environ.get("GROQ_API_KEY")
     model = os.environ.get("ANALYTICS_MODEL", "qwen/qwen3.6-27b")
     if not key:
         fail("GROQ_API_KEY is required")
 
-    schema = Path(
-        "architect/evaluation/growth-experimentation-analytics/schemas/result.schema.json"
-    ).read_text(encoding="utf-8")
 
     system = (
         "You are the exact frozen Growth Experimentation & Measurement candidate under behavioral evaluation. "
@@ -123,7 +142,7 @@ def main() -> int:
     if not isinstance(manifest, dict) or not isinstance(task, dict):
         fail("candidate manifest or task missing")
     candidate_text = load_candidate(manifest)
-    result = parse_json_object(api_call(candidate_text, task))
+    result = parse_json_object(api_call(candidate_text, load_output_contract(manifest), task))
     json.dump(result, sys.stdout, ensure_ascii=False)
     sys.stdout.write("\n")
     return 0

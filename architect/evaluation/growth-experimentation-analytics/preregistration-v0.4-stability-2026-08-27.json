@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-27",
+  "gate_id": "analytics-v0.4-stability-2026-08-27",
+  "candidate_id": "growth-experimentation-measurement-v0.4-structured-decision-record",
+  "candidate_assembly_digest": "sha256:db2a519bf6d67080b915581cd02d003965487cb2b8e4f1e401ac901df63b7f47",
+  "purpose": "Measure whether the repaired v0.4 output contract removes the phrasing-dependent verdict instability observed in v0.3, where one frozen candidate, fixture and grader produced different behavioral results across runs.",
+  "suites": [
+    {
+      "path": "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-decision-sufficiency.json",
+      "git_blob_sha": "88cdb8e7a856d875e583007179cb480ac91125f4"
+    },
+    {
+      "path": "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-fresh.json",
+      "git_blob_sha": "2412ecd71304bda6648908b418f8f38e5cbd2a3d"
+    },
+    {
+      "path": "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-final-downstream.json",
+      "git_blob_sha": "69f0ff49c7a3cb89dc34835a7a24132f2af075f7"
+    },
+    {
+      "path": "architect/evaluation/growth-experimentation-analytics/fixtures/heldout-v0.3-gemini-post-scorer-repair.json",
+      "git_blob_sha": "92d39a0a5782c9c93ffaa36dd1c4a6d0e478a305"
+    },
+    {
+      "path": "architect/evaluation/growth-experimentation-analytics/fixtures/regression-v0.3-decision-sufficiency.json",
+      "git_blob_sha": "ec9ebcc13122c39f330063858540a88cd9d451c8"
+    }
+  ],
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v04_structural.py",
+    "git_blob_sha": "3fd16fc26d23f1a2cfd9cef05f4467c4f9c030d4"
+  },
+  "trials_per_fixture": 3,
+  "retries_permitted": 0,
+  "pass_rule": "Every fixture must PASS on every one of its 3 independent trials, on every executed model family. Any single trial failure ends this gate as FAIL. Best-of-N is not a pass. A rerun after a professional failure is not permitted without a new candidate version and a new freeze.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    },
+    {
+      "family": "Groq/Qwen",
+      "model": "qwen/qwen3.6-27b",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_groq.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction for this cycle; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The grader blob above is fixed for this gate. It must not be broadened, narrowed or otherwise edited after any candidate output is observed. If a construct defect is discovered, the affected case is burned in a recorded burn entry and requires a fresh case, exactly as q10-invalidation-and-q11-preregistration-v0.2.json did.",
+  "what_this_gate_does_not_establish": [
+    "This is NOT a release qualification and cannot admit any core version to the library.",
+    "The grader expectations were authored by the party performing the repair, so under the harness's own development-vs-qualification separation these are development/regression evidence, not held-out qualification evidence.",
+    "Two of the four historically required model families are not executed in this cycle.",
+    "A stable PASS here establishes only that the repaired contract grades one decision consistently; fresh independent held-out qualification by a party outside this repair remains required before any qualified claim."
+  ]
+}
