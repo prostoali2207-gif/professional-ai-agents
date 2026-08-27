@@ -52,6 +52,7 @@ jobs:
             architect/evaluation/growth-experimentation-analytics/grader_v05_structural.py \
             architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v05.py
           python3 architect/evaluation/growth-experimentation-analytics/test_metric_precedence_regression_v05.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_heldout_gate_runner_v05.py
           python3 architect/evaluation/growth-experimentation-analytics/test_decision_record_stability_v04.py
 
       - name: Bind provider
