@@ -151,3 +151,84 @@ No held-out pack exists for this cycle yet — it is authored fresh at run time.
 No hidden fixture, grader key or expected answer was read, written or modified;
 no sealed ciphertext was opened. The rehearsal used synthetic placeholders whose
 `id`s are prefixed `REHEARSAL-`.
+
+---
+
+# Execution attempt, 2026-08-27 (two authorized paid runs)
+
+Final verdict: **NOT EXECUTABLE**, blocked on `SCC-QUOTA-1`.
+
+## Run 33058365193 — repair SCC-INFRA-1 confirmed
+
+Head `118287e`. Deterministic preflight, static preflight, **sealed transport and
+pack preflight**, and the **exact-runtime candidate canary** all passed — the
+first time this cycle has ever reached the scored stage. That is production
+confirmation of the freeze-record repair.
+
+The scored runner then stopped at Groq judge calibration:
+
+```
+Groq judge HTTP 400: json_validate_failed ... "failed_generation": ""
+```
+
+Zero candidate calls. No scored evidence.
+
+## Run 33058895070 — repair SCC-INFRA-2 confirmed, quota wall reached
+
+Head `a65998f`, carrying the judge-transport repair. The `json_validate_failed`
+class is gone; the run reached a different, later error:
+
+```
+Groq judge HTTP 413: Request too large for model `qwen/qwen3.6-27b`
+service tier `on_demand` on tokens per minute (TPM): Limit 8000, Requested 12680
+```
+
+Two things are true here, and both matter.
+
+**Partly self-inflicted.** `12680` is input plus `max_completion_tokens`.
+Calibration input measures ~644 tokens, so the 12000-token budget I carried over
+from the author path is what pushed *this particular request* over the ceiling.
+Corrected to 4000 in `1200a01`.
+
+**The real blocker is independent of that.** The batched held-out judge call
+sends 12 cases, each carrying task, hidden reference and the full candidate
+answer. Measured offline against the runner's exact payload shape:
+
+| Case sizing | Held-out input tokens | vs. 8000 TPM ceiling |
+| ----------- | --------------------- | -------------------- |
+| lean | ~8,182 | exceeds |
+| typical | ~14,782 | exceeds |
+| rich | ~23,182 | exceeds |
+
+Every one exceeds the ceiling **on input alone, before any completion budget**.
+No value of `max_completion_tokens` makes the frozen batched two-judge design
+executable on this Groq tier.
+
+## SCC-QUOTA-1 — account eligibility constraint, evaluator decision required
+
+This is not a code defect and I did not attempt a third run for it. Phase 6A
+requires verifying account-specific quota from live evidence rather than
+assuming it, and the policy on quota exhaustion is to stop and preserve
+evidence rather than infer anything from partial completion.
+
+Four resolutions exist, and three of them touch the grading apparatus, so none
+is mine to take unilaterally:
+
+1. raise the Groq account tier so the batched call fits;
+2. split the batched judge call with TPM-aware pacing — changes how grading is batched;
+3. substitute the second judge with a provider that accepts the batched payload — changes which model grades;
+4. accept NOT EXECUTABLE and record it.
+
+## Accounting for both runs
+
+| Item | Value |
+| ---- | ----- |
+| Paid completion calls | 6 (2 × [1 author + 1 canary + 1 Gemini calibration]) |
+| Groq requests | 2, both rejected before completion |
+| **Candidate calls** | **0** |
+| Scored evidence produced | none |
+| Actions runs consumed | 2 |
+
+Two held-out packs were authored and sealed in CI. The candidate never received
+a single fixture, so no held-out case was consumed, no scored evidence exists,
+and there is no PASS/REVISE to report. Nothing was tuned to make a test pass.

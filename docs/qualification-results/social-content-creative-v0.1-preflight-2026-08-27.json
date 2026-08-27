@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "record_kind": "qualification-preflight-execution-record",
-  "record_id": "social-content-creative-0-1-0-preflight-20260827",
+  "record_kind": "qualification-execution-record",
+  "record_id": "social-content-creative-0-1-0-qualification-attempt-20260827",
   "core_id": "social-content-creative",
   "core_version": "0.1.0",
   "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
@@ -21,11 +21,12 @@
   "executed_stages": {
     "deterministic_precredential_preflight": "PASS",
     "static_validation": "PASS",
-    "sealed_transport_and_pack_preflight": "FAIL -> repaired -> PASS (offline rehearsal pack only)",
+    "sealed_transport_and_pack_preflight": "PASS (in production, after repair SCC-INFRA-1)",
     "sealed_runner_cold_start": "PASS",
-    "candidate_canary": "NOT_RUN",
-    "scored_heldout_qualification": "NOT_RUN",
-    "judgment_evaluation": "NOT_RUN"
+    "candidate_canary": "PASS (run 33058365193 and 33058895070)",
+    "scored_heldout_qualification": "NOT_REACHED - stopped at judge calibration, zero candidate calls",
+    "judgment_evaluation": "NOT_REACHED",
+    "post_run_accounting": "PASS"
   },
   "blocking_failures": [
     {
@@ -57,6 +58,47 @@
       "deterministic": true,
       "message": "api.groq.com is denied by this session's egress policy (gateway 403 to CONNECT)",
       "root_cause": "the frozen protocol requires two independent calibrated judges (Gemini + Groq/Qwen); the Groq judge host is unreachable from this environment regardless of credentials"
+    },
+    {
+      "id": "SCC-INFRA-2",
+      "failure_class": "QUALIFICATION_NOT_EXECUTABLE",
+      "stage": "judge calibration",
+      "deterministic": true,
+      "message": "Groq judge HTTP 400 json_validate_failed with an empty failed_generation",
+      "root_cause": "the sealed runner's Groq judge call still set response_format json_object and had no completion budget; the evaluator had already root-caused and repaired this exact class on the held-out author path in da6deb3 and 714dd42, but the judge path never received the fix",
+      "repair": "commit a65998f - drop response_format json_object, slice outermost braces in strip_json, add an explicit completion budget",
+      "repair_touches_grading_rubric": false,
+      "repair_landed": true,
+      "confirmed_resolved_by": "run 33058895070 reached a different, later error class"
+    },
+    {
+      "id": "SCC-QUOTA-1",
+      "failure_class": "QUALIFICATION_NOT_EXECUTABLE",
+      "stage": "judgment evaluation",
+      "deterministic": true,
+      "blocking": true,
+      "message": "Groq on_demand tier allows 8000 TPM for qwen/qwen3.6-27b; the frozen batched 12-case held-out judge call cannot fit",
+      "evidence": {
+        "observed_limit_tokens_per_minute": 8000,
+        "observed_rejected_request_tokens": 12680,
+        "calibration_input_tokens_measured": 644,
+        "heldout_input_tokens_measured_offline": {
+          "lean": 8182,
+          "typical": 14782,
+          "rich": 23182
+        },
+        "method": "payload built against the runner's exact JSON shape with placeholder case text; no hidden content was read"
+      },
+      "conclusion": "even the leanest plausible held-out payload exceeds the ceiling on input alone, so no max_completion_tokens value makes the frozen batched two-judge design executable on this account tier",
+      "classification": "account eligibility constraint, not a code defect",
+      "resolution_requires_evaluator_decision": true,
+      "options": [
+        "raise the Groq account tier so the batched judge call fits",
+        "split the batched judge call into smaller requests with TPM-aware pacing - changes how grading is batched",
+        "substitute the second judge with a provider that can accept the batched payload - changes which model grades",
+        "keep the cycle NOT EXECUTABLE and record it as such"
+      ],
+      "repair_landed": false
     }
   ],
   "runtime_substitution_considered_and_rejected": {
@@ -68,9 +110,9 @@
     ]
   },
   "resource_accounting": {
-    "paid_provider_calls_made": 0,
-    "completion_calls_made": 0,
-    "provider_credentials_used": "none",
+    "paid_provider_calls_made": 6,
+    "completion_calls_made": 6,
+    "provider_credentials_used": "GitHub Actions repository secrets (Gemini, Groq, sealed-pack master key)",
     "unauthenticated_reachability_probes": 2,
     "offline_rehearsal_provider_calls": 0,
     "runtime": "Claude Code remote session, Python 3.11.15, local venv (cryptography 50.0.1, jsonschema, pyyaml, pytest, hypothesis)",
@@ -78,7 +120,12 @@
       "gemini_completion_calls": "1 author + 1 canary + 24 candidate + 1 calibration + 2 judge = 29",
       "groq_completion_calls": "1 calibration + 2 judge = 3",
       "note": "the workflow's pre-run budget gate states 29 total and predates the move of the author to Gemini and the addition of judge calibration; it under-counts the actual envelope by 3 calls"
-    }
+    },
+    "breakdown": "2 runs x (1 Gemini held-out author + 1 Gemini canary + 1 Gemini judge calibration); 2 Groq requests rejected before completion",
+    "candidate_calls_made": 0,
+    "scored_evidence_produced": false,
+    "actions_runs_consumed": 2,
+    "offline_provider_calls": 0
   },
   "adjacent_findings": [
     {
@@ -104,7 +151,38 @@
     "grader_secrets_read": false,
     "hidden_fixtures_modified": false,
     "sealed_ciphertext_opened": false,
-    "note": "no held-out pack exists yet for this cycle; the pack is authored fresh at run time. The offline rehearsal used obvious synthetic placeholder fixtures and its outputs are not qualification evidence."
+    "note": "two held-out packs were authored and sealed in CI and are committed on the candidate branch. The candidate never received a single fixture, so no held-out case was consumed and no scored evidence exists. Nothing was tuned to make a test pass."
   },
-  "recorded_at": "2026-08-27T09:12:00Z"
+  "recorded_at": "2026-08-27T09:35:00Z",
+  "paid_runs": [
+    {
+      "run_id": 33058365193,
+      "head_sha": "118287e7c4455978c8bf8fa0b662186159332475",
+      "url": "https://github.com/prostoali2207-gif/professional-ai-agents/actions/runs/33058365193",
+      "outcome": "NOT_EXECUTABLE",
+      "furthest_stage": "Groq judge calibration",
+      "error": "Groq judge HTTP 400 json_validate_failed, failed_generation empty",
+      "gemini_completion_calls": 3,
+      "groq_completion_calls": 0,
+      "groq_rejected_requests": 1,
+      "candidate_calls": 0,
+      "scored_evidence_produced": false,
+      "proved": "repair SCC-INFRA-1 correct: sealed transport/pack preflight and canary PASS in production for the first time in this cycle"
+    },
+    {
+      "run_id": 33058895070,
+      "head_sha": "a65998f5e9ec6c545d887efed9416416b48746d8",
+      "url": "https://github.com/prostoali2207-gif/professional-ai-agents/actions/runs/33058895070",
+      "outcome": "NOT_EXECUTABLE",
+      "furthest_stage": "Groq judge calibration",
+      "error": "Groq judge HTTP 413 rate_limit_exceeded: TPM limit 8000, requested 12680",
+      "gemini_completion_calls": 3,
+      "groq_completion_calls": 0,
+      "groq_rejected_requests": 1,
+      "candidate_calls": 0,
+      "scored_evidence_produced": false,
+      "proved": "repair SCC-INFRA-2 correct: the json_validate_failed class is gone; the remaining blocker is an account quota ceiling"
+    }
+  ],
+  "verdict": "NOT EXECUTABLE - blocked on SCC-QUOTA-1, an account quota ceiling requiring an evaluator decision"
 }
