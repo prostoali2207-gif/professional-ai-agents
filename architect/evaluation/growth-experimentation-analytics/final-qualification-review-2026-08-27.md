@@ -195,6 +195,16 @@ asserting "the r10 spec as committed must pass every check" — now fails with e
 Left unrepaired deliberately: either the spec or the workflow is the intended source of
 truth after the `--preregistration` refactor, and that is the Sales cycle owner's call.
 
+## Root cause of the instability
+
+Investigated separately and recorded in
+`instability-root-cause-2026-08-27.md`: every qualified P0/P1 claim was asserted by regex
+over free prose, so a verdict tracked phrasing rather than the decision. The gate failed a
+correct H-DS-01 answer over word order and passed the P0 SCALE assertion on a sentence that
+refuses nothing. Repaired in candidate v0.4 by moving the decision onto a structured
+contract, with a deterministic regression locking paraphrase invariance and contrastive
+discrimination. That repair is development evidence and does not lift this quarantine.
+
 ## What would restore `qualified`
 
 No paid execution was performed for this review, and none should be authorized without the
