@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "id": "growth-experimentation-measurement",
   "version": "1.1.0",
-  "lifecycle": "qualified",
+  "lifecycle": "quarantined",
   "profession": {
     "canonical_name": "Growth Experimentation & Measurement Practitioner",
     "aliases": ["Experimentation Analyst", "Growth Measurement Analyst", "Experimentation & Measurement Practitioner"],
@@ -112,7 +112,8 @@
     "Qualification applies only to the exact artifact digest and pinned frozen three-component assembly; paraphrased or edited copies are not covered.",
     "The new decision-sufficiency delta has executable independent-model evidence on OpenAI and Gemini; this does not imply universal portability to every model/runtime.",
     "Specializations and composed agents require compatibility checks and affected-behavior evaluation.",
-    "The core does not itself provide organization-specific truth, live platform mechanics, legal advice, campaign execution authority or unqualified advanced statistical modeling."
+    "The core does not itself provide organization-specific truth, live platform mechanics, legal advice, campaign execution authority or unqualified advanced statistical modeling.",
+    "QUARANTINED 2026-08-27: the 1.1.0 qualification evidence did not hold on review. The cited held-out PASS runs are best-of-repeated-attempt results on a behavior with observed same-commit instability, two cited evaluation artifacts do not exist, one cited fixture's only execution was a behavioral failure, and the preregistered three-model-family release protocol was dropped without a revision record. Do not select this version for reuse until requalified. See architect/evaluation/growth-experimentation-analytics/final-qualification-review-2026-08-27.md."
   ],
   "qualification_refs": [
     "architect/library/qualifications/growth-experimentation-measurement/41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b/growth-experimentation-measurement-1-1-0-20260823.json"

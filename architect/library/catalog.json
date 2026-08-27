@@ -44,7 +44,7 @@
       "id": "growth-experimentation-measurement",
       "canonical_name": "Growth Experimentation & Measurement Practitioner",
       "version": "1.1.0",
-      "lifecycle": "qualified",
+      "lifecycle": "quarantined",
       "artifact_digest": "sha256:41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b",
       "manifest_path": "architect/library/cores/growth-experimentation-measurement/1.1.0/manifest.json",
       "qualification_refs": ["architect/library/qualifications/growth-experimentation-measurement/41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b/growth-experimentation-measurement-1-1-0-20260823.json"],

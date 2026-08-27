@@ -14,7 +14,7 @@ FORBIDDEN_KEYS = {
 }
 
 
-def walk(value, path="$": str):
+def walk(value, path: str = "$") -> None:
     if isinstance(value, dict):
         for key, child in value.items():
             if str(key).lower() in FORBIDDEN_KEYS:
