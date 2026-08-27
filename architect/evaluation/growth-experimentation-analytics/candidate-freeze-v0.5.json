@@ -1,0 +1,54 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.5-metric-precedence",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-27",
+  "supersedes": "growth-experimentation-measurement-v0.4-structured-decision-record",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+      "git_blob_sha": "330f32325a1071baf38f8d36d67931c0d519ae40"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.5-overlay.md",
+      "git_blob_sha": "01f3d30ac003dc5c3709be1e18349c52662e42bb"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v3.schema.json",
+  "output_contract_git_blob_sha": "56f2ac7a44a2a5aa284e91aaa5c98f1684ef7103",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v2.schema.json",
+  "assembly_digest": "sha256:156bd093c131d9c3ab252a9487c9ff13a48f190c69144e953196ea1a07aec44e",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the five overlay components in order, then the output contract",
+  "repairs": [
+    {
+      "failure": "H-GDS-02 wrong-arm stop (P0)",
+      "layer": "candidate professional model",
+      "root_cause": "The upstream-proxy-versus-downstream-economics precedence rule existed only for SCALE in v0.1 and only in negative form in v0.3. No positive rule said which arm a KILL targets when a diagnostic metric and the decisive metric rank the arms oppositely.",
+      "repair": "v0.5 overlay generalises metric precedence to every action and to arm selection, and requires decisive_metric to be recorded."
+    },
+    {
+      "failure": "operational.target unresolvable or naming two arms (6 of 7 v0.4 failures)",
+      "layer": "output contract",
+      "root_cause": "target was the one free-text field left inside an otherwise closed-vocabulary decision record, so arm identification was a parse.",
+      "repair": "Contract v3 constrains target to an identifier; fixture contract v2 requires every case to declare its arms, making grading a set-membership lookup."
+    }
+  ],
+  "qualification_scope": "fresh post-freeze held-out qualification cycle; NOT library-admitted until a valid gate passes.",
+  "freeze_rules": [
+    "Do not edit any frozen component or the bound output contract during a scored cycle.",
+    "Held-out cases are generated after this freeze from a seeded generator; the seed is recorded before execution.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh case.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ]
+}
