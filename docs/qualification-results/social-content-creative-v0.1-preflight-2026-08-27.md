@@ -232,3 +232,79 @@ is mine to take unilaterally:
 Two held-out packs were authored and sealed in CI. The candidate never received
 a single fixture, so no held-out case was consumed, no scored evidence exists,
 and there is no PASS/REVISE to report. Nothing was tuned to make a test pass.
+
+---
+
+# Result: PASS — run 33061964574, 2026-08-27
+
+Head `3f9f3c5`. Scored step ran 18m 21s: the frozen cycle executed end to end for
+the first time.
+
+| | |
+| --- | --- |
+| Release verdict | **PASS** |
+| Fixtures | 12/12 passed, both trials |
+| Families | 12/12, all pass |
+| Critical failures | **0** |
+| Min elicited score, all 24 gradings | 2 |
+| Judge calibration | Gemini PASS, Groq/Qwen PASS |
+| Report sha256 | `68de3bb4…` — matches the release ledger |
+| Runner exit code | 0 |
+
+## The final repair
+
+Run 33061287199 returned HTTP 200 with empty content, which closed the
+diagnosis: all three Groq judge failures were one root cause. `qwen/qwen3.6-27b`
+is a reasoning model and its hidden reasoning is charged against the completion
+budget.
+
+| Budget | Symptom |
+| --- | --- |
+| none | empty generation → 400 `json_validate_failed` |
+| 12000 | input + budget over the 8000 ceiling → 413 |
+| 3500 | accepted, reasoning consumed it → 200, empty content |
+
+`3f9f3c5` sizes the budget per request from the ceiling minus that request's own
+input. `reasoning_format` and `reasoning_effort` were left untouched — the judge
+reasons exactly as before, it is only given room to finish.
+
+## Cost across the whole cycle
+
+| | |
+| --- | --- |
+| Paid runs | 4 |
+| Runs producing scored evidence | 1 |
+| Candidate calls | 24, all in the passing run |
+| Final run (estimated) | ~33 Gemini + ~7 Groq completions |
+| Three failed runs | 9 Gemini completions, 3 rejected/empty Groq responses, **zero** candidate calls |
+
+Per-call counts are not instrumented; the final run's grouping (~3 groups per
+judge per trial) is inferred from the 1101s duration.
+
+## Construct-validity caveats — read before relying on this PASS
+
+These do not invalidate the verdict under the frozen protocol, which was
+satisfied as written. They bound what it means.
+
+1. **Independence is compromised.** The held-out author, the candidate runtime
+   and judge 1 are all `gemini-3.5-flash-lite`. The same model family authored
+   the test, sat it, and graded half of it. `eval-integrity-and-regression.md`
+   directs that such an evaluation's independence be downgraded. This
+   composition was preregistered before this session and was deliberately not
+   changed, because changing it would have altered the frozen cycle.
+2. **Ceiling effect.** Every one of the 24 gradings returned a minimum elicited
+   score of 2. Both judges discriminated correctly on the six calibration cases,
+   so this is not simple rubber-stamping — but a uniform top score separates
+   "professionally strong" from "adequate" poorly.
+3. **Two trials** satisfies the frozen repeated-trial rule and is still thin for
+   estimating stochastic reliability.
+4. **Scope.** PASS binds this artifact digest, this pack and this runtime only.
+5. **The grouped judge configuration has one scored run behind it.** Grading
+   semantics were verified byte-identical and equivalence proven offline, but
+   the transport itself is newly exercised.
+
+## Not done here
+
+Promoting the core's lifecycle from `candidate` to qualified, and adding this
+record to the manifest's `qualification_refs`, are evaluator decisions on the
+candidate branch and were left alone.

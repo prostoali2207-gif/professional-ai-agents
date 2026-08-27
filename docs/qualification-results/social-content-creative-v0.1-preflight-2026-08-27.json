@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "record_kind": "qualification-execution-record",
-  "record_id": "social-content-creative-0-1-0-qualification-attempt-20260827",
+  "record_id": "social-content-creative-0-1-0-qualification-20260827",
   "core_id": "social-content-creative",
   "core_version": "0.1.0",
   "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
@@ -16,16 +16,19 @@
     "thresholds_modified": false,
     "hard_fail_rules_modified": false
   },
-  "status": "QUALIFICATION_NOT_EXECUTABLE",
+  "status": "PASS",
   "verdict_scope": "infrastructure only; no professional verdict was produced and none may be inferred",
   "executed_stages": {
     "deterministic_precredential_preflight": "PASS",
     "static_validation": "PASS",
-    "sealed_transport_and_pack_preflight": "PASS (in production, after repair SCC-INFRA-1)",
+    "sealed_transport_and_pack_preflight": "PASS",
     "sealed_runner_cold_start": "PASS",
-    "candidate_canary": "PASS (run 33058365193 and 33058895070)",
-    "scored_heldout_qualification": "NOT_REACHED - stopped at judge calibration, zero candidate calls",
-    "judgment_evaluation": "NOT_REACHED",
+    "candidate_canary": "PASS",
+    "judge_calibration": "PASS (both judges)",
+    "scored_heldout_qualification": "PASS",
+    "judgment_evaluation": "PASS",
+    "sanitized_report_validation": "PASS",
+    "release_verdict_enforcement": "PASS",
     "post_run_accounting": "PASS"
   },
   "blocking_failures": [
@@ -99,6 +102,19 @@
         "keep the cycle NOT EXECUTABLE and record it as such"
       ],
       "repair_landed": false
+    },
+    {
+      "id": "SCC-JUDGE-BUDGET",
+      "failure_class": "QUALIFICATION_NOT_EXECUTABLE",
+      "stage": "judge calibration",
+      "deterministic": true,
+      "message": "Groq judge HTTP 200 with empty content",
+      "root_cause": "qwen/qwen3.6-27b is a reasoning model and its hidden reasoning is charged against the completion budget; a fixed 3500-token budget was exhausted by reasoning before any content was emitted. This is the single root cause behind all three earlier Groq symptoms (400 json_validate_failed with empty failed_generation, 413 over the TPM ceiling, and 200 with empty content).",
+      "repair": "commit 3f9f3c5 - size max_completion_tokens per request from the ceiling minus that request's own input; reduce the input grouping so held-out groups leave real completion headroom; report finish_reason and usage when content is empty",
+      "repair_touches_grading_rubric": false,
+      "reasoning_settings_touched": false,
+      "repair_landed": true,
+      "confirmed_resolved_by": "run 33061964574 completed the full scored qualification"
     }
   ],
   "runtime_substitution_considered_and_rejected": {
@@ -122,10 +138,16 @@
       "note": "the workflow's pre-run budget gate states 29 total and predates the move of the author to Gemini and the addition of judge calibration; it under-counts the actual envelope by 3 calls"
     },
     "breakdown": "2 runs x (1 Gemini held-out author + 1 Gemini canary + 1 Gemini judge calibration); 2 Groq requests rejected before completion",
-    "candidate_calls_made": 0,
-    "scored_evidence_produced": false,
-    "actions_runs_consumed": 2,
-    "offline_provider_calls": 0
+    "candidate_calls_made": 24,
+    "scored_evidence_produced": true,
+    "actions_runs_consumed": 4,
+    "offline_provider_calls": 0,
+    "paid_runs_total": 4,
+    "runs_that_produced_scored_evidence": 1,
+    "final_run_gemini_calls_estimated": 33,
+    "final_run_groq_calls_estimated": 7,
+    "call_counts_measurement": "the runner does not instrument per-call counts; the final run's judge grouping (~3 groups per judge per trial) is inferred from the 1101s scored-step duration and is an estimate, not a measurement",
+    "earlier_runs_cost": "3 failed runs x (1 author + 1 canary + 1 Gemini calibration) = 9 Gemini completions, plus 3 rejected/empty Groq responses; zero candidate calls in those runs"
   },
   "adjacent_findings": [
     {
@@ -153,7 +175,7 @@
     "sealed_ciphertext_opened": false,
     "note": "two held-out packs were authored and sealed in CI and are committed on the candidate branch. The candidate never received a single fixture, so no held-out case was consumed and no scored evidence exists. Nothing was tuned to make a test pass."
   },
-  "recorded_at": "2026-08-27T09:35:00Z",
+  "recorded_at": "2026-08-27T10:35:00Z",
   "paid_runs": [
     {
       "run_id": 33058365193,
@@ -182,7 +204,50 @@
       "candidate_calls": 0,
       "scored_evidence_produced": false,
       "proved": "repair SCC-INFRA-2 correct: the json_validate_failed class is gone; the remaining blocker is an account quota ceiling"
+    },
+    {
+      "run_id": 33061964574,
+      "head_sha": "3f9f3c504cb61b55494732a1b256d3ca72068ab9",
+      "url": "https://github.com/prostoali2207-gif/professional-ai-agents/actions/runs/33061964574",
+      "outcome": "PASS",
+      "furthest_stage": "complete",
+      "scored_step_duration_seconds": 1101,
+      "candidate_calls": 24,
+      "scored_evidence_produced": true,
+      "proved": "repair SCC-JUDGE-BUDGET correct; the frozen cycle executed end to end for the first time"
     }
   ],
-  "verdict": "NOT EXECUTABLE - blocked on SCC-QUOTA-1, an account quota ceiling requiring an evaluator decision"
+  "verdict": "PASS - frozen held-out qualification completed, 12/12 fixtures across two trials, zero critical failures",
+  "result": {
+    "release_verdict": "PASS",
+    "fixture_count": 12,
+    "families": 12,
+    "trials": 2,
+    "fixture_passes_per_trial": [
+      12,
+      12
+    ],
+    "critical_flag_count": 0,
+    "all_families_pass": true,
+    "min_elicited_score_across_all_24_gradings": 2,
+    "judge_calibration": {
+      "gemini": true,
+      "groq_qwen": true
+    },
+    "judge_models": [
+      "gemini-3.5-flash-lite",
+      "qwen/qwen3.6-27b"
+    ],
+    "candidate_model": "gemini-3.5-flash-lite",
+    "pack_digest": "sha256:9482c2da14cf65317ff2a8415f9107bbf7b46016bde2a4414be482808f958660",
+    "report_sha256": "68de3bb422c9fa757c804eb62bc5a2069720963740e3a2f5cad51fe17142d760",
+    "report_sha256_matches_ledger": true,
+    "runner_exit_code": 0
+  },
+  "construct_validity_caveats": [
+    "The held-out pack author, the candidate runtime and one of the two judges are all gemini-3.5-flash-lite. The same model family authored the test, sat the test and graded half of it. eval-integrity-and-regression.md directs that such an evaluation's independence be downgraded. This was preregistered in the cycle before this session and was not changed here, because changing it would alter the frozen cycle.",
+    "All 24 gradings returned a minimum elicited score of 2, a ceiling effect. Both judges did discriminate correctly on the six calibration cases, which is real evidence they are not simply agreeing, but a uniform top score across every fixture and dimension is weak at distinguishing strong from adequate work.",
+    "Two clean trials satisfy the frozen protocol's repeated-trial rule, but two trials is a thin basis for estimating stochastic reliability.",
+    "PASS is scoped to this exact artifact digest, this held-out pack and this declared runtime. It is not transferable to a specialization or a composed agent."
+  ]
 }
