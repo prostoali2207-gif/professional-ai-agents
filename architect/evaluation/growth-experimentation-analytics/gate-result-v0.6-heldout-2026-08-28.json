@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0.0",
+  "gate_id": "analytics-v0.6-heldout-2026-08-28",
+  "preregistration_ref": "architect/evaluation/growth-experimentation-analytics/preregistration-v0.6-heldout-2026-08-28.json",
+  "candidate_assembly_digest": "sha256:32f7a5b75da92397d94711704aab6c65356567ce87b6a3bbeb96fa7f575ecb44",
+  "executed_at": "2026-08-28T15:10:28Z",
+  "head_sha": "502962baf1e55de4e9096917a1caf24cea1d4064",
+  "heldout_seed": 20260828,
+  "verdict": "FAIL",
+  "openai_quota_consumed": false,
+  "groq_quota_consumed": false,
+  "rerun_performed": false,
+  "grader_or_generator_edited_after_observing_output": false,
+
+  "family": {
+    "name": "Gemini",
+    "model": "gemini-3.5-flash-lite",
+    "workflow_run": "github-actions:33183842900/job/98891605211",
+    "trials_per_fixture": 3,
+    "retries_used": 0,
+    "executed": 30,
+    "passed": 24,
+    "failed": 5,
+    "execution_errors": 1,
+    "per_fixture": {
+      "HO-UDC-01": ["PASS", "PASS", "PASS"],
+      "HO-UDC-02": ["PASS", "PASS", "PASS"],
+      "HO-UOC-01": ["PASS", "PASS", "PASS"],
+      "HO-UOC-02": ["PASS", "PASS", "PASS"],
+      "HO-IFH-01": ["PASS", "PASS", "EXECUTION_ERROR"],
+      "HO-IFH-02": ["PASS", "PASS", "PASS"],
+      "HO-CSW-01": ["PASS", "PASS", "PASS"],
+      "HO-CSW-02": ["PASS", "PASS", "FAIL"],
+      "HO-SBI-01": ["FAIL", "FAIL", "PASS"],
+      "HO-SBI-02": ["FAIL", "FAIL", "FAIL"]
+    }
+  },
+
+  "corroborated_by_this_gate": [
+    {
+      "family": "IMMATURE_FIXED_HORIZON",
+      "result": "5/5 executed trials PASS",
+      "significance": "This is the family burned in v0.5 for oracle inconsistency. Under the v0.6 scoping rule it passes cleanly, which is direct evidence that the adjudicated rule is both stateable and satisfiable. The sixth trial was a provider outage, not a decision."
+    },
+    {
+      "family": "UPSTREAM_DOWNSTREAM_CONFLICT",
+      "result": "6/6 PASS, second consecutive cycle",
+      "significance": "The H-GDS-02 P0 repair continues to hold on a fresh seed with the culprit arm in randomised positions."
+    },
+    {"family": "UPSTREAM_ONLY_CONFOUNDED", "result": "6/6 PASS"},
+    {
+      "family": "CLEAN_SCALABLE_WIN",
+      "result": "5/6 PASS; the sixth failed a defective assertion, see burns",
+      "significance": "The anti-gaming control still holds: the candidate is not passing the other families by reflexively blocking SCALE."
+    },
+    {
+      "observation": "claim_scope was well-formed on all 30 trials and no scope invariant fired",
+      "significance": "The v0.6 contract addition did not itself become a new instability locus, which was the risk carried over from v0.4 and v0.5."
+    }
+  ],
+
+  "burned_cases": [
+    {
+      "family": "SPARSE_BUT_IDENTIFIED",
+      "fixture_ids": ["HO-SBI-01", "HO-SBI-02"],
+      "trials": "the 5 failing trials",
+      "status": "INVALID_CONSTRUCT_BURNED",
+      "reason": "Under-specified oracle, not a candidate failure. The expectation permits action_in [INCONCLUSIVE, ITERATE] but forces a single target, 'experiment'. Those two actions do not share a natural target: INCONCLUSIVE says the registered question cannot be answered and scopes to the experiment, while ITERATE says run a properly powered test of the treatment and defensibly scopes to the treatment arm. The oracle therefore permits an action whose natural target it forbids. Every other assertion passed on these trials, including the load-bearing ones: the ceiling stayed INCREMENTAL_CAUSAL despite sparse counts, SCALE was blocked on INSUFFICIENT_SAMPLE, and INSUFFICIENT_EVIDENCE was recorded. The candidate got the discriminating behaviour right and was failed on an inconsistency in the specification.",
+      "not_used_as_candidate_failure_evidence": true,
+      "required_next_action": "Burned for this cycle; a fresh seed is required. The target expectation must become action-dependent rather than a single value whenever more than one action is permitted."
+    },
+    {
+      "family": "CLEAN_SCALABLE_WIN",
+      "fixture_ids": ["HO-CSW-02"],
+      "trials": "trial 3",
+      "status": "INVALID_CONSTRUCT_BURNED",
+      "reason": "Under-specified computation assertion. The oracle asserts relative_lift_variant_a == 0.5 as a bare number and neither the assertion nor the fixture instruction states the unit. The candidate returned 50.0, which is the same quantity expressed as a percentage. The result schema carries a unit field precisely so that a magnitude and its unit travel together, and the assertion ignored it.",
+      "not_used_as_candidate_failure_evidence": true,
+      "required_next_action": "Computation assertions must pin the unit, or normalise before comparing."
+    }
+  ],
+
+  "execution_errors": [
+    {
+      "fixture_id": "HO-IFH-01",
+      "trial": 3,
+      "detail": "Gemini API HTTP 500: gemini-3.5-flash-lite is currently experiencing high demand.",
+      "classification": "Provider outage. Not candidate evidence and not retried, because the preregistration permits zero retries."
+    }
+  ],
+
+  "genuine_behavioral_failures": [],
+
+  "observations_not_scored": [
+    {
+      "observation": "HO-CSW-02 returned relative lift as a ratio on two trials and as a percentage on the third.",
+      "note": "The failing assertion was defective, so this is not scored as a failure. The unit inconsistency across trials is nonetheless a real stability observation and should be captured by a well-formed assertion in the next cycle rather than dismissed."
+    }
+  ],
+
+  "cycle_disposition": {
+    "status": "CYCLE_CLOSED_FAIL",
+    "rule_applied": "The preregistration requires every case to pass every trial and forbids best-of-N. Six of ten cases passed every executed trial; two are burned as invalid constructs, one lost a trial to a provider outage, and one lost a trial to a defective assertion.",
+    "genuine_candidate_failures": 0,
+    "library_effect": "None. growth-experimentation-measurement 1.1.0 remains quarantined."
+  },
+
+  "standing_finding": {
+    "pattern": "Three consecutive cycles have failed on the instrument rather than the candidate: v0.4 on prose-regex grading, v0.5 on an inconsistent ceiling cap, v0.6 on an under-specified target and an unpinned unit. Across those three cycles the count of genuine candidate behavioural failures is one, H-GDS-02, and it was repaired and has since held 12/12.",
+    "implication": "The bottleneck is no longer the candidate's professional model; it is the discipline of the oracle specification. Continuing to iterate the candidate would be treating the wrong layer.",
+    "recommended_next_step": "Before any v0.7 candidate work, give the oracle its own validation pass with machine-checked well-formedness rules: every permitted action must carry a permitted target set, every asserted computation must pin a unit or normalise, and every constraint must key only on facts declared in the candidate-facing case. These are checkable properties of the expectation objects and can be enforced without any provider call.",
+    "also_noted": "The assembly is now six overlays plus the contract and has already made Groq ineligible on token-per-minute grounds. Consolidating the overlays into one normative document should precede adding a seventh."
+  },
+
+  "qualification_boundary_restated": [
+    "Even a clean sweep would not have been a release qualification: one model family, and the generator, oracle and repaired candidate written by the same party.",
+    "Library admission still requires an externally authored held-out set and the cross-model release protocol."
+  ]
+}
