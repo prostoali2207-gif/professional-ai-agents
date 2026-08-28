@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/growth-experimentation-analytics/fixture-v3.schema.json",
+  "title": "Analytics candidate-facing fixture contract v3",
+  "description": "v3 additionally requires every case to state whether the registered window has completed, so the claim-scope rule is checked against a declared fact rather than parsed out of a prose maturity description.",
+  "type": "object",
+  "required": [
+    "fixture_id",
+    "instruction",
+    "case"
+  ],
+  "properties": {
+    "fixture_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case": {
+      "type": "object",
+      "required": [
+        "arms",
+        "registered_window_complete"
+      ],
+      "properties": {
+        "arms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]+$"
+          },
+          "description": "Identifiers an action may target. operational.target must be exactly one of these."
+        },
+        "registered_window_complete": {
+          "type": "boolean",
+          "description": "True when the registered observation window has closed. False means the registered estimand is right-censored and only an interim outcome exists."
+        }
+      }
+    }
+  }
+}

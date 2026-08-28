@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/growth-experimentation-analytics/result-v4.schema.json",
+  "title": "Analytics candidate output contract v4",
+  "description": "v3 plus causal.claim_scope. A claim ceiling is meaningless without the quantity it is a claim about: in a randomized experiment with an open registered window, INCREMENTAL_CAUSAL is defensible about the interim outcome and unsupportable about the registered estimand. The scope makes which one is meant observable instead of guessed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fixture_id",
+    "recommendation",
+    "decision_record",
+    "data_integrity_findings",
+    "computations",
+    "claim_boundaries",
+    "confounders",
+    "rationale",
+    "next_action"
+  ],
+  "properties": {
+    "fixture_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recommendation": {
+      "enum": [
+        "CONTINUE",
+        "ITERATE",
+        "SCALE",
+        "KILL",
+        "INCONCLUSIVE"
+      ]
+    },
+    "decision_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "causal",
+        "operational",
+        "scale_readiness"
+      ],
+      "properties": {
+        "causal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "claim_scope",
+            "claim_ceiling",
+            "blocking_confounders"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "IDENTIFIED",
+                "UNRESOLVED",
+                "NOT_APPLICABLE"
+              ],
+              "description": "IDENTIFIED only when the design supports attributing the outcome difference to the nominal treatment."
+            },
+            "claim_ceiling": {
+              "enum": [
+                "NONE",
+                "DESCRIPTIVE_ASSOCIATION",
+                "DIRECTIONAL_ASSOCIATION",
+                "INCREMENTAL_CAUSAL"
+              ],
+              "description": "The strongest claim the evidence supports for the declared claim_scope. INCREMENTAL_CAUSAL requires a credible counterfactual, and for REGISTERED_ESTIMAND it additionally requires the registered window to have completed. Sparse outcome counts never lower this."
+            },
+            "blocking_confounders": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Names that must also appear in confounders[].name. Ties the causal ceiling to identified evidence rather than to assertion."
+            },
+            "claim_scope": {
+              "enum": [
+                "REGISTERED_ESTIMAND",
+                "INTERIM_OUTCOME"
+              ],
+              "description": "Which quantity the ceiling is a claim about. REGISTERED_ESTIMAND is the registered KPI including its window. INTERIM_OUTCOME is the measurement at the current read before the window closes - a different quantity, not an early view of the same one."
+            }
+          }
+        },
+        "operational": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "action",
+            "target",
+            "decisive_metric",
+            "decision_basis",
+            "reversible",
+            "evidence_that_would_change_action"
+          ],
+          "properties": {
+            "action": {
+              "enum": [
+                "CONTINUE",
+                "ITERATE",
+                "SCALE",
+                "KILL",
+                "INCONCLUSIVE"
+              ],
+              "description": "Must equal the top-level recommendation."
+            },
+            "target": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.-]+$",
+              "minLength": 1,
+              "description": "Exactly one identifier from the fixture's `arms` list. Identifier form only - no spaces, no conjunctions, no description of the comparison."
+            },
+            "decision_basis": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "REGISTERED_PRIMARY_KPI",
+                  "MATURE_DOWNSTREAM_ECONOMICS",
+                  "ACQUISITION_COST_DIAGNOSTIC",
+                  "MATERIALITY",
+                  "REVERSIBILITY",
+                  "COST_OF_WAITING",
+                  "CONFOUNDER_ACTION_RELEVANCE",
+                  "GUARDRAIL_BREACH",
+                  "CAPACITY_CONSTRAINT",
+                  "INSUFFICIENT_EVIDENCE"
+                ]
+              },
+              "description": "The grounds actually used for the operational action, from a closed vocabulary."
+            },
+            "reversible": {
+              "type": "boolean"
+            },
+            "evidence_that_would_change_action": {
+              "type": "string",
+              "minLength": 1
+            },
+            "decisive_metric": {
+              "enum": [
+                "MATURE_DOWNSTREAM_ECONOMICS",
+                "REGISTERED_PRIMARY_KPI",
+                "ACQUISITION_COST",
+                "GUARDRAIL",
+                "CAPACITY",
+                "NONE_DECIDABLE"
+              ],
+              "description": "The metric class that actually selected the action and the arm - the one that, if reversed, would change the decision. Not the most discussed metric."
+            }
+          }
+        },
+        "scale_readiness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "blocking_reasons"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "BLOCKED",
+                "ELIGIBLE"
+              ]
+            },
+            "blocking_reasons": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "UNIDENTIFIED_CAUSAL_EFFECT",
+                  "MEASUREMENT_INTEGRITY_UNRESOLVED",
+                  "IMMATURE_OUTCOMES",
+                  "INSUFFICIENT_SAMPLE",
+                  "NO_CREDIBLE_COUNTERFACTUAL",
+                  "CAPACITY_OR_SATURATION_UNKNOWN",
+                  "GUARDRAIL_UNVERIFIED",
+                  "NOT_BLOCKED"
+                ]
+              },
+              "description": "BLOCKED requires at least one reason other than NOT_BLOCKED."
+            }
+          }
+        }
+      }
+    },
+    "data_integrity_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "computations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "inputs",
+          "method",
+          "result",
+          "unit"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inputs": {
+            "type": "object"
+          },
+          "method": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "claim_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confounders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "severity",
+          "effect"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "NONE_OBSERVED",
+              "LOW",
+              "MATERIAL",
+              "FATAL"
+            ]
+          },
+          "effect": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
