@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-28",
+  "gate_id": "analytics-v0.6-heldout-2026-08-28",
+  "candidate_id": "growth-experimentation-measurement-v0.6-scoped-claim-ceiling",
+  "candidate_assembly_digest": "sha256:32f7a5b75da92397d94711704aab6c65356567ce87b6a3bbeb96fa7f575ecb44",
+  "purpose": "Fresh post-freeze held-out qualification of candidate v0.6, which scopes the causal claim ceiling to an estimand and separates identification from precision.",
+  "heldout_seed": 20260828,
+  "per_family": 2,
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "generator": {
+    "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v06.py",
+    "git_blob_sha": "bc20d5250d2ad9400fd4e70bbb38461bccf3f9e2"
+  },
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v06_structural.py",
+    "git_blob_sha": "a80c040f571205f9f232934dad25d69dc5e0c736"
+  },
+  "trials_per_fixture": 3,
+  "retries_permitted": 0,
+  "pass_rule": "Every generated case must PASS on every one of its 3 independent trials, on every executed model family. Any single trial failure ends this gate as FAIL. Best-of-N is not a pass.",
+  "case_provenance": "Cases are generated at run time from this preregistered seed by the frozen generator, with expectations derived mechanically from the sampled parameters. The culpable arm's position is randomised.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "Groq/Qwen",
+      "reason": "Excluded by evaluator instruction. The v0.5 gate established the cause: HTTP 413, free-tier limit 8000 tokens per minute against a request of 8273. The v0.6 assembly is larger still, so the family remains ineligible at this tier."
+    },
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The generator and grader blobs above are fixed for this gate and must not be edited after any candidate output is observed. A construct defect requires a recorded burn and a fresh seed.",
+  "qualification_boundary": [
+    "A PASS here is a fresh post-freeze held-out result on ONE model family for five generated construct families. It is not a release qualification of the professional core.",
+    "Single-family evidence is weaker than the v0.5 design intended. Groq is ineligible at this tier and OpenAI and Claude are excluded, so cross-model portability is untested in this cycle.",
+    "Independence is partial: procedural generation removes case-level authorship and leakage, but the same party wrote the generator, the oracle and the repaired candidate.",
+    "Library admission still requires an externally authored held-out set and the cross-model release protocol."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.6-scoped-claim-ceiling",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-28",
+  "supersedes": "growth-experimentation-measurement-v0.5-metric-precedence",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+      "git_blob_sha": "330f32325a1071baf38f8d36d67931c0d519ae40"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.5-overlay.md",
+      "git_blob_sha": "01f3d30ac003dc5c3709be1e18349c52662e42bb"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.6-overlay.md",
+      "git_blob_sha": "777bcdbf62b1ee45979113c15608973fef4d78f9"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:32f7a5b75da92397d94711704aab6c65356567ce87b6a3bbeb96fa7f575ecb44",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the six overlay components in order, then the output contract",
+  "adjudication_ref": "architect/research/growth-experimentation-analytics/maturity-and-causal-ceiling-adjudication-2026-08-28.md",
+  "repairs": [
+    {
+      "issue": "A causal claim ceiling was required without ever stating which quantity it was a claim about.",
+      "layer": "candidate professional model",
+      "adjudication": "The v0.5 post-mortem hypothesis -- that maturity bounds the ceiling independently of design -- was REJECTED as a professional error that would conflate identification with precision. What was adopted is narrower: the ceiling is scoped to an estimand, and while the registered window is open the registered estimand is right-censored, so no causal claim about it is licensed. Randomization keeps identifying the interim outcome, and an analyst may scope the claim there explicitly. Sparse counts never lower the ceiling.",
+      "repair": "v0.6 overlay states the scoping rule; contract v4 adds required causal.claim_scope; fixture contract v3 requires every case to declare registered_window_complete so the constraint is checked against declared facts on both sides."
+    }
+  ],
+  "qualification_scope": "fresh post-freeze held-out qualification cycle; NOT library-admitted until a valid gate passes.",
+  "freeze_rules": [
+    "Do not edit any frozen component or the bound output contract during a scored cycle.",
+    "Held-out cases are generated after this freeze from a seeded generator; the seed is recorded before execution.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh seed.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ]
+}
