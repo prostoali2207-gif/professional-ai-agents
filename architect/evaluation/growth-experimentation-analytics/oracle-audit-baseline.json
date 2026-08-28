@@ -1,5 +1,5 @@
 {
-  "note": "Accepted findings for the CURRENT Analytics oracle/harness. This is a baseline, not an approval: each entry is an open defect. The test suite fails when a finding appears that is not listed here, and also when a listed finding disappears, which forces the baseline to be updated deliberately rather than drifting.",
+  "note": "Accepted findings per oracle cycle. v05 and v06 are frozen evidence records and must not change. v07 is the repaired oracle: its baseline should stay free of HIGH findings, and the test suite fails both when a finding appears that is not listed and when a listed one disappears, so the baseline is updated deliberately rather than drifting.",
   "generated_at": "2026-08-28",
   "v06": [
     "C6-identity-unchecked|CLEAN_SCALABLE_WIN",
@@ -29,6 +29,9 @@
     "U1-unit-not-pinned|UPSTREAM_DOWNSTREAM_CONFLICT",
     "U1-unit-not-pinned|UPSTREAM_ONLY_CONFOUNDED",
     "U2-ratio-scale-ambiguity|CLEAN_SCALABLE_WIN",
+    "U3-tolerance-scale|UPSTREAM_DOWNSTREAM_CONFLICT"
+  ],
+  "v07": [
     "U3-tolerance-scale|UPSTREAM_DOWNSTREAM_CONFLICT"
   ]
 }

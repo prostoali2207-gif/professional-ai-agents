@@ -102,7 +102,10 @@ def build_passing_result(fixture: dict, expectation: dict, scope: str | None = N
             "scale_readiness": {"state": state, "blocking_reasons": reasons},
         },
         "data_integrity_findings": [],
-        "computations": [{"name": n, "inputs": {}, "method": "m", "result": v[0], "unit": "u"}
+        # The unit must be consistent with the assertion's declared kind. A placeholder unit is
+        # rejected for a ratio-valued computation, and rightly so.
+        "computations": [{"name": n, "inputs": {}, "method": "m", "result": v[0],
+                          "unit": "ratio" if (len(v) > 2 and v[2] == "RATIO") else "currency"}
                          for n, v in (expectation.get("computations") or {}).items()],
         "claim_boundaries": [],
         "confounders": [] if identified else [{"name": "design imbalance", "severity": "MATERIAL", "effect": "."}],
@@ -200,7 +203,7 @@ def check_units(expectations: dict, fixtures: dict) -> list[Finding]:
                 findings.append(Finding("U1-unit-not-pinned", sev, expectation["family"],
                                         f"assertion {name!r} compares a bare number ({value}) with no unit; "
                                         f"the result schema carries a unit field and the assertion ignores it"))
-            if ratio_like and value != 0:
+            if ratio_like and value != 0 and len(spec) < 3:
                 findings.append(Finding("U2-ratio-scale-ambiguity", "HIGH", expectation["family"],
                                         f"{name!r} is ratio-like and expects {value}; the same quantity as a "
                                         f"percentage is {value * 100}, which no assertion excludes"))
@@ -422,7 +425,11 @@ def audit(generator, grader, seeds: Iterable[int], per_family: int,
 
 
 def run(cycle: str = "v06", seeds: list[int] | None = None, per_family: int = 2) -> list[Finding]:
-    if cycle == "v06":
+    if cycle == "v07":
+        generator = load_module("gen07", "heldout_generator_v07.py")
+        grader = load_module("grd07", "grader_v07_structural.py")
+        schema_path = HERE / "schemas" / "fixture-v3.schema.json"
+    elif cycle == "v06":
         generator = load_module("gen06", "heldout_generator_v06.py")
         grader = load_module("grd06", "grader_v06_structural.py")
         schema_path = HERE / "schemas" / "fixture-v3.schema.json"
@@ -436,7 +443,7 @@ def run(cycle: str = "v06", seeds: list[int] | None = None, per_family: int = 2)
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cycle", default="v06", choices=["v05", "v06"])
+    parser.add_argument("--cycle", default="v07", choices=["v05", "v06", "v07"])
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
     findings = run(args.cycle)

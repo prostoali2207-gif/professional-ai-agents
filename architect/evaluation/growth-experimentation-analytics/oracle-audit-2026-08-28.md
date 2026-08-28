@@ -113,3 +113,72 @@ the burned families, and the preregistration should say so.
 The assembly is six overlays plus the contract and has already made Groq ineligible on
 tokens-per-minute grounds. Consolidating the overlays into one normative document should
 precede adding a seventh.
+
+---
+
+# Repairs applied — 2026-08-28
+
+All four proposed fixes are applied. The Analytics candidate is unchanged; only the instrument
+moved. Findings on the repaired oracle: **1 LOW, no HIGH, no MEDIUM** (from 5 HIGH, 8 MEDIUM,
+1 LOW).
+
+The v0.6 grader and generator are bound by the v0.6 preregistration's blob SHAs and are
+historical evidence, so they were left untouched and the repairs landed in new `*_v07` files.
+The audit still reports the v0.5 and v0.6 finding sets unchanged, and a test asserts that,
+so repairing the current oracle cannot quietly rewrite what the closed cycles were.
+
+## What changed
+
+**1 — contract validity is grading step 0.** `grade()` validates the result against the bound
+output contract before anything else and fails closed. This implements the grading order the
+harness README has documented since v0.1. Because a scored runner may not have `jsonschema`
+installed, there is a dependency-free subset validator driven by the same schema file; both
+paths are tested, and the fallback fails closed rather than passing by default.
+
+**2 — targets are action-dependent.** Expectations carry `target_by_action`. `SPARSE_BUT_IDENTIFIED`
+now permits `ITERATE` to name either the experiment or the treatment arm while `INCONCLUSIVE`
+may name only the experiment. This retires the defect that burned five v0.6 trials without
+becoming permission for any target: aiming `INCONCLUSIVE` at an arm still fails.
+
+**3 — computation assertions declare RATIO or ABSOLUTE.** For a ratio the candidate's own `unit`
+decides which number is correct, so `0.5 ratio` and `50.0 percent` both pass while `50.0 ratio`
+and an unrecognised unit both fail. A ratio is dimensionless, so an unitless declaration means
+the ratio form. Absolute assertions are unaffected by the unit string, because constraining
+free-form currency labels would just move the brittleness rather than remove it.
+
+**4 — result-to-fixture identity is checked.** A result carrying another case's `fixture_id` is
+rejected instead of silently graded against the expectation the runner happened to pair it with.
+
+## Contracts and fixtures
+
+Unchanged. `result-v4.schema.json` already carried the `unit` field that repair 3 relies on, and
+`fixture-v3.schema.json` already declared everything the repairs key on. Nothing needed to move.
+
+## Verification, no provider calls
+
+`test_oracle_repairs_v07.py` — 23 tests. Each repair is tested in both directions, because a
+repair that only loosens is indistinguishable from fitting the instrument to the answers: the
+previously-rejected correct answer now passes, and the answer that must still be rejected still
+is. A `NothingWasLoosened` class re-asserts every v0.6-era lock under the v0.7 grader — the
+censored-estimand rule, the interim re-scoping route, the sparsity rule, the anti-gaming
+control, prose independence, and grading purity.
+
+The full pipeline was driven end to end with a scripted stand-in against a scratch freeze that
+was deliberately not committed: correct answers produce a clean `PASS`, and a structurally
+invalid output is now rejected at every case rather than scored around.
+
+## Residual finding, accepted
+
+`U3-tolerance-scale` (LOW): tolerances are absolute, so `0.02` is 4% of one assertion and
+0.0001% of another. It was not in the approved fix set and no observed failure depends on it.
+Left baselined and visible.
+
+## Not done, deliberately
+
+No freeze, no preregistration, no gate run. A preregistration should be written immediately
+before execution with a fresh seed, and committing one now would either pre-commit a seed that
+goes unused or invite a gate nobody asked for.
+
+One thing the next preregistration must state: these repairs change **what the gate can
+detect**, so the next cycle's result is not comparable to v0.6's on the burned families. It is a
+new measurement, not a re-run.

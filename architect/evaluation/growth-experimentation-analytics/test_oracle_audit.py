@@ -44,14 +44,22 @@ def suite(seed: int = 20260828, per_family: int = 2):
 
 class FindingBaseline(unittest.TestCase):
     def test_no_finding_outside_the_accepted_baseline(self) -> None:
-        found = {f.key() for f in audit.run("v06")}
-        new = sorted(found - set(BASELINE["v06"]))
-        self.assertFalse(new, f"new oracle/harness defects not in the baseline: {new}")
+        for cycle in ("v05", "v06", "v07"):
+            found = {f.key() for f in audit.run(cycle)}
+            new = sorted(found - set(BASELINE[cycle]))
+            with self.subTest(cycle=cycle):
+                self.assertFalse(new, f"new oracle/harness defects not in the baseline: {new}")
 
     def test_baseline_entries_still_reproduce(self) -> None:
-        found = {f.key() for f in audit.run("v06")}
-        gone = sorted(set(BASELINE["v06"]) - found)
-        self.assertFalse(gone, f"baselined findings no longer reproduce; update the baseline: {gone}")
+        for cycle in ("v05", "v06", "v07"):
+            found = {f.key() for f in audit.run(cycle)}
+            gone = sorted(set(BASELINE[cycle]) - found)
+            with self.subTest(cycle=cycle):
+                self.assertFalse(gone, f"baselined findings no longer reproduce; update the baseline: {gone}")
+
+    def test_the_repaired_oracle_carries_no_high_findings(self) -> None:
+        high = [str(f) for f in audit.run("v07") if f.severity == "HIGH"]
+        self.assertFalse(high, high)
 
 
 class DetectorIsItselfCorrect(unittest.TestCase):
