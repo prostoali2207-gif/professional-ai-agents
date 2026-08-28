@@ -20,6 +20,9 @@ ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
 ADAPTER = HERE / "adapters" / "stdio_candidate_adapter.py"
 
+# Stop early rather than spending a full suite of quota discovering a broken configuration.
+ABORT_AFTER_CONSECUTIVE_ERRORS = 3
+
 
 def verify_frozen(prereg: dict[str, Any], freeze: dict[str, Any]) -> None:
     """Fail closed if anything the preregistration bound has drifted."""
@@ -61,6 +64,8 @@ def main() -> int:
     outdir.mkdir(parents=True, exist_ok=True)
 
     ledger: list[dict[str, Any]] = []
+    consecutive_errors = 0
+    aborted = False
     for suite_ref in prereg["suites"]:
         suite = json.loads((ROOT / suite_ref["path"]).read_text(encoding="utf-8"))
         for fixture in suite["fixtures"]:
@@ -74,11 +79,24 @@ def main() -> int:
                     env=os.environ.copy(), timeout=300,
                 )
                 if proc.returncode != 0:
-                    entry.update(status="EXECUTION_ERROR", detail=proc.stderr[-600:])
+                    detail = (proc.stderr or "").strip()[-600:]
+                    entry.update(status="EXECUTION_ERROR", detail=detail)
                     ledger.append(entry)
-                    print(f"  {fixture_id} trial {trial}: EXECUTION_ERROR")
+                    # Print the cause. A gate that reports execution errors without a
+                    # diagnostic in the job log cannot be acted on when the run artifact
+                    # is unreachable, which is how the Groq leg of the 2026-08-27 gate
+                    # ended up unresolvable.
+                    print(f"  {fixture_id} trial {trial}: EXECUTION_ERROR  {detail or '(no stderr)'}")
+                    consecutive_errors += 1
+                    if consecutive_errors >= ABORT_AFTER_CONSECUTIVE_ERRORS:
+                        print(f"\nABORTING: {consecutive_errors} consecutive execution errors. "
+                              f"This is a configuration or runtime failure, not candidate evidence. "
+                              f"Repair it before spending further quota.")
+                        aborted = True
+                        break
                     time.sleep(args.pace_seconds)
                     continue
+                consecutive_errors = 0
 
                 result_path = outdir / f"{fixture_id}-t{trial}.json"
                 result_path.write_text(proc.stdout, encoding="utf-8")
@@ -95,6 +113,10 @@ def main() -> int:
                 print(f"  {fixture_id} trial {trial}: {entry['status']}"
                       + (f"  {entry['failures']}" if entry["status"] == "FAIL" else ""))
                 time.sleep(args.pace_seconds)
+            if aborted:
+                break
+        if aborted:
+            break
 
     by_fixture: dict[str, list[str]] = {}
     for entry in ledger:
@@ -112,13 +134,14 @@ def main() -> int:
         if len({s for s in statuses if s != "EXECUTION_ERROR"}) > 1:
             unstable.append(fixture_id)
 
-    verdict = "PASS" if not failed and not errored else "FAIL"
+    verdict = "PASS" if not failed and not errored and not aborted else "FAIL"
     summary = {
         "gate_id": prereg["gate_id"],
         "candidate_assembly_digest": prereg["candidate_assembly_digest"],
         "model": os.environ.get("ANALYTICS_MODEL"),
         "trials_per_fixture": trials,
         "verdict": verdict,
+        "aborted_on_consecutive_execution_errors": aborted,
         "fixtures_with_a_failing_trial": failed,
         "fixtures_with_an_execution_error": errored,
         "fixtures_with_discordant_trials": unstable,

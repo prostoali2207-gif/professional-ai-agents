@@ -130,6 +130,41 @@ class GateRunnerContract(unittest.TestCase):
             self.assertEqual(summary["verdict"], "FAIL")
             self.assertIn("H-GF-01", summary["fixtures_with_an_execution_error"])
 
+    def test_execution_error_detail_reaches_the_job_log(self) -> None:
+        """A gate whose errors are only in an artifact is unactionable when the artifact
+        cannot be fetched. The cause must appear in stdout."""
+        with tempfile.TemporaryDirectory() as td:
+            proc, _ = run_gate(Path(td), trials=1,
+                               sabotage={"fixture": "H-DS-01", "on_trial": 1, "mode": "crash"})
+            self.assertIn("EXECUTION_ERROR", proc.stdout)
+            self.assertRegex(proc.stdout, r"EXECUTION_ERROR\s+\S")
+
+    def test_run_aborts_instead_of_burning_quota_on_a_broken_config(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            standin = tmp / "always_fails.py"
+            standin.write_text("import sys; sys.exit(3)\n", encoding="utf-8")
+            env = os.environ.copy()
+            env.update(
+                ANALYTICS_CANDIDATE_MANIFEST=FREEZE,
+                ANALYTICS_CANDIDATE_CMD=f"{sys.executable} {standin}",
+                ANALYTICS_MODEL="stand-in", ANALYTICS_PACE_SECONDS="0",
+                STANDIN_TABLE=json.dumps(CORRECT), STANDIN_SABOTAGE="{}",
+                STANDIN_COUNTER=str(tmp / "counter"),
+            )
+            proc = subprocess.run(
+                [sys.executable, str(RUNNER), "--preregistration", str(PREREG),
+                 "--trials", "3", "--outdir", str(tmp / "out")],
+                text=True, capture_output=True, cwd=ROOT, env=env, timeout=300,
+            )
+            self.assertNotEqual(proc.returncode, 0)
+            self.assertIn("ABORTING", proc.stdout)
+            summary = json.loads((tmp / "out" / "gate-summary.json").read_text())
+            self.assertTrue(summary["aborted_on_consecutive_execution_errors"])
+            self.assertEqual(summary["verdict"], "FAIL")
+            # 27 trials were preregistered; the abort must stop long before that.
+            self.assertLessEqual(len(summary["ledger"]), 3)
+
     def test_gate_fails_closed_on_candidate_drift(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             tmp = Path(td)

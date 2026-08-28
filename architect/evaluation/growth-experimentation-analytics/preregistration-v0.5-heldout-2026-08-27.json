@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-27",
+  "gate_id": "analytics-v0.5-heldout-2026-08-27",
+  "candidate_id": "growth-experimentation-measurement-v0.5-metric-precedence",
+  "candidate_assembly_digest": "sha256:156bd093c131d9c3ab252a9487c9ff13a48f190c69144e953196ea1a07aec44e",
+  "purpose": "Fresh post-freeze held-out qualification of candidate v0.5, which repairs the H-GDS-02 wrong-arm P0 failure at the candidate layer and makes the action target structural.",
+  "heldout_seed": 20260827,
+  "per_family": 2,
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN"
+  ],
+  "generator": {
+    "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v05.py",
+    "git_blob_sha": "b3b7b1c8f097d937aafec799eba73d4879a11916"
+  },
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v05_structural.py",
+    "git_blob_sha": "f7c3acdb784dc0dc4231d1e079c23273f7bb12c2"
+  },
+  "trials_per_fixture": 3,
+  "retries_permitted": 0,
+  "pass_rule": "Every generated case must PASS on every one of its 3 independent trials, on every executed model family. Any single trial failure ends this gate as FAIL. Best-of-N is not a pass.",
+  "case_provenance": "Cases are generated at run time from this preregistered seed by the frozen generator, and their expected decisions are derived mechanically from the sampled parameters. No case was authored to match an observed output, and the culpable arm's position is randomised so a candidate cannot anchor on a position instead of reasoning.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    },
+    {
+      "family": "Groq/Qwen",
+      "model": "qwen/qwen3.6-27b",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_groq.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The generator and grader blobs above are fixed for this gate and must not be edited after any candidate output is observed. A construct defect requires a recorded burn and a fresh seed, as q10-invalidation-and-q11-preregistration-v0.2.json did.",
+  "qualification_boundary": [
+    "A PASS here is a fresh post-freeze held-out result on two model families for the four generated construct families. It is not a release qualification of the professional core.",
+    "Independence is partial: the cases are procedurally generated rather than authored, which removes case-level authorship and leakage, but the same party wrote the generator, the oracle and the repaired candidate. methodology/eval-integrity-and-regression.md admits procedural generation as an independence mechanism; it does not make it equivalent to externally authored held-out material.",
+    "Two of the four historically required Analytics model families are not executed.",
+    "Library admission of growth-experimentation-measurement requires an externally authored held-out set and the cross-model release protocol, neither of which this gate supplies."
+  ]
+}

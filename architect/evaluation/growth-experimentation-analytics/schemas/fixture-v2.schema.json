@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/growth-experimentation-analytics/fixture-v2.schema.json",
+  "title": "Analytics candidate-facing fixture contract v2",
+  "description": "v2 requires every case to declare its arms, so the action target is a lookup rather than a parse.",
+  "type": "object",
+  "required": [
+    "fixture_id",
+    "instruction",
+    "case"
+  ],
+  "properties": {
+    "fixture_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instruction": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case": {
+      "type": "object",
+      "required": [
+        "arms"
+      ],
+      "properties": {
+        "arms": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]+$"
+          },
+          "description": "Identifiers an action may target. operational.target must be exactly one of these."
+        }
+      }
+    }
+  }
+}
