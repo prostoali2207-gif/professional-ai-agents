@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: eval/visual-design-art-direction-158-calibration-resume-r2
+          ref: main
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
@@ -33,9 +33,12 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           text=Path('architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py').read_text()
+          workflow=Path('.github/workflows/visual-design-art-direction-calibration-resume-v0-1.yml').read_text()
           assert 'CANDIDATE_EXECUTOR_CMD' not in text and 'candidate_response' not in text
           assert 'openai/gpt-oss-120b' in text and 'pace_groq()' in text
           assert "JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner'" in text
+          assert 'TRANSIENT_5XX_RETRIES=1' in text
+          assert 'set +e' not in workflow and 'exit 0' not in workflow
           print('CALIBRATION_RESUME_STATIC_PASS')
           PY
       - name: Require evaluator credentials
@@ -71,25 +74,27 @@ jobs:
           print('SEALED_CALIBRATION_IDENTITY_PASS')
           PY
       - name: Run blind dual-judge calibration on sealed pack
-        shell: bash
-        run: |
-          set +e
-          python architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
-          code=$?
-          echo "calibration_exit_code=$code" >> "$GITHUB_ENV"
-          exit 0
+        run: python architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+      - name: Upload calibration progress evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-calibration-progress
+          path: visual-calibration-progress.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload sanitized calibration evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-design-art-direction-v0-1-sanitized-calibration-resume
           path: visual-calibration-sanitized-report.json
-          if-no-files-found: error
+          if-no-files-found: ignore
           retention-days: 14
       - name: Enforce calibration gate
         if: always()
         run: |
-          test "${calibration_exit_code:-missing}" = 0
+          test -f visual-calibration-sanitized-report.json
           python - <<'PY'
           import json
           r=json.load(open('visual-calibration-sanitized-report.json'))
