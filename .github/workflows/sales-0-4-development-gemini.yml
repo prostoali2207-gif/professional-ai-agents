@@ -1,0 +1,57 @@
+name: Sales 0.4 development Gemini
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_provider_run:
+        description: 'Type RUN to execute the public development gate'
+        required: true
+        default: 'NO'
+
+permissions:
+  contents: read
+
+jobs:
+  development:
+    if: ${{ inputs.confirm_provider_run == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SALES_MODEL: gemini-3.5-flash-lite
+      SALES_MODEL_TIMEOUT_SECONDS: '120'
+      GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+      GEMINI_PACE_FILE: /tmp/sales-0-4-dev-gemini-pace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify no candidate drift
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          p = pathlib.Path('architect/library/cores/sales-lead-conversion/0.4.0/manifest.json')
+          m = json.loads(p.read_text())
+          canonical = ''
+          for path in m['artifact']['paths']:
+              blob = subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
+              canonical += f'{path}:{blob}\n'
+          actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual == 'sha256:403a0c26fc9d58f64111afd998790919408b8922eeb026295dd61030a9beb93e'
+          assert actual == m['artifact']['content_digest']
+          print('candidate digest verified', actual)
+          PY
+      - name: Run public Sales 0.4 development regression
+        shell: bash
+        run: |
+          set -o pipefail
+          python architect/evaluation/sales-lead-conversion/development_regression_v0_4_gemini.py | tee sales-0.4-development-report.json
+      - name: Upload development report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.4-development-report
+          path: sales-0.4-development-report.json
+          retention-days: 14
