@@ -7,8 +7,7 @@ from cryptography.fernet import Fernet
 ROOT=Path.cwd(); BASE=ROOT/'architect/evaluation/visual-design-art-direction/calibration'; CYCLE='visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration'
 GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions'; GROQ=os.environ.get('GROQ_BASE_URL','https://api.groq.com/openai/v1').rstrip('/')+'/chat/completions'
 JUDGES=[('gemini','gemini-3.5-flash-lite'),('groq','openai/gpt-oss-120b')]
-DIMENSION_NOTE_KEYS=['brief_appropriateness','reference_independence','concept_distinctiveness','craft','function_clarity','mobile_art_direction','advanced_media_judgment','authority_boundary']
-JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner':{'type':'string','enum':['A','B']},'dimension_notes':{'type':'object','additionalProperties':False,'properties':{k:{'type':'string'} for k in DIMENSION_NOTE_KEYS}}},'required':['winner','dimension_notes']}
+JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner':{'type':'string','enum':['A','B']}},'required':['winner']}
 
 def parse(t):
     t=t.strip()
@@ -42,17 +41,17 @@ def decrypt():
     with zipfile.ZipFile(z) as q:q.extractall(td.name)
     return td, json.load(open(Path(td.name)/'calibration.json')), json.load(open(Path(td.name)/'freeze-record.json'))
 def judge(provider,model,brief,a,b,dims):
-    payload={'role':'You are a blind senior landing-page art-direction assessor.','brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity.'}
+    payload={'role':'You are a blind senior landing-page art-direction assessor.','brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity. Return only winner A or B in JSON.'}
     if provider=='gemini':
         key=os.environ.get('GEMINI_API_KEY','').strip()
         if not key: raise RuntimeError('GEMINI_API_KEY missing')
-        body={'model':model,'system_instruction':'You are a blind senior art-direction assessor. Return JSON only with winner A or B and concise dimension_notes.','input':json.dumps(payload,ensure_ascii=False),'store':False,'generation_config':{'thinking_level':'medium'}}
+        body={'model':model,'system_instruction':'You are a blind senior art-direction assessor. Return JSON only as {"winner":"A"} or {"winner":"B"}.','input':json.dumps(payload,ensure_ascii=False),'store':False,'generation_config':{'thinking_level':'medium'}}
         req=urllib.request.Request(GEMINI,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'x-goog-api-key':key,'Content-Type':'application/json'})
         with urllib.request.urlopen(req,timeout=180) as r:return parse(gt(json.loads(r.read().decode())))
     key=os.environ.get('GROQ_API_KEY','').strip()
     if not key: raise RuntimeError('GROQ_API_KEY missing')
     body={'model':model,'messages':[{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'response_format':{'type':'json_schema','json_schema':{'name':'visual_judgment','strict':True,'schema':JUDGE_SCHEMA}},'include_reasoning':False,'reasoning_effort':'medium','temperature':0}
-    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.2'})
+    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.3'})
     pace_groq()
     try:
         with urllib.request.urlopen(req,timeout=180) as r:return parse(json.loads(r.read().decode())['choices'][0]['message']['content'])
