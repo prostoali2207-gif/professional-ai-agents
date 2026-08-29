@@ -1,0 +1,57 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v1.0-consolidated",
+  "freeze_id": "analytics-freeze-v1.0-2026-08-30",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-30",
+  "supersedes": "growth-experimentation-measurement-v0.8-decision-expression",
+  "consolidates": [
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.5-overlay.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.6-overlay.md",
+    "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.8-overlay.md"
+  ],
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-consolidated-v1.0.md",
+      "git_blob_sha": "828baa7805d2bebb1625b332c0fa8c89f29952fc"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the assembly components in order, then the output contract",
+  "candidate_changed_from_v0_8": true,
+  "change_summary": "Consolidation only. The seven-document assembly is replaced by one runtime document. No professional rule was added, removed, relaxed or re-scoped; duplicates collapse to one statement, four cross-document conflicts are resolved in favour of the stricter formulation, four dead dependencies on the pre-v0.4 prose regime are removed, and 21 closed-vocabulary members that existed only in the frozen output contract and the frozen oracle are now documented for the candidate. Equivalence is proven mechanically by test_consolidation_equivalence_v10.py.",
+  "consolidation_record_ref": "architect/research/growth-experimentation-analytics/consolidation-record-2026-08-30.md",
+  "instrument": {
+    "generator": {
+      "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+      "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+    },
+    "grader": {
+      "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+    },
+    "runner": {
+      "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py",
+      "git_blob_sha": "783e2303b2ef8699ceb20cc90498ca9a2c1a8787"
+    }
+  },
+  "instrument_unchanged_from": "candidate-freeze-v0.8.json",
+  "output_contract_unchanged_from": "candidate-freeze-v0.8.json",
+  "qualification_scope": "fresh post-freeze held-out qualification cycle; NOT library-admitted until a valid gate passes.",
+  "freeze_rules": [
+    "Do not edit the candidate, output contract, generator, grader, fixture contract or thresholds during this cycle.",
+    "Held-out cases are generated after this freeze from the preregistered seed.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh seed.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ],
+  "known_limits": [
+    "Equivalence is proven at the level of rule presence, modality and vocabulary completeness. It does not establish that the model behaves correctly; only a fresh held-out gate can.",
+    "The two residual v0.8 failure modes are locked by regression at the detection level only, for the same reason."
+  ]
+}
