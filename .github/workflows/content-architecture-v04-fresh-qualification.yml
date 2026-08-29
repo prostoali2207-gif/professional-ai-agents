@@ -1,0 +1,91 @@
+name: Content Architecture v0.4 fresh qualification
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-fresh/RUN-QUALIFICATION-v0.1'
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_GEMINI_MODEL: gemini-3.5-flash-lite
+      FROZEN_ARTIFACT_GEMINI_TIMEOUT: '120'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Authorization and budget gate
+        run: |
+          test "$(cat architect/evaluation/content-architecture-v04-fresh/RUN-QUALIFICATION-v0.1)" = "RUN_FRESH_CONTENT_ARCHITECTURE_V04_QUALIFICATION" || exit 21
+          echo 'objective=fresh held-out qualification of frozen Content Architecture v0.4'
+          echo 'candidate_blob=5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          echo 'provider=gemini-interactions-api'
+          echo 'model=gemini-3.5-flash-lite'
+          echo 'planned_base_fixtures=30; repeated designated fixtures add isolated trials'
+          echo 'blind_retries=0; checkpoint_resume=enabled'
+          echo 'stop_on=credential failure, corpus identity mismatch, candidate runtime error, grader failure'
+      - name: Install dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Verify credentials
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 31
+          test -n "$GEMINI_API_KEY" || exit 32
+      - name: Verify exact candidate blob
+        run: |
+          git fetch origin agent/content-architecture-core-2026-08 main
+          test "$(git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d)" = blob
+      - name: Rebuild and verify frozen hidden corpus identity
+        run: |
+          mkdir -p "$RUNNER_TEMP/ca-v04-fresh-pack"
+          python architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py --out "$RUNNER_TEMP/ca-v04-fresh-pack"
+          python - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'ca-v04-fresh-pack'/'sealed-manifest.json'
+          m=json.loads(p.read_text())
+          assert m['plain_identity_sha256']=='c11ed62a31a056288f77d2f1ec1dda0378ea7449622f8f9337275eb7200f6d7d'
+          assert m['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert m['fixture_count']==30
+          print('frozen corpus identity: PASS')
+          PY
+      - name: Re-run offline grader calibration
+        run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+      - name: Execute fresh qualification with checkpoint-resume records
+        id: gate
+        shell: bash
+        run: |
+          set +e
+          mkdir -p "$RUNNER_TEMP/ca-v04-fresh-results"
+          python architect/evaluation/content-architecture-v04-fresh/run_gate_v01.py \
+            --pack "$RUNNER_TEMP/ca-v04-fresh-pack/sealed-pack.bin" \
+            --candidate-command "python architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py" \
+            --out "$RUNNER_TEMP/ca-v04-fresh-results" \
+            --timeout 180
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload evaluator-visible sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-fresh-qualification-result
+          path: |
+            ${{ runner.temp }}/ca-v04-fresh-results/summary.json
+            ${{ runner.temp }}/ca-v04-fresh-results/grade-report.json
+            ${{ runner.temp }}/ca-v04-fresh-results/records.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Enforce gate completion
+        if: always()
+        run: test "${{ steps.gate.outputs.exit_code }}" = "0"
