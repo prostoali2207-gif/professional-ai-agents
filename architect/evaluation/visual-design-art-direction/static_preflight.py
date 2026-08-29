@@ -40,7 +40,7 @@ def main() -> int:
             "DIRECT",
             "REFINE",
             "RENDER BLOCKED",
-            "Motion / 3D / WebGL",
+            "motion / 3D / WebGL",
             "Never fabricate business imagery",
             "Never issue the independent final product release PASS",
         ],
