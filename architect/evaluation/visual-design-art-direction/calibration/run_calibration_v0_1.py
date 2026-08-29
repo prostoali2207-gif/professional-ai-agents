@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, random, tempfile, urllib.error, urllib.request, zipfile
+import json, os, random, tempfile, time, urllib.error, urllib.request, zipfile
 from pathlib import Path
 from cryptography.fernet import Fernet
 
@@ -13,6 +13,14 @@ def parse(t):
     t=t.strip()
     if t.startswith('```'): t='\n'.join(t.splitlines()[1:-1]).strip()
     return json.loads(t)
+def pace_groq():
+    interval=float(os.environ.get('GROQ_MIN_INTERVAL_SECONDS','0')); p=Path(os.environ.get('GROQ_PACE_FILE','/tmp/visual-groq-pace'))
+    if interval<=0:return
+    if p.exists():
+        try:last=float(p.read_text().strip()); delay=interval-(time.time()-last)
+        except Exception:delay=0
+        if delay>0: time.sleep(delay)
+    p.write_text(str(time.time()))
 def gt(raw):
     if isinstance(raw.get('output_text'),str): return raw['output_text']
     for step in reversed(raw.get('steps') or []):
@@ -44,6 +52,7 @@ def judge(provider,model,brief,a,b,dims):
     if not key: raise RuntimeError('GROQ_API_KEY missing')
     body={'model':model,'messages':[{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'response_format':{'type':'json_schema','json_schema':{'name':'visual_judgment','strict':True,'schema':JUDGE_SCHEMA}},'include_reasoning':False,'reasoning_effort':'medium','temperature':0}
     req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.2'})
+    pace_groq()
     try:
         with urllib.request.urlopen(req,timeout=180) as r:return parse(json.loads(r.read().decode())['choices'][0]['message']['content'])
     except urllib.error.HTTPError as exc:
