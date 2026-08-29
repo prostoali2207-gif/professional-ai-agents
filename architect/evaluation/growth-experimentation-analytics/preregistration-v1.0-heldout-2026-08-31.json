@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-31",
+  "gate_id": "analytics-v1.0-heldout-2026-08-31",
+  "candidate_id": "growth-experimentation-measurement-v1.0-consolidated",
+  "candidate_assembly_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "freeze_ref": "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.0.json",
+  "frozen_from_commit": "ceb5889",
+  "purpose": "Final fresh post-freeze held-out qualification of the consolidated candidate v1.0. v1.0 is a consolidation of the v0.1-v0.8 assembly into one runtime document with no professional rule added, removed, relaxed or re-scoped; its only behavior-relevant additions are 21 closed-vocabulary members that already existed in the frozen output contract and the frozen oracle and had never been mirrored into the candidate.",
+  "heldout_seed": 20260831,
+  "seed_provenance": "Not used by any previous gate. Burned seeds: 20260827 (v0.4 stability), 20260828 (v0.6), 20260829 (v0.7), 20260830 (v0.8). Seed 999999 was used only for a no-provider wiring dry-run of freeze v1.0 and produced no graded evidence.",
+  "per_family": 2,
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "generator": {
+    "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+    "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+  },
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+    "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+  },
+  "trials_per_fixture": 3,
+  "retries_permitted": 0,
+  "pass_rule": "Every generated case must PASS on every one of its 3 independent trials. Any single trial failure ends this gate as FAIL. Best-of-N is not a pass.",
+  "stability_criterion_is_frozen": "The per-fixture unanimity bar above is fixed for this gate and may not be revisited after any result is observed. If a single stochastic discordance appears it is to be recorded as a FAIL under this criterion and reported as such. Whether a 3-of-3 unanimity bar against a non-deterministic provider is the right criterion is a separate question for a separate cycle, decided before that cycle's seed is drawn -- never after seeing this one's result.",
+  "frozen_for_this_cycle": [
+    "candidate assembly (one consolidated component)",
+    "output contract result-v4",
+    "fixture contract fixture-v3",
+    "generator heldout_generator_v07.py",
+    "grader grader_v07_structural.py",
+    "runner run_heldout_gate_v07.py",
+    "the pass rule and the stability criterion above"
+  ],
+  "case_provenance": "Cases are generated at run time from this preregistered seed by the frozen generator, with expectations derived mechanically from the sampled parameters. The culpable arm's position is randomised. Seed 20260830 has not been used by any previous gate.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "Groq/Qwen",
+      "reason": "Ineligible at its free tier: HTTP 413, 8000 tokens per minute against a request of 8273 measured in v0.5, and this assembly is larger again."
+    },
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The generator and grader blobs above are fixed for this gate and must not be edited after any candidate output is observed. A construct defect requires a recorded burn and a fresh seed.",
+  "instrument_unchanged_since": "The generator, grader and runner blobs are byte-identical to those bound by freezes v0.7 and v0.8, and the output and fixture contracts are unchanged, so any change in result between the v0.8 gate and this one is attributable to the candidate rather than to the measurement.",
+  "post_gate_policy": "No automatic repair and no automatic rerun. Whatever this gate returns is reported as observed. A failure ends this cycle; any repair requires a new candidate version, a new freeze and a new preregistration.",
+  "qualification_boundary": [
+    "A PASS here is a fresh post-freeze held-out result on ONE model family for five generated construct families. It is not a release qualification of the professional core.",
+    "Independence is partial: procedural generation removes case-level authorship and leakage, but the same party wrote the generator, the oracle and the candidate repairs.",
+    "Cross-model portability is untested in this cycle.",
+    "Library admission still requires an externally authored held-out set and the cross-model release protocol."
+  ]
+}
