@@ -31,12 +31,16 @@ jobs:
           python -m py_compile architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py
           python -m py_compile architect/evaluation/content-architecture-v04-fresh/grader_v01.py
           python -m py_compile architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+          python -m py_compile architect/evaluation/content-architecture-v04-fresh/run_gate_v01.py
+          python -m py_compile architect/evaluation/content-architecture-v04-fresh/preflight.py
       - name: Offline calibration and terminal-status regression
         run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
       - name: Author fresh sealed corpus without provider calls
         run: |
           mkdir -p "$RUNNER_TEMP/ca-v04-fresh"
           python architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py --out "$RUNNER_TEMP/ca-v04-fresh" | tee "$RUNNER_TEMP/ca-v04-fresh/freeze-output.json"
+      - name: Verify frozen dispatch preflight without provider calls
+        run: python architect/evaluation/content-architecture-v04-fresh/preflight.py
       - name: Record evaluator implementation identities
         run: |
           python - <<'PY'
@@ -46,7 +50,7 @@ jobs:
           manifest=json.loads((out/'sealed-manifest.json').read_text())
           def sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
           record={
-            'status':'INFRASTRUCTURE_FREEZE_EVIDENCE_READY',
+            'status':'DISPATCHABLE_FROZEN_PRE_PROVIDER',
             'candidate_blob_sha':'5d440e1bf3e20fbd35c6ab276310a904e36cc06d',
             'plain_corpus_identity_sha256':manifest['plain_identity_sha256'],
             'sealed_corpus_sha256':manifest['sealed_sha256'],
@@ -54,6 +58,7 @@ jobs:
             'author_sha256':sha(root/'author_pack_v01.py'),
             'grader_sha256':sha(root/'grader_v01.py'),
             'calibration_test_sha256':sha(root/'test_grader_v01.py'),
+            'runner_sha256':sha(root/'run_gate_v01.py'),
             'provider_calls':0
           }
           (out/'freeze-evidence.json').write_text(json.dumps(record,indent=2,sort_keys=True)+'\n')
