@@ -1,0 +1,80 @@
+name: Sales 0.4 ID-04 infrastructure retry
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  retry:
+    if: ${{ github.event.label.name == 'run-sales-0-4-id04-infra-retry' && github.event.pull_request.head.ref == 'agent/sales-lead-conversion-core-0.4.0-2026-08-29' && github.event.pull_request.draft == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SALES_MODEL: gemini-3.5-flash-lite
+      SALES_MODEL_TIMEOUT_SECONDS: '120'
+      GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+      GEMINI_PACE_FILE: /tmp/sales-0-4-id04-retry-pace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact candidate artifact
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          p = pathlib.Path('architect/library/cores/sales-lead-conversion/0.4.0/manifest.json')
+          m = json.loads(p.read_text())
+          canonical = ''
+          for path in m['artifact']['paths']:
+              blob = subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
+              canonical += f'{path}:{blob}\n'
+          actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
+          expected = 'sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
+          assert actual == expected == m['artifact']['content_digest']
+          print('candidate digest verified', actual)
+          PY
+      - name: Retry only infrastructure-failed ID-04 case
+        shell: bash
+        run: |
+          set -o pipefail
+          python - <<'PY' | tee sales-0.4-id04-infra-retry-report.json
+          import importlib.util, json, pathlib, sys
+          path = pathlib.Path('architect/evaluation/sales-lead-conversion/development_regression_v0_4_gemini.py')
+          sys.path.insert(0, str(path.parent.resolve()))
+          spec = importlib.util.spec_from_file_location('sales_dev04', path)
+          m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          case = next(c for c in m.CASES if c['id'] == 'ID-04-suggestive-match-with-contradiction')
+          core = m.MODEL_PATH.read_text() + '\n\n' + m.EVIDENCE_PATH.read_text() + '\n\n' + m.IDENTITY_REPAIR_PATH.read_text()
+          result, raw_usage = m.call(case, core)
+          failures = m.grade(case, result)
+          report = {
+            'development_only': True,
+            'retry_reason': 'prior run 33266600193 had no model result for ID-04: read timeout',
+            'retry_policy': 'single bounded infrastructure retry only; no professional-result retry',
+            'candidate': 'sales-lead-conversion/0.4.0',
+            'candidate_digest': 'sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0',
+            'provider': 'gemini-interactions-api',
+            'model': m.MODEL,
+            'id': case['id'],
+            'pass': not failures,
+            'failures': failures,
+            'observable_output': result if failures else None,
+            'usage': raw_usage,
+          }
+          print(json.dumps(report, ensure_ascii=False, indent=2))
+          raise SystemExit(0 if not failures else 1)
+          PY
+      - name: Upload retry report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.4-id04-infra-retry-report
+          path: sales-0.4-id04-infra-retry-report.json
+          if-no-files-found: error
+          retention-days: 14
