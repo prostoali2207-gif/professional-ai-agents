@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "status": "DISPATCHABLE_FROZEN",
+  "created_at": "2026-08-29",
+  "gate_id": "content-architecture-v0.4-fresh-heldout-2026-08-29-r1",
+  "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_mutation_allowed": false,
+  "purpose": "Fresh independent post-freeze qualification cycle replacing the retired unscorable Content Architecture cycle.",
+  "retired_evidence_policy": "The 35 PENDING_EXTERNAL_GRADER records from run 32635329000 are diagnostic execution evidence only and may not be reused as PASS/FAIL qualification evidence.",
+  "required_families": ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
+  "p0_hard_failures_allowed": 0,
+  "per_family_min_pass_rate": 0.80,
+  "aggregate_p1_min_pass_rate": 0.90,
+  "deterministic_invariant_pass_rate": 1.0,
+  "stochastic_policy": {
+    "repeated_families": ["F2","F5","F6","F11","F12"],
+    "trials_per_designated_fixture": 3,
+    "all_repeats_must_pass": true,
+    "fresh_isolated_context_per_trial": true,
+    "best_of_n_forbidden": true
+  },
+  "required_post_gate_checks": ["UAE_COMPOSITION","PRACTICAL_HANDOFF"],
+  "grader_contract": {
+    "path": "GRADER-CONTRACT-v0.1.md",
+    "implementation_path": "grader_v01.py",
+    "implementation_blob_sha": "sha256:cb92f09fec499490cd8fba353ab29a3f51426c68d9a96344fb929bb4aba5c8a2",
+    "implementation_git_blob_sha": "a39f0fc980dd38515b2753c046c8856a428784ac",
+    "calibration_evidence_path": "test_grader_v01.py",
+    "calibration_evidence_git_blob_sha": "d3fd28aa49ad11be19f359de57aed9f55ff10cbd",
+    "runner_path": "run_gate_v01.py",
+    "runner_git_blob_sha": "bc846c856d1f9e8a147fd09a6b15851849d69bad",
+    "mode": "sealed_structural_professional_decision_verifier",
+    "status": "FROZEN_EXECUTABLE"
+  },
+  "hidden_corpus": {
+    "identity_sha256": "c11ed62a31a056288f77d2f1ec1dda0378ea7449622f8f9337275eb7200f6d7d",
+    "fixture_count": 30,
+    "author_path": "author_pack_v01.py",
+    "author_git_blob_sha": "078ef53a195b07aaeaca9d5b393f2d76ca61df5b",
+    "author_sha256": "8c2ccc5968e415c2eebb9ff91964425ba1976b7e25e9cb8d4e1dbf4c8070dc19",
+    "sealed_transport": "regenerated_from_frozen_author_with_repository_secret_then_plain_identity_verified_before_candidate_call",
+    "freeze_evidence_run_id": 33243141540,
+    "freeze_artifact_digest": "sha256:edb05410ed02f344bc0b334485f147c958261a5a00b28d51860230291e6c1bb9",
+    "status": "FROZEN_GENERATED_SEALED"
+  },
+  "runtime_eligibility": {
+    "provider_backed_calls_allowed_before_dispatchable": false,
+    "qualified_candidate_runtime": "gemini_frozen_artifact_adapter_v1",
+    "candidate_model": "gemini-3.5-flash-lite",
+    "openai_spend_allowed": false,
+    "gemini_spend_allowed_during_infrastructure_phase": false,
+    "groq_spend_allowed_during_infrastructure_phase": false,
+    "codex_or_local_static_work_allowed": true
+  },
+  "budget_gate": {
+    "objective": "Obtain valid independent qualification evidence with no unscorable provider calls.",
+    "preflight_required": true,
+    "checkpoint_resume_required": true,
+    "blind_retries_allowed": 0,
+    "dispatch_trigger": "RUN-QUALIFICATION-v0.1 sentinel commit only",
+    "dispatch_condition": "preflight exits PASS and preregistration status is DISPATCHABLE_FROZEN"
+  },
+  "integrity_rules": [
+    "No scored candidate execution before hidden corpus identity and executable grader implementation are frozen.",
+    "No reinterpretation of retired grader-key-v0.1.json.",
+    "No fixture or grader changes after any scored candidate output is observed; a construct defect burns the cycle and requires a fresh gate identity.",
+    "Mechanical invariants and professional judgment must be separated.",
+    "Public reports must not expose hidden fixtures, expected answers, grader keys, or sealed evaluator material."
+  ]
+}
