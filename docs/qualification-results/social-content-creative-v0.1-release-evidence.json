@@ -1,0 +1,11 @@
+{
+  "candidate_commit": "163f68671288fe5035a8d09197334ec9df728b93",
+  "candidate_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
+  "model": "gemini-3.5-flash-lite",
+  "pack_digest": "sha256:9482c2da14cf65317ff2a8415f9107bbf7b46016bde2a4414be482808f958660",
+  "qualification_release_evidence_version": 1,
+  "report_sanitization_check": "pass",
+  "report_sha256": "68de3bb422c9fa757c804eb62bc5a2069720963740e3a2f5cad51fe17142d760",
+  "runner_exit_code": 0
+}

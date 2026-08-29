@@ -1,0 +1,230 @@
+{
+  "candidate_commit": "163f68671288fe5035a8d09197334ec9df728b93",
+  "candidate_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "candidate_model": "gemini-3.5-flash-lite",
+  "critical_flag_count": 0,
+  "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
+  "fixture_count": 12,
+  "fixture_results": [
+    {
+      "critical_flag_count": 0,
+      "family": "Q-BR",
+      "id": "SC-BR-01",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CR",
+      "id": "SC-CR-02",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CP",
+      "id": "SC-CP-03",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CJ",
+      "id": "SC-CJ-04",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-TR",
+      "id": "SC-TR-05",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-PD",
+      "id": "SC-PD-06",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-PL",
+      "id": "SC-PL-07",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-IP",
+      "id": "SC-IP-08",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-EX",
+      "id": "SC-EX-09",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-HO",
+      "id": "SC-HO-10",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-AU",
+      "id": "SC-AU-11",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-BD",
+      "id": "SC-BD-12",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-BR",
+      "id": "SC-BR-01",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CR",
+      "id": "SC-CR-02",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CP",
+      "id": "SC-CP-03",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-CJ",
+      "id": "SC-CJ-04",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-TR",
+      "id": "SC-TR-05",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-PD",
+      "id": "SC-PD-06",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-PL",
+      "id": "SC-PL-07",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-IP",
+      "id": "SC-IP-08",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-EX",
+      "id": "SC-EX-09",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-HO",
+      "id": "SC-HO-10",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-AU",
+      "id": "SC-AU-11",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "critical_flag_count": 0,
+      "family": "Q-BD",
+      "id": "SC-BD-12",
+      "min_elicited_score": 2,
+      "pass": true,
+      "trial": 2
+    }
+  ],
+  "judge_calibration": {
+    "gemini": true,
+    "groq_qwen": true
+  },
+  "judge_models": [
+    "gemini-3.5-flash-lite",
+    "qwen/qwen3.6-27b"
+  ],
+  "release_verdict": "PASS",
+  "trial_count_per_fixture": 2,
+  "trials": [
+    {
+      "all_families_pass": true,
+      "critical_flag_count": 0,
+      "fixture_count": 12,
+      "fixture_passes": 12,
+      "release_pass": true,
+      "trial": 1
+    },
+    {
+      "all_families_pass": true,
+      "critical_flag_count": 0,
+      "fixture_count": 12,
+      "fixture_passes": 12,
+      "release_pass": true,
+      "trial": 2
+    }
+  ]
+}

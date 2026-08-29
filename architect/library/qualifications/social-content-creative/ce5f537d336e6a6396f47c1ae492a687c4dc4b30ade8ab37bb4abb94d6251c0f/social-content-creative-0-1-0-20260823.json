@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "social-content-creative-0-1-0-20260823",
+  "core_id": "social-content-creative",
+  "core_version": "0.1.0",
+  "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "status": "pass",
+  "claims": [
+    {"id": "SC-C1", "statement": "Preserves approved brief, strategy and experiment locks instead of silently reopening upstream decisions.", "criticality": "P0"},
+    {"id": "SC-C2", "statement": "Does not invent or materially inflate commercial claims and escalates missing, stale or conflicting facts.", "criticality": "P0"},
+    {"id": "SC-C3", "statement": "Produces materially distinct bounded creative alternatives when divergence is requested rather than cosmetic paraphrases.", "criticality": "P1"},
+    {"id": "SC-C4", "statement": "Creates truthful, coherent and shoot-feasible social execution with explicit hook, payoff, visual direction and handoff intent.", "criticality": "P1"},
+    {"id": "SC-C5", "statement": "Treats volatile platform and jurisdiction rules as live context rather than timeless memorized facts.", "criticality": "P0"},
+    {"id": "SC-C6", "statement": "Respects authority boundaries and does not self-approve, publish, own strategy, analytics, sales or post-production decisions.", "criticality": "P0"}
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "architect/evaluation/social_content_creative/sealed/heldout-v0.1-2026-08-23.parts",
+      "architect/evaluation/social_content_creative/sealed/heldout-v0.1-2026-08-23.qualification.json"
+    ],
+    "grader_refs": [
+      ".github/workflows/social-content-creative-v0_1-sealed-qualification.yml",
+      "architect/evaluation/social_content_creative/sealed_runner_template_v0_1.py"
+    ],
+    "thresholds": [
+      "Frozen sealed held-out qualification protocol",
+      "12/12 fixture families PASS in each of two independent trials",
+      "All families PASS in both trials",
+      "Zero critical flags",
+      "Judge calibration PASS for both configured judges",
+      "Infrastructure failure cannot count as behavioral PASS"
+    ],
+    "reliability_trials": 2,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "GitHub Actions sealed qualification workflow",
+    "model_or_executor": "gemini-3.5-flash-lite candidate executor",
+    "tools": ["Gemini candidate execution", "Gemini and Qwen blind judging under the sealed qualification workflow"],
+    "state_contract": "Each held-out fixture evaluates the exact immutable Social Content Creative artifact digest with case-supplied context. Commercial facts, project state, platform state and publication authority remain external runtime inputs.",
+    "authority_scope": "Draft, recommend and revise exact social creative execution inside an approved brief; strategy, commercial approval, post-production, analytics and publication remain external authority."
+  },
+  "evidence": {
+    "run_refs": ["docs/qualification-results/social-content-creative-v0.1-sealed-report.json"],
+    "artifact_refs": ["docs/qualification-results/social-content-creative-v0.1-release-evidence.json"],
+    "provenance_refs": [
+      "architect/library/cores/social-content-creative/0.1.0/evidence-and-reuse.md",
+      "architect/research/social-content-creative/evidence-register-v0.2.md",
+      "architect/research/social-content-creative/qualification-protocol-v0.1.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest and declared evaluation boundary; applied automotive specialization and composed workflow integration require compatibility checks.",
+    "Qualification does not grant publishing, commercial approval, strategy, analytics, sales or post-production authority.",
+    "Current platform rules, legal requirements and business facts remain volatile external inputs and require live or authoritative verification when material."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional decision policies remain qualified while the exact core digest, critical controls and evaluation assumptions are unchanged; volatile platform, legal and business facts require live verification at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to the Social Content Creative artifact",
+      "Qualification regression or newly observed critical failure",
+      "Material runtime or judge change affecting qualified claims",
+      "New platform, legal, deceptive-creative or authority risk invalidating a stable policy",
+      "Hidden coupling discovered during automotive specialization or production use"
+    ]
+  },
+  "qualified_at": "2026-08-27T10:30:55Z"
+}
