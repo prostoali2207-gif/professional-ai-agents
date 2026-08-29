@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: eval/visual-design-art-direction-158-calibration-resume
+          ref: eval/visual-design-art-direction-158-calibration-resume-r2
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
@@ -35,6 +35,7 @@ jobs:
           text=Path('architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py').read_text()
           assert 'CANDIDATE_EXECUTOR_CMD' not in text and 'candidate_response' not in text
           assert 'openai/gpt-oss-120b' in text and 'pace_groq()' in text
+          assert "JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner'" in text
           print('CALIBRATION_RESUME_STATIC_PASS')
           PY
       - name: Require evaluator credentials
