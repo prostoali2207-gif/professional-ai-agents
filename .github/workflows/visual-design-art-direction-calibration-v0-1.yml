@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: eval/visual-design-art-direction-0.1.0-heldout
+          ref: eval/visual-design-art-direction-158-calibration-r2
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - name: Compile evaluator calibration infrastructure with no credentials
@@ -34,7 +34,9 @@ jobs:
           text='\n'.join(p.read_text() for p in paths)
           forbidden=['CANDIDATE_EXECUTOR_CMD','candidate_response']
           assert not any(x in text for x in forbidden)
+          assert text.count('pace_groq()') >= 2
           print('CALIBRATION_ZERO_CANDIDATE_PATH_PASS')
+          print('CALIBRATION_SHARED_GROQ_PACING_PASS')
           PY
   calibrate:
     needs: deterministic
@@ -44,10 +46,12 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-design-calibration-groq-pace
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: eval/visual-design-art-direction-0.1.0-heldout
+          ref: eval/visual-design-art-direction-158-calibration-r2
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
