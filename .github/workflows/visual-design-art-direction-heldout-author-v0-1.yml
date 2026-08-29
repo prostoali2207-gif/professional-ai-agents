@@ -24,14 +24,16 @@ jobs:
         with: {python-version: '3.11'}
       - name: Static candidate-free heldout author preflight
         run: |
-          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py
           python - <<'PY'
           from pathlib import Path
           p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py').read_text()
+          n=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py').read_text()
           assert "CANDIDATE_COMMIT='e8be839b02f181193afe076839c6ae94fb477a9b'" in p
           assert "candidate_calls':0" in p
-          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          assert 'candidate_response' not in p+n and 'CANDIDATE_EXECUTOR' not in p+n
           assert "GROQ_MODEL='openai/gpt-oss-120b'" in p and "GEMINI_MODEL='gemini-3.5-flash-lite'" in p
+          assert "case['id']=f'{family}-{seen[family]:02d}'" in n and "case['pair_id']=mod.PAIR_IDS.get(family)" in n
           print('HELDOUT_AUTHOR_STATIC_PASS')
           PY
       - name: Require evaluator credentials
@@ -42,7 +44,7 @@ jobs:
       - name: Install sealing dependency
         run: python -m pip install --disable-pip-version-check cryptography
       - name: Author audit and seal fresh heldout corpus
-        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py
+        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py
       - name: Verify sealed manifest is candidate-free
         run: |
           python - <<'PY'
