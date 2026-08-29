@@ -1,0 +1,97 @@
+name: Visual Design Art Direction independent calibration v0.1
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/**'
+      - '.github/workflows/visual-design-art-direction-calibration-v0-1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  CALIBRATION_CYCLE_ID: visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration
+jobs:
+  deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ''
+      GEMINI_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile evaluator calibration infrastructure with no credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+      - name: Assert candidate is never invoked by calibration infrastructure
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          paths=[Path('architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py'),Path('architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py')]
+          text='\n'.join(p.read_text() for p in paths)
+          forbidden=['candidate/SKILL.md --run','CANDIDATE_EXECUTOR_CMD','candidate_response']
+          assert not any(x in text for x in forbidden)
+          print('CALIBRATION_ZERO_CANDIDATE_PATH_PASS')
+          PY
+  calibrate:
+    needs: deterministic
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install deterministic sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Require evaluator credentials
+        run: |
+          test -n "$OPENAI_API_KEY" || exit 21
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Author audit and seal calibration corpus
+        run: python architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py
+      - name: Run blind dual-judge calibration
+        id: calibration
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+          code=$?
+          echo "calibration_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+      - name: Upload encrypted calibration pack
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-encrypted-calibration-pack
+          path: |
+            architect/evaluation/visual-design-art-direction/calibration/sealed/calibration-v0.1.parts
+            architect/evaluation/visual-design-art-direction/calibration/sealed/calibration-v0.1.manifest.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-sanitized-calibration
+          path: visual-calibration-sanitized-report.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce calibration gate
+        if: always()
+        run: |
+          test "${calibration_exit_code:-missing}" = 0
+          python - <<'PY'
+          import json
+          r=json.load(open('visual-calibration-sanitized-report.json'))
+          assert r['status']=='CALIBRATION_PASS'
+          assert r['candidate_calls']==0
+          PY
