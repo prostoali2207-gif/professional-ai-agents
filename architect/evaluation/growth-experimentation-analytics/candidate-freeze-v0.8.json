@@ -1,0 +1,68 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.8-decision-expression",
+  "freeze_id": "analytics-freeze-v0.8-2026-08-30",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-30",
+  "frozen_from_commit": "54f4515",
+  "supersedes": "growth-experimentation-measurement-v0.6-scoped-claim-ceiling",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+      "git_blob_sha": "330f32325a1071baf38f8d36d67931c0d519ae40"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.5-overlay.md",
+      "git_blob_sha": "01f3d30ac003dc5c3709be1e18349c52662e42bb"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.6-overlay.md",
+      "git_blob_sha": "777bcdbf62b1ee45979113c15608973fef4d78f9"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.8-overlay.md",
+      "git_blob_sha": "097768c93f5b6d8ac5b1fd21dfa383ffa3e2c85e"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:60ce050ba097e07844e5beee485ebd77ad43954eab384061e5fb9605fc04f9b7",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the seven overlay components in order, then the output contract",
+  "candidate_changed_from_v0_7": true,
+  "change_summary": "Adds the v0.8 overlay only. v0.1-v0.6 blob SHAs are byte-identical to freeze v0.7. The overlay carries the action-to-scope mapping, the designated expression for an unanswerable registered question, the reconciliation of insufficient power with identification, and output contract discipline. No new professional judgement and nothing relaxed.",
+  "root_cause_ref": "architect/research/growth-experimentation-analytics/v07-failure-root-cause-2026-08-29.md",
+  "instrument": {
+    "generator": {
+      "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+      "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+    },
+    "grader": {
+      "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+    },
+    "runner": {
+      "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py",
+      "git_blob_sha": "783e2303b2ef8699ceb20cc90498ca9a2c1a8787"
+    }
+  },
+  "instrument_unchanged_from": "candidate-freeze-v0.7.json",
+  "qualification_scope": "fresh post-freeze held-out qualification cycle; NOT library-admitted until a valid gate passes.",
+  "freeze_rules": [
+    "Do not edit the candidate, output contract, generator, grader, fixture contract or thresholds during this cycle.",
+    "Held-out cases are generated after this freeze from the preregistered seed.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh seed.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ]
+}
