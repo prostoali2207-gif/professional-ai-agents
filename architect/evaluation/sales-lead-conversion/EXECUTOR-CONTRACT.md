@@ -10,11 +10,26 @@ The harness owns sealed fixtures, expected behavior, grading, thresholds, contro
 
 ## Frozen candidate integrity
 
-For the current gate the executor must load exactly:
+The frozen candidate is pinned **per executor generation**, not once for the
+whole file. `executor.py` carries the v0.1 values as its module defaults, and
+each versioned executor overrides `common.FROZEN_COMMIT`,
+`common.FROZEN_DIGEST` and `common.MANIFEST_PATH` at import before any request
+is validated. Read the executor a cycle actually runs, not this table alone.
 
-- commit: `b1a5f214a7cc9452e8a168f3292a2e9b613ecae0`
-- core: `sales-lead-conversion/0.1.0`
-- artifact digest: `sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6`
+| executor | core | commit | artifact digest |
+| --- | --- | --- | --- |
+| `executor.py` (base defaults) | `sales-lead-conversion/0.1.0` | `b1a5f214a7cc9452e8a168f3292a2e9b613ecae0` | `sha256:6107413b9d6699f249d15903918f0943d26348f206d9e898d37b7058dac6dfa6` |
+| `executor_v0_2_responses.py` | `sales-lead-conversion/0.2.0` | `824216b9eb225a4509f98f1c31892a80935f3bd7` | `sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728` |
+| `executor_v0_3_responses.py` | `sales-lead-conversion/0.3.0` | `5adc0d315f6f63bc92df0a921040954a3541ef89` | `sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2` |
+| `executor_v0_3_gemini.py` | `sales-lead-conversion/0.3.0` | `5adc0d315f6f63bc92df0a921040954a3541ef89` | `sha256:a33bae7c2957e415669852d10135902349f20fdc9ae22090bf8d55278e0b15c2` |
+
+Cycles r4 through r10 ran `executor_v0_3_gemini.py`, so the 0.3.0 row is the
+one those cycles pinned. `executor_v0_3_gemini_contract_v1.py` is a shim in
+front of it and inherits the same pins.
+
+`validate_request` rejects any request whose `candidate.commit` or
+`candidate.artifact_digest` differs from the executor's effective pin, so a
+mismatch fails the run rather than silently executing the wrong artifact.
 
 If the exact artifact cannot be loaded and verified, exit non-zero. Never substitute current `main`, a newer branch, model memory, or reconstructed prose.
 
