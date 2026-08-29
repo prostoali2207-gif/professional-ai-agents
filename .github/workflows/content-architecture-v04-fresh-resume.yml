@@ -1,0 +1,112 @@
+name: Content Architecture v0.4 fresh qualification resume
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-fresh/RUN-RESUME-v0.1'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_GEMINI_MODEL: gemini-3.5-flash-lite
+      FROZEN_ARTIFACT_GEMINI_TIMEOUT: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Authorization and remediation gate
+        run: |
+          test "$(cat architect/evaluation/content-architecture-v04-fresh/RUN-RESUME-v0.1)" = "RESUME_FRESH_CONTENT_ARCHITECTURE_V04_AFTER_TIMEOUT" || exit 21
+          echo 'resume_source_run=33244707736'
+          echo 'preserve_completed_records=true'
+          echo 'discard_only_terminal_error_record=true'
+          echo 'runtime_remediation=provider timeout 120s -> 180s'
+          echo 'candidate/grader/corpus/thresholds=unchanged'
+          echo 'blind_retries=0'
+      - name: Install dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Verify credentials and exact candidate
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 31
+          test -n "$GEMINI_API_KEY" || exit 32
+          git fetch origin agent/content-architecture-core-2026-08 main
+          test "$(git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d)" = blob
+      - name: Rebuild and verify frozen hidden corpus identity
+        run: |
+          mkdir -p "$RUNNER_TEMP/ca-v04-fresh-pack"
+          python architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py --out "$RUNNER_TEMP/ca-v04-fresh-pack"
+          python - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'ca-v04-fresh-pack'/'sealed-manifest.json'
+          m=json.loads(p.read_text())
+          assert m['plain_identity_sha256']=='c11ed62a31a056288f77d2f1ec1dda0378ea7449622f8f9337275eb7200f6d7d'
+          assert m['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert m['fixture_count']==30
+          print('frozen corpus identity: PASS')
+          PY
+      - name: Re-run offline grader calibration
+        run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+      - name: Download prior checkpoint evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-fresh-qualification-result
+          path: ${{ runner.temp }}/prior
+          github-token: ${{ github.token }}
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: 33244707736
+      - name: Seed checkpoint with completed records only
+        run: |
+          mkdir -p "$RUNNER_TEMP/ca-v04-fresh-results"
+          python - <<'PY'
+          import json,os,pathlib
+          src=pathlib.Path(os.environ['RUNNER_TEMP'])/'prior'/'records.jsonl'
+          dst=pathlib.Path(os.environ['RUNNER_TEMP'])/'ca-v04-fresh-results'/'records.jsonl'
+          rows=[]
+          for line in src.read_text().splitlines():
+              if not line.strip(): continue
+              r=json.loads(line)
+              if r.get('terminal_status')=='COMPLETED': rows.append(r)
+          assert len(rows)==6, f'expected 6 completed checkpoint records, got {len(rows)}'
+          dst.write_text(''.join(json.dumps(r,sort_keys=True,ensure_ascii=False)+'\n' for r in rows))
+          print('checkpoint_seed_completed_records=6')
+          PY
+      - name: Resume qualification from checkpoint
+        id: gate
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/content-architecture-v04-fresh/run_gate_v01.py \
+            --pack "$RUNNER_TEMP/ca-v04-fresh-pack/sealed-pack.bin" \
+            --candidate-command "python architect/evaluation/harness/adapters/gemini_frozen_artifact_adapter.py" \
+            --out "$RUNNER_TEMP/ca-v04-fresh-results" \
+            --timeout 240
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload resumed sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-fresh-qualification-resume-result
+          path: |
+            ${{ runner.temp }}/ca-v04-fresh-results/summary.json
+            ${{ runner.temp }}/ca-v04-fresh-results/grade-report.json
+            ${{ runner.temp }}/ca-v04-fresh-results/records.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Enforce gate completion
+        if: always()
+        run: test "${{ steps.gate.outputs.exit_code }}" = "0"
