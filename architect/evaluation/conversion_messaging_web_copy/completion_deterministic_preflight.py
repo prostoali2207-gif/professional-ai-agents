@@ -8,7 +8,6 @@ invariants, and syntactic viability of the public executor/runner path.
 
 from __future__ import annotations
 
-import hashlib
 import json
 import py_compile
 import subprocess
@@ -18,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[3]
 FROZEN_SHA = "7019f6717b1b61806f4a221a297d049a4ad3b8cb"
 SKILL_PATH = "agents/conversion-messaging-web-copy/0.1.0/SKILL.md"
 MANIFEST_PATH = "agents/conversion-messaging-web-copy/0.1.0/artifact-manifest.json"
+EXPECTED_SKILL_BLOB = "3ce5739581ce2692e38c16446c09fe0b3e0d5001"
 EXPECTED_DIGEST = "sha256:da7662f95dcf132d9a9875849b7bb5d5d831d1d54821f0b109b543a1f299e1d2"
 
 
@@ -31,22 +31,34 @@ def git_show_bytes(ref: str, path: str) -> bytes:
     return proc.stdout
 
 
+def git_object_id(ref: str, path: str) -> str:
+    proc = subprocess.run(
+        ["git", "rev-parse", f"{ref}:{path}"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return proc.stdout.strip()
+
+
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise SystemExit(f"FAIL: {message}")
 
 
 def main() -> None:
-    # Gate 0a: frozen candidate object and manifest are reachable and unchanged.
-    skill = git_show_bytes(FROZEN_SHA, SKILL_PATH)
+    # Gate 0a: frozen commit objects and the canonical artifact manifest are unchanged.
+    # The manifest's content_digest is the canonical release digest. Do not assume it
+    # is a raw byte SHA-256 of one file; verify the Git blob identity separately.
+    skill_blob = git_object_id(FROZEN_SHA, SKILL_PATH)
+    require(skill_blob == EXPECTED_SKILL_BLOB, f"frozen SKILL blob mismatch: {skill_blob}")
+
     manifest_raw = git_show_bytes(FROZEN_SHA, MANIFEST_PATH)
     manifest = json.loads(manifest_raw.decode("utf-8"))
-
-    calculated = "sha256:" + hashlib.sha256(skill).hexdigest()
-    require(calculated == EXPECTED_DIGEST, f"candidate digest mismatch: {calculated}")
     require(
         manifest.get("artifact", {}).get("content_digest") == EXPECTED_DIGEST,
-        "artifact manifest digest does not match frozen digest",
+        "artifact manifest digest does not match frozen canonical digest",
     )
     require(
         manifest.get("artifact", {}).get("paths") == [SKILL_PATH],
@@ -107,7 +119,8 @@ def main() -> None:
 
     print("PASS: messaging completion deterministic preflight")
     print(f"candidate={FROZEN_SHA}")
-    print(f"digest={EXPECTED_DIGEST}")
+    print(f"skill_blob={EXPECTED_SKILL_BLOB}")
+    print(f"canonical_digest={EXPECTED_DIGEST}")
     print("scope=FULL")
     print("model_calls=0")
 
