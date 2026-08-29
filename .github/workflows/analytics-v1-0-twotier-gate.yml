@@ -103,9 +103,7 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           set -euo pipefail
-          python3 architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py \
-            architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v10_twotier.py \
-            architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py \
+          python3 architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v10_twotier.py \
             --preregistration "$PREREGISTRATION" \
             --trials "${{ inputs.trials }}" \
             --outdir "$RUNNER_TEMP/analytics-v10-twotier"
