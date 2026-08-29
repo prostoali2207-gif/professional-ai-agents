@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.1",
+  "candidate": "visual-design-art-direction-core/0.1.0-candidate",
+  "status": "development-fixtures-not-independent",
+  "families": [
+    {
+      "id": "F01_GENERIC_POLISH_TRAP",
+      "criticality": "P1",
+      "prompt": "A landing page is functional but sterile. The stakeholder asks: make it clean, modern and premium. Produce the visual direction.",
+      "must_observe": [
+        "Does not accept clean/modern/premium as the visual thesis",
+        "Diagnoses the actual visual failure",
+        "Produces a specific thesis and structural idea",
+        "Avoids decorative-only repair"
+      ]
+    },
+    {
+      "id": "F02_REFERENCE_COPY_TRAP",
+      "criticality": "P0",
+      "prompt": "The user provides one admired website and says: copy this exactly but swap our logo and colors.",
+      "must_observe": [
+        "Treats the reference as mechanism evidence rather than a layout/style template",
+        "Extracts transferable mechanisms",
+        "Refuses derivative copying while still solving the requested design problem"
+      ]
+    },
+    {
+      "id": "F03_PSEUDO_DIVERGENCE",
+      "criticality": "P1",
+      "prompt": "Create three visual directions. Candidate A is dark with cards, B is light with the same cards, C uses the same layout with a serif heading.",
+      "must_observe": [
+        "Rejects the three variants as pseudo-divergence",
+        "Requires materially different concept/composition families",
+        "Does not count palette/font swaps as directions"
+      ]
+    },
+    {
+      "id": "F04_GENERIC_SAAS_BIAS",
+      "criticality": "P1",
+      "prompt": "Design a landing page for a physical-product sourcing service. A proposed concept uses dashboard tiles, glass cards, KPI chips and telemetry graphics because it looks high-tech.",
+      "must_observe": [
+        "Challenges category-inappropriate SaaS/dashboard language",
+        "Returns to product/job-specific visual mechanisms",
+        "Uses cards only if meaningful grouping requires them"
+      ]
+    },
+    {
+      "id": "F05_FAKE_PROOF_ASSET",
+      "criticality": "P0",
+      "prompt": "The business has no verified warehouse photography, customer logos, stock counts or delivery statistics. The design looks empty without them. Complete the page visually.",
+      "must_observe": [
+        "Does not invent proof-bearing imagery, logos, stock or metrics",
+        "Marks evidence-producing assets as needed/unknown",
+        "May use non-evidentiary conceptual treatment only if clearly non-factual"
+      ]
+    },
+    {
+      "id": "F06_MOBILE_COLLAPSE",
+      "criticality": "P0",
+      "prompt": "Desktop has a strong asymmetric hero with oversized typography and a product object. On 390px the implementation simply stacks every desktop block and removes the object.",
+      "must_observe": [
+        "Treats mobile as authored art direction rather than stacked desktop",
+        "Reworks focal order, scale, crop/density or signature mechanism",
+        "Preserves primary-action clarity"
+      ]
+    },
+    {
+      "id": "F07_KNOWN_THESIS_NO_CEREMONIAL_RESEARCH",
+      "criticality": "P1",
+      "prompt": "The visual thesis is approved and implementation-ready except typography rhythm and form integration need strengthening. Decide the workflow.",
+      "must_observe": [
+        "Chooses DIRECT rather than a broad DISCOVER reset",
+        "Uses targeted evidence only where uncertainty remains",
+        "Does not force a full reference/divergence ritual"
+      ]
+    },
+    {
+      "id": "F08_UNJUSTIFIED_3D",
+      "criticality": "P0",
+      "prompt": "The user asks to add WebGL 3D because it will make the landing page look expensive. No product explanation or spatial task requires it.",
+      "must_observe": [
+        "Does not route to 3D by keyword/preference alone",
+        "Requires a concrete communication/art-direction job and complexity justification",
+        "Considers mobile, performance, accessibility and fallback",
+        "Keeps 3D as an optional capability rather than a separate agent"
+      ]
+    },
+    {
+      "id": "F09_JUSTIFIED_3D_ROUTING",
+      "criticality": "P1",
+      "prompt": "A real mechanical component is the hero object. An exploded-view interaction could show assembly/fit relationships that are hard to communicate statically. Route the visual technique.",
+      "must_observe": [
+        "Evaluates whether the spatial/explanatory gain is material",
+        "Defines mobile/fallback, performance and accessibility constraints",
+        "Routes specialist implementation only if the technique earns the cost",
+        "Defines a removal criterion after rendered review"
+      ]
+    },
+    {
+      "id": "F10_RENDER_HONESTY",
+      "criticality": "P0",
+      "prompt": "The CSS and component code look correct and the build passes, but no browser screenshot or rendered page can be inspected. Give the final visual verdict.",
+      "must_observe": [
+        "Does not claim rendered visual success from code/build evidence",
+        "Returns RENDER BLOCKED for artifact-dependent judgment",
+        "Does not issue final product PASS"
+      ]
+    },
+    {
+      "id": "F11_RENDER_CONTRACT_MISMATCH",
+      "criticality": "P1",
+      "prompt": "The approved contract calls for a strong typographic hero and quiet transition into the form. The real render shows weak headline scale, equal emphasis everywhere, and the form as a dark dashboard shell.",
+      "must_observe": [
+        "Diagnoses observed output instead of defending intent",
+        "Classifies failures at concept/contract/implementation/asset/upstream layer",
+        "Repairs root causes rather than adding decoration",
+        "Requires re-observation after correction"
+      ]
+    },
+    {
+      "id": "F12_BOLDNESS_VS_FUNCTION",
+      "criticality": "P0",
+      "prompt": "A daring composition is memorable but makes the primary action difficult to find and body copy unreadable on mobile. The stakeholder loves the look.",
+      "must_observe": [
+        "Does not preserve spectacle at the expense of communication/function constraints",
+        "Keeps useful concept mechanisms while repairing hierarchy/usability",
+        "Does not treat stakeholder preference as professional evidence"
+      ]
+    },
+    {
+      "id": "F13_REFERENCE_BREADTH_AND_STOPPING",
+      "criticality": "P1",
+      "prompt": "A broad visual reset has 12 references, but 10 repeat the same trendy dark editorial layout. Decide whether research is sufficient.",
+      "must_observe": [
+        "Recognizes anchoring despite nominal reference count",
+        "Adds mechanism-distinct/cross-category evidence rather than more duplicates",
+        "Stops once new references no longer have plausible decision value"
+      ]
+    },
+    {
+      "id": "F14_IMPLEMENTATION_CONTRACT",
+      "criticality": "P1",
+      "prompt": "The designer hands frontend: premium industrial, bold type, tasteful animations, make mobile nice. Evaluate the handoff.",
+      "must_observe": [
+        "Rejects adjective-only handoff",
+        "Requires composition/focal order, type roles, rhythm, value/color roles, imagery grammar, responsive transforms, assets and anti-patterns",
+        "Avoids brittle pixel-by-pixel over-specification"
+      ]
+    }
+  ]
+}
