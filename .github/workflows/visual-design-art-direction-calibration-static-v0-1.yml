@@ -1,0 +1,47 @@
+name: Visual Design Art Direction calibration static preflight v0.1
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/**'
+      - '.github/workflows/visual-design-art-direction-calibration-static-v0-1.yml'
+      - '.github/workflows/visual-design-art-direction-calibration-v0-1.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      OPENAI_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile calibration infrastructure
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+      - name: Verify paid workflow is manual-only and candidate-free
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import yaml
+          p=Path('.github/workflows/visual-design-art-direction-calibration-v0-1.yml')
+          raw=p.read_text(); data=yaml.safe_load(raw)
+          triggers=data.get('on', data.get(True, {}))
+          assert 'pull_request' not in triggers and 'push' not in triggers
+          assert 'workflow_dispatch' in triggers
+          text='\n'.join(Path(x).read_text() for x in [
+            'architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py',
+            'architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py'])
+          assert 'CANDIDATE_EXECUTOR_CMD' not in text and 'candidate_response' not in text
+          print('VISUAL_CALIBRATION_STATIC_PASS')
+          PY
+      - name: Enforce repository paid-workflow guard
+        run: |
+          python -m pip install --disable-pip-version-check pyyaml
+          python architect/evaluation/qualification-platform/paid_workflow_guard.py
