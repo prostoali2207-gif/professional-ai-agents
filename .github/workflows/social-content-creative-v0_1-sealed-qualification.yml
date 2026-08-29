@@ -15,15 +15,23 @@ jobs:
   qualify:
     if: ${{ inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 90
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       SOCIAL_CONTENT_MODEL: gemini-3.5-flash-lite
-      SOCIAL_CONTENT_AUTHOR_MODEL: qwen/qwen3.6-27b
+      SOCIAL_CONTENT_AUTHOR_MODEL: gemini-3.5-flash-lite
       SOCIAL_CONTENT_GROQ_JUDGE_MODEL: qwen/qwen3.6-27b
       SOCIAL_CONTENT_MIN_REQUEST_INTERVAL: '13'
+      # Judge request sizing. Transport only: how many held-out cases ride in one
+      # request, never what is graded. Groq on_demand caps qwen3.6-27b at 8000 TPM
+      # counting input + max_completion_tokens, so 3500+3500 keeps every request inside
+      # the ceiling and 62s spacing keeps consecutive requests inside the minute.
+      SOCIAL_CONTENT_JUDGE_INPUT_BUDGET: '1800'
+      SOCIAL_CONTENT_JUDGE_COMPLETION_BUDGET: '7000'
+      SOCIAL_CONTENT_GROQ_TPM_CEILING: '8000'
+      SOCIAL_CONTENT_GROQ_JUDGE_PACE: '62'
       CYCLE_ID: social-content-creative-0.1.0-heldout-2026-08-23
       CANDIDATE_COMMIT: 163f68671288fe5035a8d09197334ec9df728b93
       CANDIDATE_DIGEST: sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f
@@ -42,7 +50,9 @@ jobs:
         run: |
           echo 'objective=independent release qualification of frozen Social Content Creative 0.1.0'
           echo 'decision_impact=PASS permits qualified-core promotion; REVISE keeps candidate status'
-          echo 'maximum planned completion calls=29 (1 Groq author + 24 Gemini candidate + 2 Gemini batched judge + 2 Groq batched judge)'
+          echo 'maximum planned Gemini completion calls=27 fixed (1 held-out author + 1 unscored canary + 24 candidate + 1 judge calibration) plus 2 to 24 grouped judge calls'
+          echo 'maximum planned Groq/Qwen completion calls=1 judge calibration plus 2 to 24 grouped judge calls'
+          echo 'judge grouping is transport only: same fixtures, calibration, rubric, dimensions, flags, scoring, thresholds and release logic'
           echo 'protected rule=no scored calls before static/secrets/sealed checks; no professional-failure retry'
           echo 'stop condition=any preflight failure, missing secret, canary failure, pack integrity failure, or completed two-trial release verdict'
       - name: Frozen candidate and evaluator static preflight
@@ -68,13 +78,13 @@ jobs:
           test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'master sealed-pack key missing; zero provider calls attempted' >&2; exit 21; }
           test -n "$GEMINI_API_KEY" || { echo 'Gemini credential missing; zero provider calls attempted' >&2; exit 22; }
           test -n "$GROQ_API_KEY" || { echo 'Groq credential missing; zero provider calls attempted' >&2; exit 23; }
-      - name: Verify Groq credential and Qwen model access without completion
+      - name: Verify Groq credential and Qwen judge model access without completion
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           import json, os, sys, urllib.error, urllib.request
-          target=os.environ['SOCIAL_CONTENT_AUTHOR_MODEL']
+          target=os.environ['SOCIAL_CONTENT_GROQ_JUDGE_MODEL']
           req=urllib.request.Request(
               'https://api.groq.com/openai/v1/models',
               headers={
@@ -91,8 +101,8 @@ jobs:
               raise SystemExit(2)
           ids={m.get('id') for m in payload.get('data',[]) if isinstance(m,dict)}
           if target not in ids:
-              raise SystemExit(f'Groq model unavailable for this account: {target}')
-          print('GROQ CREDENTIAL + QWEN MODEL ACCESS PASS')
+              raise SystemExit(f'Groq judge model unavailable for this account: {target}')
+          print('GROQ CREDENTIAL + QWEN JUDGE MODEL ACCESS PASS')
           PY
       - name: Independently author and immediately seal fresh held-out pack
         run: python architect/evaluation/social_content_creative/author_sealed_pack_v0_1.py
@@ -172,8 +182,8 @@ jobs:
       - name: Post-run accounting
         if: always()
         run: |
-          echo 'planned_max_completion_calls=29'
-          echo 'author_provider=groq/qwen'
+          echo 'planned_max_completion_calls=27..51 gemini + 1..25 groq (judge calls vary with request grouping)'
+          echo 'author_provider=gemini'
           echo 'candidate_provider=gemini'
           echo 'judges=gemini+groq/qwen'
           echo "qualification_exit_code=${qualification_exit_code:-not_started}"

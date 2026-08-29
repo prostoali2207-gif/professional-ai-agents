@@ -1,0 +1,71 @@
+{
+  "candidate": {
+    "commit": "163f68671288fe5035a8d09197334ec9df728b93",
+    "digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "manifest_path": "architect/library/cores/social-content-creative/0.1.0/manifest.json"
+  },
+  "cycle_id": "social-content-creative-0.1.0-heldout-2026-08-23",
+  "evaluation": {
+    "family_count": 12,
+    "fixture_count": 12,
+    "fixtures_file": "fixtures.json",
+    "freeze_record_file": "freeze-record.json",
+    "grader_file": "grader.json",
+    "per_family": 1,
+    "runner_file": "runner.py"
+  },
+  "report": {
+    "artifact_required": true,
+    "release_ledger_required": true,
+    "sanitized_required": true,
+    "validator_path": "architect/evaluation/qualification-platform/validate_sanitized_report.py"
+  },
+  "runtime": {
+    "canary_cmd": "python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py --canary --model-timeout 120",
+    "canary_required": true,
+    "candidate_timeout_seconds": 180,
+    "contract_probe_argv": [
+      "python3",
+      "architect/evaluation/social_content_creative/executor_v0_1_gemini.py",
+      "--qualification-contract"
+    ],
+    "credential_env": "GEMINI_API_KEY",
+    "executor_cmd": "python3 architect/evaluation/social_content_creative/executor_v0_1_gemini.py",
+    "executor_path": "architect/evaluation/social_content_creative/executor_v0_1_gemini.py",
+    "model": "gemini-3.5-flash-lite",
+    "model_timeout_seconds": 120,
+    "observable_protocol": "final-output-only-v1",
+    "protocol": "social-content-creative-candidate-v1",
+    "provider": "gemini-interactions-api",
+    "state_protocol": "stateless-v1",
+    "tool_protocol": "none-v1",
+    "workflow_timeout_seconds": 5400
+  },
+  "sealed_pack": {
+    "ciphertext_length": 15820,
+    "ciphertext_sha256": "9d03ae58dc26378c49d16e024b2827dbfe1bf41805a7cb9a363ef31474960db5",
+    "decrypted_zip_sha256": "71afaa12c268565aa3b3d7966ca97596ca2c05128e35939c488d7842ff9d751d",
+    "key_derivation": {
+      "context": "social-content-creative-0.1.0-heldout-2026-08-23",
+      "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
+      "scheme": "hkdf-sha256-v1"
+    },
+    "key_fingerprint_sha256": "81ebdea9132f60a708fa7eca464d51c21c150007f67d6d32d54b9f1f85602be8",
+    "pack_digest": "sha256:9482c2da14cf65317ff2a8415f9107bbf7b46016bde2a4414be482808f958660",
+    "part_count": 4,
+    "parts_dir": "architect/evaluation/social_content_creative/sealed/heldout-v0.1-2026-08-23.parts",
+    "required_files": [
+      "fixtures.json",
+      "grader.json",
+      "runner.py",
+      "freeze-record.json"
+    ]
+  },
+  "verdict": {
+    "artifact_upload_required": true,
+    "missing_report_is_failure": true,
+    "report_validation_required": true,
+    "runner_exit_zero_required": true
+  },
+  "version": 2
+}
