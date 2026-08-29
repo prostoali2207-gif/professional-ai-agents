@@ -1,0 +1,23 @@
+name: Visual calibration run probe
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/visual-calibration-run-probe.yml'
+permissions:
+  actions: read
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Print latest calibration workflow run metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "/repos/$GH_REPO/actions/workflows/visual-design-art-direction-calibration-v0-1.yml/runs?per_page=3" \
+            --jq '.workflow_runs[] | {id,name,status,conclusion,event,head_sha,created_at,updated_at}'
