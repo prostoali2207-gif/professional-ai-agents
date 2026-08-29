@@ -1,0 +1,139 @@
+name: Visual Design Art Direction exact r3 corpus calibration
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  calibrate:
+    if: github.event.issue.number == 158 && github.actor == 'prostoali2207-gif' && (github.event.comment.body == '/calibrate-visual-heldout-r3' || startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r3 '))
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-r3-corpus-calibration-groq-pace
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: '33265201398'
+      SOURCE_HEAD_SHA: af43f2d12187e1825c596239a7313fd8b7e5da63
+      SOURCE_ARTIFACT_ID: '9718569692'
+      SOURCE_ARTIFACT_NAME: visual-design-art-direction-v0-1-encrypted-heldout-pack-r3
+      SOURCE_ARTIFACT_DIGEST: sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static preflight before provider use
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py').read_text()
+          assert "SOURCE_RUN_ID = '33265201398'" in p
+          assert "SOURCE_HEAD_SHA = 'af43f2d12187e1825c596239a7313fd8b7e5da63'" in p
+          assert "SOURCE_ARTIFACT_ID = '9718569692'" in p
+          assert "SOURCE_ARTIFACT_DIGEST = 'sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b'" in p
+          assert "PER_JUDGE_MIN = 0.80" in p and "COMBINED_MIN = 0.90" in p and "MAX_DISAGREEMENT = 0.25" in p
+          assert 'CANDIDATE_EXECUTOR_CMD' not in p and 'candidate_response' not in p and 'run_candidate' not in p
+          print('R3_CORPUS_CALIBRATION_PRE_CREDENTIAL_STATIC_PASS')
+          PY
+      - name: Verify exact source artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > r3-artifact-meta.json
+          python - <<'PY'
+          import json,os
+          m=json.load(open('r3-artifact-meta.json'))
+          assert str(m['id'])==os.environ['SOURCE_ARTIFACT_ID']
+          assert m['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert m['digest']==os.environ['SOURCE_ARTIFACT_DIGEST']
+          assert str(m['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert m['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert m['expired'] is False
+          print('EXACT_R3_ARTIFACT_METADATA_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Download exact R3 sealed pack
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-encrypted-heldout-pack-r3
+          path: r3-source
+          github-token: ${{ github.token }}
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: 33265201398
+      - name: Restore encrypted checkpoint for bounded resume
+        if: startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r3 ')
+        shell: bash
+        run: |
+          set -euo pipefail
+          checkpoint_run="${{ github.event.comment.body }}"
+          checkpoint_run="${checkpoint_run#'/resume-calibrate-visual-heldout-r3 '}"
+          [[ "$checkpoint_run" =~ ^[0-9]+$ ]]
+          mkdir -p checkpoint-source
+          gh run download "$checkpoint_run" -n visual-design-art-direction-v0-1-r3-corpus-calibration-checkpoint --dir checkpoint-source
+          cp checkpoint-source/visual-r3-corpus-calibration-checkpoint.enc ./visual-r3-corpus-calibration-checkpoint.enc
+      - name: Run blind exact-R3 corpus calibration
+        id: calibration
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload encrypted resumable checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-corpus-calibration-checkpoint
+          path: visual-r3-corpus-calibration-checkpoint.enc
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-corpus-calibration-progress
+          path: visual-r3-corpus-calibration-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-corpus-calibration-report
+          path: visual-r3-corpus-calibration-sanitized-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Enforce pre-score calibration gate
+        if: always()
+        run: |
+          test "${{ steps.calibration.outputs.exit_code }}" = 0
+          test -f visual-r3-corpus-calibration-sanitized-report.json
+          python - <<'PY'
+          import json
+          r=json.load(open('visual-r3-corpus-calibration-sanitized-report.json'))
+          assert r['status']=='CALIBRATION_PASS'
+          assert r['candidate_calls']==0
+          assert r['source']['run_id']=='33265201398'
+          assert r['source']['head_sha']=='af43f2d12187e1825c596239a7313fd8b7e5da63'
+          assert r['source']['artifact_id']=='9718569692'
+          assert r['source']['artifact_digest']=='sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b'
+          assert r['policy']=={
+            'per_judge_expected_winner_rate_min':0.8,
+            'combined_expected_winner_rate_min':0.9,
+            'max_pair_disagreement_rate':0.25,
+          }
+          print('EXACT_R3_CORPUS_CALIBRATION_PASS_ENFORCED')
+          PY
