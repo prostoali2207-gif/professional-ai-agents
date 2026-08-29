@@ -7,6 +7,14 @@ on:
         description: 'Type RUN to execute the public development gate'
         required: true
         default: 'NO'
+  workflow_call:
+    inputs:
+      confirm_provider_run:
+        required: true
+        type: string
+    secrets:
+      GEMINI_API_KEY:
+        required: true
 
 permissions:
   contents: read
