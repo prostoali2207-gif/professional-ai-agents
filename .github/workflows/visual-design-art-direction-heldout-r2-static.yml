@@ -1,0 +1,39 @@
+name: Visual Design Art Direction heldout r2 static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/heldout/**'
+      - 'architect/evaluation/visual-design-art-direction/heldout-remediation-r2-preregistration.md'
+      - '.github/workflows/visual-design-art-direction-heldout-r2-*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/heldout/**'
+      - 'architect/evaluation/visual-design-art-direction/heldout-remediation-r2-preregistration.md'
+      - '.github/workflows/visual-design-art-direction-heldout-r2-*.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Candidate-free deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r2.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r2.py').read_text()
+          r=Path('architect/evaluation/visual-design-art-direction/heldout-remediation-r2-preregistration.md').read_text()
+          assert "CANDIDATE_COMMIT = 'e8be839b02f181193afe076839c6ae94fb477a9b'" in p
+          assert "MAX_ATTEMPTS_PER_FAMILY = 3" in p
+          assert "GEMINI_MODEL = 'gemini-3.5-flash-lite'" in p
+          assert "GROQ_MODEL = 'openai/gpt-oss-120b'" in p
+          assert "candidate_calls': 0" in p
+          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          assert 'first construct-valid audited pair per family' in r
+          assert 'Maximum author attempts: **3 per family**' in r
+          print('VISUAL_HELDOUT_R2_STATIC_PASS')
+          PY

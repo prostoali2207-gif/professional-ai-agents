@@ -1,0 +1,66 @@
+name: Visual Design Art Direction heldout r2 author
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+jobs:
+  author:
+    if: github.event.issue.number == 158 && github.event.comment.body == '/author-visual-heldout-r2' && github.actor == 'prostoali2207-gif'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-heldout-r2-groq-pace
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static preflight before credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r2.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r2.py').read_text()
+          assert "CANDIDATE_COMMIT = 'e8be839b02f181193afe076839c6ae94fb477a9b'" in p
+          assert "MAX_ATTEMPTS_PER_FAMILY = 3" in p
+          assert "candidate_calls': 0" in p
+          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          print('VISUAL_HELDOUT_R2_STATIC_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Author audit and seal family-local fresh heldout corpus
+        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r2.py
+      - name: Verify sealed manifest
+        run: |
+          python - <<'PY'
+          import json
+          p='architect/evaluation/visual-design-art-direction/heldout/sealed-r2/heldout-r2.manifest.json'
+          m=json.load(open(p))
+          assert m['cycle_id']=='visual-design-art-direction-0.1.0-independent-2026-08-29-r2-semantic'
+          assert m['candidate_commit']=='e8be839b02f181193afe076839c6ae94fb477a9b'
+          assert m['item_count']==20 and m['family_count']==10 and m['pair_count']==5
+          assert m['authoring_policy']=={'mode':'family_first_pass','max_attempts_per_family':3}
+          assert m['candidate_calls']==0 and m['hidden_content_printed'] is False
+          assert all(1 <= int(v) <= 3 for v in m['attempts_used'].values()) and len(m['attempts_used'])==10
+          print('VISUAL_HELDOUT_R2_SEAL_PASS',m['ciphertext_sha256'])
+          PY
+      - name: Upload encrypted heldout pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-encrypted-heldout-pack-r2
+          path: architect/evaluation/visual-design-art-direction/heldout/sealed-r2
+          if-no-files-found: error
+          retention-days: 14
