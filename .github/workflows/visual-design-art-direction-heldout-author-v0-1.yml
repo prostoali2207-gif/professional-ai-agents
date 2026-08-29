@@ -8,7 +8,7 @@ jobs:
   author:
     if: github.event.issue.number == 158 && github.event.comment.body == '/author-visual-heldout' && github.actor == 'prostoali2207-gif'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -24,16 +24,17 @@ jobs:
         with: {python-version: '3.11'}
       - name: Static candidate-free heldout author preflight
         run: |
-          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_contract.py
           python - <<'PY'
           from pathlib import Path
           p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1.py').read_text()
-          n=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py').read_text()
+          c=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_contract.py').read_text()
           assert "CANDIDATE_COMMIT='e8be839b02f181193afe076839c6ae94fb477a9b'" in p
           assert "candidate_calls':0" in p
-          assert 'candidate_response' not in p+n and 'CANDIDATE_EXECUTOR' not in p+n
+          assert 'candidate_response' not in p+c and 'CANDIDATE_EXECUTOR' not in p+c
           assert "GROQ_MODEL='openai/gpt-oss-120b'" in p and "GEMINI_MODEL='gemini-3.5-flash-lite'" in p
-          assert "case['id']=f'{family}-{seen[family]:02d}'" in n and "case['pair_id']=mod.PAIR_IDS.get(family)" in n
+          assert 'professional_criteria MUST be a JSON array of AT LEAST THREE' in c
+          assert 'mod.author=contract_author' in c
           print('HELDOUT_AUTHOR_STATIC_PASS')
           PY
       - name: Require evaluator credentials
@@ -44,7 +45,7 @@ jobs:
       - name: Install sealing dependency
         run: python -m pip install --disable-pip-version-check cryptography
       - name: Author audit and seal fresh heldout corpus
-        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_normalized.py
+        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_v0_1_contract.py
       - name: Verify sealed manifest is candidate-free
         run: |
           python - <<'PY'
