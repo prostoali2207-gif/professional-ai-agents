@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-08-29",
+  "gate_id": "analytics-v0.7-heldout-2026-08-29",
+  "candidate_id": "growth-experimentation-measurement-v0.6-scoped-claim-ceiling",
+  "candidate_assembly_digest": "sha256:32f7a5b75da92397d94711704aab6c65356567ce87b6a3bbeb96fa7f575ecb44",
+  "freeze_ref": "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.7.json",
+  "purpose": "Fresh post-freeze held-out qualification of the unchanged v0.6 candidate against the instrument repaired by the 2026-08-28 oracle audit.",
+  "heldout_seed": 20260829,
+  "per_family": 2,
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "generator": {
+    "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+    "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+  },
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+    "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+  },
+  "trials_per_fixture": 3,
+  "retries_permitted": 0,
+  "pass_rule": "Every generated case must PASS on every one of its 3 independent trials. Any single trial failure ends this gate as FAIL. Best-of-N is not a pass.",
+  "case_provenance": "Cases are generated at run time from this preregistered seed by the frozen generator, with expectations derived mechanically from the sampled parameters. The culpable arm's position is randomised. Seed 20260829 has not been used by a previous gate.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "Groq/Qwen",
+      "reason": "Excluded by evaluator instruction. The v0.5 gate established the cause: HTTP 413, free-tier limit 8000 tokens per minute against a request of 8273, and this assembly is larger."
+    },
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The generator and grader blobs above are fixed for this gate and must not be edited after any candidate output is observed. A construct defect requires a recorded burn and a fresh seed.",
+  "comparability_notice": "This gate is NOT a re-run of v0.6 and its result is not comparable to v0.6 on the burned families. The 2026-08-28 repairs changed what the gate can detect: contract validity is now checked before anything else, action targets are read from target_by_action, ratio-valued computations are compared against the candidate's declared unit, and result-to-fixture identity is verified. Two families that produced no usable evidence in v0.6 can now produce evidence, and structurally invalid output that would previously have been scored around now fails. This is a new measurement.",
+  "qualification_boundary": [
+    "A PASS here is a fresh post-freeze held-out result on ONE model family for five generated construct families. It is not a release qualification of the professional core.",
+    "Independence is partial: procedural generation removes case-level authorship and leakage, but the same party wrote the generator, the oracle and the candidate repairs.",
+    "Groq is ineligible at its free tier and OpenAI and Claude are excluded, so cross-model portability is untested in this cycle.",
+    "Library admission still requires an externally authored held-out set and the cross-model release protocol."
+  ]
+}

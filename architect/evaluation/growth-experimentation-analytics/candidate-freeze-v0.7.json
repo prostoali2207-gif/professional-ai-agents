@@ -1,0 +1,60 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v0.6-scoped-claim-ceiling",
+  "freeze_id": "analytics-freeze-v0.7-2026-08-29",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-08-29",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "ee2d3c8695657d3e5223cd6c034638a1216853c2"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.2-overlay.md",
+      "git_blob_sha": "0f2a537057b57adb2fba89883e7d5d23e65c44ed"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.3-overlay.md",
+      "git_blob_sha": "240a9c99ec3092c7332181cb9888b51ac9163047"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.4-overlay.md",
+      "git_blob_sha": "330f32325a1071baf38f8d36d67931c0d519ae40"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.5-overlay.md",
+      "git_blob_sha": "01f3d30ac003dc5c3709be1e18349c52662e42bb"
+    },
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-candidate-v0.6-overlay.md",
+      "git_blob_sha": "777bcdbf62b1ee45979113c15608973fef4d78f9"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:32f7a5b75da92397d94711704aab6c65356567ce87b6a3bbeb96fa7f575ecb44",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the six overlay components in order, then the output contract",
+  "candidate_unchanged_from": "candidate-freeze-v0.6.json",
+  "why_a_new_freeze_with_an_identical_candidate_digest": "The candidate assembly digest is byte-identical to freeze v0.6: the 2026-08-28 audit repaired the evaluation instrument, not the professional model. This freeze exists to bind the repaired instrument alongside the unchanged candidate, so the next gate's evidence points at an exact generator and grader as well as an exact candidate.",
+  "instrument": {
+    "generator": {
+      "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+      "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+    },
+    "grader": {
+      "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+    },
+    "runner": {
+      "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py",
+      "git_blob_sha": "783e2303b2ef8699ceb20cc90498ca9a2c1a8787"
+    }
+  },
+  "qualification_scope": "fresh post-freeze held-out qualification cycle; NOT library-admitted until a valid gate passes.",
+  "freeze_rules": [
+    "Do not edit the candidate, the output contract, the generator, the grader or the fixture contract during a scored cycle.",
+    "Held-out cases are generated after this freeze from the preregistered seed.",
+    "Graders may not be broadened to accept an observed output. Construct repairs require a recorded burn and a fresh seed.",
+    "Any behavioral failure ends the cycle; repair requires a new candidate version and a new freeze."
+  ]
+}
