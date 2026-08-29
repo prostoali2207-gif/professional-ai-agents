@@ -1,0 +1,22 @@
+name: Visual Design Art Direction static preflight
+
+on:
+  pull_request:
+    paths:
+      - 'architect/research/visual-design-art-direction/**'
+      - 'architect/evaluation/visual-design-art-direction/**'
+      - '.github/workflows/visual-design-art-direction-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile preflight
+        run: python -m py_compile architect/evaluation/visual-design-art-direction/static_preflight.py
+      - name: Validate candidate and fixture contracts
+        run: python architect/evaluation/visual-design-art-direction/static_preflight.py
