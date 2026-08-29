@@ -1,11 +1,7 @@
 name: Content Architecture v0.4 fresh qualification
 
 on:
-  push:
-    branches:
-      - eval/content-architecture-v04-fresh-gate-2026-08
-    paths:
-      - 'architect/evaluation/content-architecture-v04-fresh/RUN-QUALIFICATION-v0.1'
+  workflow_dispatch:
 
 permissions:
   contents: read
