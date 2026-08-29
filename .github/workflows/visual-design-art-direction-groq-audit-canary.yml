@@ -1,0 +1,42 @@
+name: Visual Design Art Direction Groq audit canary
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+jobs:
+  canary:
+    if: github.event.issue.number == 158 && github.event.comment.body == '/run-visual-groq-canary' && github.actor == 'prostoali2207-gif'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eval/visual-design-art-direction-0.1.0-heldout
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install import dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Require Groq credential
+        run: test -n "$GROQ_API_KEY" || exit 24
+      - name: Exact audit-path tiny canary
+        run: |
+          python - <<'PY'
+          import importlib.util
+          p='architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py'
+          spec=importlib.util.spec_from_file_location('visual_cal',p); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          item={
+            'id':'CANARY-01',
+            'archetype':'competent_generic',
+            'brief':'A truthful landing page needs one clear primary action and readable mobile hierarchy.',
+            'sample_strong':'Use one dominant headline, one primary action, restrained supporting proof, and author the narrow layout separately.',
+            'sample_challenger':'Use the same hierarchy but make every block equally prominent and simply stack desktop cards on mobile.',
+            'expected_winner':'strong',
+            'relevant_dimensions':['brief_appropriateness','craft','function_clarity','mobile_art_direction']
+          }
+          out=m.audit_one(item)
+          assert isinstance(out,dict) and out.get('id')=='CANARY-01'
+          print('GROQ_AUDIT_CANARY_PASS')
+          PY
