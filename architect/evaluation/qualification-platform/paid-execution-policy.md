@@ -2,15 +2,29 @@
 
 ## Purpose
 
-Prevent accidental API spend without weakening independent release evidence.
+Prevent accidental metered API spend and quota waste without weakening independent release evidence.
+
+Read together with `../../methodology/qualification-execution-routing.md`.
 
 ## Mandatory execution rule
 
-Automatic `push` and `pull_request` triggers may run deterministic/static and no-API sealed preflight only.
+Automatic `push` and `pull_request` triggers may run deterministic/static and no-metered-API sealed preflight only.
 
-Any stage that can consume paid model/provider quota — including runtime canaries and scored held-out qualification — must require an explicit manual `workflow_dispatch` approval or an equivalent protected release action.
+Any stage that can consume metered model/provider quota — including runtime canaries and scored held-out qualification — must require an explicit manual `workflow_dispatch` approval or an equivalent protected release action.
 
 The manual gate is an execution authorization, not evidence. It must not change the frozen candidate, hidden fixtures, grader, thresholds, model/runtime identity, or preregistered qualification protocol.
+
+## Execution route before metered API
+
+Before authorizing Gemini, Groq, OpenAI API, Anthropic API, xAI/Grok API, or another metered model API, classify the required evidence and check the eligible routes in this order:
+
+`deterministic/no-model -> valid reusable evidence -> subscription-backed Codex/Claude Code when eligible -> metered API when required or justified`
+
+Subscription-backed Codex/Claude Code is preferred only when it preserves the required quality, observability, reproducibility, security, frozen protocol, and evaluator independence. Subscription access is quota-bearing capacity, not unlimited compute.
+
+Do not silently substitute Codex/Claude Code for a provider/model whose identity is part of a frozen qualification, calibrated judge, comparability requirement, or independence contract. Such a migration requires explicit revalidation first.
+
+Do not encode Gemini, Groq, or another metered provider as a universal default merely because an adapter or repository secret already exists.
 
 ## Deterministic enforcement
 
@@ -22,9 +36,9 @@ Exceptions fail closed when their required invariants disappear and stale except
 
 ## Required order
 
-`static/no-API -> sealed/no-API -> explicit paid-run authorization -> smallest valid runtime canary when needed -> scored release run`
+`static/no-API -> sealed/no-API -> choose eligible execution route -> explicit metered-run authorization if still required -> smallest valid runtime canary when needed -> scored release run`
 
-A paid stage is ineligible when an earlier required deterministic gate has failed.
+A metered stage is ineligible when an earlier required deterministic gate has failed.
 
 ## Development and repair policy
 
@@ -32,17 +46,18 @@ During development or repair:
 
 - prefer deterministic checks first;
 - run only the affected targeted regression unless shared coupling justifies broader coverage;
+- prefer eligible already-included subscription capacity over additional metered API spend;
 - do not rerun an unchanged scored suite to diagnose infrastructure;
 - do not rerun an unchanged professional failure merely to seek a better stochastic result;
 - preserve valid completed evidence when the evaluator protocol allows compatible resume.
 
 ## Pre-run budget gate
 
-Before authorizing a paid scored run, record at minimum:
+Before authorizing a metered scored run, record at minimum:
 
 - objective and decision impact;
 - exact candidate/version and evaluation cycle;
-- why reusable evidence is insufficient;
+- why deterministic, reusable, or eligible subscription-backed evidence is insufficient;
 - expected call/token/quota envelope when observable;
 - protected reserve for release/recovery;
 - stop condition and retry limit;
@@ -60,6 +75,6 @@ Infrastructure/configuration failure: repair first, then rerun the smallest stag
 
 Transient provider failure: bounded retry only with a concrete reason to expect success.
 
-Quota/budget exhaustion: stop, preserve completed valid evidence, and do not infer PASS from partial completion.
+Quota/budget exhaustion: stop, preserve completed valid evidence, and do not infer PASS from partial completion. Do not repeatedly retry the same unchanged quota-bound Gemini, Groq, or other provider route. Move to another eligible route only if the frozen protocol and evidence validity remain intact; otherwise defer or revalidate the migration.
 
 Professional failure: revise the candidate or follow an explicitly preregistered repeated-trial policy.
