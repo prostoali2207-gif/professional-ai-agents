@@ -1,0 +1,39 @@
+name: Visual Design Art Direction heldout r3 static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py'
+      - 'architect/evaluation/visual-design-art-direction/heldout-remediation-r3-preregistration.md'
+      - '.github/workflows/visual-design-art-direction-heldout-r3-*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py'
+      - 'architect/evaluation/visual-design-art-direction/heldout-remediation-r3-preregistration.md'
+      - '.github/workflows/visual-design-art-direction-heldout-r3-*.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Candidate-free deterministic preflight
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py').read_text()
+          r=Path('architect/evaluation/visual-design-art-direction/heldout-remediation-r3-preregistration.md').read_text()
+          assert "CANDIDATE_COMMIT = r2.CANDIDATE_COMMIT" in p
+          assert "MAX_ATTEMPTS_PER_FAMILY = 3" in p
+          assert "'response_format':" in p and "'mime_type': 'application/json'" in p and "'schema': AUTHOR_SCHEMA" in p
+          assert "case['family'] = family" in p and "case['pair_id'] = r2.PAIR_IDS.get(family)" in p
+          assert "candidate_calls': 0" in p
+          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          assert 'Maximum author attempts: **3 per family**' in r
+          assert 'first' in r.lower() and 'accept' in r.lower()
+          print('VISUAL_HELDOUT_R3_STATIC_PASS')
+          PY
