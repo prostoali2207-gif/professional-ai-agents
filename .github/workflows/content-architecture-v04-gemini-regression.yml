@@ -40,7 +40,7 @@ jobs:
           echo 'model=gemini-3.5-flash-lite'
           echo 'planned_provider_calls=1 unscored tool-canary + up to 36 scored candidate runs; extra tool rounds only when fixture behavior requires them'
           echo 'reusable_evidence=v0.3/v0.4 OpenAI infrastructure evidence retained; no behavioral PASS reused across provider switch'
-          echo 'stop_conditions=sealed integrity failure, credential failure, canary failure, execution failure, targeted/P0 professional failure'
+          echo 'stop_conditions=sealed integrity failure, missing executable grader contract, credential failure, canary failure, execution failure, targeted/P0 professional failure'
           echo 'retry_limit=0 blind retries'
           echo 'provider_quota_state=unknown; fail closed on quota/rate/auth error'
 
@@ -57,6 +57,41 @@ jobs:
           python architect/evaluation/content-architecture-heldout/build_sealed_runtime.py \
             --parts-dir architect/evaluation/content-architecture-heldout/sealed.parts \
             --out "$RUNNER_TEMP/content-architecture-v04"
+
+      - name: Fail closed if executable grader contract is absent
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04'
+          manifest=json.loads((root/'manifest.json').read_text())
+          missing=[]
+          for meta in manifest.get('fixtures',[]):
+              fixture=json.loads((root/meta['path']).read_text())
+              grader=fixture.get('mechanical_grader')
+              has_mechanical=bool(grader) and any(bool(grader.get(k)) for k in (
+                  'required_equals','required_absent','required_contains','artifact_exists','artifact_json_equals'
+              ))
+              if not has_mechanical:
+                  missing.append(meta.get('fixture_id') or meta.get('id'))
+          external=manifest.get('external_grader_contract')
+          if missing and not external:
+              raise SystemExit(
+                  'NOT EXECUTABLE: restored Content Architecture cycle has no executable grader contract; '
+                  f'{len(missing)} scored fixtures would become PENDING_EXTERNAL_GRADER. '
+                  'Do not spend provider quota on this retired cycle.'
+              )
+          if external:
+              required=('implementation_path','sha256','contract_version')
+              absent=[k for k in required if not external.get(k)]
+              if absent:
+                  raise SystemExit('NOT EXECUTABLE: external grader contract incomplete: '+','.join(absent))
+              p=(root/external['implementation_path']).resolve()
+              if root.resolve() not in p.parents and p!=root.resolve():
+                  raise SystemExit('NOT EXECUTABLE: external grader path escapes restored corpus')
+              if not p.is_file():
+                  raise SystemExit('NOT EXECUTABLE: external grader implementation missing')
+          print(json.dumps({'status':'PASS','executable_grader_contract':True}))
+          PY
 
       - name: Install reviewed Gemini adapter from main
         run: |
