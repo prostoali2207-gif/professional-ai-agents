@@ -1,0 +1,54 @@
+name: Visual Design Art Direction r3 corpus calibration static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r3-corpus-calibration-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py'
+      - '.github/workflows/visual-design-art-direction-r3-corpus-calibration*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r3-corpus-calibration-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py'
+      - '.github/workflows/visual-design-art-direction-r3-corpus-calibration*.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile exact R3 corpus calibration runner
+        run: python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py
+      - name: Verify frozen bindings and zero-candidate path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/calibration/run_r3_corpus_calibration_v0_1.py').read_text()
+          prereg=Path('architect/evaluation/visual-design-art-direction/r3-corpus-calibration-preregistration.md').read_text()
+          workflow=Path('.github/workflows/visual-design-art-direction-r3-corpus-calibration.yml').read_text()
+          required=[
+            '33265201398','af43f2d12187e1825c596239a7313fd8b7e5da63','9718569692',
+            'visual-design-art-direction-v0-1-encrypted-heldout-pack-r3',
+            'sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b',
+            'e8be839b02f181193afe076839c6ae94fb477a9b','gemini-3.5-flash-lite','openai/gpt-oss-120b',
+            'PER_JUDGE_MIN = 0.80','COMBINED_MIN = 0.90','MAX_DISAGREEMENT = 0.25',
+            'TRANSIENT_5XX_RETRIES = 1',
+          ]
+          assert all(x in p for x in required)
+          assert all(x in prereg for x in required[:8])
+          forbidden=['CANDIDATE_EXECUTOR_CMD','candidate_response','run_candidate','candidate_output']
+          assert not any(x in p for x in forbidden)
+          assert "candidate_calls': 0" in p
+          assert "github.event.comment.body == '/calibrate-visual-heldout-r3'" in workflow
+          assert "startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r3 ')" in workflow
+          assert 'pull_request:' not in workflow and 'push:' not in workflow
+          print('VISUAL_R3_CORPUS_CALIBRATION_STATIC_PASS')
+          PY
