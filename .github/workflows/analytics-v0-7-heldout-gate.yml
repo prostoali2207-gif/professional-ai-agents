@@ -1,0 +1,110 @@
+name: Analytics v0.7 heldout gate
+
+# Manual only. This stage consumes provider quota, so per
+# architect/evaluation/qualification-platform/paid-execution-policy.md it must never be
+# reachable from push or pull_request.
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Model family to execute'
+        required: true
+        default: gemini
+        type: choice
+        # Groq/Qwen is omitted deliberately: the v0.5 gate established a hard free-tier cap of
+        # 8000 tokens per minute against a request of 8273, and the v0.6 assembly is larger.
+        options: [gemini]
+      trials:
+        description: 'Independent trials per case (preregistered default is 3)'
+        required: false
+        default: '3'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  heldout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANALYTICS_CANDIDATE_MANIFEST: architect/evaluation/growth-experimentation-analytics/candidate-freeze-v0.7.json
+      ANALYTICS_CANDIDATE_TIMEOUT_SECONDS: '300'
+      ANALYTICS_MODEL_TIMEOUT_SECONDS: '240'
+      ANALYTICS_TEMPERATURE: '0'
+      ANALYTICS_PACE_SECONDS: '3'
+      PREREGISTRATION: architect/evaluation/growth-experimentation-analytics/preregistration-v0.7-heldout-2026-08-29.json
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install the reference contract validator
+        run: pip install --quiet jsonschema
+
+      - name: Deterministic checks before any credential is used
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            architect/evaluation/growth-experimentation-analytics/executor_gemini.py \
+            architect/evaluation/growth-experimentation-analytics/executor_groq.py \
+            architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py \
+            architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py \
+            architect/evaluation/growth-experimentation-analytics/oracle_audit.py \
+            architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_oracle_repairs_v07.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_oracle_audit.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_claim_scope_regression_v06.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_metric_precedence_regression_v05.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_decision_record_stability_v04.py
+          python3 architect/evaluation/growth-experimentation-analytics/oracle_audit.py --cycle v07
+
+      - name: Bind provider
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.provider }}" = "gemini" ]; then
+            echo "ANALYTICS_CANDIDATE_CMD=python3 architect/evaluation/growth-experimentation-analytics/executor_gemini.py" >> "$GITHUB_ENV"
+            echo "ANALYTICS_MODEL=gemini-3.5-flash-lite" >> "$GITHUB_ENV"
+            echo "GEMINI_THINKING_LEVEL=medium" >> "$GITHUB_ENV"
+          else
+            echo "ANALYTICS_CANDIDATE_CMD=python3 architect/evaluation/growth-experimentation-analytics/executor_groq.py" >> "$GITHUB_ENV"
+            echo "ANALYTICS_MODEL=qwen/qwen3.6-27b" >> "$GITHUB_ENV"
+          fi
+
+      - name: Require the selected provider credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.provider }}" = "gemini" ]; then
+            test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing' >&2; exit 2; }
+          else
+            test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing' >&2; exit 2; }
+          fi
+
+      - name: Run preregistered held-out gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          set -euo pipefail
+          python3 architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py \
+            --preregistration "$PREREGISTRATION" \
+            --trials "${{ inputs.trials }}" \
+            --outdir "$RUNNER_TEMP/analytics-v07-heldout"
+
+      - name: Preserve every trial
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-v0-7-heldout-${{ inputs.provider }}
+          path: ${{ runner.temp }}/analytics-v07-heldout/*.json
+          if-no-files-found: ignore
+          retention-days: 14
