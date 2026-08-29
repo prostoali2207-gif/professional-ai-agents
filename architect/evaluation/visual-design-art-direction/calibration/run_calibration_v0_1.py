@@ -32,7 +32,7 @@ def decrypt():
     with zipfile.ZipFile(z) as q:q.extractall(td.name)
     return td, json.load(open(Path(td.name)/'calibration.json')), json.load(open(Path(td.name)/'freeze-record.json'))
 def judge(provider,model,brief,a,b,dims):
-    payload={'role':'You are a blind senior landing-page art-direction assessor.','brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity. Return JSON only: {"winner":"A|B","dimension_notes":{"dimension":"short reason"}}.'}
+    payload={'role':'You are a blind senior landing-page art-direction assessor.','brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity. Return only one valid JSON object with schema {"winner":"A|B","dimension_notes":{"dimension":"short reason"}}, with no prose or markdown.'}
     if provider=='gemini':
         key=os.environ.get('GEMINI_API_KEY','').strip()
         if not key: raise RuntimeError('GEMINI_API_KEY missing')
@@ -41,10 +41,12 @@ def judge(provider,model,brief,a,b,dims):
         with urllib.request.urlopen(req,timeout=180) as r:return parse(gt(json.loads(r.read().decode())))
     key=os.environ.get('GROQ_API_KEY','').strip()
     if not key: raise RuntimeError('GROQ_API_KEY missing')
-    body={'model':model,'messages':[{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'response_format':{'type':'json_object'},'reasoning_format':'hidden','reasoning_effort':'default','temperature':0.6}
+    body={'model':model,'messages':[{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'reasoning_format':'hidden','reasoning_effort':'default','temperature':0.6}
     req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.1'})
     try:
-        with urllib.request.urlopen(req,timeout=180) as r:return json.loads(json.loads(r.read().decode())['choices'][0]['message']['content'])
+        with urllib.request.urlopen(req,timeout=180) as r:
+            content=json.loads(r.read().decode())['choices'][0]['message']['content']
+            return parse(content)
     except urllib.error.HTTPError as exc:
         detail=exc.read().decode('utf-8','replace')[-1500:]
         raise RuntimeError(f'Groq judge HTTP {exc.code}: {detail}') from None
