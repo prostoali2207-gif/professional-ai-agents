@@ -47,7 +47,7 @@ jobs:
               blob = subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
               canonical += f'{path}:{blob}\n'
           actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
-          assert actual == 'sha256:403a0c26fc9d58f64111afd998790919408b8922eeb026295dd61030a9beb93e'
+          assert actual == 'sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
           assert actual == m['artifact']['content_digest']
           print('candidate digest verified', actual)
           PY
