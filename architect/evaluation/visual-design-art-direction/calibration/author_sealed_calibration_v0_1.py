@@ -46,12 +46,13 @@ def author():
 def audit_one(item):
     key=os.environ.get('GROQ_API_KEY','').strip()
     if not key: raise RuntimeError('GROQ_API_KEY missing')
-    task={'role':'You are an independent senior landing-page art-direction assessor and evaluation scientist.','task':'Audit and, only if needed, repair this single calibration pair before judge calibration. Preserve its archetype and schema. Ensure the expected winner is professionally defensible, the pair is realistic, contains no answer leakage, and tests causal art-direction judgment rather than verbosity. For justified_rule_breaking and advanced_media_justified, a professionally justified non-conservative response must be allowed to win. For advanced_media_ornamental, restraint should win. Return the repaired item as one JSON object only.','dimensions':DIMS,'item':item}
-    body={'model':AUDIT_MODEL,'messages':[{'role':'user','content':json.dumps(task,ensure_ascii=False)}],'response_format':{'type':'json_object'},'reasoning_format':'hidden','reasoning_effort':'default','temperature':0.6}
+    task={'role':'You are an independent senior landing-page art-direction assessor and evaluation scientist.','task':'Audit and, only if needed, repair this single calibration pair before judge calibration. Preserve its archetype and schema. Ensure the expected winner is professionally defensible, the pair is realistic, contains no answer leakage, and tests causal art-direction judgment rather than verbosity. For justified_rule_breaking and advanced_media_justified, a professionally justified non-conservative response must be allowed to win. For advanced_media_ornamental, restraint should win. Return only the repaired item as one valid JSON object, with no prose or markdown.','dimensions':DIMS,'item':item}
+    body={'model':AUDIT_MODEL,'messages':[{'role':'user','content':json.dumps(task,ensure_ascii=False)}],'reasoning_format':'hidden','reasoning_effort':'default','temperature':0.6}
     req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-auditor/0.1'})
     try:
         with urllib.request.urlopen(req,timeout=180) as r:
-            return json.loads(json.loads(r.read().decode())['choices'][0]['message']['content'])
+            content=json.loads(r.read().decode())['choices'][0]['message']['content']
+            return parse(content)
     except urllib.error.HTTPError as exc:
         detail=exc.read().decode('utf-8','replace')[-1500:]
         raise RuntimeError(f'Groq audit HTTP {exc.code}: {detail}') from None
