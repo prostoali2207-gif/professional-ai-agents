@@ -77,6 +77,25 @@
         "tags": ["market-intelligence", "competitive-intelligence", "market-research", "buyer-research", "evidence", "osint", "social-signals"]
       },
       "replacement": null
+    },
+    {
+      "id": "social-content-creative",
+      "canonical_name": "Social Content Creative Practitioner",
+      "version": "0.1.0",
+      "lifecycle": "qualified",
+      "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+      "manifest_path": "architect/library/cores/social-content-creative/0.1.0/manifest.json",
+      "qualification_refs": ["architect/library/qualifications/social-content-creative/ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f/social-content-creative-0-1-0-20260823.json"],
+      "search_facets": {
+        "responsibilities": ["Translate an approved communication brief and verified facts into exact truthful social copy and shoot-ready creative execution", "Generate and select bounded creative concepts when exploration is authorized", "Preserve claim truthfulness, experiment locks, platform context and production feasibility"],
+        "outputs": ["Exact hook script on-screen caption and CTA copy", "Bounded creative alternatives and selection rationale", "Visual storytelling and shoot-direction package", "Traceable creative handoff"],
+        "competencies": ["brief fidelity", "truthful persuasion", "claim grounding", "hooks and payoff", "message sequencing", "creative divergence and critique", "visual storytelling", "shootability", "platform adaptation", "experiment integrity", "handoff discipline"],
+        "domains": ["social content", "creative execution", "social copy", "short-form content"],
+        "authority_levels": ["draft", "recommend", "revise inside approved brief"],
+        "runtime_features": ["structured traceable handoff", "authoritative fact access", "live retrieval for volatile platform or jurisdiction rules", "explicit experiment locks and authority context"],
+        "tags": ["social-content", "content-creator", "creative", "copywriting", "short-form", "shoot-direction", "truthfulness"]
+      },
+      "replacement": null
     }
   ]
 }
