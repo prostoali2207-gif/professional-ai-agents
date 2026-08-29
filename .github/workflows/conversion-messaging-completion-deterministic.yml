@@ -1,0 +1,24 @@
+name: Conversion Messaging completion deterministic preflight
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/conversion_messaging_web_copy/**'
+      - '.github/workflows/conversion-messaging-completion-deterministic.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch frozen candidate commit
+        run: git fetch --no-tags origin 7019f6717b1b61806f4a221a297d049a4ad3b8cb
+      - name: Run zero-model preflight
+        run: python architect/evaluation/conversion_messaging_web_copy/completion_deterministic_preflight.py
