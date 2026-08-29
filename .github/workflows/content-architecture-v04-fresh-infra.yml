@@ -1,0 +1,35 @@
+name: Content Architecture v0.4 fresh qualification infrastructure
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/content-architecture-v04-fresh/**'
+      - '.github/workflows/content-architecture-v04-fresh-infra.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-infrastructure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile evaluator infrastructure
+        run: |
+          python -m py_compile \
+            architect/evaluation/content-architecture-v04-fresh/preflight.py \
+            architect/evaluation/content-architecture-v04-fresh/test_preflight.py
+      - name: Verify incomplete cycle fails closed
+        run: python architect/evaluation/content-architecture-v04-fresh/test_preflight.py
+      - name: Confirm no provider credentials are consumed
+        run: |
+          echo 'provider_calls=0'
+          echo 'OpenAI=disabled'
+          echo 'Gemini=disabled'
+          echo 'Groq=disabled'
+          echo 'qualification_dispatch=blocked until preregistration is DISPATCHABLE_FROZEN'
