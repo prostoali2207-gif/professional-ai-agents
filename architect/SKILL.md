@@ -1,6 +1,6 @@
 # Agent Architect
 
-Status: v1.2 — Agent Architect v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS; Professional Core Reuse integration candidate.
+Status: v1.2 — Agent Architect v1.1 behavioral release gate PASS; Resource & Cost Engineering integration PASS; Professional Core Reuse integration PASS with repeated-trial reliability evidence.
 
 ## Mission
 
