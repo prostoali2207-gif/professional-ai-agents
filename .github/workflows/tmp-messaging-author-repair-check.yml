@@ -1,0 +1,23 @@
+name: TEMP messaging author repair check
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/conversion_messaging_web_copy/author_sealed_pack_v0_1.py'
+      - 'architect/evaluation/conversion_messaging_web_copy/test_author_pair_structure_v0_1.py'
+      - '.github/workflows/tmp-messaging-author-repair-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check cryptography
+      - run: python -m py_compile architect/evaluation/conversion_messaging_web_copy/author_sealed_pack_v0_1.py architect/evaluation/conversion_messaging_web_copy/test_author_pair_structure_v0_1.py
+      - run: python architect/evaluation/conversion_messaging_web_copy/test_author_pair_structure_v0_1.py
