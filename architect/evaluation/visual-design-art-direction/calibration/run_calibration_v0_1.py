@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, random, tempfile, urllib.request, zipfile
+import json, os, random, tempfile, time, urllib.error, urllib.request, zipfile
 from pathlib import Path
 from cryptography.fernet import Fernet
 
 ROOT=Path.cwd(); BASE=ROOT/'architect/evaluation/visual-design-art-direction/calibration'; CYCLE='visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration'
 GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions'; GROQ=os.environ.get('GROQ_BASE_URL','https://api.groq.com/openai/v1').rstrip('/')+'/chat/completions'
-JUDGES=[('gemini','gemini-3.5-flash-lite'),('groq','qwen/qwen3.6-27b')]
+JUDGES=[('gemini','gemini-3.5-flash-lite'),('groq','openai/gpt-oss-120b')]
+JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner':{'type':'string','enum':['A','B']},'dimension_notes':{'type':'object','additionalProperties':{'type':'string'}}},'required':['winner','dimension_notes']}
 
 def parse(t):
     t=t.strip()
     if t.startswith('```'): t='\n'.join(t.splitlines()[1:-1]).strip()
     return json.loads(t)
+def pace_groq():
+    interval=float(os.environ.get('GROQ_MIN_INTERVAL_SECONDS','0')); p=Path(os.environ.get('GROQ_PACE_FILE','/tmp/visual-groq-pace'))
+    if interval<=0:return
+    if p.exists():
+        try:last=float(p.read_text().strip()); delay=interval-(time.time()-last)
+        except Exception:delay=0
+        if delay>0: time.sleep(delay)
+    p.write_text(str(time.time()))
 def gt(raw):
     if isinstance(raw.get('output_text'),str): return raw['output_text']
     for step in reversed(raw.get('steps') or []):
@@ -32,18 +41,23 @@ def decrypt():
     with zipfile.ZipFile(z) as q:q.extractall(td.name)
     return td, json.load(open(Path(td.name)/'calibration.json')), json.load(open(Path(td.name)/'freeze-record.json'))
 def judge(provider,model,brief,a,b,dims):
-    payload={'brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity. Return JSON only: {"winner":"A|B","dimension_notes":{"dimension":"short reason"}}.'}
+    payload={'role':'You are a blind senior landing-page art-direction assessor.','brief':brief,'output_A':a,'output_B':b,'dimensions':dims,'task':'Choose the professionally stronger landing-page visual-design/art-direction output. Judge causal appropriateness, craft, function, mobile behavior, reference independence and boundary discipline as relevant. Do not reward verbosity.'}
     if provider=='gemini':
         key=os.environ.get('GEMINI_API_KEY','').strip()
         if not key: raise RuntimeError('GEMINI_API_KEY missing')
-        body={'model':model,'system_instruction':'You are a blind senior art-direction assessor. Return JSON only.','input':json.dumps(payload,ensure_ascii=False),'store':False,'generation_config':{'thinking_level':'medium'}}
+        body={'model':model,'system_instruction':'You are a blind senior art-direction assessor. Return JSON only with winner A or B and concise dimension_notes.','input':json.dumps(payload,ensure_ascii=False),'store':False,'generation_config':{'thinking_level':'medium'}}
         req=urllib.request.Request(GEMINI,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'x-goog-api-key':key,'Content-Type':'application/json'})
         with urllib.request.urlopen(req,timeout=180) as r:return parse(gt(json.loads(r.read().decode())))
     key=os.environ.get('GROQ_API_KEY','').strip()
     if not key: raise RuntimeError('GROQ_API_KEY missing')
-    body={'model':model,'messages':[{'role':'system','content':'You are a blind senior art-direction assessor. Return JSON only.'},{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'response_format':{'type':'json_object'},'reasoning_format':'hidden','reasoning_effort':'default','temperature':0}
-    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.1'})
-    with urllib.request.urlopen(req,timeout=180) as r:return json.loads(json.loads(r.read().decode())['choices'][0]['message']['content'])
+    body={'model':model,'messages':[{'role':'user','content':json.dumps(payload,ensure_ascii=False)}],'response_format':{'type':'json_schema','json_schema':{'name':'visual_judgment','strict':True,'schema':JUDGE_SCHEMA}},'include_reasoning':False,'reasoning_effort':'medium','temperature':0}
+    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-judge/0.2'})
+    pace_groq()
+    try:
+        with urllib.request.urlopen(req,timeout=180) as r:return parse(json.loads(r.read().decode())['choices'][0]['message']['content'])
+    except urllib.error.HTTPError as exc:
+        detail=exc.read().decode('utf-8','replace')[-1500:]
+        raise RuntimeError(f'Groq judge HTTP {exc.code}: {detail}') from None
 def main():
     td,items,freeze=decrypt(); results=[]
     try:
