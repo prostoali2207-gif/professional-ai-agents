@@ -1,0 +1,95 @@
+{
+  "schema_version": "2.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-09-01",
+  "gate_id": "analytics-v1.0-twotier-heldout-2026-09-01",
+  "candidate_id": "growth-experimentation-measurement-v1.0-consolidated",
+  "candidate_assembly_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "freeze_ref": "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.0.json",
+  "frozen_from_commit": "221264b",
+  "purpose": "Final held-out qualification of consolidated candidate v1.0 under the two-tier stability criterion adopted in stability-criterion-audit-2026-08-31.md. The candidate, the professional model, the grader, the generator, the fixtures and both contracts are unchanged and byte-identical to freeze v1.0; only the verdict arithmetic differs.",
+  "criterion_authority": "architect/evaluation/growth-experimentation-analytics/stability-criterion-audit-2026-08-31.md",
+  "heldout_seed": 20260901,
+  "seed_provenance": "Not used by any previous gate. Burned: 20260827 (v0.4), 20260828 (v0.6), 20260829 (v0.7), 20260830 (v0.8), 20260831 (v1.0 unanimity gate). Seed 999999 was a no-provider wiring dry-run and produced no graded evidence.",
+  "per_family": 2,
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "trials_per_fixture": 7,
+  "total_trials": 70,
+  "retries_permitted": 0,
+  "best_of_n": false,
+  "tier1_tolerance": 0,
+  "tier2_per_fixture_cap": 2,
+  "tier2_total_cap": 6,
+  "tier_map_digest": "sha256:11f18a82f63493528d281adc69ac3cf50325fd084ebc40b9d96e04f2054f40e4",
+  "pass_rule": "PASS iff: zero tier-1 trials across all 70; tier-2 <= 2 on every fixture; tier-2 <= 6 in total; and zero INVALID trials. Any tier-1 failure is a FAIL. Either tier-2 cap exceeded is a FAIL. Any INVALID trial makes the gate INVALID -- not PASS and not FAIL -- because the apparatus did not measure the candidate on that trial. Best-of-N is not a pass and no trial may be retried.",
+  "tier_definitions": {
+    "TIER1": "Professional judgment. Every grader failure except those the frozen tier map assigns to TIER2. Zero tolerance across the whole gate.",
+    "TIER2": "The candidate produced output that is not a valid instance of the frozen output contract: a syntactic JSON parse failure, or a frozen-schema violation. Counted and capped. A TIER2 trial is never a judgment PASS -- its professional content was never assessed.",
+    "INVALID": "The measurement apparatus failed: provider transport or HTTP error, unusable response envelope, or harness misconfiguration. No candidate output exists, so there is nothing to score. Voids the gate and preserves the seed."
+  },
+  "tier_map_binding": "Classification is performed by the frozen classifier below and is a pure, total function of the failure text alone. It is not given the fixture, family, trial index, sibling outcomes, or whether the gate would otherwise pass, so no trial can be reinterpreted after a result is known. The tier map digest above is checked at run time and the run aborts on drift.",
+  "generator": {
+    "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+    "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+  },
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+    "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+  },
+  "classifier": {
+    "path": "architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py",
+    "git_blob_sha": "b62fe0f77417357f991aeebbca5ae3edc3f6ad98"
+  },
+  "runner": {
+    "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v10_twotier.py",
+    "git_blob_sha": "d790ba7574fa8af29c20e0ef533f155639d3df39"
+  },
+  "frozen_for_this_cycle": [
+    "candidate assembly (one consolidated component)",
+    "output contract result-v4",
+    "fixture contract fixture-v3",
+    "generator heldout_generator_v07.py",
+    "grader grader_v07_structural.py",
+    "classifier trial_outcome_classifier.py",
+    "runner run_heldout_gate_v10_twotier.py",
+    "the tier map, both tier-2 caps, the tier-1 zero tolerance and the trial count"
+  ],
+  "case_provenance": "Cases are generated at run time from this preregistered seed by the frozen generator, with expectations derived mechanically from the sampled parameters. The culpable arm's position is randomised. Seed 20260830 has not been used by any previous gate.",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py"
+    }
+  ],
+  "excluded_model_families": [
+    {
+      "family": "Groq/Qwen",
+      "reason": "Ineligible at its free tier: HTTP 413, 8000 tokens per minute against a request of 8273 measured in v0.5, and this assembly is larger again."
+    },
+    {
+      "family": "OpenAI",
+      "reason": "Excluded by explicit evaluator instruction; no OpenAI quota may be consumed."
+    },
+    {
+      "family": "Claude",
+      "reason": "No automated executor or credential path exists in this repository."
+    }
+  ],
+  "grader_change_policy": "The generator, grader, classifier and runner blobs above are fixed for this gate and must not be edited after any candidate output is observed. A construct defect requires a recorded burn and a fresh seed.",
+  "instrument_unchanged_since": "Generator, grader, output contract and fixture contract are byte-identical to those bound by freezes v0.7, v0.8 and v1.0. The runner is new because the verdict arithmetic is new; it shares the execution loop of run_heldout_gate_v07.py and calls the same grader with the same arguments.",
+  "post_gate_policy": "No automatic repair and no automatic rerun. Whatever this gate returns is reported as observed. A FAIL ends the cycle. An INVALID means nothing about the candidate was measured and the same seed may be re-run once the apparatus fault is fixed.",
+  "quota_note": "The Gemini per-day request limit for this key was not verifiable from the build environment and remains unverified. If the provider throttles mid-run the affected trials classify INVALID and the gate voids rather than mis-scoring throttling as candidate behavior.",
+  "qualification_boundary": [
+    "A PASS here is a fresh post-freeze held-out result on ONE model family for five generated construct families. It is not a release qualification of the professional core.",
+    "Independence is partial: procedural generation removes case-level authorship and leakage, but the same party wrote the generator, the oracle and the candidate repairs.",
+    "Cross-model portability is untested in this cycle.",
+    "Library admission still requires an externally authored held-out set and the cross-model release protocol."
+  ]
+}
