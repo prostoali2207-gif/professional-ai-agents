@@ -10,7 +10,7 @@ AUTHOR_MODEL='gemini-3.5-flash-lite'; AUDIT_MODEL='openai/gpt-oss-120b'
 GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions'; GROQ=os.environ.get('GROQ_BASE_URL','https://api.groq.com/openai/v1').rstrip('/')+'/chat/completions'
 ARCHETYPES=['competent_generic','derivative_reference_copy','overdesigned_spectacle','function_damaging_novelty','collapsed_desktop_mobile','faithful_but_poor_render','craft_weak_hierarchy','justified_rule_breaking','advanced_media_justified','advanced_media_ornamental']
 DIMS=['brief_appropriateness','reference_independence','concept_distinctiveness','craft','function_clarity','mobile_art_direction','advanced_media_judgment','authority_boundary']
-ITEM_SCHEMA={'type':'object','additionalProperties':False,'properties':{'id':{'type':'string'},'archetype':{'type':'string','enum':ARCHETYPES},'brief':{'type':'string'},'sample_strong':{'type':'string'},'sample_challenger':{'type':'string'},'expected_winner':{'type':'string','enum':['strong','challenger']},'relevant_dimensions':{'type':'array','items':{'type':'string','enum':DIMS},'minItems':1,'uniqueItems':True}},'required':['id','archetype','brief','sample_strong','sample_challenger','expected_winner','relevant_dimensions']}
+ITEM_SCHEMA={'type':'object','additionalProperties':False,'properties':{'id':{'type':'string'},'archetype':{'type':'string','enum':ARCHETYPES},'brief':{'type':'string'},'sample_strong':{'type':'string'},'sample_challenger':{'type':'string'},'expected_winner':{'type':'string','enum':['strong','challenger']},'relevant_dimensions':{'type':'array','items':{'type':'string','enum':DIMS},'minItems':1}},'required':['id','archetype','brief','sample_strong','sample_challenger','expected_winner','relevant_dimensions']}
 
 def sha(b:bytes)->str:return hashlib.sha256(b).hexdigest()
 def parse(t):
@@ -34,6 +34,7 @@ def validate(items):
             if k not in x: raise RuntimeError(f'missing {k}')
         if x['expected_winner'] not in {'strong','challenger'}: raise RuntimeError('winner invalid')
         if not set(x['relevant_dimensions']).issubset(DIMS): raise RuntimeError('dimension invalid')
+        if len(x['relevant_dimensions'])!=len(set(x['relevant_dimensions'])): raise RuntimeError('duplicate dimensions invalid')
     return items
 
 def author():
