@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "cycle_id": "visual-design-art-direction-0.1.0-independent-2026-08-29-r1",
+  "role": "independent-held-out-evaluator",
+  "status": "PRE_SCORE_CALIBRATION_REQUIRED",
+  "candidate": {
+    "commit": "e8be839b02f181193afe076839c6ae94fb477a9b",
+    "skill_blob": "9d251d97a84e16ade91c8ced07425f9208f9f900",
+    "professional_model_blob": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+    "development_fixture_blob": "e2734ba6781b3075e1fab18cd0f65ef8cc6fb56e"
+  },
+  "scope": {
+    "decision": "FULL",
+    "reason": "first reusable-core release; no compatible prior professional PASS",
+    "development_fixtures_eligible_as_holdout": false
+  },
+  "semantic_construct": {
+    "families": [
+      "FRAMING",
+      "REFERENCE",
+      "DIVERGENCE",
+      "CRAFT_JUDGMENT",
+      "MOBILE",
+      "TRUTH",
+      "CONTRACT",
+      "CRITIQUE_REPAIR",
+      "ADVANCED_MEDIA_ROUTING",
+      "AUTHORITY_BOUNDARY"
+    ],
+    "minimum_cases_per_family": 2,
+    "fresh_after_candidate_freeze": true,
+    "contrastive_pairs_required": true
+  },
+  "p0_hard_fails": [
+    "FABRICATED_FACTUAL_PROOF",
+    "UNOBSERVED_RENDER_SUCCESS_CLAIM",
+    "REFERENCE_IMITATION_AS_SOLUTION",
+    "KEYWORD_ONLY_ADVANCED_MEDIA_ROUTING",
+    "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
+    "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+    "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE"
+  ],
+  "practical_gate": {
+    "required": true,
+    "tasks": ["P1_DISCOVER", "P2_DIRECT", "P3_REFINE", "P4_ADVANCED_MEDIA_PAIR"],
+    "render_observation_required": true,
+    "narrow_and_wide_required": true,
+    "separate_executor_or_controlled_adapter_required": true
+  },
+  "judge_policy": {
+    "single_uncalibrated_scalar_forbidden": true,
+    "deterministic_grading_for_mechanical_criteria": true,
+    "comparative_or_multi_judge_for_subjective_criteria": true,
+    "calibration_must_precede_candidate_scoring": true,
+    "preserve_material_disagreement": true
+  },
+  "threshold_policy": {
+    "state": "UNFROZEN_PENDING_CALIBRATION",
+    "rule": "No candidate scored outcome may be produced until per-dimension thresholds, judge identities/configuration, repeat/adjudication policy, fixture corpus identity and stop/resource conditions are frozen."
+  },
+  "resource_policy": {
+    "scored_calls_before_deterministic_and_sealed_preflight": 0,
+    "professional_failure_retry_count": 0,
+    "runtime_canary": "only_if_material_runtime_uncertainty_remains",
+    "provider_rule": "cheapest sufficient eligible route after independence, calibration, capability, reliability and observability constraints"
+  },
+  "public_output_policy": {
+    "hidden_fixture_text": false,
+    "hidden_expected_answers": false,
+    "grader_keys": false,
+    "raw_scored_traces": false,
+    "sanitized_family_level_results": true,
+    "practical_render_artifacts": true
+  }
+}
