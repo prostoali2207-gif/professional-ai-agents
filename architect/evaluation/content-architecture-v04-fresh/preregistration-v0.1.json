@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "status": "INFRASTRUCTURE_ONLY_NOT_DISPATCHABLE",
+  "created_at": "2026-08-29",
+  "gate_id": "content-architecture-v0.4-fresh-heldout-2026-08-29-r1",
+  "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_mutation_allowed": false,
+  "purpose": "Fresh independent post-freeze qualification cycle replacing the retired unscorable Content Architecture cycle.",
+  "retired_evidence_policy": "The 35 PENDING_EXTERNAL_GRADER records from run 32635329000 are diagnostic execution evidence only and may not be reused as PASS/FAIL qualification evidence.",
+  "required_families": ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
+  "p0_hard_failures_allowed": 0,
+  "per_family_min_pass_rate": 0.80,
+  "aggregate_p1_min_pass_rate": 0.90,
+  "deterministic_invariant_pass_rate": 1.0,
+  "stochastic_policy": {
+    "repeated_families": ["F2","F5","F6","F11","F12"],
+    "trials_per_designated_fixture": 3,
+    "all_repeats_must_pass": true,
+    "fresh_isolated_context_per_trial": true,
+    "best_of_n_forbidden": true
+  },
+  "required_post_gate_checks": ["UAE_COMPOSITION","PRACTICAL_HANDOFF"],
+  "grader_contract": {
+    "path": "architect/evaluation/content-architecture-v04-fresh/GRADER-CONTRACT-v0.1.md",
+    "implementation_path": null,
+    "implementation_blob_sha": null,
+    "calibration_evidence_path": null,
+    "status": "NOT_YET_FROZEN"
+  },
+  "hidden_corpus": {
+    "identity_sha256": null,
+    "sealed_transport_path": null,
+    "status": "NOT_YET_AUTHORED"
+  },
+  "runtime_eligibility": {
+    "provider_backed_calls_allowed_before_dispatchable": false,
+    "openai_spend_allowed": false,
+    "gemini_spend_allowed_during_infrastructure_phase": false,
+    "groq_spend_allowed_during_infrastructure_phase": false,
+    "codex_or_local_static_work_allowed": true
+  },
+  "budget_gate": {
+    "objective": "Obtain valid independent qualification evidence with no unscorable provider calls.",
+    "preflight_required": true,
+    "checkpoint_resume_required": true,
+    "blind_retries_allowed": 0,
+    "dispatch_condition": "preflight exits PASS and preregistration status is DISPATCHABLE_FROZEN"
+  },
+  "integrity_rules": [
+    "No scored candidate execution before hidden corpus identity and executable grader implementation are frozen.",
+    "No reinterpretation of retired grader-key-v0.1.json.",
+    "No fixture or grader changes after any scored candidate output is observed; a construct defect burns the cycle and requires a fresh gate identity.",
+    "Mechanical invariants and professional judgment must be separated.",
+    "Public reports must not expose hidden fixtures, expected answers, grader keys, or sealed evaluator material."
+  ]
+}
