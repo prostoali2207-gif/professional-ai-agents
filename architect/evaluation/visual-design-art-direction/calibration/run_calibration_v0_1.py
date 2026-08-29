@@ -7,7 +7,8 @@ from cryptography.fernet import Fernet
 ROOT=Path.cwd(); BASE=ROOT/'architect/evaluation/visual-design-art-direction/calibration'; CYCLE='visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration'
 GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions'; GROQ=os.environ.get('GROQ_BASE_URL','https://api.groq.com/openai/v1').rstrip('/')+'/chat/completions'
 JUDGES=[('gemini','gemini-3.5-flash-lite'),('groq','openai/gpt-oss-120b')]
-JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner':{'type':'string','enum':['A','B']},'dimension_notes':{'type':'object','additionalProperties':{'type':'string'}}},'required':['winner','dimension_notes']}
+DIMENSION_NOTE_KEYS=['brief_appropriateness','reference_independence','concept_distinctiveness','craft','function_clarity','mobile_art_direction','advanced_media_judgment','authority_boundary']
+JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner':{'type':'string','enum':['A','B']},'dimension_notes':{'type':'object','additionalProperties':False,'properties':{k:{'type':'string'} for k in DIMENSION_NOTE_KEYS}}},'required':['winner','dimension_notes']}
 
 def parse(t):
     t=t.strip()

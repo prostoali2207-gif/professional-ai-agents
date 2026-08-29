@@ -1,0 +1,97 @@
+name: Visual Design Art Direction calibration resume v0.1
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  actions: read
+env:
+  CALIBRATION_CYCLE_ID: visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration
+  SOURCE_CALIBRATION_RUN_ID: '33260913156'
+  SOURCE_CIPHERTEXT_SHA256: '7ff98e8a9eb8bb82edb0c0a8ebde78553dd40f08487b1eb85f0412ac291ddeb1'
+jobs:
+  resume:
+    if: github.event.issue.number == 158 && github.event.comment.body == '/resume-visual-calibration' && github.actor == 'prostoali2207-gif'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-design-calibration-groq-pace
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: eval/visual-design-art-direction-158-calibration-resume
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile resume path and prove candidate-free
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py').read_text()
+          assert 'CANDIDATE_EXECUTOR_CMD' not in text and 'candidate_response' not in text
+          assert 'openai/gpt-oss-120b' in text and 'pace_groq()' in text
+          print('CALIBRATION_RESUME_STATIC_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install deterministic sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Download exact sealed calibration artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-encrypted-calibration-pack
+          path: calibration-source
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_CALIBRATION_RUN_ID }}
+      - name: Restore and verify exact sealed pack
+        run: |
+          mkdir -p architect/evaluation/visual-design-art-direction/calibration/sealed
+          rm -rf architect/evaluation/visual-design-art-direction/calibration/sealed/calibration-v0.1.parts
+          cp -R calibration-source/calibration-v0.1.parts architect/evaluation/visual-design-art-direction/calibration/sealed/
+          cp calibration-source/calibration-v0.1.manifest.json architect/evaluation/visual-design-art-direction/calibration/sealed/
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          base=Path('architect/evaluation/visual-design-art-direction/calibration/sealed')
+          m=json.load(open(base/'calibration-v0.1.manifest.json'))
+          token=''.join(p.read_text() for p in sorted((base/'calibration-v0.1.parts').iterdir())).encode()
+          assert m['ciphertext_sha256']=='7ff98e8a9eb8bb82edb0c0a8ebde78553dd40f08487b1eb85f0412ac291ddeb1'
+          assert hashlib.sha256(token).hexdigest()==m['ciphertext_sha256']
+          assert m['candidate_calls']==0 and m['item_count']==10
+          print('SEALED_CALIBRATION_IDENTITY_PASS')
+          PY
+      - name: Run blind dual-judge calibration on sealed pack
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py
+          code=$?
+          echo "calibration_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+      - name: Upload sanitized calibration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-sanitized-calibration-resume
+          path: visual-calibration-sanitized-report.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce calibration gate
+        if: always()
+        run: |
+          test "${calibration_exit_code:-missing}" = 0
+          python - <<'PY'
+          import json
+          r=json.load(open('visual-calibration-sanitized-report.json'))
+          assert r['status']=='CALIBRATION_PASS'
+          assert r['candidate_calls']==0
+          PY
