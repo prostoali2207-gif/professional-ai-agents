@@ -88,7 +88,13 @@ Use the current qualification-platform ordering rather than replaying the stale 
 
 Do not spend scored calls debugging infrastructure. Do not change thresholds, hard-fails, sealed policy, candidate content, or expected-answer boundaries after seeing candidate output.
 
-Subscription-backed Codex or Claude Code may be used only if the current evaluation environment can preserve evaluator isolation, sealed hidden material, reproducible runtime identity, observable execution, and the existing frozen release contract. Subscription access itself is not evidence and must not be used to bypass qualification integrity.
+## Execution-routing decision
+
+Current `main` requires `static/no-API -> sealed/no-API -> explicit paid-run authorization -> canary when needed -> scored release run`. It does not currently establish subscription-backed Codex/Claude Code as an approved replacement for this frozen qualification route.
+
+A separate open Architect PR (`#153`, `infra/subscription-first-qualification-routing-2026-08`) proposes preferring eligible subscription-backed Codex/Claude Code after deterministic evidence and before metered APIs, while preserving independence and frozen provider constraints. Because that policy is not merged into `main`, it is not source of truth for this release cycle.
+
+Therefore classify the current messaging qualification route as `KEEP_PINNED` unless a later merged policy plus explicit compatibility/revalidation proves that a subscription-backed executor preserves candidate identity, evaluator independence, hidden-pack secrecy, observable execution, reproducibility, grader calibration and the frozen release contract. Do not silently substitute Codex/Claude merely because subscription capacity exists.
 
 ## Required post-core composition regression for Spline
 
