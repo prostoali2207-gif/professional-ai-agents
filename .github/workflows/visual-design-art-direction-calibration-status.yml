@@ -1,0 +1,24 @@
+name: Visual Design Art Direction calibration status reporter
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  actions: read
+  issues: write
+  contents: read
+jobs:
+  report:
+    if: github.event.issue.number == 158 && github.event.comment.body == '/report-visual-calibration' && github.actor == 'prostoali2207-gif'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report latest calibration workflow run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          json=$(gh api "/repos/$GH_REPO/actions/workflows/visual-design-art-direction-calibration-v0-1.yml/runs?per_page=1")
+          body=$(python -c 'import json,sys; d=json.load(sys.stdin); r=(d.get("workflow_runs") or [None])[0]; print("No calibration run found." if r is None else f"Calibration run `{r[\"id\"]}`: status `{r[\"status\"]}`, conclusion `{r.get(\"conclusion\")}`. Event: `{r[\"event\"]}`. Head: `{r[\"head_sha\"]}`.")' <<< "$json")
+          gh issue comment 158 --body "$body"
