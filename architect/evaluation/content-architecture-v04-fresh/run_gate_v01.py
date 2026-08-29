@@ -40,7 +40,7 @@ def main():
             key=(fixture["fixture_id"],trial)
             if key in done: continue
             workspace=out/"workspaces"/f"{fixture['fixture_id']}-t{trial}"; workspace.mkdir(parents=True,exist_ok=True)
-            payload={"protocol_version":2,"candidate_sha":SHA,"workspace":str(workspace),"input":{**fixture["candidate_input"],"allowed_resources":[],"fixture_tools":{},"max_tool_rounds":0}}
+            payload={"protocol_version":2,"candidate_sha":SHA,"workspace":str(workspace),"input":{**fixture["candidate_input"],"allowed_resources":[],"fixture_tools":{}}}
             started=time.time(); proc=None
             try:
                 proc=subprocess.run(shlex.split(a.candidate_command),input=json.dumps(payload),text=True,capture_output=True,timeout=a.timeout,env=os.environ.copy())
