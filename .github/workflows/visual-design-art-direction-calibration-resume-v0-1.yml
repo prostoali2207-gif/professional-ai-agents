@@ -38,7 +38,10 @@ jobs:
           assert 'openai/gpt-oss-120b' in text and 'pace_groq()' in text
           assert "JUDGE_SCHEMA={'type':'object','additionalProperties':False,'properties':{'winner'" in text
           assert 'TRANSIENT_5XX_RETRIES=1' in text
-          assert 'set +e' not in workflow and 'exit 0' not in workflow
+          marker='      - name: Run blind dual-judge calibration on sealed pack\n'
+          tail=workflow.split(marker,1)[1]
+          step=tail.split('      - name:',1)[0]
+          assert step.strip() == 'run: python architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py'
           print('CALIBRATION_RESUME_STATIC_PASS')
           PY
       - name: Require evaluator credentials
