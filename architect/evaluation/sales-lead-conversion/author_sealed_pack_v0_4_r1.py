@@ -7,7 +7,7 @@ import subprocess
 
 BASE = Path('architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py')
 EXPECTED_BASE_BLOB = '929a19ed17993795ad2ba76933964c1a3c8a7663'
-CYCLE = 'sales-0.4-fresh-independent-2026-08-29-r1-author'
+CYCLE = 'sales-0.4-fresh-independent-2026-08-29-r1-gemini-paced'
 COMMIT = 'd00bb8057ba0eaae24b918e13941fb61b0b8616d'
 DIGEST = 'sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
 PREREG = Path('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r1-gemini.json')
