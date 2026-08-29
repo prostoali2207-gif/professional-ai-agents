@@ -1,12 +1,15 @@
 name: Visual Design Art Direction independent calibration v0.1
 on:
   workflow_dispatch:
+  issue_comment:
+    types: [created]
 permissions:
   contents: read
 env:
   CALIBRATION_CYCLE_ID: visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration
 jobs:
   deterministic:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.issue.number == 158 && github.event.comment.body == '/run-visual-calibration' && github.actor == 'prostoali2207-gif')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -15,6 +18,8 @@ jobs:
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: eval/visual-design-art-direction-0.1.0-heldout
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - name: Compile evaluator calibration infrastructure with no credentials
@@ -41,7 +46,9 @@ jobs:
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
     steps:
       - uses: actions/checkout@v4
-        with: {fetch-depth: 0}
+        with:
+          ref: eval/visual-design-art-direction-0.1.0-heldout
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - name: Install deterministic sealing dependency
