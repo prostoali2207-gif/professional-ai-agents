@@ -6,10 +6,11 @@ from cryptography.fernet import Fernet
 
 ROOT=Path.cwd(); BASE=ROOT/'architect/evaluation/visual-design-art-direction/calibration'
 CYCLE='visual-design-art-direction-0.1.0-independent-2026-08-29-r1-calibration'
-AUTHOR_MODEL='gemini-3.5-flash-lite'; AUDIT_MODEL='qwen/qwen3.6-27b'
+AUTHOR_MODEL='gemini-3.5-flash-lite'; AUDIT_MODEL='openai/gpt-oss-120b'
 GEMINI='https://generativelanguage.googleapis.com/v1beta/interactions'; GROQ=os.environ.get('GROQ_BASE_URL','https://api.groq.com/openai/v1').rstrip('/')+'/chat/completions'
 ARCHETYPES=['competent_generic','derivative_reference_copy','overdesigned_spectacle','function_damaging_novelty','collapsed_desktop_mobile','faithful_but_poor_render','craft_weak_hierarchy','justified_rule_breaking','advanced_media_justified','advanced_media_ornamental']
 DIMS=['brief_appropriateness','reference_independence','concept_distinctiveness','craft','function_clarity','mobile_art_direction','advanced_media_judgment','authority_boundary']
+ITEM_SCHEMA={'type':'object','additionalProperties':False,'properties':{'id':{'type':'string'},'archetype':{'type':'string','enum':ARCHETYPES},'brief':{'type':'string'},'sample_strong':{'type':'string'},'sample_challenger':{'type':'string'},'expected_winner':{'type':'string','enum':['strong','challenger']},'relevant_dimensions':{'type':'array','items':{'type':'string','enum':DIMS},'minItems':1,'uniqueItems':True}},'required':['id','archetype','brief','sample_strong','sample_challenger','expected_winner','relevant_dimensions']}
 
 def sha(b:bytes)->str:return hashlib.sha256(b).hexdigest()
 def parse(t):
@@ -29,7 +30,7 @@ def validate(items):
     if not isinstance(items,list) or len(items)!=len(ARCHETYPES): raise RuntimeError('calibration cardinality invalid')
     if {x.get('archetype') for x in items}!=set(ARCHETYPES): raise RuntimeError('archetypes invalid')
     for x in items:
-        for k in ['id','archetype','brief','sample_strong','sample_challenger','expected_winner','relevant_dimensions']:
+        for k in ITEM_SCHEMA['required']:
             if k not in x: raise RuntimeError(f'missing {k}')
         if x['expected_winner'] not in {'strong','challenger'}: raise RuntimeError('winner invalid')
         if not set(x['relevant_dimensions']).issubset(DIMS): raise RuntimeError('dimension invalid')
@@ -46,13 +47,11 @@ def author():
 def audit_one(item):
     key=os.environ.get('GROQ_API_KEY','').strip()
     if not key: raise RuntimeError('GROQ_API_KEY missing')
-    task={'role':'You are an independent senior landing-page art-direction assessor and evaluation scientist.','task':'Audit and, only if needed, repair this single calibration pair before judge calibration. Preserve its archetype and schema. Ensure the expected winner is professionally defensible, the pair is realistic, contains no answer leakage, and tests causal art-direction judgment rather than verbosity. For justified_rule_breaking and advanced_media_justified, a professionally justified non-conservative response must be allowed to win. For advanced_media_ornamental, restraint should win. Return only the repaired item as one valid JSON object, with no prose or markdown.','dimensions':DIMS,'item':item}
-    body={'model':AUDIT_MODEL,'messages':[{'role':'user','content':json.dumps(task,ensure_ascii=False)}],'reasoning_format':'hidden','reasoning_effort':'default','temperature':0.6}
-    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-auditor/0.1'})
+    task={'role':'You are an independent senior landing-page art-direction assessor and evaluation scientist.','task':'Audit and, only if needed, repair this single calibration pair before judge calibration. Preserve its archetype and schema. Ensure the expected winner is professionally defensible, the pair is realistic, contains no answer leakage, and tests causal art-direction judgment rather than verbosity. For justified_rule_breaking and advanced_media_justified, a professionally justified non-conservative response must be allowed to win. For advanced_media_ornamental, restraint should win.','dimensions':DIMS,'item':item}
+    body={'model':AUDIT_MODEL,'messages':[{'role':'user','content':json.dumps(task,ensure_ascii=False)}],'response_format':{'type':'json_schema','json_schema':{'name':'visual_calibration_item','strict':True,'schema':ITEM_SCHEMA}},'include_reasoning':False,'reasoning_effort':'medium','temperature':0}
+    req=urllib.request.Request(GROQ,data=json.dumps(body,ensure_ascii=False).encode(),method='POST',headers={'Authorization':f'Bearer {key}','Content-Type':'application/json','Accept':'application/json','User-Agent':'visual-calibration-auditor/0.2'})
     try:
-        with urllib.request.urlopen(req,timeout=180) as r:
-            content=json.loads(r.read().decode())['choices'][0]['message']['content']
-            return parse(content)
+        with urllib.request.urlopen(req,timeout=180) as r:return parse(json.loads(r.read().decode())['choices'][0]['message']['content'])
     except urllib.error.HTTPError as exc:
         detail=exc.read().decode('utf-8','replace')[-1500:]
         raise RuntimeError(f'Groq audit HTTP {exc.code}: {detail}') from None
