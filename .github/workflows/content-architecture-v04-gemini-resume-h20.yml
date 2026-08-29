@@ -39,6 +39,7 @@ jobs:
           echo 'planned_scored_runs=1'
           echo 'prior_valid_runs_preserved=35'
           echo 'prior_failure=429 free-tier request quota; retry-after was ~26s'
+          echo 'stop_condition=missing executable grader contract before provider call'
           echo 'retry_limit=0 blind retries'
 
       - name: Install deterministic dependency
@@ -75,6 +76,40 @@ jobs:
           }
           p.write_text(json.dumps(m, ensure_ascii=False, indent=2, sort_keys=True))
           print(json.dumps({'status':'PASS','fixture_id':'H20','family':row.get('family'),'trial_count':1}))
+          PY
+
+      - name: Fail closed if executable grader contract is absent
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'content-architecture-v04-h20'
+          manifest=json.loads((root/'manifest.json').read_text())
+          missing=[]
+          for meta in manifest.get('fixtures',[]):
+              fixture=json.loads((root/meta['path']).read_text())
+              grader=fixture.get('mechanical_grader')
+              has_mechanical=bool(grader) and any(bool(grader.get(k)) for k in (
+                  'required_equals','required_absent','required_contains','artifact_exists','artifact_json_equals'
+              ))
+              if not has_mechanical:
+                  missing.append(meta.get('fixture_id') or meta.get('id'))
+          external=manifest.get('external_grader_contract')
+          if missing and not external:
+              raise SystemExit(
+                  'NOT EXECUTABLE: H20 belongs to a retired unscorable cycle with no executable grader contract. '
+                  'Do not spend provider quota merely to turn one missing execution into PENDING_EXTERNAL_GRADER.'
+              )
+          if external:
+              required=('implementation_path','sha256','contract_version')
+              absent=[k for k in required if not external.get(k)]
+              if absent:
+                  raise SystemExit('NOT EXECUTABLE: external grader contract incomplete: '+','.join(absent))
+              p=(root/external['implementation_path']).resolve()
+              if root.resolve() not in p.parents and p!=root.resolve():
+                  raise SystemExit('NOT EXECUTABLE: external grader path escapes restored corpus')
+              if not p.is_file():
+                  raise SystemExit('NOT EXECUTABLE: external grader implementation missing')
+          print(json.dumps({'status':'PASS','executable_grader_contract':True}))
           PY
 
       - name: Fail-closed credential preflight
