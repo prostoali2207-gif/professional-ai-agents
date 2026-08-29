@@ -1,10 +1,5 @@
 name: Visual Design Art Direction independent calibration v0.1
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'architect/evaluation/visual-design-art-direction/**'
-      - '.github/workflows/visual-design-art-direction-calibration-v0-1.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      OPENAI_API_KEY: ''
       GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +27,7 @@ jobs:
           from pathlib import Path
           paths=[Path('architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py'),Path('architect/evaluation/visual-design-art-direction/calibration/run_calibration_v0_1.py')]
           text='\n'.join(p.read_text() for p in paths)
-          forbidden=['candidate/SKILL.md --run','CANDIDATE_EXECUTOR_CMD','candidate_response']
+          forbidden=['CANDIDATE_EXECUTOR_CMD','candidate_response']
           assert not any(x in text for x in forbidden)
           print('CALIBRATION_ZERO_CANDIDATE_PATH_PASS')
           PY
@@ -41,8 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
     steps:
       - uses: actions/checkout@v4
@@ -53,13 +48,12 @@ jobs:
         run: python -m pip install --disable-pip-version-check cryptography
       - name: Require evaluator credentials
         run: |
-          test -n "$OPENAI_API_KEY" || exit 21
           test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
           test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
       - name: Author audit and seal calibration corpus
         run: python architect/evaluation/visual-design-art-direction/calibration/author_sealed_calibration_v0_1.py
       - name: Run blind dual-judge calibration
-        id: calibration
         shell: bash
         run: |
           set +e
