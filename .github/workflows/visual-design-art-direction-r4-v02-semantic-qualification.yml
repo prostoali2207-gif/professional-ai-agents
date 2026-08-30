@@ -1,0 +1,281 @@
+name: Visual Design Art Direction R4 v0.2 semantic qualification
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    if: >-
+      github.event.issue.number == 158 &&
+      github.actor == 'prostoali2207-gif' &&
+      (github.event.comment.body == '/run-visual-r4-v02-semantic' ||
+       startsWith(github.event.comment.body, '/resume-visual-r4-v02-semantic '))
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-r4-v02-semantic-groq-pace
+      GH_TOKEN: ${{ github.token }}
+      R4_PACK_DIR: r4-source
+      SOURCE_RUN_ID: '33306265227'
+      SOURCE_HEAD_SHA: 147f1581c1ff24c51b71169aaad7770d6d27f3ce
+      SOURCE_ARTIFACT_ID: '9730714845'
+      SOURCE_ARTIFACT_NAME: visual-design-art-direction-v0-2-encrypted-heldout-pack-r4
+      SOURCE_ARTIFACT_DIGEST: sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e
+      R4_CIPHERTEXT_SHA256: b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6
+      R4_CAL_RUN_ID: '33315348031'
+      R4_CAL_ARTIFACT_ID: '9733259354'
+      R4_CAL_ARTIFACT_NAME: visual-design-art-direction-v0-2-r4-corpus-calibration-report
+      R4_CAL_ARTIFACT_DIGEST: sha256:0586e0c43287a99a0991dc3d60bbe461f7701fcc7b43a0d030391d8face024a5
+      R4_CAL_REPORT_SHA256: 642b2cc24f7e34593d52208bb4f5fcb342471c04104ff145136e1da15d613409
+      CHECKPOINT_ARTIFACT_NAME: visual-design-art-direction-v0-2-r4-semantic-checkpoint
+      PROGRESS_ARTIFACT_NAME: visual-design-art-direction-v0-2-r4-semantic-progress
+      REPORT_ARTIFACT_NAME: visual-design-art-direction-v0-2-r4-semantic-report
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check cryptography
+      - name: Parse exact fresh/resume command
+        id: command
+        shell: bash
+        env:
+          BODY: ${{ github.event.comment.body }}
+        run: |
+          set -euo pipefail
+          if [[ "$BODY" == "/run-visual-r4-v02-semantic" ]]; then
+            echo 'mode=fresh' >> "$GITHUB_OUTPUT"
+            echo 'resume_run_id=' >> "$GITHUB_OUTPUT"
+          elif [[ "$BODY" =~ ^/resume-visual-r4-v02-semantic\ ([0-9]+)$ ]]; then
+            echo 'mode=resume' >> "$GITHUB_OUTPUT"
+            echo "resume_run_id=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            exit 40
+          fi
+      - name: Verify frozen release contract before credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py
+          python - <<'PY'
+          import json,subprocess
+          x=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r4-v0.2.json'))
+          assert x['issue']==158 and x['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and x['candidate_calls_at_freeze']==0
+          assert x['cycle_id']=='visual-design-art-direction-0.2.0-independent-2026-08-30-r4-semantic'
+          c=x['candidate']; assert c['commit']=='0116d20f99fde919fa6e39c700726d16310d010b' and c['mutation_allowed'] is False
+          assert c['skill_blob']=='b230a06aeca3cc67d0c275889a65b8b7403b59c0'
+          assert c['professional_model_base_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert c['professional_model_repair_blob']=='bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'
+          h=x['heldout']; assert h['artifact_id']==9730714845 and h['source_run']==33306265227
+          assert h['artifact_digest']=='sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e'
+          assert h['sealed_ciphertext_sha256']=='b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6'
+          assert h['regeneration_or_substitution_allowed'] is False and h['historical_r3_release_reuse_allowed'] is False
+          cal=x['calibration']['exact_r4']; assert cal['run']==33315348031 and cal['status']=='CALIBRATION_PASS' and cal['candidate_calls']==0
+          assert cal['sanitized_report_artifact_id']==9733259354
+          assert cal['sanitized_report_payload_sha256']=='642b2cc24f7e34593d52208bb4f5fcb342471c04104ff145136e1da15d613409'
+          t=x['semantic_release_thresholds']; assert t['per_judge_candidate_preference_rate_min']==0.8 and t['combined_candidate_preference_rate_min']==0.9
+          assert t['max_pair_disagreement_rate']==0.25 and t['p0_tolerance']==0 and t['all_dimension_groups_must_pass'] is True
+          assert len(x['families'])==10 and len(x['p0_hard_fails'])==7
+          r=x['retry_resume_stop']; assert r['professional_failure_retry_count']==0 and r['completed_calls_repeated'] is False and r['same_pack_professional_rerun_after_real_failure'] is False
+          assert x['rendered_release_gate']['required_after_semantic_pass'] is True
+          component_paths={
+            'skill_blob':'architect/evaluation/visual-design-art-direction/candidate/SKILL.md',
+            'professional_model_base_blob':'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md',
+            'professional_model_repair_blob':'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md',
+          }
+          for key,path in component_paths.items():
+            assert subprocess.check_output(['git','rev-parse',f"{c['commit']}:{path}"],text=True).strip()==c[key]
+          runtime=x['candidate_runtime']; runner=x['semantic_runner']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+runtime['executor_path']],text=True).strip()==runtime['executor_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+runner['path']],text=True).strip()==runner['blob']
+          print('VISUAL_R4_V02_FROZEN_RELEASE_CONTRACT_PASS candidate_calls=0')
+          PY
+      - name: Verify immutable R4 source artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > source-meta.json
+          python - <<'PY'
+          import json,os
+          x=json.load(open('source-meta.json'))
+          assert str(x['id'])==os.environ['SOURCE_ARTIFACT_ID'] and x['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert x['digest']==os.environ['SOURCE_ARTIFACT_DIGEST'] and not x['expired']
+          assert str(x['workflow_run']['id'])==os.environ['SOURCE_RUN_ID'] and x['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          print('VISUAL_R4_V02_SOURCE_ARTIFACT_PASS')
+          PY
+      - name: Verify exact R4 calibration evidence
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${R4_CAL_ARTIFACT_ID}" > cal-meta.json
+          mkdir -p r4-cal
+          gh run download "$R4_CAL_RUN_ID" -n "$R4_CAL_ARTIFACT_NAME" --dir r4-cal
+          python - <<'PY'
+          import hashlib,json,os
+          m=json.load(open('cal-meta.json'))
+          assert str(m['id'])==os.environ['R4_CAL_ARTIFACT_ID'] and m['name']==os.environ['R4_CAL_ARTIFACT_NAME']
+          assert m['digest']==os.environ['R4_CAL_ARTIFACT_DIGEST'] and not m['expired']
+          assert str(m['workflow_run']['id'])==os.environ['R4_CAL_RUN_ID']
+          p='r4-cal/visual-r4-corpus-calibration-sanitized-report.json'
+          assert hashlib.sha256(open(p,'rb').read()).hexdigest()==os.environ['R4_CAL_REPORT_SHA256']
+          x=json.load(open(p))
+          assert x['status']=='CALIBRATION_PASS' and x['candidate_calls']==0 and x['hidden_content_printed'] is False
+          assert x['per_judge_expected_winner_rate']=={'gemini':1.0,'groq':1.0}
+          assert x['combined_expected_winner_rate']==1.0 and x['pair_disagreement_rate']==0.0
+          print('VISUAL_R4_V02_EXACT_CALIBRATION_PASS candidate_calls=0')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Verify candidate runtime contract without provider call
+        run: |
+          python architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py --qualification-contract > candidate-contract.json
+          python - <<'PY'
+          import json
+          x=json.load(open('candidate-contract.json'))
+          assert x['candidate_commit']=='0116d20f99fde919fa6e39c700726d16310d010b'
+          assert x['skill_blob']=='b230a06aeca3cc67d0c275889a65b8b7403b59c0'
+          assert x['professional_model_base_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert x['professional_model_repair_blob']=='bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'
+          assert x['provider']=='gemini-interactions-api' and x['model']=='gemini-3.5-flash-lite'
+          assert x['tool_protocol']=='none-v1' and x['state_protocol']=='stateless-v1' and x['observable_protocol']=='final-output-only-v1'
+          print('VISUAL_R4_V02_CANDIDATE_CONTRACT_PASS provider_calls=0')
+          PY
+      - name: Download exact sealed R4 corpus
+        run: |
+          mkdir -p "$R4_PACK_DIR"
+          gh run download "$SOURCE_RUN_ID" -n "$SOURCE_ARTIFACT_NAME" --dir "$R4_PACK_DIR"
+      - name: Restore exact checkpoint only for infrastructure resume
+        if: steps.command.outputs.mode == 'resume'
+        env:
+          RESUME_RUN_ID: ${{ steps.command.outputs.resume_run_id }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RESUME_RUN_ID}" > resume-run.json
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RESUME_RUN_ID}/artifacts?per_page=100" > resume-artifacts.json
+          python - <<'PY'
+          import json,os
+          run=json.load(open('resume-run.json'))
+          assert str(run['id'])==os.environ['RESUME_RUN_ID']
+          assert run['path']=='.github/workflows/visual-design-art-direction-r4-v02-semantic-qualification.yml'
+          assert run['event']=='issue_comment' and run['status']=='completed'
+          arts=json.load(open('resume-artifacts.json'))['artifacts']
+          names={a['name']:a for a in arts}
+          for name in (os.environ['CHECKPOINT_ARTIFACT_NAME'],os.environ['PROGRESS_ARTIFACT_NAME']):
+            assert name in names and not names[name]['expired']
+          print('VISUAL_R4_V02_RESUME_SOURCE_METADATA_PASS')
+          PY
+          mkdir -p checkpoint-source progress-source
+          gh run download "$RESUME_RUN_ID" -n "$CHECKPOINT_ARTIFACT_NAME" --dir checkpoint-source
+          gh run download "$RESUME_RUN_ID" -n "$PROGRESS_ARTIFACT_NAME" --dir progress-source
+          cp checkpoint-source/visual-r4-v02-semantic-checkpoint.enc ./visual-r4-v02-semantic-checkpoint.enc
+          cp progress-source/visual-r4-v02-semantic-progress.json ./resume-progress.json
+      - name: Verify R4 ciphertext and fresh/resume state before provider calls
+        env:
+          MODE: ${{ steps.command.outputs.mode }}
+        run: |
+          python - <<'PY'
+          import hashlib,importlib.util,json,os
+          from pathlib import Path
+          base=Path(os.environ['R4_PACK_DIR'])
+          manifest=json.load(open(base/'heldout-r4.manifest.json'))
+          token=''.join(p.read_text() for p in sorted((base/'heldout-r4.parts').iterdir())).encode()
+          assert hashlib.sha256(token).hexdigest()==os.environ['R4_CIPHERTEXT_SHA256']==manifest['ciphertext_sha256']
+          assert manifest['cycle_id']=='visual-design-art-direction-0.2.0-independent-2026-08-30-r4-semantic'
+          assert manifest['candidate_commit']=='0116d20f99fde919fa6e39c700726d16310d010b'
+          assert manifest['candidate_blobs']=={
+            'skill':'b230a06aeca3cc67d0c275889a65b8b7403b59c0',
+            'professional_model_base':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'professional_model_repair':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+          }
+          assert manifest['item_count']==20 and manifest['family_count']==10 and manifest['candidate_calls']==0 and manifest['hidden_content_printed'] is False
+          p=Path('architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py')
+          spec=importlib.util.spec_from_file_location('r4score',p); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          state=m.module.load_state()
+          assert set(state)=={'candidate','judges'}
+          c=len(state['candidate']); j=len(state['judges'])
+          if os.environ['MODE']=='fresh':
+            assert c==0 and j==0 and not Path('resume-progress.json').exists()
+          else:
+            progress=json.load(open('resume-progress.json'))
+            assert progress['status']=='INFRASTRUCTURE_FAILURE' and progress['hidden_content_printed'] is False
+            assert progress['candidate_calls']==c and progress['completed_judgments']==j
+            assert 0<=c<=20 and 0<=j<=40
+            for key in state['judges']:
+              cid,provider=key.rsplit(':',1)
+              assert cid in state['candidate'] and provider in {'gemini','groq'}
+          print(f"VISUAL_R4_V02_PRE_SCORE_STATE_PASS mode={os.environ['MODE']} candidate_calls={c} completed_judgments={j} hidden_content_printed=false")
+          PY
+      - name: Run frozen scored FULL semantic qualification
+        id: semantic
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload encrypted checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-semantic-checkpoint
+          path: visual-r4-v02-semantic-checkpoint.enc
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-semantic-progress
+          path: visual-r4-v02-semantic-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-semantic-report
+          path: visual-r4-v02-semantic-sanitized-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Enforce frozen semantic release gate
+        if: always()
+        run: |
+          test -f visual-r4-v02-semantic-progress.json || exit 31
+          python - <<'PY'
+          import json,os
+          p=json.load(open('visual-r4-v02-semantic-progress.json'))
+          code='${{ steps.semantic.outputs.exit_code }}'
+          assert p['hidden_content_printed'] is False
+          if p['status']=='INFRASTRUCTURE_FAILURE':
+              print('VISUAL_R4_V02_INFRASTRUCTURE_FAILURE_RESUME_ONLY_MISSING_CALLS')
+              raise SystemExit(30)
+          if not os.path.exists('visual-r4-v02-semantic-sanitized-report.json'):
+              raise SystemExit(31)
+          r=json.load(open('visual-r4-v02-semantic-sanitized-report.json'))
+          assert r['candidate']['commit']=='0116d20f99fde919fa6e39c700726d16310d010b'
+          assert r['candidate']['skill_blob']=='b230a06aeca3cc67d0c275889a65b8b7403b59c0'
+          assert r['candidate']['professional_model_base_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert r['candidate']['professional_model_repair_blob']=='bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'
+          assert r['candidate_calls']==20 and r['case_count']==20 and r['hidden_content_printed'] is False
+          assert r['source_artifact']['artifact_id']==9730714845 and r['source_artifact']['sealed_ciphertext_sha256']=='b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6'
+          assert r['calibration']['exact_r4_run']==33315348031 and r['calibration']['exact_r4_report_sha256']=='642b2cc24f7e34593d52208bb4f5fcb342471c04104ff145136e1da15d613409'
+          if r['status']=='SEMANTIC_PASS':
+              assert code=='0' and r['rendered_gate_required_after_semantic_pass'] is True
+              print('VISUAL_R4_V02_SEMANTIC_PASS_RENDERED_P1_P4_REQUIRED')
+              raise SystemExit(0)
+          if r['status']=='SEMANTIC_REVISE': raise SystemExit(20)
+          if r['status']=='SEMANTIC_FAIL_P0': raise SystemExit(21)
+          if r['status']=='SEMANTIC_ADJUDICATION_REQUIRED': raise SystemExit(22)
+          raise SystemExit(32)
+          PY
