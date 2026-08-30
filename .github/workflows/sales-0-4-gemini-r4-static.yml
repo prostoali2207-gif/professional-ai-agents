@@ -1,0 +1,103 @@
+name: Sales 0.4 r4 static pre-score gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r4-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r4_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_4_gemini_r4.py'
+      - '.github/workflows/sales-0-4-gemini-r4*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile r4 evaluator surface
+        run: |
+          python -m py_compile \
+            architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r4_gemini_groq.py \
+            architect/evaluation/sales-lead-conversion/executor_v0_4_gemini_contract_v1.py \
+            architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_4_gemini_r4.py \
+            architect/evaluation/sales-lead-conversion/gemini_rate_limiter.py \
+            architect/evaluation/sales-lead-conversion/reseal_provider_pack.py \
+            architect/evaluation/sales-lead-conversion/canary_v0_4_gemini.py
+      - name: Verify r4 freeze and authoring contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast, hashlib, json, subprocess
+          from pathlib import Path
+          p = json.loads(Path('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r4-gemini-groq.json').read_text())
+          commit = 'd00bb8057ba0eaae24b918e13941fb61b0b8616d'
+          digest = 'sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
+          assert p['cycle_id'] == 'sales-0.4-fresh-independent-2026-08-30-r4-gemini-groq'
+          assert p['scope']['decision'] == 'FULL' and p['scope']['fixture_count'] == 36 and p['scope']['per_family'] == 3
+          assert p['frozen_candidate']['commit'] == commit and p['frozen_candidate']['artifact_digest'] == digest
+          assert p['prior_cycle_evidence']['r3_run_id'] == 33298750696 and p['prior_cycle_evidence']['candidate_calls'] == 0
+          assert p['thresholds'] == {
+              'task_pass_score_min': 5,
+              'release_tasks_passed_min': 34,
+              'per_family_tasks_passed_min': 2,
+              'critical_hard_fails_max': 0,
+              'professional_failure_retry': 0,
+              'critical_repeat_rule': 'every repeated trial must pass',
+          }
+          assert p['fixture_design']['repeated_fixture_slots'] == ['OWN-boundary','SEC-injection','FACT-conflict','STATE-supersession','ID-privacy','OPS-operational-verification']
+          route = p['heldout_authoring']
+          assert route['author_provider'] == 'gemini-interactions-api' and route['author_model'] == 'gemini-3.5-flash-lite'
+          assert route['construct_audit_provider'] == 'groq-openai-compatible-api' and route['construct_audit_model'] == 'openai/gpt-oss-120b'
+          assert route['max_author_attempts_per_group'] == 3 and route['max_construct_audit_calls_per_group'] == 3
+          assert 'native JSON Schema' in route['interface_remediation']
+          assert p['runtime_contract']['provider'] == 'gemini-interactions-api'
+          assert p['runtime_contract']['candidate_model'] == 'gemini-3.5-flash-lite'
+          assert p['runtime_contract']['grader_model'] == 'gemini-3.5-flash-lite'
+          assert p['runtime_contract']['minimum_seconds_between_requests'] == 6.0
+
+          base = Path('architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py')
+          assert subprocess.check_output(['git','hash-object',str(base)], text=True).strip() == '929a19ed17993795ad2ba76933964c1a3c8a7663'
+          tree = ast.parse(base.read_text())
+          literals = {}
+          for node in tree.body:
+              if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+                  name = node.targets[0].id
+                  if name in {'FAMILIES','SLOTS'}:
+                      literals[name] = ast.literal_eval(node.value)
+          assert literals['FAMILIES'] == p['families']
+          for family in p['families']:
+              assert list(p['fixture_design']['slot_semantic_contract'][family]) == literals['SLOTS'][family]
+
+          manifest = json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"], text=True))
+          canonical = ''
+          for path in manifest['artifact']['paths']:
+              blob = subprocess.check_output(['git','rev-parse',f'{commit}:{path}'], text=True).strip()
+              canonical += f'{path}:{blob}\n'
+          actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual == digest == manifest['artifact']['content_digest']
+          contract = json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_4_gemini_contract_v1.py','--qualification-contract'], text=True))
+          assert contract['contract_version'] == 1 and contract['candidate_commit'] == commit and contract['candidate_digest'] == digest
+          assert contract['provider'] == 'gemini-interactions-api'
+          print('SALES_V04_R4_STATIC_FREEZE_PASS')
+          PY
+      - name: Verify explicit opt-in only
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          paid = Path('.github/workflows/sales-0-4-gemini-r4.yml').read_text()
+          optin = Path('.github/workflows/sales-0-4-gemini-r4-optin.yml').read_text()
+          assert 'workflow_dispatch:' in paid and 'workflow_call:' in paid
+          assert 'push:' not in paid and 'pull_request:' not in paid
+          assert "github.event.label.name == 'run-sales-0-4-final-qualification-r4'" in optin
+          assert 'types: [labeled]' in optin
+          print('SALES_V04_R4_EXPLICIT_OPTIN_PASS')
+          PY
