@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-          import hashlib, importlib.util, json, subprocess
+          import ast, hashlib, json, subprocess
           from pathlib import Path
 
           cycle = 'sales-0.4-fresh-independent-2026-08-30-r3-gemini-groq'
@@ -72,11 +72,19 @@ jobs:
 
           base_path = Path('architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_3_r2.py')
           assert subprocess.check_output(['git','hash-object',str(base_path)], text=True).strip() == '929a19ed17993795ad2ba76933964c1a3c8a7663'
-          spec = importlib.util.spec_from_file_location('sales_author_base_static', base_path)
-          m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          tree = ast.parse(base_path.read_text())
+          literals = {}
+          for node in tree.body:
+              if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+                  name = node.targets[0].id
+                  if name in {'FAMILIES', 'SLOTS'}:
+                      literals[name] = ast.literal_eval(node.value)
+          base_families = literals['FAMILIES']
+          base_slots = literals['SLOTS']
           slots = p['fixture_design']['slot_semantic_contract']
-          for family in m.FAMILIES:
-              assert list(slots[family]) == m.SLOTS[family]
+          assert base_families == p['families']
+          for family in base_families:
+              assert list(slots[family]) == base_slots[family]
               assert all(isinstance(v, str) and v.strip() for v in slots[family].values())
 
           manifest_path = p['frozen_candidate']['manifest_path']
