@@ -1,0 +1,44 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v1.1-consolidated",
+  "freeze_id": "analytics-freeze-v1.1-2026-09-05",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-09-05",
+  "supersedes": "growth-experimentation-measurement-v1.0-consolidated",
+  "supersedes_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-consolidated-v1.1.md",
+      "git_blob_sha": "90c24b280367a5cb00bc5d9dbce1cbdaf369894e"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:3c83f266a4191b2137e8a1cc974bab89d59d2308896b1752a4881205e3019081",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the assembly components in order, then the output contract",
+  "candidate_changed_from_v1_0": true,
+  "change_summary": "Repair of the transfer failures observed in external held-out run 33293694601. Four localized changes, all additive or tightening, none removing or re-scoping any rule. Section 5.9 gains the procedure for recognising which declared identifier is the registered comparison as a whole -- the one genuine knowledge gap, since v1.0 required that identifier by name but never taught how to find it, and the evaluator's own generator always named it literally `experiment`. Section 6.3 gains the action-grounds couplings that v1.0 already asserts in sections 4, 5.3, 5.7 and 5.9 but never gathered where the assembled result is checked. Section 6.3 names the scale_readiness nesting violation. Section 6.1 constrains prose-field length. No new professional rule is introduced except the recognition procedure.",
+  "non_weakening_proof": "architect/evaluation/growth-experimentation-analytics/test_successor_v11_non_weakening.py",
+  "adjudication_ref": "architect/research/growth-experimentation-analytics/failure-adjudication-2026-08-30.md",
+  "repaired_failure_classes": {
+    "A": "experiment-scoped CONTINUE/INCONCLUSIVE aimed at an arm or at the fixture id (11 tier-1)",
+    "B": "decision_basis omitting COST_OF_WAITING or INSUFFICIENT_EVIDENCE (2 tier-1)",
+    "C": "decision paralysis against mature downstream economics; sparsity conflated with identification (2 tier-1)",
+    "D": "scale_readiness nested under operational, and malformed JSON (8 tier-2)"
+  },
+  "instrument": {
+    "generator": {
+      "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+      "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+    },
+    "grader": {
+      "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+    },
+    "runner": {
+      "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py",
+      "git_blob_sha": "783e2303b2ef8699ceb20cc90498ca9a2c1a8787"
+    }
+  },
+  "instrument_note": "Byte-identical to freeze v1.0. The grader, generator, output contract and fixture contract are unchanged by this repair; only the candidate document differs."
+}

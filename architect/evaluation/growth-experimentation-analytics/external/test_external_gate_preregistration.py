@@ -25,6 +25,8 @@ PASSED = json.loads((ANALYTICS / "preregistration-v1.0-twotier-2026-09-01.json")
 FREEZE = json.loads((ANALYTICS / "candidate-freeze-v1.0.json").read_text(encoding="utf-8"))
 RUNNER = HERE / "run_external_heldout_gate_v11.py"
 AUTHOR = HERE / "author_external_heldout_v1.py"
+# The commit at which run 33293694601 executed this preregistration.
+EXECUTED_COMMIT = "1697c9c688e734582a1354d74593b4279846e847"
 
 
 def blob(path: str) -> str:
@@ -218,14 +220,25 @@ class RunnerImplementsTheCriterion(unittest.TestCase):
         self.assertGreater(digest_line, 0)
         self.assertLess(digest_line, first_trial)
 
-    def test_every_bound_blob_matches_the_file_on_disk(self) -> None:
+    def test_every_bound_blob_matches_what_the_run_actually_executed(self) -> None:
+        """This cycle is closed, so the binding is checked against the commit that ran it.
+
+        Run 33293694601 executed at `1697c9c`. Checking the working tree instead would make this
+        assertion drift as later cycles evolve the shared modules -- and would quietly stop
+        testing the thing that matters, which is what the scored run actually loaded.
+        """
         for key in ("grader", "classifier", "pack_contract", "author", "runner"):
             with self.subTest(key=key):
-                self.assertEqual(PREREG[key]["git_blob_sha"], blob(PREREG[key]["path"]))
+                at_run = subprocess.check_output(
+                    ["git", "rev-parse", f"{EXECUTED_COMMIT}:{PREREG[key]['path']}"],
+                    text=True, cwd=ROOT).strip()
+                self.assertEqual(PREREG[key]["git_blob_sha"], at_run)
 
-    def test_the_runner_verifies_all_five_apparatus_blobs_at_run_time(self) -> None:
-        self.assertIn('for key in ("grader", "classifier", "pack_contract", "author", "runner")',
-                      RUNNER.read_text(encoding="utf-8"))
+    def test_the_runner_verifies_every_bound_apparatus_blob_at_run_time(self) -> None:
+        source = RUNNER.read_text(encoding="utf-8")
+        self.assertIn('prereg.get("bound_apparatus"', source)
+        self.assertIn('["grader", "classifier", "pack_contract", "author", "runner"]', source)
+        self.assertIn("DRIFT: {ref['path']} was edited after preregistration", source)
 
 
 class NothingProfessionalWasTouched(unittest.TestCase):
