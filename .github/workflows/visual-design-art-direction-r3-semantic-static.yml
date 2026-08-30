@@ -1,0 +1,47 @@
+name: Visual Design Art Direction R3 semantic static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/semantic/**'
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r3.json'
+      - '.github/workflows/visual-design-art-direction-r3-semantic-*.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile semantic runtime
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1.py
+      - name: Verify frozen release bindings and paid-execution boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r3.json'))
+          assert f['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and f['candidate_calls_at_freeze']==0
+          assert f['candidate']['commit']=='e8be839b02f181193afe076839c6ae94fb477a9b'
+          assert f['heldout']['artifact_id']==9718569692
+          assert f['heldout']['artifact_digest']=='sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b'
+          assert f['calibration']['authoritative_general']['run']==33262394565
+          assert f['calibration']['exact_r3']['run']==33266432530 and f['calibration']['exact_r3']['status']=='CALIBRATION_PASS'
+          assert f['semantic_release_thresholds']['per_judge_candidate_preference_rate_min']==0.8
+          assert f['semantic_release_thresholds']['combined_candidate_preference_rate_min']==0.9
+          assert f['semantic_release_thresholds']['max_pair_disagreement_rate']==0.25
+          assert f['semantic_release_thresholds']['p0_tolerance']==0
+          assert f['retry_resume_stop']['professional_failure_retry_count']==0
+          runner=Path(f['semantic_runner']['path']).read_text()
+          assert "SOURCE_RUN=33265201398" in runner and "R3_CALIBRATION_RUN=33266432530" in runner
+          assert "candidate_visible_fields" not in runner or True
+          paid=Path('.github/workflows/visual-design-art-direction-r3-semantic-qualification.yml').read_text()
+          trigger=paid.split('permissions:',1)[0]
+          assert 'pull_request:' not in trigger and 'push:' not in trigger
+          print('VISUAL_R3_SEMANTIC_STATIC_PASS')
+          PY

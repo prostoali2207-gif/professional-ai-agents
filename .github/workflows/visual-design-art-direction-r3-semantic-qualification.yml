@@ -1,0 +1,174 @@
+name: Visual Design Art Direction R3 semantic qualification
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify:
+    if: github.event.issue.number == 158 && github.actor == 'prostoali2207-gif' && (github.event.comment.body == '/run-visual-r3-semantic' || startsWith(github.event.comment.body, '/resume-visual-r3-semantic '))
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-r3-semantic-groq-pace
+      GH_TOKEN: ${{ github.token }}
+      R3_PACK_DIR: r3-source-pack
+      SOURCE_RUN_ID: '33265201398'
+      SOURCE_HEAD_SHA: af43f2d12187e1825c596239a7313fd8b7e5da63
+      SOURCE_ARTIFACT_ID: '9718569692'
+      SOURCE_ARTIFACT_NAME: visual-design-art-direction-v0-1-encrypted-heldout-pack-r3
+      SOURCE_ARTIFACT_DIGEST: sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static release-freeze preflight before credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1.py
+          python - <<'PY'
+          import json,subprocess
+          f=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r3.json'))
+          assert f['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and f['candidate_calls_at_freeze']==0
+          assert f['candidate']['commit']=='e8be839b02f181193afe076839c6ae94fb477a9b'
+          assert f['candidate']['skill_blob']=='9d251d97a84e16ade91c8ced07425f9208f9f900'
+          assert f['candidate']['professional_model_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert subprocess.check_output(['git','rev-parse','e8be839b02f181193afe076839c6ae94fb477a9b:architect/evaluation/visual-design-art-direction/candidate/SKILL.md'],text=True).strip()==f['candidate']['skill_blob']
+          assert subprocess.check_output(['git','rev-parse','e8be839b02f181193afe076839c6ae94fb477a9b:architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md'],text=True).strip()==f['candidate']['professional_model_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+f['candidate_runtime']['executor_path']],text=True).strip()==f['candidate_runtime']['executor_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+f['semantic_runner']['path']],text=True).strip()==f['semantic_runner']['blob']
+          assert f['heldout']['artifact_id']==9718569692 and f['heldout']['artifact_digest']=='sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b'
+          assert f['calibration']['authoritative_general']['run']==33262394565 and f['calibration']['exact_r3']['run']==33266432530
+          assert f['semantic_release_thresholds']['per_judge_candidate_preference_rate_min']==0.8
+          assert f['semantic_release_thresholds']['combined_candidate_preference_rate_min']==0.9
+          assert f['semantic_release_thresholds']['max_pair_disagreement_rate']==0.25
+          assert f['semantic_release_thresholds']['p0_tolerance']==0
+          print('VISUAL_R3_RELEASE_FREEZE_STATIC_PASS')
+          PY
+      - name: Verify exact source artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > r3-artifact-meta.json
+          python - <<'PY'
+          import json,os
+          m=json.load(open('r3-artifact-meta.json'))
+          assert str(m['id'])==os.environ['SOURCE_ARTIFACT_ID']
+          assert m['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert m['digest']==os.environ['SOURCE_ARTIFACT_DIGEST']
+          assert str(m['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert m['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert m['expired'] is False
+          print('EXACT_R3_ARTIFACT_METADATA_PASS')
+          PY
+      - name: Verify calibration evidence payloads
+        run: |
+          mkdir -p general-cal r3-cal
+          gh run download 33262394565 -n visual-design-art-direction-v0-1-sanitized-calibration-resume --dir general-cal
+          gh run download 33266432530 -n visual-design-art-direction-v0-1-r3-corpus-calibration-report --dir r3-cal
+          python - <<'PY'
+          import hashlib,json
+          g='general-cal/visual-calibration-sanitized-report.json'
+          r='r3-cal/visual-r3-corpus-calibration-sanitized-report.json'
+          assert hashlib.sha256(open(g,'rb').read()).hexdigest()=='0d5348f397fb1c5b75bac2c018a85189ecf9b76dd2dc46a66583747a9b11d975'
+          assert hashlib.sha256(open(r,'rb').read()).hexdigest()=='88c731996b0c262883ff9b1950235f875870741522e918b6851079a55212c3f7'
+          gj=json.load(open(g)); rj=json.load(open(r))
+          assert gj['status']=='CALIBRATION_PASS' and gj['candidate_calls']==0
+          assert rj['status']=='CALIBRATION_PASS' and rj['candidate_calls']==0
+          print('CALIBRATION_EVIDENCE_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Candidate runtime contract
+        run: python architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py --qualification-contract
+      - name: Public unscored candidate runtime canary
+        if: github.event.comment.body == '/run-visual-r3-semantic'
+        run: python architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py --canary --model-timeout 180 > /tmp/visual-r3-canary.json
+      - name: Download exact R3 sealed pack
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-encrypted-heldout-pack-r3
+          path: r3-source-pack
+          github-token: ${{ github.token }}
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: 33265201398
+      - name: Restore encrypted checkpoint for bounded resume
+        if: startsWith(github.event.comment.body, '/resume-visual-r3-semantic ')
+        shell: bash
+        run: |
+          set -euo pipefail
+          checkpoint_run="${{ github.event.comment.body }}"
+          checkpoint_run="${checkpoint_run#'/resume-visual-r3-semantic '}"
+          [[ "$checkpoint_run" =~ ^[0-9]+$ ]]
+          mkdir -p checkpoint-source
+          gh run download "$checkpoint_run" -n visual-design-art-direction-v0-1-r3-semantic-checkpoint --dir checkpoint-source
+          cp checkpoint-source/visual-r3-semantic-checkpoint.enc ./visual-r3-semantic-checkpoint.enc
+      - name: Run scored FULL semantic qualification
+        id: semantic
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload encrypted semantic checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-semantic-checkpoint
+          path: visual-r3-semantic-checkpoint.enc
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized semantic progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-semantic-progress
+          path: visual-r3-semantic-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized semantic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-1-r3-semantic-report
+          path: visual-r3-semantic-sanitized-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Enforce semantic release gate
+        if: always()
+        run: |
+          test -f visual-r3-semantic-progress.json
+          python - <<'PY'
+          import json
+          p=json.load(open('visual-r3-semantic-progress.json'))
+          code='${{ steps.semantic.outputs.exit_code }}'
+          if p['status']=='INFRASTRUCTURE_FAILURE':
+              raise SystemExit(30)
+          if not __import__('os').path.exists('visual-r3-semantic-sanitized-report.json'):
+              raise SystemExit(31)
+          r=json.load(open('visual-r3-semantic-sanitized-report.json'))
+          assert r['candidate']['commit']=='e8be839b02f181193afe076839c6ae94fb477a9b'
+          assert r['source_artifact']['artifact_digest']=='sha256:04edc998022ae2ec524cec2e366c2644e46964c052030c5faddec320c7e94f1b'
+          assert r['calibration']['exact_r3_run']==33266432530
+          if r['status']=='SEMANTIC_PASS':
+              assert code=='0' and r['candidate_calls']==20
+              print('VISUAL_R3_SEMANTIC_PASS_RENDERED_GATE_REQUIRED')
+              raise SystemExit(0)
+          if r['status']=='SEMANTIC_REVISE': raise SystemExit(20)
+          if r['status']=='SEMANTIC_FAIL_P0': raise SystemExit(21)
+          if r['status']=='SEMANTIC_ADJUDICATION_REQUIRED': raise SystemExit(22)
+          raise SystemExit(32)
+          PY
