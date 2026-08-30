@@ -51,6 +51,7 @@
     "max_author_attempts_per_group": 3,
     "max_construct_audit_calls_per_group": 3,
     "native_schema_rule": "Use exactly the pinned r6 AUTHOR_SCHEMA with no field, nesting, cardinality or type changes.",
+    "targeted_instruction_change": "Only for FUP/STATE/ID/OPS: hidden_reference_json must be a syntactically valid compact JSON object string; candidate-visible fields contain neutral scenario/request/state/tool facts only and never evaluation language or expected behavior; critical_hard_fail_triggers defaults to [] and may contain a frozen identifier only when the candidate-visible facts directly and unambiguously expose that material failure.",
     "authoring_rule": "Use the pinned r9 authoring implementation unchanged except cycle/output binding. Rejected hidden payloads are never inspected, repaired, ranked or reused.",
     "audit_reason_codes": ["accepted", "missing_slot_semantic_coverage", "reference_not_grounded_in_case_facts", "candidate_visible_leakage", "invalid_hard_fail_semantics", "unrealistic_or_not_self_contained", "other_construct_failure"]
   },
