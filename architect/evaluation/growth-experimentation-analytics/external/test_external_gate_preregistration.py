@@ -127,6 +127,29 @@ class TheAuthorCannotReachTheCandidate(unittest.TestCase):
         self.assertIn("api.groq.com", author.AUTHOR_ENDPOINT)
         self.assertIn("there is no Gemini fallback for authoring", source)
 
+    def test_the_authoring_request_identifies_itself(self) -> None:
+        """Regression for run 33293517671.
+
+        urllib's default agent is banned by Cloudflare on api.groq.com (error 1010), which killed
+        that run at the authoring step before a single case existed. Every working Groq call in
+        this repository sets an explicit agent.
+        """
+        source = AUTHOR.read_text(encoding="utf-8")
+        self.assertIn('"User-Agent"', source)
+        self.assertNotIn("Python-urllib", source)
+        index = source.find('headers={"Authorization"')
+        self.assertGreater(index, 0)
+        self.assertIn('"User-Agent"', source[index:index + 400])
+
+    def test_the_burn_record_for_the_voided_run_is_present(self) -> None:
+        self.assertEqual(
+            ["architect/evaluation/growth-experimentation-analytics/external/"
+             "burn-record-33293517671.md"], PREREG["burn_records"])
+        record = (ROOT / PREREG["burn_records"][0]).read_text(encoding="utf-8")
+        self.assertIn("INVALID", record)
+        self.assertIn("Zero Gemini calls", record.replace("zero Gemini calls", "Zero Gemini calls"))
+        self.assertIn("Nothing about the candidate", record)
+
     def test_the_authoring_schema_cannot_carry_an_expectation(self) -> None:
         author = _load("author3", AUTHOR)
         for family in PACK.FAMILIES:
