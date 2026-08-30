@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import sys
@@ -44,7 +45,15 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "architect/evaluation/qualification-platform"))
 
 import external_pack_contract as contract  # noqa: E402
-import external_pack_novelty_v11 as novelty  # noqa: E402
+
+
+def load_novelty(path: str):
+    """The cycle's novelty guard, named by its preregistration rather than hardcoded here."""
+    spec = importlib.util.spec_from_file_location("novelty_guard", ROOT / path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    return module
 
 
 def _crypto():
@@ -192,7 +201,7 @@ def request_cases(family: str, attempt: int, feedback: list[str]) -> list[dict[s
     return cases
 
 
-def author_pack(cycle: str, candidate_digest: str, enforce_novelty: bool) -> dict[str, Any]:
+def author_pack(cycle: str, candidate_digest: str, novelty) -> dict[str, Any]:
     fixtures: list[dict[str, Any]] = []
     expectations: dict[str, dict[str, Any]] = {}
     attempts_used: dict[str, int] = {}
@@ -216,10 +225,11 @@ def author_pack(cycle: str, candidate_digest: str, enforce_novelty: bool) -> dic
             for case_index, one in enumerate(authored, start=1):
                 fixture_id = f"{FIXTURE_PREFIX}-{family_index:02d}-{case_index:02d}"
                 try:
-                    if enforce_novelty:
+                    if novelty is not None:
                         novelty.check_case(one, family)
                     batch.append(contract.admit(family, one, fixture_id))
-                except (contract.Rejected, novelty.NotNovel) as exc:
+                except (contract.Rejected,
+                        novelty.NotNovel if novelty is not None else contract.Rejected) as exc:
                     feedback.append(str(exc))
                     rejections.append({"family": family, "attempt": str(attempt),
                                        "reason": str(exc)})
@@ -255,7 +265,7 @@ def author_pack(cycle: str, candidate_digest: str, enforce_novelty: bool) -> dic
         "authoring_policy": {"mode": "family_batch_schema_enforced",
                              "max_attempts_per_family": MAX_ATTEMPTS_PER_FAMILY,
                              "fallback_author_family": None,
-                             "novelty_enforced": enforce_novelty},
+                             "novelty_enforced": novelty is not None},
         "attempts_used": attempts_used,
         "rejections": rejections,
         "author_calls": author_calls,
@@ -348,9 +358,10 @@ def main() -> int:
                              "digest it was authored against, and whether novelty is enforced")
     args = parser.parse_args()
     prereg = json.loads(Path(args.preregistration).read_text(encoding="utf-8"))
+    guard = (load_novelty(prereg["novelty"]["path"])
+             if prereg.get("novelty_guard", {}).get("enforced") else None)
     manifest = seal(author_pack(prereg["gate_id"],
-                                prereg["candidate_assembly_digest"],
-                                bool(prereg.get("novelty_guard", {}).get("enforced"))),
+                                prereg["candidate_assembly_digest"], guard),
                     Path(args.outdir))
     # Only counts and digests are printed. No case text and no expectation ever reaches a log.
     print(json.dumps({"status": "EXTERNAL_HELDOUT_AUTHORED_AND_SEALED",

@@ -29,6 +29,9 @@ RUNNER = HERE / "run_external_heldout_gate_v11.py"
 AUTHOR = HERE / "author_external_heldout_v1.py"
 # The commit at which the previous external cycle (run 33293694601) executed.
 PREVIOUS_EXECUTED_COMMIT = "1697c9c688e734582a1354d74593b4279846e847"
+# The commit at which THIS cycle (run 33299723985) executed. This cycle is closed, so its bindings
+# are checked against what it actually loaded rather than against a working tree later cycles move.
+EXECUTED_COMMIT = "b1818d580208b874b14e331803c3497c498d3675"
 
 
 def blob(path: str) -> str:
@@ -197,8 +200,10 @@ class TheNoveltyGuardIsRealAndBound(unittest.TestCase):
                             "stakeholder_pressure": "ship the ui_refresh now",
                             "confound": "legacy_ui ran on different budget pacing"}, "F")
 
-    def test_the_author_applies_the_guard_when_the_preregistration_requires_it(self) -> None:
-        source = AUTHOR.read_text(encoding="utf-8")
+    def test_the_author_applied_the_guard_in_the_run_that_executed(self) -> None:
+        """Read at the executed commit: later cycles legitimately evolve the shared author."""
+        source = subprocess.check_output(
+            ["git", "show", f"{EXECUTED_COMMIT}:{PREREG['author']['path']}"], text=True, cwd=ROOT)
         self.assertIn("novelty.check_case(one, family)", source)
         self.assertIn("if enforce_novelty:", source)
         self.assertIn('bool(prereg.get("novelty_guard", {}).get("enforced"))', source)
@@ -226,6 +231,16 @@ class TheCycleIdentityIsCarriedByTheDocumentNotTheCode(unittest.TestCase):
     def test_the_gate_id_is_new(self) -> None:
         self.assertNotEqual(PREVIOUS["gate_id"], PREREG["gate_id"])
         self.assertEqual(PREVIOUS["gate_id"], PREREG["supersedes_cycle"])
+
+
+class TheBindingsMatchWhatTheRunExecuted(unittest.TestCase):
+    def test_every_bound_apparatus_blob_matches_the_executed_commit(self) -> None:
+        for key in PREREG["bound_apparatus"]:
+            with self.subTest(key=key):
+                at_run = subprocess.check_output(
+                    ["git", "rev-parse", f"{EXECUTED_COMMIT}:{PREREG[key]['path']}"],
+                    text=True, cwd=ROOT).strip()
+                self.assertEqual(PREREG[key]["git_blob_sha"], at_run)
 
 
 class TheApparatusBurnIsRecorded(unittest.TestCase):

@@ -1,0 +1,44 @@
+{
+  "candidate_id": "growth-experimentation-measurement-v1.2-consolidated",
+  "freeze_id": "analytics-freeze-v1.2-2026-09-09",
+  "lifecycle": "frozen-candidate",
+  "frozen_at": "2026-09-09",
+  "supersedes": "growth-experimentation-measurement-v1.1-consolidated",
+  "supersedes_digest": "sha256:3c83f266a4191b2137e8a1cc974bab89d59d2308896b1752a4881205e3019081",
+  "assembly": [
+    {
+      "path": "architect/research/growth-experimentation-analytics/professional-model-consolidated-v1.2.md",
+      "git_blob_sha": "79372d17096c4fc9498deea415bdb998841f4c0a"
+    }
+  ],
+  "output_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/result-v4.schema.json",
+  "output_contract_git_blob_sha": "6cc6c50ae82954569a5562fe5f8b03c5ded5ea57",
+  "fixture_contract_path": "architect/evaluation/growth-experimentation-analytics/schemas/fixture-v3.schema.json",
+  "assembly_digest": "sha256:d57001f6820cc346098397432bc247d05eb529c1611b785dc978552010b25629",
+  "assembly_digest_method": "SHA-256 over ordered canonical lines '<path>:<git_blob_sha>\\n' for the assembly components in order, then the output contract",
+  "candidate_changed_from_v1_1": true,
+  "change_summary": "One addition: the identification ledger in section 5.2 and the channel separation that follows it. External run 33299723985 measured v1.1 cleanly and separated two kinds of repair -- adding a procedure took scope-target failures from 11 to 0, while restating existing rules as emit-time checks took its classes from 4 to 6. Sparsity was still conflated with identification in four trials on one fixture. v1.2 therefore does not state the sparsity rule a fourth time. It supplies the missing procedure: five defect questions answered from declared design facts, run before any outcome count is read, a prohibition on revising the answer afterwards, the exact fields thin counts may touch instead, and the rule that the action channel is decided separately and never inherited from the causal verdict.",
+  "non_weakening_proof": "architect/evaluation/growth-experimentation-analytics/test_successor_v12_non_weakening.py",
+  "targeted_regressions": "architect/evaluation/growth-experimentation-analytics/test_identification_ledger_regression_v12.py",
+  "repaired_failure_classes": {
+    "C2": "Sparsity conflated with identification: 4 tier-1 on one fixture, the dominant blocker.",
+    "B": "decision_basis omitting INSUFFICIENT_EVIDENCE, and scale_readiness omitting INSUFFICIENT_SAMPLE: same procedure names both fields.",
+    "C1": "Causal paralysis leaking into the action channel on the confounded family: same procedure forbids the leak."
+  },
+  "same_root_cause_note": "All three residuals are channel-separation failures, so one procedure addresses them. No fixture-specific rule was added.",
+  "instrument": {
+    "generator": {
+      "path": "architect/evaluation/growth-experimentation-analytics/heldout_generator_v07.py",
+      "git_blob_sha": "24762e2e6f6577573c680d13268fbe71fdcfe5dc"
+    },
+    "grader": {
+      "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8"
+    },
+    "runner": {
+      "path": "architect/evaluation/growth-experimentation-analytics/run_heldout_gate_v07.py",
+      "git_blob_sha": "783e2303b2ef8699ceb20cc90498ca9a2c1a8787"
+    }
+  },
+  "instrument_note": "Byte-identical to freezes v1.0 and v1.1. The grader, generator, output contract and fixture contract are unchanged by this repair; only the candidate document differs."
+}
