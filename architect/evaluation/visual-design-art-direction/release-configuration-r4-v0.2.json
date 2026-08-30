@@ -1,0 +1,151 @@
+{
+  "schema_version": "0.2",
+  "issue": 158,
+  "cycle_id": "visual-design-art-direction-0.2.0-independent-2026-08-30-r4-semantic",
+  "freeze_state": "FROZEN_PRE_CANDIDATE_OUTCOME",
+  "candidate_calls_at_freeze": 0,
+  "candidate": {
+    "commit": "0116d20f99fde919fa6e39c700726d16310d010b",
+    "skill_blob": "b230a06aeca3cc67d0c275889a65b8b7403b59c0",
+    "professional_model_base_blob": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+    "professional_model_repair_blob": "bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50",
+    "mutation_allowed": false
+  },
+  "scope": "FULL",
+  "heldout": {
+    "source_run": 33306265227,
+    "source_head": "147f1581c1ff24c51b71169aaad7770d6d27f3ce",
+    "artifact_id": 9730714845,
+    "artifact_name": "visual-design-art-direction-v0-2-encrypted-heldout-pack-r4",
+    "artifact_digest": "sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e",
+    "sealed_ciphertext_sha256": "b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6",
+    "case_count": 20,
+    "family_count": 10,
+    "contrastive_pair_count": 5,
+    "regeneration_or_substitution_allowed": false,
+    "historical_r3_release_reuse_allowed": false
+  },
+  "families": [
+    "FRAMING",
+    "REFERENCE",
+    "DIVERGENCE",
+    "CRAFT_JUDGMENT",
+    "MOBILE",
+    "TRUTH",
+    "CONTRACT",
+    "CRITIQUE_REPAIR",
+    "ADVANCED_MEDIA_ROUTING",
+    "AUTHORITY_BOUNDARY"
+  ],
+  "p0_hard_fails": [
+    "FABRICATED_FACTUAL_PROOF",
+    "UNOBSERVED_RENDER_SUCCESS_CLAIM",
+    "REFERENCE_IMITATION_AS_SOLUTION",
+    "KEYWORD_ONLY_ADVANCED_MEDIA_ROUTING",
+    "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
+    "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+    "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE"
+  ],
+  "calibration": {
+    "authoritative_general": {
+      "run": 33262394565,
+      "status": "CALIBRATION_PASS",
+      "ciphertext_sha256": "7ff98e8a9eb8bb82edb0c0a8ebde78553dd40f08487b1eb85f0412ac291ddeb1",
+      "sanitized_report_payload_sha256": "0d5348f397fb1c5b75bac2c018a85189ecf9b76dd2dc46a66583747a9b11d975"
+    },
+    "exact_r4": {
+      "run": 33315348031,
+      "status": "CALIBRATION_PASS",
+      "sanitized_report_artifact_id": 9733259354,
+      "sanitized_report_artifact_digest": "sha256:0586e0c43287a99a0991dc3d60bbe461f7701fcc7b43a0d030391d8face024a5",
+      "sanitized_report_payload_sha256": "642b2cc24f7e34593d52208bb4f5fcb342471c04104ff145136e1da15d613409",
+      "gemini_correct": "20/20",
+      "groq_correct": "20/20",
+      "combined_expected_winner_rate": 1.0,
+      "pair_disagreement_rate": 0.0,
+      "candidate_calls": 0
+    }
+  },
+  "judges": {
+    "gemini": {
+      "model": "gemini-3.5-flash-lite",
+      "api": "interactions",
+      "thinking_level": "medium",
+      "structured_output": "frozen JUDGE_SCHEMA"
+    },
+    "groq": {
+      "model": "openai/gpt-oss-120b",
+      "api": "chat_completions",
+      "reasoning_effort": "medium",
+      "temperature": 0,
+      "minimum_interval_seconds": 60
+    },
+    "protocol": "blind deterministic A/B candidate-versus-sealed-competent-generic-baseline",
+    "single_uncalibrated_scalar_forbidden": true
+  },
+  "semantic_release_thresholds": {
+    "numeric_policy_source": "unchanged calibrated comparative thresholds validated by general calibration 33262394565 and exact R4 calibration 33315348031",
+    "per_judge_candidate_preference_rate_min": 0.8,
+    "combined_candidate_preference_rate_min": 0.9,
+    "max_pair_disagreement_rate": 0.25,
+    "apply_to_overall": true,
+    "apply_to_each_preregistered_dimension_group": true,
+    "p0_tolerance": 0,
+    "all_dimension_groups_must_pass": true
+  },
+  "dimension_grouping": {
+    "method": "case-level calibrated A/B winner grouped by public construct family; no new scalar grader",
+    "FRAMING": ["brief_appropriateness", "function_clarity", "authority_boundary_discipline"],
+    "REFERENCE": ["brief_appropriateness", "reference_independence"],
+    "DIVERGENCE": ["brief_appropriateness", "concept_distinctiveness", "divergence_quality"],
+    "CRAFT_JUDGMENT": ["visual_craft_reasoning", "function_clarity"],
+    "MOBILE": ["mobile_art_direction", "function_clarity"],
+    "TRUTH": ["truth_evidence_integrity"],
+    "CONTRACT": ["brief_appropriateness", "implementation_contract_usefulness", "authority_boundary_discipline"],
+    "CRITIQUE_REPAIR": ["visual_craft_reasoning", "critique_root_cause_quality", "function_clarity"],
+    "ADVANCED_MEDIA_ROUTING": ["advanced_media_routing", "mobile_art_direction", "function_clarity"],
+    "AUTHORITY_BOUNDARY": ["brief_appropriateness", "authority_boundary_discipline"]
+  },
+  "candidate_runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "thinking_level": "medium",
+    "trial_count_per_case": 1,
+    "state": "stateless-v1",
+    "tools": "none-v1",
+    "observable": "final-output-only-v1",
+    "executor_path": "architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py",
+    "executor_protocol": "visual-design-art-direction-r4-v02-candidate-v1",
+    "public_canary": "not repeated; provider/runtime transport already exercised in v0.1 and deterministic v0.2 contract verification precedes scored execution",
+    "executor_blob": "9d8e8a1e8f1cd9793ca196ef93f8ffd978a76737"
+  },
+  "semantic_runner": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py",
+    "candidate_visible_fields": ["brief", "context", "constraints"],
+    "hidden_fields_withheld_from_candidate": ["competent_generic_baseline", "professional_criteria", "p0_guardrail"],
+    "constraints_adapter": "lossless canonical JSON array[string] -> executor string; judges retain original array",
+    "checkpoint": "encrypted after every completed candidate or judge call",
+    "public_report": "sanitized aggregate/family-dimension only",
+    "blob": "fba1d44bd175024400a37e7ed6ef061881af633f"
+  },
+  "p0_adjudication": {
+    "two_judges_same_category": "confirmed P0 -> professional release failure",
+    "single_or_discordant_flag": "SEMANTIC_ADJUDICATION_REQUIRED -> no PASS and no professional-failure inference until criterion resolution",
+    "no_posthoc_threshold_relaxation": true
+  },
+  "retry_resume_stop": {
+    "transient_5xx_retries_per_provider_request": 1,
+    "professional_failure_retry_count": 0,
+    "infrastructure_resume": "only missing calls from encrypted checkpoint on exact R4 artifact and frozen implementation",
+    "completed_calls_repeated": false,
+    "same_pack_professional_rerun_after_real_failure": false,
+    "provider_quota_or_transport_failure": "infrastructure failure, not professional failure"
+  },
+  "rendered_release_gate": {
+    "required_after_semantic_pass": true,
+    "tasks": ["P1_DISCOVER", "P2_DIRECT", "P3_REFINE", "P4_ADVANCED_MEDIA_PAIR"],
+    "narrow_and_wide_render_observation_required": true,
+    "separate_frontend_executor_or_controlled_adapter_required": true,
+    "semantic_pass_is_not_final_pass": true
+  }
+}
