@@ -1,0 +1,34 @@
+{
+  "acl_cleanup": "PASS",
+  "addendum_git_blob": "430b39da1b01dafdce05d0f10ec355cdb3921e9f",
+  "codex_cli_version": "codex-cli 0.151.0-alpha.7.2",
+  "denied_roots": [
+    "sha256:6ccff3618d6f124a823994a6450513ff56ac880b85768180c219381dd21f55be",
+    "sha256:a2799436b01e811234cf23457aaff75c22d3e70411abdd652a57f2071a7f854f",
+    "sha256:7b5c9941f7697b3782286ac869a300043d75696fadadb681ff2209821a86a10e"
+  ],
+  "ended_utc": "2026-08-30T12:19:48.715370+00:00",
+  "error_class": "RuntimeError",
+  "freeze_commit": "616375862c5e718f31d83c7c7cab4bbda1f737e6",
+  "isolation_canary": {
+    "observed": {
+      "inside": "READABLE",
+      "root_0": "DENIED",
+      "root_1": "DENIED",
+      "root_2": "DENIED"
+    },
+    "sandbox_principal": "RAUSHAN\\CodexSandboxOffline",
+    "status": "PASS"
+  },
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "pre_run_budget": {
+    "candidate_canary": 1,
+    "judge_calibration_batches": 2,
+    "maximum_model_calls": 3,
+    "on_quota_error": "STOP",
+    "scored_calls_authorized": 0
+  },
+  "provider": "codex-subscription-chatgpt-auth",
+  "started_utc": "2026-08-30T12:19:35.069437+00:00",
+  "verdict": "CANARY_GATE_FAIL_STOPPED"
+}
