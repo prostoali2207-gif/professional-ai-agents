@@ -1,0 +1,62 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-30-r2-gemini-groq",
+  "status": "PRE_SCORE_EVALUATOR_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "base_preregistration": {
+    "path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json",
+    "blob": "1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c",
+    "inherit_without_semantic_change": [
+      "scope",
+      "fixture_count",
+      "per_family",
+      "families",
+      "construct",
+      "fixture_design",
+      "critical_hard_fail_policy",
+      "thresholds",
+      "grader_methodology",
+      "runtime_contract",
+      "stochastic_retry_policy"
+    ]
+  },
+  "r1_sanitized_evidence": {
+    "run_id": 33308744663,
+    "artifact_id": 9731331513,
+    "artifact_digest": "sha256:693b543c5c7494e8cef866b17de0fa6f63ae5e18f2dcd9201a5374781ff9fbdd",
+    "classification": "NOT_EXECUTABLE_HELDOUT_AUTHORING_GATE_V05_R1",
+    "candidate_calls": 0,
+    "hidden_content_printed": false,
+    "accepted_group": "OWN/LIFE/MIX/SEC",
+    "accepted_group_attempt": 1,
+    "failed_group": "FACT/INTENT/OBJ/NEXT",
+    "failed_group_attempts": 3,
+    "failed_group_structural_reason_codes": [
+      "hidden_reference_json_parse",
+      "hidden_reference_json_parse",
+      "hidden_reference_json_parse"
+    ],
+    "audit_calls_for_failed_group": 0,
+    "conclusion": "The only observed r1 blocker is representation-level author output: hidden_reference_json was not syntactically parseable JSON in three fresh attempts. No candidate or grader call occurred for scoring."
+  },
+  "authoring_remediation": {
+    "semantic_mutation_allowed": false,
+    "native_schema_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "candidate_change_allowed": false,
+    "change": "Apply the already-proven compact-JSON encoding instruction to hidden_reference_json for every authoring group, not only FUP/STATE/ID/OPS.",
+    "encoding_contract": [
+      "hidden_reference_json must be one syntactically valid compact JSON object encoded as a string",
+      "use double-quoted JSON keys and strings",
+      "no Markdown fences, comments, trailing commas, Python literals or unescaped control characters",
+      "the decoded object must retain exactly the preregistered professional_disposition, three-item rubric, critical_hard_fail_triggers, boundary_expectation and alternative_interpretation_check shape"
+    ],
+    "fresh_attempt_rule": "All r2 author attempts are fresh. No rejected r1 hidden payload may be inspected, parsed manually, repaired, edited, replayed, paraphrased, ranked or reused.",
+    "safe_observability": "Only preregistered structural reason codes, group names, attempt counts, audit reason codes and call counts may be logged. Never log candidate-visible case facts, hidden-reference values or raw author output."
+  },
+  "release_rule": "Use the exact r1 FULL release contract after deterministic assembly of the r1 base plus this r2 cycle/authoring remediation. PASS still requires a COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}
