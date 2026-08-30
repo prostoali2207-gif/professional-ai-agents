@@ -92,8 +92,9 @@
     "reusable_evidence_checked": true,
     "subscription_route_eligibility": "eligible because the frozen historical provider identity is not reused as the release contract; this is a newly preregistered cross-runtime cycle with exact candidate identity and new evidence",
     "metered_api_route": "BLOCKED; no unmet evidence requirement justifies an API key while authenticated ChatGPT subscription Codex is available",
-    "planned_subscription_calls": 7,
-    "maximum_subscription_calls": 7,
+    "planned_subscription_calls": 8,
+    "maximum_subscription_calls": 8,
+    "runtime_drift_recanary_calls": 1,
     "protected_reserve": "no API quota or provider secret is consumed",
     "stop_condition": "deterministic preflight failure, canary failure, first scored mismatch, runtime failure, or completed verdict",
     "mid_run_exhaustion": "preserve completed sanitized aggregates and return NOT_EXECUTABLE; never infer PASS from partial work"
