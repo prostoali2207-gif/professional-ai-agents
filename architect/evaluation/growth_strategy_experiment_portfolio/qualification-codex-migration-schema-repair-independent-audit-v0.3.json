@@ -1,0 +1,35 @@
+{
+  "audit_id": "strategist-codex-calibration-schema-repair-independent-audit-2026-08-30",
+  "review_role": "independent evaluator and infrastructure verifier; not the Strategist candidate",
+  "reviewed_schema_failure_evidence_commit": "42ba2677603608aaf41ff55a85b84ccc7cddc221",
+  "schema_repair_addendum_git_blob": "54c0dcb9294d7db0ee9ce5501cdd323383b34568",
+  "judge_adapter_git_blob": "7106e064d45208983fd2d49054eefb525ad3be62",
+  "canary_gate_git_blob": "0aaa668a02d2f8beecefb3ca9b49b58d212e41e3",
+  "targeted_test_git_blob": "25e07acc065d868798b2d35556e0a6209be5818e",
+  "unchanged_candidate_adapter_git_blob": "81b4122bd394c0972d92b8859ceeaac32cefdae7",
+  "unchanged_transport_runner_git_blob": "87cb4e9615ff8fe69fe510caade90513c3e9a894",
+  "hidden_sealed_content_opened": false,
+  "hidden_or_scored_fixture_used_for_repair_or_calibration": false,
+  "scored_qualification_executed": false,
+  "separately_paid_api_used": false,
+  "repair_authoring_model_calls": 0,
+  "finding": {
+    "id": "SCHEMA-STRICT-001",
+    "severity": "P0",
+    "observed_root_cause": "Calibration exposed pair_results as an optional top-level property, but the active strict structured-output runtime requires every exposed property to be listed in required.",
+    "repair": "Calibration now exposes and requires results only. Heldout mode continues to expose and require results plus pair_results.",
+    "direct_regression": "Recursively assert that required equals the complete property-key set for every object and that additionalProperties is false in both calibration and heldout schemas.",
+    "nearby_variant": "Heldout pair_results preservation is tested independently so the calibration repair cannot silently weaken future contrastive grading."
+  },
+  "unchanged_invariants_verified": [
+    "Strategist candidate commit, digest, content, and adapter",
+    "judge prompt, dimensions, critical flags, public calibration anchors, and expected calibration dispositions",
+    "professional constructs, thresholds, hard fails, conservative aggregation, and release criteria",
+    "v0.2 sanitized failure envelope and bounded retry controller",
+    "hidden/scored fixtures excluded from repair and calibration",
+    "scored authorization remains zero",
+    "no separately paid API fallback"
+  ],
+  "static_test_result": "PASS_20_OF_20",
+  "freeze_decision": "FROZEN_FOR_TARGETED_UNSCORED_GATE_EXECUTION"
+}

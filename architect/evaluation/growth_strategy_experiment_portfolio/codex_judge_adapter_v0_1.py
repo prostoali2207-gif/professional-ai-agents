@@ -55,10 +55,10 @@ def schema(mode: str) -> dict:
     result_props = {"id": {"type": "string"}, **{d: score for d in DIMENSIONS}, "critical_flags": {"type": "array", "items": {"enum": FLAGS}}, "pass": {"type": "boolean"}}
     properties = {
         "results": {"type": "array", "items": {"type": "object", "properties": result_props, "required": list(result_props), "additionalProperties": False}},
-        "pair_results": {"type": "array", "items": {"type": "object", "properties": {"pair_id": {"type": "string"}, "consistent": {"type": "boolean"}}, "required": ["pair_id", "consistent"], "additionalProperties": False}},
     }
-    required = ["results"] if mode == "calibration" else ["results", "pair_results"]
-    return {"type": "object", "properties": properties, "required": required, "additionalProperties": False}
+    if mode != "calibration":
+        properties["pair_results"] = {"type": "array", "items": {"type": "object", "properties": {"pair_id": {"type": "string"}, "consistent": {"type": "boolean"}}, "required": ["pair_id", "consistent"], "additionalProperties": False}}
+    return {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}
 
 
 def run(payload: dict, model: str, timeout: int) -> tuple[dict, dict]:

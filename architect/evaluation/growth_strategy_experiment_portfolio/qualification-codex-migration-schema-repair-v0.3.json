@@ -1,0 +1,58 @@
+{
+  "repair_id": "strategist-v0.1-codex-calibration-schema-repair-2026-08-30",
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "status": "FROZEN_FOR_TARGETED_UNSCORED_GATE_EXECUTION",
+  "base_transport_repair_commit": "cf48a5475d3097c0bbd519855702bff4247927cc",
+  "schema_failure_evidence_commit": "42ba2677603608aaf41ff55a85b84ccc7cddc221",
+  "root_cause": {
+    "layer": "judge calibration response schema",
+    "observed": "Runtime HTTP 400 invalid_json_schema because pair_results appeared in top-level properties but was absent from required during calibration.",
+    "source": "sanitized unscored transport envelope in qualification-codex-canary-record-v0.2.json"
+  },
+  "minimal_repair": {
+    "calibration_schema": "Expose and require results only.",
+    "heldout_schema": "Expose and require both results and pair_results.",
+    "strict_object_invariant": "At every object level, required contains every key exposed by properties and additionalProperties remains false.",
+    "rubric_or_prompt_changed": false,
+    "hidden_or_scored_inputs_used": false
+  },
+  "inherited_controls": {
+    "transport_repair_addendum_git_blob": "64e4c6d1689bd72c682c6d891c099b62ddee4bf7",
+    "sanitized_failure_envelope": "UNCHANGED",
+    "shared_retry_budget": 1,
+    "retry_eligible_only_for": "TRANSIENT_TRANSPORT",
+    "backoff_seconds": 5,
+    "quota_auth_permission_config_model_unknown_content_or_professional_retry_count": 0,
+    "candidate_canary_retry_count": 0,
+    "fallback_provider_or_paid_api": "FORBIDDEN"
+  },
+  "unchanged": {
+    "strategist_candidate_commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "strategist_candidate_digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "candidate_content_changed": false,
+    "professional_constructs_changed": false,
+    "thresholds_changed": false,
+    "hard_fails_changed": false,
+    "release_criteria_changed": false,
+    "scored_qualification_authorized": false
+  },
+  "targeted_gate_order": [
+    "judge-a grades all 6 public calibration anchors in one batch under the inherited bounded retry policy",
+    "judge-b grades all 6 public calibration anchors in one batch under the remaining shared retry budget",
+    "judge isolation attests distinct non-null ephemeral thread and workspace identities plus tool-free transports",
+    "candidate filesystem-denial probe passes under the previously frozen boundary",
+    "exact unscored frozen candidate canary executes once with zero retry",
+    "stop with READY_FOR_SCORED_AUTHORIZATION only when every targeted gate passes; otherwise CANARY_GATE_FAIL_STOPPED"
+  ],
+  "pre_run_budget": {
+    "provider": "Codex subscription with existing ChatGPT authentication",
+    "public_calibration_initial_calls": 2,
+    "shared_transient_transport_retry_reserve": 1,
+    "exact_candidate_canary_calls": 1,
+    "maximum_model_calls": 4,
+    "scored_model_calls_authorized": 0,
+    "separately_paid_api_calls_authorized": 0
+  },
+  "success_verdict": "READY_FOR_SCORED_AUTHORIZATION",
+  "failure_verdict": "CANARY_GATE_FAIL_STOPPED"
+}

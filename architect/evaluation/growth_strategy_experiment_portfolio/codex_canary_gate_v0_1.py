@@ -186,7 +186,7 @@ def main() -> int:
     if any(candidate_root == path or candidate_root.is_relative_to(path) for path in denied_roots):
         raise RuntimeError("candidate root overlaps a denied root")
 
-    addendum = repo / "architect/evaluation/growth_strategy_experiment_portfolio/qualification-codex-migration-repair-v0.2.json"
+    addendum = repo / "architect/evaluation/growth_strategy_experiment_portfolio/qualification-codex-migration-schema-repair-v0.3.json"
     candidate_adapter = repo / "architect/evaluation/growth_strategy_experiment_portfolio/codex_candidate_adapter_v0_1.py"
     judge_adapter = repo / "architect/evaluation/growth_strategy_experiment_portfolio/codex_judge_adapter_v0_1.py"
     python = Path(args.python).resolve()
