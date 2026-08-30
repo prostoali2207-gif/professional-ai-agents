@@ -20,7 +20,11 @@
     "r9_audit_rejections": 0,
     "r9_structural_rejections": 0,
     "r9_transport_failure": "Fresh source pack passed sealed preflight, then reseal_provider_pack.py failed before candidate calls because SOURCE_PACK_DIGEST was not exported by the workflow.",
-    "decision": "Keep r9 authoring semantics and exact r6 native schema unchanged. In r10 only repair transport: preserve the encrypted source pack immediately after authoring, resolve SOURCE_PACK_DIGEST from SOURCE_MANIFEST, export it before reseal, then continue the unchanged canary and FULL qualification path."
+    "r10_pre_model_run_id": 33301814559,
+    "r10_author_model_results": 0,
+    "r10_candidate_calls": 0,
+    "r10_pre_model_failure": "The first r10 execution failed in local preregistration assembly before any Gemini or Groq request because safe_structural_reason_codes and safe_observability were omitted from the transport-only preregistration. This is a pre-call evaluator configuration failure, not professional evidence.",
+    "decision": "Keep r9 authoring semantics and exact r6 native schema unchanged. In r10 only repair transport and complete the exact inherited diagnostic fields: preserve the encrypted source pack immediately after authoring, resolve SOURCE_PACK_DIGEST from SOURCE_MANIFEST, export it before reseal, then continue the unchanged canary and FULL qualification path."
   },
   "construct_inheritance": {
     "base_preregistration_path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r6-gemini-groq.json",
@@ -53,6 +57,8 @@
     "native_schema_rule": "Use exactly the pinned r6 AUTHOR_SCHEMA with no field, nesting, cardinality or type changes.",
     "targeted_instruction_change": "Only for FUP/STATE/ID/OPS: hidden_reference_json must be a syntactically valid compact JSON object string; candidate-visible fields contain neutral scenario/request/state/tool facts only and never evaluation language or expected behavior; critical_hard_fail_triggers defaults to [] and may contain a frozen identifier only when the candidate-visible facts directly and unambiguously expose that material failure.",
     "authoring_rule": "Use the pinned r9 authoring implementation unchanged except cycle/output binding. Rejected hidden payloads are never inspected, repaired, ranked or reused.",
+    "safe_structural_reason_codes": ["schema_top_level", "schema_cardinality", "schema_case_type", "schema_text_fields", "initial_state_json_parse", "initial_state_json_type", "tool_scenario_json_parse", "tool_scenario_json_type", "tool_scenario_shape", "checkpoint_json_parse", "checkpoint_json_type", "hidden_reference_json_parse", "hidden_reference_json_type", "professional_disposition", "rubric_cardinality", "rubric_item", "hard_fail_enum", "boundary_expectation", "alternative_interpretation_check"],
+    "safe_observability": "Only preregistered structural/audit reason codes, group names and call counts may be logged; never field values, hidden reference text, task text, expected content or raw model output.",
     "audit_reason_codes": ["accepted", "missing_slot_semantic_coverage", "reference_not_grounded_in_case_facts", "candidate_visible_leakage", "invalid_hard_fail_semantics", "unrealistic_or_not_self_contained", "other_construct_failure"]
   },
   "transport_remediation": {
