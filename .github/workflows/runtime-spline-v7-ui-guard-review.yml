@@ -15,7 +15,7 @@ jobs:
     env:
       SPLINE_BASE: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
       SPLINE_HEAD: 77a994f8ea64271afab0532b065dc12922be686f
-      SPLINE_PREVIEW_URL: https://auto-parts-landing-fsdjzc9u5-prostoali2207-5636s-projects.vercel.app/
+      SPLINE_PREVIEW_URL: http://127.0.0.1:3000/
     steps:
       - name: Checkout professional core
         uses: actions/checkout@v4
@@ -34,13 +34,26 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install browser runtime
+      - name: Install, build and start exact Spline head
         working-directory: spline
         run: |
           npm install
-          npx playwright install --with-deps chromium
+          npm run build
+          npm run start -- -p 3000 > /tmp/spline-ui-guard.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/spline-ui-guard.log
+          exit 1
 
-      - name: Capture exact preview render evidence
+      - name: Install Chromium
+        working-directory: spline
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture exact local render evidence
         run: node runtime/spline_ui_guard/capture.js
 
       - name: Run fresh independent UI Guard
