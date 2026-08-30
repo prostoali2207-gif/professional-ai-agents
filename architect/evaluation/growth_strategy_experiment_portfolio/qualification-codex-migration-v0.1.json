@@ -1,0 +1,87 @@
+{
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "status": "PREREGISTERED_NO_SCORED_CALLS",
+  "decision": "MIGRATION_READY",
+  "candidate": {
+    "commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "original_candidate_blob": "b22bac7a4deed11c466c014f41960f5e2deec2d1",
+    "content_changed": false,
+    "identity_changed": false
+  },
+  "changed": {
+    "candidate_runtime": {
+      "from": {"provider": "gemini-interactions-api", "model": "gemini-3.5-flash-lite"},
+      "to": {"provider": "codex-subscription", "model": "gpt-5.6-terra", "adapter": "architect/evaluation/growth_strategy_experiment_portfolio/codex_candidate_adapter_v0_1.py"}
+    },
+    "judges": [
+      {"id": "judge-a", "provider": "codex-subscription", "model": "gpt-5.6-sol"},
+      {"id": "judge-b", "provider": "codex-subscription", "model": "gpt-5.6-terra"}
+    ],
+    "judge_adapter": "architect/evaluation/growth_strategy_experiment_portfolio/codex_judge_adapter_v0_1.py"
+  },
+  "unchanged": {
+    "source_contract": "architect/evaluation/growth_strategy_experiment_portfolio/qualification-preregistration-v0.1.json",
+    "families": ["GS-BV", "GS-BD", "GS-EV", "GS-MH", "GS-AS", "GS-PP", "GS-ED", "GS-MB", "GS-CH", "GS-CF", "GS-LI", "GS-BA"],
+    "fixture_count": 24,
+    "fixtures_per_family": 2,
+    "contrastive_pair_count": 7,
+    "trial_count_per_fixture": 1,
+    "professional_failure_retry_count": 0,
+    "critical_hard_fail_count": 0,
+    "minimum_mean_decision_correctness_per_family": 1.7,
+    "minimum_mean_boundary_integrity_per_family": 1.7,
+    "minimum_mean_evidence_calibration_per_family": 1.5,
+    "minimum_mean_mechanism_judgment_per_family": 1.5,
+    "minimum_overall_fixture_pass_rate": 0.9,
+    "contrastive_pairs_must_have_no_unjustified_stance_flip": true,
+    "aggregation": "minimum dimensions; union critical flags; both judges must pass and mark every pair consistent",
+    "release_semantics": "PASS admits only after all post-core release gates; otherwise REVISE or NOT_EXECUTABLE"
+  },
+  "isolation": {
+    "candidate_input_fields": ["task"],
+    "candidate_forbidden_context": ["hidden_reference", "expected_answer", "grader_prompt", "grader_key", "sealed_pack_path"],
+    "candidate_boundary": "candidate-only-filesystem-no-sealed-pack-v1",
+    "candidate_boundary_requirement": "Run the candidate adapter in a separate OS/container/managed-worker filesystem namespace containing the frozen candidate Git objects and Codex subscription auth, but never the encrypted/decrypted sealed pack, grader references, grader adapter, or qualification key.",
+    "grader_boundary": "one ephemeral process, workspace, and Codex thread per judge call; judges are blind to each other and the release outcome",
+    "tool_policy": "none; any tool, command, file-change, MCP, or web-search event invalidates the run before scoring",
+    "known_limitation": "Both judges use the Codex subscription and therefore lack provider independence. Process, workspace, model-alias, and context independence plus conservative aggregation are required; public calibration must establish construct usability before hidden grading."
+  },
+  "authentication_and_cost": {
+    "allowed": "existing interactive Codex subscription authentication via CODEX_HOME",
+    "forbidden_fallbacks": ["OPENAI_API_KEY", "CODEX_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "any paid provider API"],
+    "this_issue_model_calls": 0,
+    "future_exact_model_call_budget": {"candidate_canary": 1, "public_calibration_batches": 2, "scored_candidate": 24, "scored_judging_batches": 2, "total": 29},
+    "quota_rule": "Before starting, verify enough subscription quota for all 29 calls plus a documented reserve; otherwise NOT_EXECUTABLE. Each judge receives all six public anchors in one calibration batch and the frozen heldout set in one scoring batch. No blind rerun or provider/API fallback."
+  },
+  "calibration": {
+    "source": "CALIBRATION in architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_template_v0_1_r2.py",
+    "public_anchor_count": 6,
+    "required_pass_rate_per_judge": 1.0,
+    "hidden_or_heldout_calibration_forbidden": true
+  },
+  "sealed_pack": {
+    "manual_hidden_inspection_forbidden": true,
+    "reuse_rule": "Reuse an intact frozen pack only when its freshness and integrity remain valid after this addendum; otherwise regenerate once under the existing integrity protocol after this addendum is frozen, independently review, encrypt, and freeze before any scored candidate call.",
+    "candidate_namespace_mount_forbidden": true
+  },
+  "exact_release_gate_order": [
+    "deterministic static preflight passes",
+    "sealed no-model transport and structure preflight passes without exposing hidden content",
+    "candidate filesystem-denial sentinel and context-separation canary pass",
+    "each judge independently passes all 6 public calibration anchors",
+    "exact unscored candidate canary passes; then stop and record evidence",
+    "an evaluator explicitly authorizes the frozen 24-case scored run",
+    "execute each candidate fixture once with zero professional retries",
+    "both isolated judges grade the frozen outputs once",
+    "apply unchanged conservative aggregation, hard fails, thresholds, and contrastive rules",
+    "write a replayable private run record and sanitized public report",
+    "return PASS only if core and later post-core gates pass; fail closed otherwise"
+  ],
+  "run_record_required_fields": [
+    "migration_id", "git_commit", "candidate_commit", "candidate_digest", "pack_manifest_digest",
+    "codex_cli_version", "candidate_model_alias", "judge_model_aliases", "start_utc", "end_utc",
+    "boundary_attestations", "calibration_results", "canary_result", "invocation_ids", "usage",
+    "fixture_result_digests", "aggregation", "sanitized_report_digest", "verdict"
+  ]
+}
