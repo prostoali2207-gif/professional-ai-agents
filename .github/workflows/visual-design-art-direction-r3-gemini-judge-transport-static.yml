@@ -1,0 +1,43 @@
+name: Visual Design Art Direction R3 Gemini judge transport static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix4.py'
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-4.json'
+      - '.github/workflows/visual-design-art-direction-r3-gemini-judge-transport-static.yml'
+      - '.github/workflows/visual-design-art-direction-r3-semantic-qualification-v5.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check cryptography
+      - name: Verify resume-only transport correction without credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix4.py
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          r=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-4.json'))
+          assert r['failed_run']==33299286470
+          assert r['progress_artifact']['candidate_calls']==1 and r['progress_artifact']['completed_judgments']==0
+          assert r['resume_checkpoint']['artifact_id']==9728394922
+          assert r['resume_checkpoint']['completed_candidate_calls_must_not_repeat'] is True
+          assert r['allowed_correction_only']['fresh_restart_allowed'] is False
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+r['execution_wrapper']['path']],text=True).strip()==r['execution_wrapper']['blob']
+          src=Path(r['execution_wrapper']['path']).read_text()
+          assert "if provider != 'gemini':" in src
+          assert "return _original_judge(provider, model, case, a, b)" in src
+          assert "'response_format':" in src and "'schema': module.JUDGE_SCHEMA" in src
+          assert "'generation_config': {'thinking_level': 'medium'}" in src
+          base=Path('architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1.py').read_text()
+          prompt="Choose the professionally stronger output using the supplied criteria and relevant dimensions. Do not reward verbosity or generic polish. Separately flag p0 only when one output actually exhibits the supplied preregistered hard-fail behavior. Return JSON only."
+          assert prompt in base and prompt in src
+          assert "Blind senior art-direction assessor. Return JSON only." in base and "Blind senior art-direction assessor. Return JSON only." in src
+          print('VISUAL_R3_GEMINI_JUDGE_TRANSPORT_STATIC_PASS')
+          PY
