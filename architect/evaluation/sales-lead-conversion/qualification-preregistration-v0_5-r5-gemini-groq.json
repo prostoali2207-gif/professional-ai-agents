@@ -1,0 +1,142 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-30-r5-gemini-groq",
+  "status": "PRE_SCORE_EXECUTION_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "base_preregistration": {
+    "path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json",
+    "blob": "1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c",
+    "inherit_without_semantic_change": [
+      "scope",
+      "fixture_count",
+      "per_family",
+      "families",
+      "construct",
+      "fixture_design",
+      "critical_hard_fail_policy",
+      "thresholds",
+      "grader_methodology",
+      "runtime_contract",
+      "stochastic_retry_policy"
+    ]
+  },
+  "prior_sanitized_evidence": {
+    "r1": {
+      "run_id": 33308744663,
+      "artifact_id": 9731331513,
+      "candidate_calls": 0,
+      "structural_reason_codes": ["hidden_reference_json_parse", "hidden_reference_json_parse", "hidden_reference_json_parse"]
+    },
+    "r2": {
+      "run_id": 33309083950,
+      "artifact_id": 9731426171,
+      "candidate_calls": 0,
+      "structural_reason_codes": ["hidden_reference_json_parse", "hidden_reference_json_parse", "hidden_reference_json_parse"]
+    },
+    "r3": {
+      "run_id": 33310578863,
+      "artifact_id": 9733133317,
+      "artifact_digest": "sha256:233bdcef4002c08c94434161be5c435e005cfab17badccbe8c6a554487ea542a",
+      "candidate_calls": 0,
+      "provider_failure": "Groq construct auditor HTTP 429 tokens-per-day capacity before sealing and before candidate calls."
+    },
+    "r4": {
+      "run_id": 33315346775,
+      "job_id": 99267619872,
+      "authoring_artifact_id": 9735496023,
+      "source_pack_artifact_id": 9735496279,
+      "scoring_pack_artifact_id": 9735496701,
+      "scoring_pack_artifact_digest": "sha256:5c8df07add3bc32904a52f8ffd755b7c361567a1f1a7d33eac2fa3ba83e1ebcf",
+      "scoring_pack_digest": "sha256:a2c7e8229b306cc12416d03402f05fbfa09acece49ddfe6ffa8d91ee22a52ced",
+      "authoring_status": "V05_R4_AUTHORED_AUDITED_SEALED",
+      "sealed_preflight": "PASS",
+      "canary": "PASS",
+      "full_scoring_started": true,
+      "full_scoring_terminal_state": "CANCELLED_BY_JOB_WALL_CLOCK",
+      "sanitized_report_written": false,
+      "scored_candidate_calls": "UNKNOWN_NONZERO_POSSIBLE",
+      "checkpoint_available": false,
+      "pack_reuse_for_scoring_allowed": false,
+      "causal_conclusion": "The r4 workflow consumed most of one job's wall-clock budget in pre-score provider waiting/authoring, then GitHub cancelled the FULL scoring step about 8.5 minutes after it began. Because no scoring checkpoint or sanitized report was written, the exact number of already-scored hidden cases is unknown. Replaying the r4 pack from the start could create prohibited second attempts, so r4 is NOT_EXECUTABLE and its pack is disqualified from release scoring reuse."
+    }
+  },
+  "authoring_remediation": {
+    "semantic_mutation_allowed": false,
+    "native_schema_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "candidate_change_allowed": false,
+    "field_name": "hidden_reference_json",
+    "representation_change": "Reuse the r3/r4 deterministic 13-line tagged record unchanged. The outer r6 AUTHOR_SCHEMA, field count, field names, types and cardinality remain unchanged.",
+    "tagged_record_contract": [
+      "Exactly 13 non-empty lines in the fixed order below.",
+      "PD=<single-line professional disposition>",
+      "R1N=<rubric dimension 1 name>",
+      "R1P=<rubric dimension 1 pass evidence>",
+      "R1F=<rubric dimension 1 material failure>",
+      "R2N=<rubric dimension 2 name>",
+      "R2P=<rubric dimension 2 pass evidence>",
+      "R2F=<rubric dimension 2 material failure>",
+      "R3N=<rubric dimension 3 name>",
+      "R3P=<rubric dimension 3 pass evidence>",
+      "R3F=<rubric dimension 3 material failure>",
+      "HF=NONE or comma-separated frozen critical hard-fail identifiers",
+      "BE=<single-line boundary expectation>",
+      "AI=<single-line alternative interpretation check>"
+    ],
+    "decoder_rule": "Reuse the r3/r4 deterministic decoder unchanged.",
+    "fresh_attempt_rule": "All r5 author attempts are fresh. No prior rejected payload and no r4 hidden pack/case may be inspected, repaired, replayed, paraphrased, ranked or reused.",
+    "safe_structural_reason_codes": [
+      "schema_top_level",
+      "schema_cardinality",
+      "schema_case_type",
+      "schema_text_fields",
+      "initial_state_json_parse",
+      "initial_state_json_type",
+      "tool_scenario_json_parse",
+      "tool_scenario_json_type",
+      "tool_scenario_shape",
+      "checkpoint_json_parse",
+      "checkpoint_json_type",
+      "hidden_reference_tagged_shape",
+      "hidden_reference_tagged_tag",
+      "hidden_reference_tagged_value",
+      "hard_fail_enum"
+    ],
+    "safe_observability": "Only preregistered structural reason codes, group names, attempt counts, audit reason codes, provider status class and call counts may be logged; never hidden values, case facts, raw author output or reconstructed hidden reference content."
+  },
+  "provider_resilience_remediation": {
+    "provider": "groq-openai-compatible-api",
+    "model": "openai/gpt-oss-120b",
+    "trigger": "HTTP 429 from the construct-audit request",
+    "retry_count": 1,
+    "retry_delay_rule": "Use Retry-After when present; otherwise parse the provider 'try again in' duration from the 429 body. Add a 5-second safety buffer.",
+    "maximum_wait_seconds": 2700,
+    "second_failure_rule": "If the single delayed retry also fails, stop NOT_EXECUTABLE before sealing and before candidate calls.",
+    "non_429_rule": "All other provider transport failures keep the inherited infrastructure-failure behavior.",
+    "judge_identity_change": false,
+    "model_change": false
+  },
+  "execution_split_remediation": {
+    "trigger": "r4 FULL scoring was cancelled by the per-job wall-clock after successful fresh authoring, sealing, preflight and canary.",
+    "author_job": "Fresh authoring, independent construct audit, immediate sealing, re-sealing with the frozen Gemini runner, static/sealed preflight, then upload of the exact encrypted scoring pack. No canary and no candidate scoring in this job.",
+    "scoring_job": "A separate dependent job downloads only the exact scoring artifact produced by the author job in the same workflow run, verifies artifact/run/candidate/pack bindings, performs static/sealed preflight and exact-runtime canary, then executes the preregistered FULL qualification exactly once and validates the sanitized report.",
+    "artifact_boundary": "The author job exports GitHub artifact id/digest plus internal sealed pack digest as job outputs; the scoring job must verify all three before any candidate call.",
+    "author_job_timeout_minutes": 180,
+    "scoring_job_timeout_minutes": 180,
+    "fresh_r5_pack_required": true,
+    "r4_pack_reuse_allowed": false,
+    "partial_r4_resume_allowed": false,
+    "candidate_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "hard_fail_change_allowed": false,
+    "candidate_provider_change_allowed": false,
+    "candidate_model_change_allowed": false,
+    "professional_retry_change_allowed": false
+  },
+  "release_rule": "Use the exact r1 FULL release contract with the unchanged tagged hidden-reference transport and Groq-429 resilience. R5 changes only job-level execution isolation. PASS still requires a COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}
