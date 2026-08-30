@@ -61,17 +61,17 @@ jobs:
           name: content-architecture-v04-codex-r2-windows-wheelhouse
           path: ${{ runner.temp }}/ca-v04-codex-r2-wheelhouse
       - name: Install evaluator dependency offline
-        shell: pwsh
+        shell: powershell
         run: |
           python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-codex-r2-wheelhouse" cryptography==44.0.2
       - name: Verify secret and exact candidate
-        shell: pwsh
+        shell: powershell
         run: |
           if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
           git fetch origin agent/content-architecture-core-2026-08 main
           if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
       - name: Verify Codex subscription runtime
-        shell: pwsh
+        shell: powershell
         run: |
           $auth = (codex login status 2>&1 | Out-String)
           if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Host $auth; exit 41 }
@@ -79,17 +79,17 @@ jobs:
           Write-Host "codex_version=$ver"
           if ($ver -notmatch '0\.151\.0-alpha\.7\.1') { exit 42 }
       - name: Run unscored Codex adapter regression
-        shell: pwsh
+        shell: powershell
         run: |
           python architect/evaluation/harness/adapters/test_codex_frozen_artifact_adapter.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python architect/evaluation/harness/adapters/codex_frozen_artifact_live_regression.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Re-run frozen base grader calibration
-        shell: pwsh
+        shell: powershell
         run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
       - name: Author and verify fresh r2 sealed corpus
-        shell: pwsh
+        shell: powershell
         run: |
           $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-pack'
           New-Item -ItemType Directory -Force -Path $pack | Out-Null
@@ -109,7 +109,7 @@ jobs:
           print('r2 corpus/grader binding: PASS')
           '@ | python -
       - name: Record freeze evidence
-        shell: pwsh
+        shell: powershell
         run: |
           $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-pack'
           $evidence = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-freeze-evidence'
