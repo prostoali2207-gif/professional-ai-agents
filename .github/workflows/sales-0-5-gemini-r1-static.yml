@@ -9,6 +9,8 @@ on:
       - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r1.py'
       - 'architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py'
       - 'architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py'
+      - '.github/workflows/sales-0-5-gemini-r1.yml'
+      - '.github/workflows/sales-0-5-gemini-r1-optin.yml'
       - '.github/workflows/sales-0-5-gemini-r1-static.yml'
   workflow_dispatch:
 
