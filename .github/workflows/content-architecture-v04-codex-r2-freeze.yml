@@ -1,0 +1,115 @@
+name: Content Architecture v0.4 Codex r2 freeze
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-codex-r2/FREEZE-CODEX-R2-v0.1'
+
+permissions:
+  contents: read
+
+jobs:
+  freeze:
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 20
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install evaluator dependency
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Verify secret and exact candidate
+        shell: pwsh
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08 main
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+      - name: Verify Codex subscription runtime
+        shell: pwsh
+        run: |
+          $auth = (codex login status 2>&1 | Out-String)
+          if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Host $auth; exit 41 }
+          $ver = (codex --version 2>&1 | Out-String).Trim()
+          Write-Host "codex_version=$ver"
+          if ($ver -notmatch '0\.151\.0-alpha\.7\.1') { exit 42 }
+      - name: Run unscored Codex adapter regression
+        shell: pwsh
+        run: |
+          python architect/evaluation/harness/adapters/test_codex_frozen_artifact_adapter.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python architect/evaluation/harness/adapters/codex_frozen_artifact_live_regression.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Re-run frozen base grader calibration
+        shell: pwsh
+        run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+      - name: Author and verify fresh r2 sealed corpus
+        shell: pwsh
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-pack'
+          New-Item -ItemType Directory -Force -Path $pack | Out-Null
+          python architect/evaluation/content-architecture-v04-codex-r2/author_pack_r2.py --out $pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:R2_PACK_DIR = $pack
+          @'
+          import importlib.util, json, os, pathlib
+          manifest=json.loads((pathlib.Path(os.environ['R2_PACK_DIR'])/'sealed-manifest.json').read_text())
+          assert manifest['gate_id']=='content-architecture-v0.4-codex-heldout-2026-08-30-r2'
+          assert manifest['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert manifest['fixture_count']==30
+          p=pathlib.Path('architect/evaluation/content-architecture-v04-codex-r2/grader_r2.py')
+          spec=importlib.util.spec_from_file_location('grader_r2',p); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+          pack=g.load_pack(pathlib.Path(os.environ['R2_PACK_DIR'])/'sealed-pack.bin')
+          assert pack['gate_id']==manifest['gate_id'] and len(pack['fixtures'])==30
+          print('r2 corpus/grader binding: PASS')
+          '@ | python -
+      - name: Record freeze evidence
+        shell: pwsh
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-pack'
+          $evidence = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r2-freeze-evidence'
+          New-Item -ItemType Directory -Force -Path $evidence | Out-Null
+          Copy-Item (Join-Path $pack 'sealed-manifest.json') (Join-Path $evidence 'sealed-manifest.json')
+          $env:R2_EVIDENCE_DIR = $evidence
+          @'
+          import json, os, pathlib, subprocess
+          out=pathlib.Path(os.environ['R2_EVIDENCE_DIR'])
+          manifest=json.loads((out/'sealed-manifest.json').read_text())
+          def blob(path):
+              return subprocess.check_output(['git','hash-object',path],text=True).strip()
+          evidence={
+            'gate_id': manifest['gate_id'],
+            'candidate_sha': manifest['candidate_sha'],
+            'plain_identity_sha256': manifest['plain_identity_sha256'],
+            'fixture_count': manifest['fixture_count'],
+            'provider': 'codex-cli-chatgpt-subscription',
+            'model': 'gpt-5.6-sol',
+            'reasoning_effort': 'medium',
+            'codex_cli_version': '0.151.0-alpha.7.1',
+            'adapter_git_blob_sha': blob('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py'),
+            'mcp_git_blob_sha': blob('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py'),
+            'author_wrapper_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r2/author_pack_r2.py'),
+            'grader_wrapper_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r2/grader_r2.py'),
+            'runner_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r2/run_gate_r2.py'),
+            'provider_api_keys_used': False,
+            'scored_candidate_calls': 0
+          }
+          (out/'freeze-evidence.json').write_text(json.dumps(evidence,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(evidence,sort_keys=True))
+          '@ | python -
+      - name: Upload r2 freeze evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r2-freeze-evidence
+          path: ${{ runner.temp }}/ca-v04-codex-r2-freeze-evidence/
+          retention-days: 14
