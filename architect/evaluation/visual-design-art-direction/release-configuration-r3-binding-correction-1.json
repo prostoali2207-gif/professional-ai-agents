@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1",
+  "issue": 158,
+  "type": "evaluator_infrastructure_binding_correction",
+  "status": "FROZEN_BEFORE_ANY_CANDIDATE_CALL",
+  "candidate_calls_before_correction": 0,
+  "failed_preflight_run": 33293275507,
+  "failed_step": "Verify calibration evidence payloads",
+  "failure_position": "before credentials, candidate runtime canary, held-out download and scored candidate execution",
+  "base_release_configuration": {
+    "path": "architect/evaluation/visual-design-art-direction/release-configuration-r3.json",
+    "blob": "4bd74dc06058b73014077dbf77369d65994993ca"
+  },
+  "allowed_correction_only": {
+    "field": "calibration.exact_r3.sanitized_report_payload_sha256",
+    "incorrect_value": "88c731996b0c262883ff9b1950235f875870741522e918b6851079a55212c3f7",
+    "correct_value": "56136e59e216da4a773a943d7dcc30c9d045b2d899165cb68e2060283ea11131",
+    "source_run": 33266432530,
+    "artifact_id": 9719310347,
+    "artifact_name": "visual-design-art-direction-v0-1-r3-corpus-calibration-report",
+    "status": "CALIBRATION_PASS",
+    "candidate_calls": 0
+  },
+  "execution_wrapper": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix.py",
+    "blob": "2c7ac62239e9f286dbc5c9c31f1157452120a0ed",
+    "effect": "override only the sanitized exact-R3 calibration report evidence-label constant in the frozen scorer"
+  },
+  "unchanged": [
+    "frozen candidate commit and component blobs",
+    "FULL scope",
+    "exact sealed R3 corpus/run/head/artifact/digest",
+    "all professional criteria",
+    "all seven P0 hard fails",
+    "judge identities and judge configuration",
+    "0.80/0.90/0.25 semantic thresholds",
+    "dimension grouping",
+    "candidate runtime provider/model/configuration",
+    "one scored trial per case",
+    "professional failure retry count zero",
+    "bounded transient 5xx retry and encrypted resume policy",
+    "mandatory rendered P1-P4 gate after semantic PASS"
+  ],
+  "same_failed_run_resume_allowed": false,
+  "next_execution": "fresh protected workflow start is allowed because the failed run made zero candidate/provider calls and produced no checkpoint"
+}
