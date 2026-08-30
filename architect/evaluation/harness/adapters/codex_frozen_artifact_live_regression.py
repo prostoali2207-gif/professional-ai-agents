@@ -61,7 +61,24 @@ def main() -> int:
             text=True, encoding="utf-8", errors="replace", env=env, timeout=300,
         )
         if proc.returncode != 0:
-            print(json.dumps({"status": "FAIL", "reason": "adapter_nonzero"}))
+            runtime_diagnostic = None
+            if diagnostic.exists():
+                try:
+                    value = json.loads(diagnostic.read_text(encoding="utf-8"))
+                    if isinstance(value, dict):
+                        runtime_diagnostic = {
+                            "exit_code": value.get("exit_code"),
+                            "stderr": str(value.get("stderr", ""))[-4000:],
+                        }
+                except Exception:
+                    runtime_diagnostic = {"unreadable": True}
+            print(json.dumps({
+                "status": "FAIL",
+                "reason": "adapter_nonzero",
+                "adapter_stdout": proc.stdout[-2000:],
+                "adapter_stderr": proc.stderr[-2000:],
+                "runtime_diagnostic": runtime_diagnostic,
+            }, ensure_ascii=False, sort_keys=True))
             return 1
         record = json.loads(proc.stdout)
         calls = record.get("observable", {}).get("tool_calls", [])
