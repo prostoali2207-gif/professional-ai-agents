@@ -1,0 +1,134 @@
+name: Runtime Spline V7 Independent QA Agent
+
+on:
+  push:
+    branches:
+      - runtime/spline-v7-qa-20260831
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SPLINE_BASE: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
+      SPLINE_HEAD: 77a994f8ea64271afab0532b065dc12922be686f
+    steps:
+      - name: Checkout QA runtime
+        uses: actions/checkout@v4
+
+      - name: Checkout exact Spline PR head
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-parts-landing
+          ref: 77a994f8ea64271afab0532b065dc12922be686f
+          path: spline
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install and build exact head
+        working-directory: spline
+        run: |
+          npm install
+          npm run build
+          npx playwright install --with-deps chromium
+
+      - name: Record exact base-to-head diff
+        working-directory: spline
+        run: |
+          git fetch origin $SPLINE_BASE
+          {
+            echo "BASE=$SPLINE_BASE"
+            echo "HEAD=$SPLINE_HEAD"
+            echo
+            echo "CHANGED FILES"
+            git diff --name-status "$SPLINE_BASE" "$SPLINE_HEAD"
+            echo
+            echo "STAT"
+            git diff --stat "$SPLINE_BASE" "$SPLINE_HEAD"
+            echo
+            echo "RUNTIME PAGE DIFF"
+            git diff --exit-code "$SPLINE_BASE" "$SPLINE_HEAD" -- app/page.tsx && echo "app/page.tsx: UNCHANGED"
+          } > ../qa-diff.txt
+
+      - name: Execute regression and mobile QA suite
+        working-directory: spline
+        run: |
+          set -o pipefail
+          npm run test:e2e 2>&1 | tee ../qa-e2e.log
+
+      - name: Start exact head locally for real downstream smoke
+        working-directory: spline
+        run: |
+          npm run start -- -p 3000 > /tmp/spline-qa.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/spline-qa.log
+          exit 1
+
+      - name: Submit one real clearly-marked CRM request from exact head
+        working-directory: spline
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('@playwright/test');
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+            const url = 'http://127.0.0.1:3000/?utm_source=qa-agent&utm_medium=release-gate&utm_campaign=v7_process_collision';
+            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.locator('input[name="vin"]').fill('SMOKETESTVIN000001');
+            await page.locator('input[name="partName"]').fill('QA TEST V7 PROCESS - DO NOT PROCESS');
+            await page.locator('input[name="contact"]').fill('qa-agent-v7-process');
+            await page.locator('input[name="clientName"]').fill('QA Agent V7 Process');
+            await page.getByRole('button', { name: 'Отправить заявку' }).click();
+            const status = page.locator('[role="status"]');
+            await status.waitFor({ state: 'visible', timeout: 20000 });
+            const statusText = await status.innerText();
+            const match = statusText.match(/Заявка №(\d+)/);
+            if (!match) throw new Error(`No accepted numbered request in success state: ${statusText}`);
+            fs.writeFileSync('../qa-real-crm-smoke.json', JSON.stringify({
+              source: 'real-browser-exact-local-head-to-live-create-landing-request',
+              spline_head: process.env.SPLINE_HEAD,
+              viewport: '390x844',
+              accepted: true,
+              request_number: Number(match[1]),
+              status_text: statusText,
+              test_identity: {
+                vin: 'SMOKETESTVIN000001',
+                part_name: 'QA TEST V7 PROCESS - DO NOT PROCESS',
+                contact: 'qa-agent-v7-process',
+                client_name: 'QA Agent V7 Process'
+              }
+            }, null, 2));
+            console.log(statusText);
+            await browser.close();
+          })().catch((error) => { console.error(error); process.exit(1); });
+          NODE
+
+      - name: Run fresh independent QA Agent
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python runtime/spline_qa/review.py
+
+      - name: Upload QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spline-v7-independent-qa-agent
+          path: |
+            qa-diff.txt
+            qa-e2e.log
+            qa-real-crm-smoke.json
+            qa-agent-output.md
+            qa-agent-metadata.json
+          retention-days: 7
