@@ -32,8 +32,11 @@ jobs:
           assert "candidate_calls': 0" in p
           assert "historical_r3_reused': False" in p
           assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
-          assert 'fresh independent held-out semantic corpus' in pre
-          assert 'R3 sealed corpus and hidden cases must not be reused' in pre
+          assert 'Status: preregistered before R4 implementation/provider calls' in pre
+          assert 'It must generate fresh cases after v0.2 freeze.' in pre
+          assert 'The R3 sealed corpus and hidden cases must not be reused, inspected, paraphrased, ranked, edited, or substituted into R4 release evidence.' in pre
+          assert 'candidate scoring remains forbidden until true `CALIBRATION_PASS` on exact R4.' in pre
+          assert 'No final QUALIFIED claim without rendered P1-P4 PASS.' in pre
           assert freeze['candidate_version']=='0.2.0-candidate'
           assert subprocess.check_output(['git','rev-parse','HEAD:architect/evaluation/visual-design-art-direction/candidate/SKILL.md'],text=True).strip()=='b230a06aeca3cc67d0c275889a65b8b7403b59c0'
           assert subprocess.check_output(['git','rev-parse','HEAD:architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md'],text=True).strip()=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
