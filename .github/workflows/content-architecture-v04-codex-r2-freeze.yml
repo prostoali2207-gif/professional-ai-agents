@@ -101,6 +101,7 @@ jobs:
 
           if (-not $resolved) {
             $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
               (Join-Path $env:LOCALAPPDATA 'Programs'),
               (Join-Path $env:USERPROFILE '.vscode\extensions'),
               (Join-Path $env:USERPROFILE '.cursor\extensions')
