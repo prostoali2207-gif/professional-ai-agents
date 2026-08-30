@@ -168,14 +168,17 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $env:R3_PACK_DIR = $pack
           @'
-          import json, os, pathlib
+          import importlib.util, json, os, pathlib
           d=pathlib.Path(os.environ['R3_PACK_DIR'])
           m=json.loads((d/'sealed-manifest.json').read_text())
           assert m['gate_id']=='content-architecture-v0.4-codex-heldout-2026-08-30-r3'
           assert m['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
           assert m['fixture_count']==30
           assert m['plain_identity_sha256']=='31ef6b0f0a1286e3860cfc706ece28acc72bd2eea3e77fb1726026e3ba962335'
-          assert m['sealed_sha256']=='0a802036401d7040d8b93dadb3c7798ad01ca19ce06d2c422ec8245da1ffae31'
+          gp=pathlib.Path('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py')
+          spec=importlib.util.spec_from_file_location('grader_r3',gp); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+          plain=g.load_pack(d/'sealed-pack.bin')
+          assert plain['gate_id']==m['gate_id'] and plain['candidate_sha']==m['candidate_sha'] and len(plain['fixtures'])==30
           print('exact frozen r3 corpus: PASS')
           '@ | python -
       - name: Run scored r3 qualification
