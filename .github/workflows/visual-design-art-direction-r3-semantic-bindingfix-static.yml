@@ -1,0 +1,38 @@
+name: Visual Design Art Direction R3 semantic binding-fix static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-1.json'
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix.py'
+      - '.github/workflows/visual-design-art-direction-r3-semantic-qualification-v2.yml'
+      - '.github/workflows/visual-design-art-direction-r3-semantic-bindingfix-static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify correction is evaluator-only and pre-candidate
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          fix=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-1.json'))
+          assert fix['candidate_calls_before_correction']==0
+          assert fix['failed_preflight_run']==33293275507
+          assert fix['allowed_correction_only']['incorrect_value']=='88c731996b0c262883ff9b1950235f875870741522e918b6851079a55212c3f7'
+          assert fix['allowed_correction_only']['correct_value']=='56136e59e216da4a773a943d7dcc30c9d045b2d899165cb68e2060283ea11131'
+          assert fix['same_failed_run_resume_allowed'] is False
+          paid=Path('.github/workflows/visual-design-art-direction-r3-semantic-qualification-v2.yml').read_text()
+          trigger=paid.split('permissions:',1)[0]
+          assert 'pull_request:' not in trigger and 'push:' not in trigger
+          assert '/run-visual-r3-semantic-v2' in paid
+          assert '56136e59e216da4a773a943d7dcc30c9d045b2d899165cb68e2060283ea11131' in paid
+          print('VISUAL_R3_BINDING_FIX_STATIC_PASS')
+          PY
