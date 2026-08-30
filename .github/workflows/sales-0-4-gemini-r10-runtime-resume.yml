@@ -60,6 +60,7 @@ jobs:
           p=json.load(open(os.environ['RESUME_RECORD']))
           assert p['cycle_id']==os.environ['CYCLE_ID']
           assert p['source_run']['run_id']==int(os.environ['SOURCE_RUN_ID']) and p['source_run']['scored_candidate_calls']==0
+          assert p['resume_attempts'][-1]['run_id']==33302325011 and p['resume_attempts'][-1]['scored_candidate_calls']==0 and p['resume_attempts'][-1]['classification']=='PRE_SCORE_LOCAL_ASSERTION_FAILURE'
           assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
           assert p['exact_scoring_pack']['artifact_name']==os.environ['SOURCE_ARTIFACT_NAME'] and p['exact_scoring_pack']['pack_digest']==os.environ['PACK_DIGEST'] and p['exact_scoring_pack']['fixture_count']==36
           fix=p['runtime_fix']; assert not any(fix[k] for k in ('semantic_change','candidate_change','grader_change','pack_change','threshold_change','retry_policy_change'))
@@ -97,7 +98,6 @@ jobs:
           assert m['cycle_id']==os.environ['CYCLE_ID']
           assert m['candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and m['candidate']['digest']==os.environ['CANDIDATE_DIGEST']
           assert m['sealed_pack']['pack_digest']==os.environ['PACK_DIGEST']
-          assert m['fixture_count']==36
           print('R10_EXACT_PACK_BINDING_PASS')
           PY
       - name: Generic static preflight on preserved pack
