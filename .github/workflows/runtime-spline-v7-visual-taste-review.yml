@@ -9,14 +9,12 @@ permissions:
   contents: read
 
 jobs:
-  visual-taste:
+  review:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       SPLINE_COMMIT: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
       SPLINE_URL: https://auto-parts-landing-five.vercel.app/
-      CANDIDATE_COMMIT: 0116d20f99fde919fa6e39c700726d16310d010b
     steps:
       - name: Checkout professional core
         uses: actions/checkout@v4
@@ -27,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: prostoali2207-gif/auto-parts-landing
-          ref: ${{ env.SPLINE_COMMIT }}
+          ref: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
           path: spline
 
       - name: Setup Node
@@ -35,166 +33,19 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Spline dependencies and Chromium
+      - name: Install browser runtime
         working-directory: spline
         run: |
           npm install
           npx playwright install --with-deps chromium
 
-      - name: Capture exact live render evidence
-        working-directory: spline
-        env:
-          URL: ${{ env.SPLINE_URL }}
-        run: |
-          node <<'NODE'
-          const { chromium } = require('@playwright/test');
-          (async () => {
-            const browser = await chromium.launch({headless:true});
-            const mobile = await browser.newPage({viewport:{width:390,height:844}, deviceScaleFactor:1});
-            await mobile.goto(process.env.URL,{waitUntil:'domcontentloaded',timeout:30000});
-            await mobile.locator('main').waitFor({timeout:15000});
-            await mobile.evaluate(() => document.fonts.ready);
-            await mobile.waitForTimeout(1200);
-            await mobile.screenshot({path:'../mobile-full.png',fullPage:true});
-            await mobile.locator('.process').screenshot({path:'../mobile-process.png'});
-            await mobile.close();
+      - name: Capture live render evidence
+        run: node runtime/spline_visual_review/capture.js
 
-            const desktop = await browser.newPage({viewport:{width:1440,height:1000}, deviceScaleFactor:1});
-            await desktop.goto(process.env.URL,{waitUntil:'domcontentloaded',timeout:30000});
-            await desktop.locator('main').waitFor({timeout:15000});
-            await desktop.evaluate(() => document.fonts.ready);
-            await desktop.waitForTimeout(1200);
-            await desktop.screenshot({path:'../desktop-full.png',fullPage:true});
-            await desktop.close();
-            await browser.close();
-          })().catch(e => { console.error(e); process.exit(1); });
-          NODE
-
-      - name: Run frozen visual professional core on render evidence
+      - name: Run fresh provider-backed visual specialist
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          test -n "$GEMINI_API_KEY"
-          python <<'PY'
-          import base64, json, os, subprocess, urllib.request, urllib.error
-          from pathlib import Path
-
-          candidate=os.environ['CANDIDATE_COMMIT']
-          def show(path):
-              return subprocess.check_output(['git','show',f'{candidate}:{path}'],text=True)
-
-          skill=show('architect/evaluation/visual-design-art-direction/candidate/SKILL.md')
-          base=show('architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md')
-          repair=show('architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md')
-          agents=Path('spline/AGENTS.md').read_text()
-          design=Path('spline/DESIGN.md').read_text()
-          taste=Path('spline/.agents/skills/visual-taste-agent/SKILL.md').read_text()
-
-          system=(
-            'You are a fresh, isolated execution of the frozen Visual Design / Art Direction professional core v0.2. '
-            'Act as the Spline Visual Taste specialist for a narrow post-render review. Use direct rendered evidence as primary truth. '
-            'Do not inherit any previous assistant verdict or score. Do not redesign for novelty. Decide independently whether the current production render should be kept or narrowly refined. '
-            'Respect function, mobile viability, truth, authority boundaries, and project visual contracts.\n\n'
-            '--- FROZEN PROFESSIONAL CORE ---\n'+skill+
-            '\n\n--- PROFESSIONAL MODEL BASE ---\n'+base+
-            '\n\n--- P0 REPAIR MODEL ---\n'+repair
-          )
-
-          prompt=f'''Review the exact current production render of Spline at commit {os.environ['SPLINE_COMMIT']}.
-
-The user is specifically asking whether the mobile design still needs work after V7 refinement. This is a NARROW REFINE decision, not permission for another reset.
-
-The supplied images are, in order:
-1. current 390px full-page production render;
-2. current 390px process-section crop;
-3. current 1440px full-page production render.
-
-Project source-of-truth context follows.
-
---- SPLINE AGENTS ---
-{agents}
-
---- SPLINE DESIGN CONTRACT ---
-{design}
-
---- VISUAL TASTE PROJECT SKILL ---
-{taste}
-
-Return a concise professional review using exactly these headings:
-VERDICT: KEEP | REFINE | RESET
-P0
-P1
-P2
-HERO
-PROCESS
-EVIDENCE_CHAPTER
-REQUEST_FORM
-EXACT_CHANGE_CONTRACT
-
-Rules:
-- Base every finding on visible render evidence or the supplied contracts.
-- If there is no P1, write NONE.
-- If REFINE, give only the minimum exact changes needed; identify elements that must not be touched.
-- Do not write CSS or implementation code.
-- Do not invent benchmark observations, business facts, or unsupported claims.
-'''
-
-          def img(path):
-              return {'type':'image','data':base64.b64encode(Path(path).read_bytes()).decode(),'mime_type':'image/png'}
-
-          body={
-            'model':'gemini-3.5-flash-lite',
-            'system_instruction':system,
-            'input':[
-              {'type':'text','text':prompt},
-              img('mobile-full.png'),
-              img('mobile-process.png'),
-              img('desktop-full.png'),
-            ],
-            'store':False,
-            'generation_config':{'thinking_level':'medium'},
-          }
-          req=urllib.request.Request(
-            'https://generativelanguage.googleapis.com/v1beta/interactions',
-            data=json.dumps(body,ensure_ascii=False).encode(),
-            method='POST',
-            headers={'Content-Type':'application/json','x-goog-api-key':os.environ['GEMINI_API_KEY']},
-          )
-          try:
-              with urllib.request.urlopen(req,timeout=240) as r:
-                  raw=json.loads(r.read().decode())
-          except urllib.error.HTTPError as e:
-              detail=e.read().decode('utf-8','replace')[-1500:]
-              raise SystemExit(f'Gemini HTTP {e.code}: {detail}')
-
-          text=raw.get('output_text')
-          if not text:
-              chunks=[]
-              for out in raw.get('outputs') or []:
-                  if isinstance(out,dict) and isinstance(out.get('text'),str): chunks.append(out['text'])
-              for step in raw.get('steps') or []:
-                  if isinstance(step,dict) and step.get('type')=='model_output':
-                      c=step.get('content')
-                      if isinstance(c,str): chunks.append(c)
-                      elif isinstance(c,list):
-                          chunks.extend(x.get('text','') for x in c if isinstance(x,dict) and isinstance(x.get('text'),str))
-              text='\n'.join(x for x in chunks if x.strip())
-          if not text or not text.strip():
-              raise SystemExit('No observable specialist output')
-          Path('visual-taste-output.md').write_text(text)
-          Path('visual-taste-metadata.json').write_text(json.dumps({
-              'runtime':'fresh-provider-backed-multimodal',
-              'provider':'gemini-interactions-api',
-              'model':'gemini-3.5-flash-lite',
-              'candidate_commit':candidate,
-              'candidate_skill_blob':subprocess.check_output(['git','rev-parse',f'{candidate}:architect/evaluation/visual-design-art-direction/candidate/SKILL.md'],text=True).strip(),
-              'spline_commit':os.environ['SPLINE_COMMIT'],
-              'production_url':os.environ['SPLINE_URL'],
-              'interaction_id':raw.get('id'),
-          },indent=2))
-          print('VISUAL_SPECIALIST_COMPLETED')
-          print(text)
-          PY
+        run: python runtime/spline_visual_review/review.py
 
       - name: Upload specialist evidence
         uses: actions/upload-artifact@v4
