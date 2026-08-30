@@ -164,8 +164,12 @@ def request_cases(family: str, attempt: int, feedback: list[str]) -> list[dict[s
     }
     request = urllib.request.Request(
         AUTHOR_ENDPOINT, data=json.dumps(body, ensure_ascii=False).encode("utf-8"), method="POST",
+        # An explicit User-Agent is required, not cosmetic. Run 33293517671 sent urllib's
+        # default and Cloudflare answered 1010 browser_signature_banned before a single case was
+        # authored. Every working Groq call in this repository sets one.
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json",
-                 "Accept": "application/json"},
+                 "Accept": "application/json",
+                 "User-Agent": "analytics-external-heldout-author/1.0"},
     )
     pace()
     try:

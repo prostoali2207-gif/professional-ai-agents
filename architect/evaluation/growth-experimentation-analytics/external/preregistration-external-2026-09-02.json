@@ -82,7 +82,8 @@
   },
   "author": {
     "path": "architect/evaluation/growth-experimentation-analytics/external/author_external_heldout_v1.py",
-    "git_blob_sha": "4d4a62df5811ec106e7418cd5e7b6fd1d544c298"
+    "git_blob_sha": "2665b9541040726bd2460e151735dbc96e219967",
+    "repair_note": "Re-bound after burn record burn-record-33293517671.md: run 33293517671 ended INVALID at the authoring step with Cloudflare 1010 browser_signature_banned because the request carried urllib's default User-Agent. The repair is one header. No case had been authored and no candidate call had been made, so no result was protected."
   },
   "runner": {
     "path": "architect/evaluation/growth-experimentation-analytics/external/run_external_heldout_gate_v11.py",
@@ -122,5 +123,8 @@
     "Cross-runtime portability is untested. Deployment on another model family is a revalidation trigger.",
     "The external author is a language model, not a human practitioner. This removes evaluator authorship, not model authorship; admission re-derives every construct from the authored numbers so an agreeable author cannot widen the pack.",
     "The release does not grant spend, publication or approval authority, and it does not cover any Analytics specialization."
+  ],
+  "burn_records": [
+    "architect/evaluation/growth-experimentation-analytics/external/burn-record-33293517671.md"
   ]
 }
