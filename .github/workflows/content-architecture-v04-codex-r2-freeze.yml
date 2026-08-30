@@ -130,11 +130,19 @@ jobs:
       - name: Verify Codex subscription runtime
         shell: powershell
         run: |
-          $auth = (codex login status 2>&1 | Out-String)
-          if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Host $auth; exit 41 }
-          $ver = (codex --version 2>&1 | Out-String).Trim()
-          Write-Host "codex_version=$ver"
-          if ($ver -notmatch '0\.151\.0-alpha\.7\.1') { exit 42 }
+          @'
+          import subprocess, sys
+          auth = subprocess.run(['codex','login','status'], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=15)
+          auth_text = (auth.stdout or '') + (auth.stderr or '')
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in auth_text:
+              print(auth_text)
+              raise SystemExit(41)
+          ver = subprocess.run(['codex','--version'], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=15)
+          version = ((ver.stdout or '') + (ver.stderr or '')).strip()
+          print('codex_version=' + version)
+          if ver.returncode != 0 or '0.151.0-alpha.7.1' not in version:
+              raise SystemExit(42)
+          '@ | python -
       - name: Run unscored Codex adapter regression
         shell: powershell
         run: |
