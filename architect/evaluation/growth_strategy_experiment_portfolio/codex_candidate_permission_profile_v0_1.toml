@@ -1,0 +1,18 @@
+# Install as $CODEX_HOME/p198-candidate.config.toml for the deterministic
+# `codex sandbox` isolation probe. External deny-read ACLs remain the primary
+# boundary on native Windows because the probe must prove, not assume, denial.
+[permissions.candidate]
+description = "Strategist issue 198 candidate-only boundary"
+extends = ":workspace"
+
+[permissions.candidate.filesystem]
+":root" = "deny"
+":minimal" = "read"
+":tmpdir" = "deny"
+":slash_tmp" = "deny"
+
+[permissions.candidate.filesystem.":workspace_roots"]
+"." = "read"
+
+[permissions.candidate.network]
+enabled = false

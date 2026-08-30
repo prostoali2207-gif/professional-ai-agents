@@ -88,7 +88,11 @@ def run_codex(candidate: str, task: str, model: str, timeout: int) -> tuple[dict
         "\n--- END FROZEN CANDIDATE ---\n\n--- BEGIN TASK ---\n" + task +
         "\n--- END TASK ---"
     )
-    with tempfile.TemporaryDirectory(prefix="strategist-candidate-") as raw_root:
+    parent_value = os.environ.get("STRATEGIST_CODEX_CANDIDATE_ROOT", "").strip()
+    parent = Path(parent_value).resolve() if parent_value else None
+    if parent is not None and (not parent.is_dir() or parent == Path.cwd().resolve()):
+        raise RuntimeError("STRATEGIST_CODEX_CANDIDATE_ROOT must be an existing isolated directory")
+    with tempfile.TemporaryDirectory(prefix="strategist-candidate-", dir=parent) as raw_root:
         root = Path(raw_root)
         schema_path = root / "candidate-output.schema.json"
         result_path = root / "candidate-output.json"
@@ -140,7 +144,7 @@ def contract(model: str) -> dict:
         "tool_protocol": "none-v1",
         "state_protocol": "stateless-v1",
         "observable_protocol": "final-output-only-v1",
-        "required_boundary": "candidate-only-filesystem-no-sealed-pack-v1",
+        "required_boundary": "native-windows-elevated-sandbox-plus-sensitive-root-deny-acl-v1",
     }
 
 

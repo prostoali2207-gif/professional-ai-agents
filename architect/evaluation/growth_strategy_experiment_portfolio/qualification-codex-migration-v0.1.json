@@ -1,6 +1,6 @@
 {
   "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
-  "status": "PREREGISTERED_NO_SCORED_CALLS",
+  "status": "FROZEN_FOR_PREREGISTERED_CANARY_EXECUTION",
   "decision": "MIGRATION_READY",
   "candidate": {
     "commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
@@ -41,8 +41,10 @@
   "isolation": {
     "candidate_input_fields": ["task"],
     "candidate_forbidden_context": ["hidden_reference", "expected_answer", "grader_prompt", "grader_key", "sealed_pack_path"],
-    "candidate_boundary": "candidate-only-filesystem-no-sealed-pack-v1",
-    "candidate_boundary_requirement": "Run the candidate adapter in a separate OS/container/managed-worker filesystem namespace containing the frozen candidate Git objects and Codex subscription auth, but never the encrypted/decrypted sealed pack, grader references, grader adapter, or qualification key.",
+    "candidate_boundary": "native-windows-elevated-sandbox-plus-sensitive-root-deny-acl-v1",
+    "candidate_boundary_requirement": "Run Codex in a dedicated candidate workspace under the elevated CodexSandboxOffline account while temporary inherited deny-read ACLs protect every repository/sealed-pack root and CODEX_HOME. The host-side adapter may verify frozen Git identity before the model call, but model-generated commands must be unable to read the repository, grader artifacts, encrypted/decrypted pack, or subscription credentials. Remove the temporary ACLs in a finally block and fail closed on cleanup error.",
+    "boundary_profile": "architect/evaluation/growth_strategy_experiment_portfolio/codex_candidate_permission_profile_v0_1.toml",
+    "canary_gate": "architect/evaluation/growth_strategy_experiment_portfolio/codex_canary_gate_v0_1.py",
     "grader_boundary": "one ephemeral process, workspace, and Codex thread per judge call; judges are blind to each other and the release outcome",
     "tool_policy": "none; any tool, command, file-change, MCP, or web-search event invalidates the run before scoring",
     "known_limitation": "Both judges use the Codex subscription and therefore lack provider independence. Process, workspace, model-alias, and context independence plus conservative aggregation are required; public calibration must establish construct usability before hidden grading."
@@ -50,9 +52,10 @@
   "authentication_and_cost": {
     "allowed": "existing interactive Codex subscription authentication via CODEX_HOME",
     "forbidden_fallbacks": ["OPENAI_API_KEY", "CODEX_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "any paid provider API"],
-    "this_issue_model_calls": 0,
+    "preregistration_authoring_model_calls": 0,
+    "authorized_canary_phase_model_calls": 3,
     "future_exact_model_call_budget": {"candidate_canary": 1, "public_calibration_batches": 2, "scored_candidate": 24, "scored_judging_batches": 2, "total": 29},
-    "quota_rule": "Before starting, verify enough subscription quota for all 29 calls plus a documented reserve; otherwise NOT_EXECUTABLE. Each judge receives all six public anchors in one calibration batch and the frozen heldout set in one scoring batch. No blind rerun or provider/API fallback."
+    "quota_rule": "The canary phase is capped at three subscription calls and stops on any quota/runtime error without retry. Before a later scored run, verify enough subscription quota for the remaining 26 calls plus a documented reserve; otherwise NOT_EXECUTABLE. Each judge receives all six public anchors in one calibration batch and the frozen heldout set in one scoring batch. No blind rerun or provider/API fallback."
   },
   "calibration": {
     "source": "CALIBRATION in architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_template_v0_1_r2.py",

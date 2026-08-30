@@ -1,0 +1,41 @@
+{
+  "audit_id": "strategist-codex-migration-independent-audit-2026-08-30",
+  "reviewed_source_commit": "cbb0f5372c71c351324d6ecd2950456fddc24ac7",
+  "reviewed_addendum_git_blob": "39dde3ca04cf1066d5a7553158b019e279c0a518",
+  "frozen_repaired_addendum_git_blob": "430b39da1b01dafdce05d0f10ec355cdb3921e9f",
+  "frozen_boundary_profile_git_blob": "cededb1836eee16fce8da4c5a000b24e6386b9b2",
+  "frozen_canary_gate_git_blob": "fda6f17c31a7b71f477b77663ed043a016f267ef",
+  "review_role": "held-out evaluator and infrastructure verifier; not the Strategist candidate",
+  "candidate_content_opened_for_identity_and_contract_review": true,
+  "hidden_sealed_content_opened": false,
+  "scored_heldout_executed": false,
+  "findings": [
+    {
+      "id": "AUDIT-BOUNDARY-001",
+      "severity": "P0",
+      "observation": "The addendum named an external candidate-only namespace but did not freeze an executable native-Windows enforcement path.",
+      "evidence": "A permission-profile-only probe observed the host repository as readable; therefore narrative isolation and profile configuration alone were rejected as proof.",
+      "repair": "Freeze elevated CodexSandboxOffline execution plus temporary inherited deny-read ACLs on every repository/sealed-pack root and CODEX_HOME, a separate candidate workspace, a deterministic denial probe, and finally-block ACL cleanup.",
+      "required_regression": "Inside candidate workspace must be READABLE; every protected root must be DENIED; ACL cleanup must PASS. Exact candidate canary is blocked otherwise."
+    },
+    {
+      "id": "AUDIT-COST-001",
+      "severity": "P1",
+      "observation": "The original field this_issue_model_calls=0 became ambiguous once the authorized canary continuation began.",
+      "repair": "Separate zero-call preregistration authoring from the three-call canary phase and reserve the remaining 26 calls for a separately authorized scored run."
+    }
+  ],
+  "unchanged_invariants_verified": [
+    "candidate commit and digest",
+    "candidate content and original blob",
+    "12 families and 24 fixtures",
+    "7 contrastive constructs",
+    "hard fails and thresholds",
+    "one trial and zero professional retries",
+    "conservative aggregation and release semantics",
+    "no separately paid API fallback"
+  ],
+  "model_alias_availability_observed": ["gpt-5.6-sol", "gpt-5.6-terra"],
+  "static_test_result": "PASS_9_OF_9",
+  "freeze_decision": "FROZEN_FOR_PREREGISTERED_CANARY_EXECUTION"
+}
