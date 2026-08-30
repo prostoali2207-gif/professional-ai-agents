@@ -1,0 +1,50 @@
+{
+  "acl_cleanup": "NOT_APPLICABLE",
+  "calibration": {
+    "attempts": [
+      {
+        "attempt": 1,
+        "failure_envelope": {
+          "classification": "UNKNOWN_TECHNICAL",
+          "returncode": 1,
+          "stage": "codex_exec",
+          "stderr_tail": "2026-08-30T12:29:20.015132Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell\n",
+          "stdout_tail": "{\"type\":\"thread.started\",\"thread_id\":\"01a052a5-4d0c-7d10-ad5e-acbc71af62a1\"}\n{\"type\":\"turn.started\"}\n{\"type\":\"error\",\"message\":\"{\\n  \\\"type\\\": \\\"error\\\",\\n  \\\"error\\\": {\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"code\\\": \\\"invalid_json_schema\\\",\\n    \\\"message\\\": \\\"Invalid schema for response_format 'codex_output_schema': In context=(), 'required' is required to be supplied and to be an array including every key in properties. Missing 'pair_results'.\\\",\\n    \\\"param\\\": \\\"text.format.schema\\\"\\n  },\\n  \\\"status\\\": 400\\n}\"}\n{\"type\":\"turn.failed\",\"error\":{\"message\":\"{\\n  \\\"type\\\": \\\"error\\\",\\n  \\\"error\\\": {\\n    \\\"type\\\": \\\"invalid_request_error\\\",\\n    \\\"code\\\": \\\"invalid_json_schema\\\",\\n    \\\"message\\\": \\\"Invalid schema for response_format 'codex_output_schema': In context=(), 'required' is required to be supplied and to be an array including every key in properties. Missing 'pair_results'.\\\",\\n    \\\"param\\\": \\\"text.format.schema\\\"\\n  },\\n  \\\"status\\\": 400\\n}\"}}\n"
+        },
+        "model": "gpt-5.6-sol",
+        "outcome": "TECHNICAL_FAILURE"
+      }
+    ],
+    "shared_retry_used": 0,
+    "status": "FAIL"
+  },
+  "codex_cli_version": "codex-cli 0.151.0-alpha.7.2",
+  "denied_roots": [
+    "sha256:6ccff3618d6f124a823994a6450513ff56ac880b85768180c219381dd21f55be",
+    "sha256:a2799436b01e811234cf23457aaff75c22d3e70411abdd652a57f2071a7f854f",
+    "sha256:7b5c9941f7697b3782286ac869a300043d75696fadadb681ff2209821a86a10e"
+  ],
+  "ended_utc": "2026-08-30T12:29:25.244989+00:00",
+  "error_class": "RuntimeError",
+  "freeze_commit": "cf48a5475d3097c0bbd519855702bff4247927cc",
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "pre_run_budget": {
+    "candidate_canary": 1,
+    "judge_calibration_initial_batches": 2,
+    "maximum_model_calls": 4,
+    "on_quota_or_nonretryable_failure": "STOP",
+    "scored_calls_authorized": 0,
+    "shared_transient_transport_retry": 1
+  },
+  "provider": "codex-subscription-chatgpt-auth",
+  "repair_addendum_git_blob": "64e4c6d1689bd72c682c6d891c099b62ddee4bf7",
+  "retry_policy": {
+    "backoff_seconds": 5,
+    "candidate_retry_budget": 0,
+    "eligible_classification": "TRANSIENT_TRANSPORT",
+    "professional_or_calibration_mismatch_retry_budget": 0,
+    "shared_retry_budget": 1
+  },
+  "started_utc": "2026-08-30T12:29:19.351053+00:00",
+  "verdict": "CANARY_GATE_FAIL_STOPPED"
+}
