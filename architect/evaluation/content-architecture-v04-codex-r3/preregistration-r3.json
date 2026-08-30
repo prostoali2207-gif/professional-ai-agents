@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "status": "PRE_DISPATCH_FREEZE",
+  "status": "FROZEN_PRE_SCORE",
   "gate_id": "content-architecture-v0.4-codex-heldout-2026-08-30-r3",
   "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
   "candidate_mutation_allowed": false,
@@ -23,16 +23,19 @@
     "base_implementation_path": "architect/evaluation/content-architecture-v04-fresh/grader_v01.py",
     "base_git_blob_sha": "a39f0fc980dd38515b2753c046c8856a428784ac",
     "cycle_binding_path": "architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py",
+    "cycle_binding_git_blob_sha": "0c8f7b63638b90e3108496425bd82411110cd96a",
     "semantics": "unchanged from frozen v0.1 grader; only gate identity binding changes",
-    "status": "FROZEN_EXECUTABLE_PENDING_CI_CONFIRMATION"
+    "status": "FROZEN_EXECUTABLE_CONFIRMED"
   },
   "hidden_corpus": {
     "author_path": "architect/evaluation/content-architecture-v04-codex-r3/author_pack_r3.py",
+    "author_wrapper_git_blob_sha": "4a00a066bb0adad262ef6039fe68e3238b431b33",
     "base_construct_source": "architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py",
     "base_author_git_blob_sha": "078ef53a195b07aaeaca9d5b393f2d76ca61df5b",
     "fixture_count": 30,
-    "identity_sha256": "PENDING_SELF_HOSTED_FREEZE",
-    "status": "PENDING_SELF_HOSTED_FREEZE"
+    "identity_sha256": "31ef6b0f0a1286e3860cfc706ece28acc72bd2eea3e77fb1726026e3ba962335",
+    "sealed_sha256": "0a802036401d7040d8b93dadb3c7798ad01ca19ce06d2c422ec8245da1ffae31",
+    "status": "FROZEN"
   },
   "runtime_eligibility": {
     "provider": "codex-cli-chatgpt-subscription",
@@ -40,6 +43,7 @@
     "adapter_git_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d",
     "mcp_git_blob_sha": "73e9349391d4aa83dd459ed23e4069a3cf9a2072",
     "adapter_commit_sha": "50617fa6dcbbf70b97ff91d21305849186ef54b0",
+    "runner_git_blob_sha": "79db4642e79bd8044ad2dfa7e89131f49693a0fe",
     "codex_cli_version": "0.151.0-alpha.7.2",
     "candidate_model": "gpt-5.6-sol",
     "reasoning_effort": "medium",
@@ -55,6 +59,17 @@
     "blind_retries_allowed": 0,
     "checkpoint_resume_required_within_r3_only": true,
     "mixed_runtime_checkpoint_reuse": false
+  },
+  "freeze_evidence": {
+    "workflow_run_id": 33314445905,
+    "workflow_head_sha": "ae1436eef8d30e6d5a1494e2dd040c941373b3f6",
+    "artifact_id": 9733004330,
+    "artifact_digest_sha256": "72929544d81956e39fd324b2a5411d39c6b2d3585118b5280d446aac4ebfc46a",
+    "unscored_adapter_regression": "PASS",
+    "offline_grader_calibration": "PASS",
+    "corpus_grader_binding": "PASS",
+    "provider_api_keys_used": false,
+    "scored_candidate_calls": 0
   },
   "integrity_rules": [
     "No scored r3 call before exact r3 corpus identity is frozen and recorded.",
