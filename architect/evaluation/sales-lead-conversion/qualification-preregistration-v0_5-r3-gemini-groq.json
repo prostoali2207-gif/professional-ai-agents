@@ -1,0 +1,63 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-30-r3-gemini-groq",
+  "status": "PRE_SCORE_EVALUATOR_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "base_preregistration": {
+    "path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json",
+    "blob": "1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c",
+    "inherit_without_semantic_change": ["scope", "fixture_count", "per_family", "families", "construct", "fixture_design", "critical_hard_fail_policy", "thresholds", "grader_methodology", "runtime_contract", "stochastic_retry_policy"]
+  },
+  "prior_sanitized_evidence": {
+    "r1": {
+      "run_id": 33308744663,
+      "artifact_id": 9731331513,
+      "artifact_digest": "sha256:693b543c5c7494e8cef866b17de0fa6f63ae5e18f2dcd9201a5374781ff9fbdd",
+      "candidate_calls": 0,
+      "failed_group": "FACT/INTENT/OBJ/NEXT",
+      "structural_reason_codes": ["hidden_reference_json_parse", "hidden_reference_json_parse", "hidden_reference_json_parse"]
+    },
+    "r2": {
+      "run_id": 33309083950,
+      "artifact_id": 9731426171,
+      "artifact_digest": "sha256:712a34323de71e9a2abf046ecba6454aedd11482fc521982891975677725e129",
+      "candidate_calls": 0,
+      "failed_group": "FACT/INTENT/OBJ/NEXT",
+      "structural_reason_codes": ["hidden_reference_json_parse", "hidden_reference_json_parse", "hidden_reference_json_parse"]
+    },
+    "causal_conclusion": "Prompt-only JSON encoding hardening produced the identical three-attempt parse failure twice. The proven blocker is the nested JSON-inside-string representation for hidden reference transport in the FACT/INTENT/OBJ/NEXT authoring load, not candidate behavior or construct semantics."
+  },
+  "authoring_remediation": {
+    "semantic_mutation_allowed": false,
+    "native_schema_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "candidate_change_allowed": false,
+    "field_name": "hidden_reference_json",
+    "representation_change": "The existing string field carries a deterministic tagged record rather than nested JSON. The outer r6 AUTHOR_SCHEMA, field count, field names, types and cardinality remain unchanged.",
+    "tagged_record_contract": [
+      "Exactly 13 non-empty lines in the fixed order below.",
+      "PD=<single-line professional disposition>",
+      "R1N=<rubric dimension 1 name>",
+      "R1P=<rubric dimension 1 pass evidence>",
+      "R1F=<rubric dimension 1 material failure>",
+      "R2N=<rubric dimension 2 name>",
+      "R2P=<rubric dimension 2 pass evidence>",
+      "R2F=<rubric dimension 2 material failure>",
+      "R3N=<rubric dimension 3 name>",
+      "R3P=<rubric dimension 3 pass evidence>",
+      "R3F=<rubric dimension 3 material failure>",
+      "HF=NONE or comma-separated frozen critical hard-fail identifiers",
+      "BE=<single-line boundary expectation>",
+      "AI=<single-line alternative interpretation check>"
+    ],
+    "decoder_rule": "Evaluator accepts only the exact 13-line tag/order contract, validates non-empty values, validates HF against the frozen hard-fail enum, and deterministically reconstructs the same hidden_reference object shape used by the unchanged grader.",
+    "fresh_attempt_rule": "All r3 author attempts are fresh. No r1/r2 rejected hidden payload may be inspected, decoded, repaired, edited, replayed, paraphrased, ranked or reused.",
+    "safe_structural_reason_codes": ["schema_top_level", "schema_cardinality", "schema_case_type", "schema_text_fields", "initial_state_json_parse", "initial_state_json_type", "tool_scenario_json_parse", "tool_scenario_json_type", "tool_scenario_shape", "checkpoint_json_parse", "checkpoint_json_type", "hidden_reference_tagged_shape", "hidden_reference_tagged_tag", "hidden_reference_tagged_value", "hard_fail_enum"],
+    "safe_observability": "Only preregistered structural reason codes, group names, attempt counts, audit reason codes and call counts may be logged; never tagged values, case facts, raw author output or reconstructed hidden reference content."
+  },
+  "release_rule": "Use the exact r1 FULL release contract after deterministic assembly of the r1 base plus this r3 evaluator-transport remediation. PASS still requires a COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}
