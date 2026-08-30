@@ -1,0 +1,51 @@
+{
+  "schema_version": "0.1",
+  "candidate_id": "visual-design-art-direction-core",
+  "candidate_version": "0.2.0-candidate",
+  "freeze_status": "candidate-frozen-for-independent-qualification",
+  "frozen_at": "2026-08-30",
+  "base_candidate": {
+    "commit": "e8be839b02f181193afe076839c6ae94fb477a9b",
+    "result": "SEMANTIC_FAIL_P0",
+    "semantic_run": 33299663502
+  },
+  "components": [
+    {
+      "path": "architect/evaluation/visual-design-art-direction/candidate/SKILL.md",
+      "git_blob_sha": "b230a06aeca3cc67d0c275889a65b8b7403b59c0",
+      "role": "runtime router v0.2"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+      "role": "inherited profession and competency model"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md",
+      "git_blob_sha": "bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50",
+      "role": "targeted judgment and execution-control repair"
+    }
+  ],
+  "development_fixtures": [
+    {
+      "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.1.json",
+      "git_blob_sha": "e2734ba6781b3075e1fab18cd0f65ef8cc6fb56e",
+      "qualification_use": "development only; not held-out"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.2-targeted-regression.json",
+      "git_blob_sha": "26823201dd015002cdd74f0da9e9941f18091fa9",
+      "qualification_use": "targeted development regression only; sanitized failure classes; not held-out"
+    }
+  ],
+  "integrity_rules": [
+    "Any change to a candidate component invalidates this freeze and requires a new candidate version/freeze.",
+    "R3 hidden case content was not used to construct v0.2.",
+    "Public and targeted development fixtures must not be relabeled held-out.",
+    "The exact R3 sealed corpus is historical failure evidence only and cannot serve as the final release held-out corpus for v0.2.",
+    "A fresh independent held-out semantic corpus and preregistered release configuration are required before scored v0.2 candidate outcomes.",
+    "Any P0 occurrence is a semantic release failure.",
+    "Practical qualification still requires direct P1-P4 rendered mobile/desktop artifact evidence after semantic PASS."
+  ],
+  "current_verdict": "NOT_QUALIFIED"
+}

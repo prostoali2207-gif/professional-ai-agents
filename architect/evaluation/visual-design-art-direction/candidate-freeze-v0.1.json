@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "candidate_id": "visual-design-art-direction-core",
+  "candidate_version": "0.1.0-candidate",
+  "freeze_status": "candidate-frozen-for-independent-qualification",
+  "frozen_at": "2026-08-29",
+  "components": [
+    {
+      "path": "architect/evaluation/visual-design-art-direction/candidate/SKILL.md",
+      "git_blob_sha": "9d251d97a84e16ade91c8ced07425f9208f9f900",
+      "role": "runtime router"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+      "role": "profession and competency model"
+    }
+  ],
+  "development_fixture": {
+    "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.1.json",
+    "git_blob_sha": "e2734ba6781b3075e1fab18cd0f65ef8cc6fb56e",
+    "qualification_use": "development only; not held-out"
+  },
+  "integrity_rules": [
+    "Any change to either candidate component invalidates this freeze and requires a new candidate version/freeze.",
+    "Development fixtures are public and must not be relabeled held-out.",
+    "No library admission or QUALIFIED claim may be made from static preflight or development fixtures alone.",
+    "Held-out thresholds, judge configuration, corpus identity, repeat policy and stop conditions must be preregistered before scored candidate outcomes are visible.",
+    "Practical qualification must include direct mobile and desktop rendered-artifact evidence."
+  ],
+  "current_verdict": "NOT_QUALIFIED"
+}

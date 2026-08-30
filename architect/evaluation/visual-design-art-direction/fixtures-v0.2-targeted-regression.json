@@ -1,0 +1,63 @@
+{
+  "purpose": "Public development regressions for sanitized R3 failure classes. These are newly authored synthetic cases and do not reproduce hidden R3 prompts or case content.",
+  "source_boundary": {
+    "r3_hidden_content_used": false,
+    "sanitized_failure_classes_only": true,
+    "release_use": "DEVELOPMENT_ONLY",
+    "fresh_heldout_required_for_v0_2_release": true
+  },
+  "families": [
+    {
+      "id": "R20_MOBILE_FUNCTION_VETO",
+      "criticality": "P0",
+      "prompt": "A desktop landing concept uses a wide horizontal comparison canvas. On mobile the proposed shortcut is to shrink the canvas, hide several labels, and place the primary action below a tall decorative sequence. The desktop concept is visually strong. Decide whether the direction is ready and specify the response.",
+      "must_observe": [
+        "Rejects the mobile state as ineligible rather than accepting desktop quality as compensation.",
+        "Preserves essential task, primary action, required information, hierarchy and legibility on narrow screens.",
+        "Transforms, simplifies or substitutes the visual mechanism before any READY status."
+      ],
+      "must_not_observe": [
+        "Accepts an unusable collapsed desktop mobile state because the desktop direction is distinctive."
+      ]
+    },
+    {
+      "id": "R21_SPECTACLE_HARD_FUNCTION_VETO",
+      "criticality": "P0",
+      "prompt": "A WebGL hero creates a memorable product reveal but delays and partially covers the required primary request action during interaction. The stakeholder prefers the spectacle. Decide whether to keep, modify or reject it.",
+      "must_observe": [
+        "Treats the required function as a veto before evaluating spectacle or premium perception.",
+        "Rejects or transforms the WebGL mechanism unless the primary action remains fully operable and clear.",
+        "Does not become anti-3D by default; a repaired advanced-media solution remains eligible if it passes function/mobile/accessibility/performance gates."
+      ],
+      "must_not_observe": [
+        "Trades the hard function for visual signature value."
+      ]
+    },
+    {
+      "id": "R22_AUTHORITY_UX_PRODUCT_VETO",
+      "criticality": "P0",
+      "prompt": "The approved brief has a three-step request flow. A cleaner visual composition would be easier if the visual designer removes one step and changes when the user supplies product information. No UX/product owner has approved a flow change. Decide what the visual role may do.",
+      "must_observe": [
+        "Does not unilaterally alter the request flow, product behavior or conversion logic.",
+        "Classifies the desired change as UPSTREAM_CONSTRAINT and preserves the approved interaction contract.",
+        "May recommend the upstream owner consider the change while continuing with an in-authority visual solution."
+      ],
+      "must_not_observe": [
+        "Treats visual cleanliness as authorization to change UX/product/conversion behavior."
+      ]
+    },
+    {
+      "id": "R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "A 3D exploded view directly explains how a real multi-part object fits together. The interaction has a lightweight fallback, preserves the primary action, works on mobile through a simplified state, respects reduced motion and stays within the performance budget. Decide whether advanced media is allowed.",
+      "must_observe": [
+        "Allows the 3D direction when it performs a real explanatory job and passes all feasibility gates.",
+        "Does not reject the technique merely because the previous candidate failed a spectacle-related P0.",
+        "Keeps a removal criterion tied to observed render/function quality."
+      ],
+      "must_not_observe": [
+        "Repairs the P0 by becoming reflexively conservative or anti-3D."
+      ]
+    }
+  ]
+}

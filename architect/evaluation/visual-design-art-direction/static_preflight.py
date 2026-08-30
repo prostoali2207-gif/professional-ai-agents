@@ -1,0 +1,176 @@
+#!/usr/bin/env python3
+"""Zero-provider structural preflight for the Visual Design / Art Direction candidate.
+
+This does not grade creative quality. It only fails closed when release-critical
+contracts or development-fixture coverage are missing before any model/judge spend.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parent
+SKILL = ROOT / "candidate" / "SKILL.md"
+MODEL = ROOT / "professional-model-candidate-v0.1.md"
+REPAIR_MODEL = ROOT / "professional-model-p0-repair-v0.2.md"
+FIXTURES = ROOT / "fixtures-v0.1.json"
+TARGETED = ROOT / "fixtures-v0.2-targeted-regression.json"
+PLAN = ROOT / "qualification-plan-v0.1.md"
+
+
+def fail(message: str) -> None:
+    print(f"VISUAL_DESIGN_STATIC_PREFLIGHT_FAIL: {message}")
+    raise SystemExit(1)
+
+
+def require_text(path: Path, needles: list[str]) -> None:
+    if not path.exists():
+        fail(f"missing file: {path.relative_to(ROOT.parent.parent.parent)}")
+    text = path.read_text(encoding="utf-8")
+    for needle in needles:
+        if needle not in text:
+            fail(f"{path.name}: missing required contract marker {needle!r}")
+
+
+def load_json(path: Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        fail(f"{path.name} is not valid JSON: {exc}")
+
+
+def main() -> int:
+    require_text(
+        SKILL,
+        [
+            "version: 0.2.0-candidate",
+            "Status: **CANDIDATE — NOT QUALIFIED**",
+            "DISCOVER",
+            "DIRECT",
+            "REFINE",
+            "RENDER BLOCKED",
+            "motion / 3D / WebGL",
+            "Never fabricate business imagery",
+            "Never issue the independent final product release PASS",
+            "FUNCTION PASS",
+            "MOBILE PASS",
+            "AUTHORITY PASS",
+            "ADVANCED-MEDIA PASS",
+            "UPSTREAM_CONSTRAINT",
+            "unusable collapsed desktop",
+        ],
+    )
+    require_text(
+        MODEL,
+        [
+            "VD-02 — Current reference research and benchmark extraction",
+            "VD-03 — Creative divergence before convergence",
+            "VD-07 — Mobile-first responsive art direction",
+            "VD-09 — Rendered artifact critique and iterative refinement",
+            "VD-10 — Motion / 3D / WebGL capability routing",
+            "never invent customer logos, metrics, testimonials",
+        ],
+    )
+    require_text(
+        REPAIR_MODEL,
+        [
+            "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
+            "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
+            "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+            "J-01 — Hard-function precedence veto",
+            "J-02 — Mobile viability veto",
+            "J-03 — Authority veto",
+            "J-04 — Advanced-media feasibility before desirability",
+            "J-05 — Ready-state gate",
+            "fresh independent held-out corpus",
+        ],
+    )
+    require_text(
+        PLAN,
+        [
+            "P0 hard-fail behaviors",
+            "Held-out professional judgment gate",
+            "Practical rendered-artifact gate",
+            "uncalibrated single LLM scalar score is not release evidence",
+            "`NOT QUALIFIED`",
+        ],
+    )
+
+    payload = load_json(FIXTURES)
+    families = payload.get("families")
+    if not isinstance(families, list) or len(families) < 12:
+        fail("expected at least 12 development fixture families")
+
+    ids = [row.get("id") for row in families]
+    if len(ids) != len(set(ids)):
+        fail("fixture ids must be unique")
+
+    required = {
+        "F02_REFERENCE_COPY_TRAP",
+        "F03_PSEUDO_DIVERGENCE",
+        "F04_GENERIC_SAAS_BIAS",
+        "F05_FAKE_PROOF_ASSET",
+        "F06_MOBILE_COLLAPSE",
+        "F08_UNJUSTIFIED_3D",
+        "F09_JUSTIFIED_3D_ROUTING",
+        "F10_RENDER_HONESTY",
+        "F11_RENDER_CONTRACT_MISMATCH",
+        "F12_BOLDNESS_VS_FUNCTION",
+    }
+    missing = sorted(required.difference(ids))
+    if missing:
+        fail(f"missing critical development families: {missing}")
+
+    p0 = {row.get("id") for row in families if row.get("criticality") == "P0"}
+    p0_required = {
+        "F02_REFERENCE_COPY_TRAP",
+        "F05_FAKE_PROOF_ASSET",
+        "F06_MOBILE_COLLAPSE",
+        "F08_UNJUSTIFIED_3D",
+        "F10_RENDER_HONESTY",
+        "F12_BOLDNESS_VS_FUNCTION",
+    }
+    if not p0_required.issubset(p0):
+        fail("release-critical traps are not all marked P0")
+
+    for row in families:
+        if not isinstance(row.get("prompt"), str) or not row["prompt"].strip():
+            fail(f"{row.get('id')}: missing prompt")
+        obs = row.get("must_observe")
+        if not isinstance(obs, list) or len(obs) < 2 or not all(isinstance(x, str) and x.strip() for x in obs):
+            fail(f"{row.get('id')}: must_observe must contain at least two non-empty observations")
+
+    targeted = load_json(TARGETED)
+    boundary = targeted.get("source_boundary", {})
+    if boundary.get("r3_hidden_content_used") is not False or boundary.get("release_use") != "DEVELOPMENT_ONLY":
+        fail("targeted regression source boundary must explicitly exclude hidden R3 content and release use")
+    if boundary.get("fresh_heldout_required_for_v0_2_release") is not True:
+        fail("v0.2 must require a fresh held-out release corpus")
+
+    target_rows = targeted.get("families")
+    if not isinstance(target_rows, list) or len(target_rows) != 4:
+        fail("expected exactly four targeted v0.2 regression families")
+    target_ids = {row.get("id") for row in target_rows}
+    required_targets = {
+        "R20_MOBILE_FUNCTION_VETO",
+        "R21_SPECTACLE_HARD_FUNCTION_VETO",
+        "R22_AUTHORITY_UX_PRODUCT_VETO",
+        "R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION",
+    }
+    if target_ids != required_targets:
+        fail(f"targeted regression ids mismatch: {sorted(target_ids)}")
+    target_p0 = {row.get("id") for row in target_rows if row.get("criticality") == "P0"}
+    if target_p0 != required_targets - {"R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION"}:
+        fail("the three repaired failure classes must remain P0 in development regression")
+
+    print(
+        "VISUAL_DESIGN_STATIC_PREFLIGHT_PASS "
+        f"families={len(families)} p0={len(p0)} targeted={len(target_rows)} "
+        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
