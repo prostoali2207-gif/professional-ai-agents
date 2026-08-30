@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PRE_DISPATCH_FREEZE",
+  "gate_id": "content-architecture-v0.4-codex-heldout-2026-08-30-r2",
+  "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_mutation_allowed": false,
+  "purpose": "Fresh independent qualification cycle for the exact frozen Content Architecture v0.4 candidate under Codex CLI subscription runtime after the r1 Gemini runtime became unavailable due provider quota.",
+  "r1_policy": "r1 remains NOT_EXECUTABLE for release under its frozen Gemini runtime eligibility. Gemini COMPLETED records are diagnostic only for r2 and may not be mixed with Codex evidence.",
+  "required_families": ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
+  "p0_hard_failures_allowed": 0,
+  "per_family_min_pass_rate": 0.80,
+  "aggregate_p1_min_pass_rate": 0.90,
+  "deterministic_invariant_pass_rate": 1.0,
+  "stochastic_policy": {
+    "repeated_families": ["F2","F5","F6","F11","F12"],
+    "trials_per_designated_fixture": 3,
+    "all_repeats_must_pass": true,
+    "fresh_isolated_context_per_trial": true,
+    "best_of_n_forbidden": true
+  },
+  "required_post_gate_checks": ["UAE_COMPOSITION","PRACTICAL_HANDOFF"],
+  "grader_contract": {
+    "base_implementation_path": "architect/evaluation/content-architecture-v04-fresh/grader_v01.py",
+    "base_git_blob_sha": "a39f0fc980dd38515b2753c046c8856a428784ac",
+    "cycle_binding_path": "architect/evaluation/content-architecture-v04-codex-r2/grader_r2.py",
+    "semantics": "unchanged from frozen v0.1 grader; only gate identity binding changes",
+    "status": "FROZEN_EXECUTABLE_PENDING_CI_CONFIRMATION"
+  },
+  "hidden_corpus": {
+    "author_path": "architect/evaluation/content-architecture-v04-codex-r2/author_pack_r2.py",
+    "base_construct_source": "architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py",
+    "base_author_git_blob_sha": "078ef53a195b07aaeaca9d5b393f2d76ca61df5b",
+    "fixture_count": 30,
+    "identity_sha256": "PENDING_SELF_HOSTED_FREEZE",
+    "status": "PENDING_SELF_HOSTED_FREEZE"
+  },
+  "runtime_eligibility": {
+    "provider": "codex-cli-chatgpt-subscription",
+    "adapter_path": "architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py",
+    "adapter_git_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d",
+    "mcp_git_blob_sha": "73e9349391d4aa83dd459ed23e4069a3cf9a2072",
+    "adapter_commit_sha": "50617fa6dcbbf70b97ff91d21305849186ef54b0",
+    "codex_cli_version": "0.151.0-alpha.7.1",
+    "candidate_model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "auth": "ChatGPT subscription",
+    "openai_api_key_forbidden": true,
+    "gemini_api_forbidden": true,
+    "groq_api_forbidden": true
+  },
+  "budget_gate": {
+    "objective": "Obtain valid independent release evidence without paid API credentials.",
+    "preflight_required": true,
+    "scored_calls_before_freeze_allowed": 0,
+    "blind_retries_allowed": 0,
+    "checkpoint_resume_required_within_r2_only": true,
+    "mixed_runtime_checkpoint_reuse": false
+  },
+  "integrity_rules": [
+    "No scored r2 call before exact r2 corpus identity is frozen and recorded.",
+    "Do not modify candidate, thresholds, P0, repeat policy, or frozen grader semantics.",
+    "Do not mix r1 Gemini records into r2 scoring.",
+    "If Codex runtime cannot faithfully expose required observable tools/state, mark NOT_EXECUTABLE.",
+    "Do not expose hidden fixtures, expectations, nonces, sealed pack contents, or master key."
+  ]
+}
