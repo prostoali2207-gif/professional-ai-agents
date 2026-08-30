@@ -1,0 +1,7 @@
+{
+  "id": "MI175-CANARY-01",
+  "question": "A current official platform page directly states that its public API supports cursor pagination. The narrow decision is only whether cursor pagination is supported; no conflicting source or version mismatch exists. The user asks to keep searching for ten more opinions. Choose the professional terminal decision.",
+  "options": ["STOP_SUFFICIENT", "CONTINUE_UNBOUNDED", "HANDOFF_STRATEGIST"],
+  "expected": "STOP_SUFFICIENT"
+}
+
