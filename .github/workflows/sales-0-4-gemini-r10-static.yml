@@ -30,11 +30,14 @@ jobs:
           assert p['frozen_candidate']['artifact_digest']=='sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
           prior=p['prior_cycle_evidence']; assert prior['r9_run_id']==33301068662 and prior['candidate_calls']==0 and prior['r9_authoring_status']=='AUTHORED_AUDITED_SEALED'
           assert prior['r9_fixture_count']==36 and prior['r9_family_count']==12 and prior['r9_repeat_fixture_count']==6 and prior['r9_audit_rejections']==0 and prior['r9_structural_rejections']==0
+          assert prior['r10_pre_model_run_id']==33301814559 and prior['r10_author_model_results']==0 and prior['r10_candidate_calls']==0
           inh=p['construct_inheritance']; assert inh['base_preregistration_blob']=='65d826075ded39ab9e465bfaf0a7bb3a254d15f9' and inh['authoring_implementation_blob']=='5e5193039528da68930d9356396e629874eca29b'
           assert subprocess.check_output(['git','hash-object',inh['base_preregistration_path']],text=True).strip()==inh['base_preregistration_blob']
           assert subprocess.check_output(['git','hash-object',inh['authoring_implementation_path']],text=True).strip()==inh['authoring_implementation_blob']
           assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3 and len(p['families'])==12
           t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          a=p['heldout_authoring']; assert len(a['safe_structural_reason_codes'])==19 and a['safe_observability'].startswith('Only preregistered structural/audit reason codes')
+          assert a['targeted_instruction_change'].startswith('Only for FUP/STATE/ID/OPS')
           assert p['transport_remediation']['semantic_mutation_allowed'] is False and p['transport_remediation']['candidate_calls_before_reseal_success']==0
           assert 'SOURCE_PACK_DIGEST' in p['transport_remediation']['source_digest_binding']
           r=p['runtime_contract']; assert r['provider']=='gemini-interactions-api' and r['candidate_model']=='gemini-3.5-flash-lite' and r['grader_model']=='gemini-3.5-flash-lite' and r['minimum_seconds_between_requests']==6.0
