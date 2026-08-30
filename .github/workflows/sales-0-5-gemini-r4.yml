@@ -1,0 +1,188 @@
+name: Sales 0.5 fresh held-out r4 Gemini Groq
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_provider_run:
+        required: true
+        default: 'NO'
+        description: 'Type RUN to execute the preregistered Sales 0.5 r4 provider-resilient FULL qualification'
+  workflow_call:
+    inputs:
+      confirm_provider_run: {required: true, type: string}
+    secrets:
+      GEMINI_API_KEY: {required: true}
+      GROQ_API_KEY: {required: true}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: {required: true}
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-30-r4-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  SALES_MODEL: gemini-3.5-flash-lite
+  SALES_GRADER_MODEL: gemini-3.5-flash-lite
+  SALES_MODEL_TIMEOUT_SECONDS: '120'
+  GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+  GEMINI_PACE_FILE: /tmp/sales-v05-r4-gemini-pace
+  SOURCE_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r4-author/qualification.json
+  QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r4-gemini/qualification.json
+  R4_DELTA: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r4-gemini-groq.json
+  EFFECTIVE_PREREGISTRATION: sales-v05-r4-effective-prereg.json
+  QUALIFICATION_FIXTURE_COUNT: '36'
+  QUALIFICATION_RELEASE_TASKS_PASSED_MIN: '34'
+  QUALIFICATION_PER_FAMILY_TASKS_PASSED_MIN: '2'
+  QUALIFICATION_TASK_PASS_SCORE_MIN: '5'
+  QUALIFICATION_CRITICAL_HARD_FAILS_MAX: '0'
+  PYTHONPATH: architect/evaluation/sales-lead-conversion
+
+jobs:
+  qualify:
+    if: ${{ inputs.confirm_provider_run == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py
+      SANITIZED_REPORT_PATH: sales-v05-r4-gemini-report.json
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Assemble effective r4 preregistration before any model call
+        run: python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r4.py "$EFFECTIVE_PREREGISTRATION"
+      - name: Deterministic Sales 0.5 r4 frozen checks
+        shell: bash
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r4.py architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r4.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          d=json.load(open(os.environ['R4_DELTA'])); p=json.load(open(os.environ['EFFECTIVE_PREREGISTRATION']))
+          assert p['cycle_id']==os.environ['CYCLE_ID'] and p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          assert d['prior_sanitized_evidence']['r3']['run_id']==33310578863 and d['prior_sanitized_evidence']['r3']['candidate_calls']==0
+          pr=d['provider_resilience_remediation']; assert pr['provider']=='groq-openai-compatible-api' and pr['model']=='openai/gpt-oss-120b' and pr['retry_count']==1 and pr['maximum_wait_seconds']==2700 and pr['judge_identity_change'] is False and pr['model_change'] is False
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert p['fixture_design']['expected_candidate_runs_if_full']==42 and len(p['fixture_design']['repeated_fixture_slots'])==6
+          r=p['runtime_contract']; assert r['provider']=='gemini-interactions-api' and r['candidate_model']=='gemini-3.5-flash-lite' and r['grader_model']=='gemini-3.5-flash-lite' and r['minimum_seconds_between_requests']==6.0
+          commit=os.environ['CANDIDATE_COMMIT']; m=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in m['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==m['artifact']['content_digest']
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py','--qualification-contract'],text=True)); assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['provider']=='gemini-interactions-api' and c['core']=='sales-lead-conversion/0.5.0'
+          print('SALES_V05_R4_STATIC_FREEZE_PASS')
+          PY
+      - name: Require evaluator credentials before authoring
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY"
+          test -n "$GEMINI_API_KEY"
+          test -n "$GROQ_API_KEY"
+      - name: Author audit and immediately seal fresh Sales 0.5 r4 corpus
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py | tee sales-v05-r4-author-safe-freeze.json
+          echo "author_exit_code=${PIPESTATUS[0]}" >> "$GITHUB_ENV"
+          exit 0
+      - name: Upload sanitized Sales 0.5 r4 authoring evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r4-authoring-sanitized-evidence
+          path: sales-v05-r4-author-safe-freeze.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve encrypted fresh source pack before transport
+        if: env.author_exit_code == '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r4-source-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r4-author
+          if-no-files-found: error
+          retention-days: 14
+      - name: Verify freshly authored sealed source corpus
+        if: env.author_exit_code == '0'
+        id: source_preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$SOURCE_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-v05-r4-source"
+      - name: Resolve source pack digest for reseal
+        if: env.author_exit_code == '0' && steps.source_preflight.outcome == 'success'
+        run: echo "SOURCE_PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["SOURCE_MANIFEST"]))["sealed_pack"]["pack_digest"])')" >> "$GITHUB_ENV"
+      - name: Re-seal unchanged fresh corpus with frozen Gemini runner
+        if: env.author_exit_code == '0' && steps.source_preflight.outcome == 'success'
+        id: reseal
+        run: |
+          test -n "$SOURCE_PACK_DIGEST"
+          python architect/evaluation/sales-lead-conversion/reseal_provider_pack.py --source-dir "$RUNNER_TEMP/sales-v05-r4-source" --runner architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r4.py --out architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r4-gemini --cycle-id "$CYCLE_ID"
+          python - <<'PY'
+          import json,os
+          p=os.environ['QUALIFICATION_MANIFEST']; m=json.load(open(p)); path='architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py'
+          m['candidate']['manifest_path']='architect/library/cores/sales-lead-conversion/0.5.0/manifest.json'
+          m['runtime']['executor_path']=path; m['runtime']['executor_cmd']='python '+path; m['runtime']['contract_probe_argv']=['python',path,'--qualification-contract']; m['runtime']['canary_cmd']='python architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py'
+          open(p,'w').write(json.dumps(m,indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Generic static preflight
+        if: env.author_exit_code == '0' && steps.reseal.outcome == 'success'
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+      - name: Generic sealed no-API preflight
+        if: env.author_exit_code == '0' && steps.reseal.outcome == 'success'
+        id: sealed_preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-v05-r4-pack"
+      - name: Preserve encrypted scoring pack before candidate calls
+        if: env.author_exit_code == '0' && steps.sealed_preflight.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r4-gemini-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r4-gemini
+          if-no-files-found: error
+          retention-days: 14
+      - name: Exact-runtime paced Gemini canary
+        if: env.author_exit_code == '0' && steps.sealed_preflight.outcome == 'success'
+        id: canary
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase canary --require-runtime-secret
+      - name: Run preregistered FULL paced qualification
+        if: env.author_exit_code == '0' && steps.canary.outcome == 'success'
+        run: |
+          set +e
+          python "$RUNNER_TEMP/sales-v05-r4-pack/runner.py"
+          echo "qualification_exit_code=$?" >> "$GITHUB_ENV"
+          exit 0
+      - name: Resolve final pack digest
+        if: always() && steps.reseal.outcome == 'success'
+        run: echo "PACK_DIGEST=$(python -c 'import json,os; print(json.load(open(os.environ["QUALIFICATION_MANIFEST"]))["sealed_pack"]["pack_digest"])')" >> "$GITHUB_ENV"
+      - name: Validate sanitized report
+        if: always() && steps.reseal.outcome == 'success' && steps.canary.outcome == 'success'
+        id: validate
+        run: python architect/evaluation/qualification-platform/validate_sanitized_report.py --report "$SANITIZED_REPORT_PATH" --preregistration "$EFFECTIVE_PREREGISTRATION" --cycle-id "$CYCLE_ID" --candidate-commit "$CANDIDATE_COMMIT" --candidate-digest "$CANDIDATE_DIGEST" --pack-digest "$PACK_DIGEST" --model "$SALES_MODEL" --runner-exit-code "${qualification_exit_code:-255}" --ledger-out sales-v05-r4-gemini-release-evidence.json
+      - name: Upload sanitized qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r4-gemini-sanitized-qualification-evidence
+          path: |
+            sales-v05-r4-gemini-report.json
+            sales-v05-r4-gemini-release-evidence.json
+            sales-v05-r4-effective-prereg.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce frozen verdict protocol
+        if: always()
+        run: |
+          test "${author_exit_code:-missing}" = 0
+          test "${{ steps.source_preflight.outcome }}" = success
+          test "${{ steps.reseal.outcome }}" = success
+          test "${{ steps.sealed_preflight.outcome }}" = success
+          test "${{ steps.canary.outcome }}" = success
+          test "${{ steps.validate.outcome }}" = success
+          test "${{ steps.upload.outcome }}" = success
+          case "${qualification_exit_code:-missing}" in
+            0) python -c "import json; assert json.load(open('sales-v05-r4-gemini-report.json')).get('verdict') in {'PASS','REVISE'}" ;;
+            10) python -c "import json; assert json.load(open('sales-v05-r4-gemini-report.json')).get('verdict') == 'REVISE'" ;;
+            *) exit 1 ;;
+          esac
