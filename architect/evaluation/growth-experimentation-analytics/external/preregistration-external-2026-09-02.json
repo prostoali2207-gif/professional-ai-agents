@@ -1,0 +1,126 @@
+{
+  "schema_version": "2.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-09-02",
+  "gate_id": "analytics-external-heldout-2026-09-02",
+  "candidate_id": "growth-experimentation-measurement-v1.0-consolidated",
+  "candidate_assembly_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "freeze_ref": "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.0.json",
+  "purpose": "Close the remaining reusable-core release gate for the consolidated Analytics candidate with an externally authored held-out set. The candidate, the professional model, the grader, the output contract, the fixture contract, the tier map and the two-tier criterion are unchanged and byte-identical to those bound by the v1.0 two-tier gate. Only the source of the cases changes: they are authored on a different model family by an author that has never seen the candidate, instead of being drawn by the evaluator's own seeded generator.",
+  "criterion_authority": "architect/evaluation/growth-experimentation-analytics/stability-criterion-audit-2026-08-31.md",
+  "closure_authority": "architect/evaluation/growth-experimentation-analytics/external/release-closure-and-cross-model-revision-2026-09-02.md",
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "per_family": 2,
+  "fixture_count": 10,
+  "trials_per_fixture": 7,
+  "total_trials": 70,
+  "retries_permitted": 0,
+  "best_of_n": false,
+  "tier1_tolerance": 0,
+  "tier2_per_fixture_cap": 2,
+  "tier2_total_cap": 6,
+  "tier_map_digest": "sha256:11f18a82f63493528d281adc69ac3cf50325fd084ebc40b9d96e04f2054f40e4",
+  "pass_rule": "PASS iff: zero tier-1 trials across all 70; tier-2 <= 2 on every fixture; tier-2 <= 6 in total; and zero INVALID trials. Any tier-1 failure is a FAIL. Either tier-2 cap exceeded is a FAIL. Any INVALID trial makes the gate INVALID -- not PASS and not FAIL -- because the apparatus did not measure the candidate on that trial. Best-of-N is not a pass and no trial may be retried.",
+  "criterion_unchanged_from": "preregistration-v1.0-twotier-2026-09-01.json. The trial count, both tier-2 caps, the tier-1 zero tolerance, the tier map and the INVALID rule are identical values. Re-tuning any of them for a new pack would make the two results incomparable and would be indistinguishable from fitting the criterion to the pack.",
+  "tier_definitions": {
+    "TIER1": "Professional judgment. Every grader failure except those the frozen tier map assigns to TIER2. Zero tolerance across the whole gate.",
+    "TIER2": "The candidate produced output that is not a valid instance of the frozen output contract: a syntactic JSON parse failure, or a frozen-schema violation. Counted and capped. A TIER2 trial is never a judgment PASS -- its professional content was never assessed.",
+    "INVALID": "The measurement apparatus failed: provider transport or HTTP error, unusable response envelope, or harness misconfiguration. No candidate output exists, so there is nothing to score. Voids the gate and preserves the pack."
+  },
+  "external_authorship": {
+    "required": true,
+    "author_family": "Groq",
+    "author_model": "openai/gpt-oss-120b",
+    "candidate_model_family_must_differ": true,
+    "fallback_author_family": null,
+    "author_sees_candidate": false,
+    "author_may_state_an_expectation": false,
+    "rationale": "The preregistration of the passed gate names an externally authored held-out set as an outstanding release requirement, and the 2026-08-27 review's blocking findings were all about authorship and selection rather than runtime. The author is given each family's scenario schema, which has no field capable of carrying a recommendation, ceiling, causal status, scale state or decision basis; expectations are derived afterwards by the frozen oracle from the authored numbers alone.",
+    "hard_fail_on_fallback": "If the Groq authoring route is unavailable the cycle ends INVALID / NOT EXECUTABLE. Authoring the pack on the candidate's own family would collapse the independence property this pack exists to establish, so it is forbidden rather than degraded."
+  },
+  "cross_model_requirement": {
+    "historical_rule": "ChatGPT + Gemini + Claude, per heldout-final-gate-preregistration-v0.1.json, -v0.2.json, heldout-v0.2-preregistration.json, q10-invalidation-and-q11-preregistration-v0.2.json and qualification-status-v0.3.json.",
+    "resolution": "FORMALLY REVISED BEFORE EXECUTION",
+    "revision_record": "architect/evaluation/growth-experimentation-analytics/external/release-closure-and-cross-model-revision-2026-09-02.md",
+    "revised_rule": "One eligible candidate runtime family, named here; plus evaluation-side family independence (the held-out material is authored by a different family by an author that has not seen the candidate); plus an explicit portability limitation in the qualification record, with deployment on another family recorded as a revalidation trigger.",
+    "eligibility_findings": [
+      "Gemini: executor and credential present. ELIGIBLE.",
+      "Groq/Qwen: ineligible for candidate execution. The frozen assembly is 40544 bytes (~10.1k tokens) before the fixture; v0.5 measured HTTP 413 at 8273 tokens against the 8000 TPM free-tier ceiling. Eligible for authoring, whose payload is ~2k tokens.",
+      "OpenAI/ChatGPT: excluded by standing evaluator instruction; no OpenAI quota may be consumed.",
+      "Claude: no executor and no credential exist in this repository; zero references to any Anthropic secret across all provider-secret references in .github/workflows/. Subscription-backed Claude Code was considered and rejected on independence grounds, not cost: a coding agent executing the candidate would hold filesystem access to the oracle and the expectations, and R5 cannot be asserted on trust."
+    ],
+    "claim_narrowing": "The release claim is scoped to the Gemini candidate runtime family. Cross-runtime portability is unproven by this cycle and is recorded as a limitation and a revalidation trigger, not as an inherited PASS."
+  },
+  "candidate_model_family": "Gemini",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py",
+      "role": "candidate runtime"
+    }
+  ],
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+    "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8",
+    "note": "Byte-identical to the grader bound by preregistration-v1.0-twotier-2026-09-01.json and by freezes v0.7, v0.8 and v1.0. It is imported unmodified. A grader written alongside a new pack would prove nothing."
+  },
+  "classifier": {
+    "path": "architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py",
+    "git_blob_sha": "b62fe0f77417357f991aeebbca5ae3edc3f6ad98"
+  },
+  "pack_contract": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/external_pack_contract.py",
+    "git_blob_sha": "fa27322e443ba88a5d66b68927874af9caf5e610",
+    "note": "Carries the authoring schemas, the admission checks and the evaluator-owned oracle. Frozen before any case is authored."
+  },
+  "author": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/author_external_heldout_v1.py",
+    "git_blob_sha": "4d4a62df5811ec106e7418cd5e7b6fd1d544c298"
+  },
+  "runner": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/run_external_heldout_gate_v11.py",
+    "git_blob_sha": "43d5a287f93db61065a05636a149d0db3ff18e34"
+  },
+  "frozen_for_this_cycle": [
+    "candidate assembly (one consolidated component)",
+    "output contract result-v4",
+    "fixture contract fixture-v3",
+    "grader grader_v07_structural.py",
+    "classifier trial_outcome_classifier.py",
+    "pack contract and oracle external_pack_contract.py",
+    "author author_external_heldout_v1.py",
+    "runner run_external_heldout_gate_v11.py",
+    "the tier map, both tier-2 caps, the tier-1 zero tolerance and the trial count"
+  ],
+  "hard_fails": [
+    "Any tier-1 professional-judgment failure on any trial.",
+    "Tier-2 above 2 on any single fixture, or above 6 in total.",
+    "A pack whose manifest reports any candidate call during authoring.",
+    "A pack whose author family equals the candidate runtime family.",
+    "A pack authored against a different candidate assembly digest.",
+    "Drift in any bound blob, or in the tier map digest, detected at run time.",
+    "A pack whose ciphertext or plaintext digest does not match its manifest."
+  ],
+  "case_provenance": "Cases are authored inside the scored workflow run by the external author, admitted by the frozen contract, and sealed before the first candidate call. The runner prints the pack's ciphertext and plaintext digests before executing any trial, so the job log proves the pack predates every result. The sealed pack, its manifest and the full ledger are uploaded as the run's audit artifact.",
+  "execution_policy": "One invocation per trial. No retry on any failure class. No best-of-N. Every trial is recorded, including failures. The executor receives one candidate-facing fixture at a time and never the expectations, the family, or the oracle. Sampling is pinned at temperature 0.",
+  "post_gate_policy": "No automatic repair and no automatic rerun. Whatever this gate returns is reported as observed. A FAIL ends the cycle and the core stays quarantined with the blocker recorded. An INVALID means nothing about the candidate was measured.",
+  "on_pass": [
+    "Publish the consolidated artifact as a new library core version with its own manifest and a qualification record bound to its digest.",
+    "Move the catalog entry to qualified against that new version.",
+    "Supersede qualification-status-v0.3.json.",
+    "Record the portability limitation and its revalidation trigger in the qualification record."
+  ],
+  "qualification_boundary": [
+    "A PASS here plus the v1.0 two-tier PASS is the release evidence for the consolidated artifact on the Gemini runtime family.",
+    "Cross-runtime portability is untested. Deployment on another model family is a revalidation trigger.",
+    "The external author is a language model, not a human practitioner. This removes evaluator authorship, not model authorship; admission re-derives every construct from the authored numbers so an agreeable author cannot widen the pack.",
+    "The release does not grant spend, publication or approval authority, and it does not cover any Analytics specialization."
+  ]
+}
