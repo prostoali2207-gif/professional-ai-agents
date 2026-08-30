@@ -1,0 +1,66 @@
+{
+  "repair_id": "strategist-v0.1-codex-calibration-transport-repair-2026-08-30",
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "status": "FROZEN_FOR_TARGETED_UNSCORED_GATE_EXECUTION",
+  "base_freeze_commit": "616375862c5e718f31d83c7c7cab4bbda1f737e6",
+  "failure_evidence_commit": "7c71391901edfec129e16faccd9e281bb151c20a",
+  "scope": {
+    "root_cause_layer": "calibration transport observability and execution control",
+    "changed_files": [
+      "architect/evaluation/growth_strategy_experiment_portfolio/codex_judge_adapter_v0_1.py",
+      "architect/evaluation/growth_strategy_experiment_portfolio/sealed_runner_codex_v0_1.py",
+      "architect/evaluation/growth_strategy_experiment_portfolio/codex_canary_gate_v0_1.py"
+    ],
+    "repair": "Preserve a sanitized structured stdout/stderr failure envelope, classify transport failures, allow one shared bounded retry only for a transient transport classification, and attest distinct judge threads/workspaces before the exact candidate canary.",
+    "hidden_or_scored_inputs_used_for_repair": false
+  },
+  "unchanged": {
+    "strategist_candidate_commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "strategist_candidate_digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "candidate_content_changed": false,
+    "professional_constructs_changed": false,
+    "thresholds_changed": false,
+    "hard_fails_changed": false,
+    "release_criteria_changed": false,
+    "scored_qualification_authorized": false
+  },
+  "failure_envelope": {
+    "fields": ["stage", "returncode", "classification", "stdout_tail", "stderr_tail"],
+    "maximum_tail_characters": 1600,
+    "sanitization": ["credential-like values redacted", "absolute Windows paths redacted", "tails bounded"],
+    "persistence": "public unscored canary run record only; no prompts, hidden fixtures, grader data, auth material, or chain-of-thought"
+  },
+  "bounded_retry_policy": {
+    "scope": "both public judge calibration batches share one retry budget",
+    "initial_calibration_calls": 2,
+    "maximum_additional_calls": 1,
+    "maximum_calibration_calls": 3,
+    "eligible_classification": "TRANSIENT_TRANSPORT",
+    "eligible_signals": ["timeout", "connection reset or closed", "websocket transport interruption", "HTTP 500/502/503/504", "temporarily unavailable"],
+    "ineligible_signals": ["quota or rate limit", "HTTP 429", "authentication", "permission", "invalid argument or configuration", "unknown or unavailable model", "unknown technical failure", "calibration/content mismatch", "professional failure"],
+    "backoff_seconds": 5,
+    "fallback_provider_or_paid_api": "FORBIDDEN",
+    "candidate_canary_retry_count": 0,
+    "scored_retry_count": 0,
+    "stop_rule": "Any ineligible failure, exhausted shared retry, repeated failure, calibration mismatch, judge-isolation failure, candidate-boundary failure, or candidate-canary failure stops the run immediately. No improvised retry."
+  },
+  "targeted_gate_order": [
+    "judge-a grades all 6 public calibration anchors in one batch under the bounded retry policy",
+    "judge-b grades all 6 public calibration anchors in one batch under the remaining shared retry budget",
+    "judge isolation attests distinct non-null ephemeral thread and workspace identities plus tool-free transports",
+    "candidate filesystem-denial probe passes under the previously frozen boundary",
+    "exact unscored frozen candidate canary executes once with zero retry",
+    "stop with READY_FOR_SCORED_AUTHORIZATION only when every targeted gate passes; otherwise STOP"
+  ],
+  "pre_run_budget": {
+    "provider": "Codex subscription with existing ChatGPT authentication",
+    "public_calibration_initial_calls": 2,
+    "shared_transient_transport_retry_reserve": 1,
+    "exact_candidate_canary_calls": 1,
+    "maximum_model_calls": 4,
+    "scored_model_calls_authorized": 0,
+    "separately_paid_api_calls_authorized": 0
+  },
+  "success_verdict": "READY_FOR_SCORED_AUTHORIZATION",
+  "failure_verdict": "CANARY_GATE_FAIL_STOPPED"
+}

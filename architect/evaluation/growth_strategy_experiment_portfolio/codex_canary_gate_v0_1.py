@@ -13,8 +13,10 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 from typing import Any
 
+import codex_judge_adapter_v0_1 as judge_transport
 import sealed_runner_codex_v0_1 as runner
 
 MIGRATION_ID = "strategist-v0.1-codex-subscription-migration-2026-08-30"
@@ -92,6 +94,54 @@ def judge_command(python: Path, adapter: Path, model: str) -> str:
     return f"{python.as_posix()} {adapter.as_posix()} --model {model} --timeout 600"
 
 
+def sanitized_envelope(value: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "stage": str(value.get("stage", "unknown"))[:80],
+        "returncode": value.get("returncode"),
+        "classification": str(value.get("classification", "UNKNOWN_TECHNICAL"))[:80],
+        "stdout_tail": judge_transport.sanitize_tail(str(value.get("stdout_tail", ""))),
+        "stderr_tail": judge_transport.sanitize_tail(str(value.get("stderr_tail", ""))),
+    }
+
+
+def calibrate_with_bounded_retry(command: str, model: str, retry: dict[str, int], attempts: list[dict[str, Any]]) -> None:
+    attempt = 0
+    while True:
+        attempt += 1
+        try:
+            passed = runner.calibrate(command, model)
+        except runner.IsolatedRuntimeError as exc:
+            envelope = sanitized_envelope(exc.envelope)
+            attempts.append({"model": model, "attempt": attempt, "outcome": "TECHNICAL_FAILURE", "failure_envelope": envelope})
+            if envelope["classification"] == "TRANSIENT_TRANSPORT" and retry["remaining"] > 0:
+                retry["remaining"] -= 1
+                time.sleep(5)
+                continue
+            raise RuntimeError(f"calibration technical failure: {model}") from exc
+        attempts.append({"model": model, "attempt": attempt, "outcome": "PASS" if passed else "CALIBRATION_MISMATCH"})
+        if not passed:
+            raise RuntimeError(f"public calibration mismatch: {model}")
+        return
+
+
+def verify_judge_isolation(transports: list[dict[str, Any]]) -> dict[str, Any]:
+    if len(transports) != 2:
+        raise RuntimeError("judge isolation requires exactly two successful calibration transports")
+    expected = {"gpt-5.6-sol", "gpt-5.6-terra"}
+    if {row.get("model") for row in transports} != expected or any(row.get("mode") != "calibration" for row in transports):
+        raise RuntimeError("judge identity or calibration-mode isolation mismatch")
+    details = [row.get("transport") or {} for row in transports]
+    threads = [row.get("thread_id") for row in details]
+    workspaces = [row.get("workspace_digest") for row in details]
+    if any(not value for value in threads + workspaces) or len(set(threads)) != 2 or len(set(workspaces)) != 2:
+        raise RuntimeError("judges did not use distinct ephemeral threads and workspaces")
+    for transport in details:
+        event_types = transport.get("event_types") or []
+        if any("tool" in str(kind).lower() or "command" in str(kind).lower() or "file_change" in str(kind).lower() for kind in event_types):
+            raise RuntimeError("judge isolation observed a forbidden event")
+    return {"status": "PASS", "distinct_threads": 2, "distinct_ephemeral_workspaces": 2, "tool_free": True}
+
+
 def verify_candidate_canary(raw: dict[str, Any]) -> dict[str, Any]:
     identity = raw.get("candidate_identity") or {}
     if raw.get("status") != "completed":
@@ -136,7 +186,7 @@ def main() -> int:
     if any(candidate_root == path or candidate_root.is_relative_to(path) for path in denied_roots):
         raise RuntimeError("candidate root overlaps a denied root")
 
-    addendum = repo / "architect/evaluation/growth_strategy_experiment_portfolio/qualification-codex-migration-v0.1.json"
+    addendum = repo / "architect/evaluation/growth_strategy_experiment_portfolio/qualification-codex-migration-repair-v0.2.json"
     candidate_adapter = repo / "architect/evaluation/growth_strategy_experiment_portfolio/codex_candidate_adapter_v0_1.py"
     judge_adapter = repo / "architect/evaluation/growth_strategy_experiment_portfolio/codex_judge_adapter_v0_1.py"
     python = Path(args.python).resolve()
@@ -144,35 +194,39 @@ def main() -> int:
         "migration_id": MIGRATION_ID,
         "started_utc": now(),
         "freeze_commit": run_checked(["git", "rev-parse", "HEAD"], cwd=repo).stdout.strip(),
-        "addendum_git_blob": run_checked(["git", "rev-parse", f"HEAD:{addendum.relative_to(repo).as_posix()}"], cwd=repo).stdout.strip(),
+        "repair_addendum_git_blob": run_checked(["git", "rev-parse", f"HEAD:{addendum.relative_to(repo).as_posix()}"], cwd=repo).stdout.strip(),
         "codex_cli_version": run_checked(["codex", "--version"]).stdout.strip(),
         "provider": "codex-subscription-chatgpt-auth",
-        "pre_run_budget": {"maximum_model_calls": 3, "judge_calibration_batches": 2, "candidate_canary": 1, "scored_calls_authorized": 0, "on_quota_error": "STOP"},
+        "pre_run_budget": {"maximum_model_calls": 4, "judge_calibration_initial_batches": 2, "shared_transient_transport_retry": 1, "candidate_canary": 1, "scored_calls_authorized": 0, "on_quota_or_nonretryable_failure": "STOP"},
+        "retry_policy": {"shared_retry_budget": 1, "eligible_classification": "TRANSIENT_TRANSPORT", "backoff_seconds": 5, "candidate_retry_budget": 0, "professional_or_calibration_mismatch_retry_budget": 0},
         "denied_roots": [digest_bytes(str(path).encode()) for path in denied_roots],
     }
     principal = sandbox_principal()
     applied: list[Path] = []
     try:
+        runner.JUDGE_TRANSPORTS.clear()
+        retry = {"remaining": 1}
+        attempts: list[dict[str, Any]] = []
+        calibrate_with_bounded_retry(judge_command(python, judge_adapter, "gpt-5.6-sol"), "gpt-5.6-sol", retry, attempts)
+        calibrate_with_bounded_retry(judge_command(python, judge_adapter, "gpt-5.6-terra"), "gpt-5.6-terra", retry, attempts)
+        record["calibration"] = {"status": "PASS", "attempts": attempts, "shared_retry_used": 1 - retry["remaining"], "transports": runner.JUDGE_TRANSPORTS.copy()}
+        record["judge_isolation"] = verify_judge_isolation(runner.JUDGE_TRANSPORTS)
+
         for path in denied_roots:
             deny_read(path, principal)
             applied.append(path)
         record["isolation_canary"] = isolation_probe(candidate_root, denied_roots, args.profile)
 
-        runner.JUDGE_TRANSPORTS.clear()
-        judge_a = runner.calibrate(judge_command(python, judge_adapter, "gpt-5.6-sol"), "gpt-5.6-sol")
-        judge_b = runner.calibrate(judge_command(python, judge_adapter, "gpt-5.6-terra"), "gpt-5.6-terra")
-        record["calibration"] = {"judge-a": "PASS" if judge_a else "FAIL", "judge-b": "PASS" if judge_b else "FAIL", "transports": runner.JUDGE_TRANSPORTS.copy()}
-        if not judge_a or not judge_b:
-            raise RuntimeError("public calibration failed; exact candidate canary is blocked")
-
         child_env = os.environ.copy()
         child_env["STRATEGIST_CODEX_CANDIDATE_ROOT"] = str(candidate_root)
         proc = run_checked([str(python), str(candidate_adapter), "--canary", "--model", "gpt-5.6-terra", "--timeout", "300"], cwd=repo, env=child_env, timeout=360)
         record["candidate_canary"] = verify_candidate_canary(json.loads(proc.stdout))
-        record["verdict"] = "CANARY_GATES_PASS_STOPPED_BEFORE_SCORED_RUN"
+        record["verdict"] = "READY_FOR_SCORED_AUTHORIZATION"
     except Exception as exc:
         record["verdict"] = "CANARY_GATE_FAIL_STOPPED"
         record["error_class"] = type(exc).__name__
+        if "attempts" in locals() and "calibration" not in record:
+            record["calibration"] = {"status": "FAIL", "attempts": attempts, "shared_retry_used": 1 - retry["remaining"]}
         raise
     finally:
         cleanup_errors = []
@@ -181,7 +235,7 @@ def main() -> int:
                 remove_deny(path, principal)
             except Exception as cleanup_exc:
                 cleanup_errors.append(f"{path}: {type(cleanup_exc).__name__}")
-        record["acl_cleanup"] = "PASS" if not cleanup_errors else {"status": "FAIL", "errors": cleanup_errors}
+        record["acl_cleanup"] = ("PASS" if applied else "NOT_APPLICABLE") if not cleanup_errors else {"status": "FAIL", "errors": cleanup_errors}
         record["ended_utc"] = now()
         Path(args.record).write_text(json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if record["acl_cleanup"] != "PASS":

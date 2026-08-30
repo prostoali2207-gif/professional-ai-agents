@@ -1,0 +1,49 @@
+{
+  "audit_id": "strategist-codex-calibration-transport-repair-independent-audit-2026-08-30",
+  "review_role": "independent evaluator and infrastructure verifier; not the Strategist candidate",
+  "reviewed_failure_evidence_commit": "7c71391901edfec129e16faccd9e281bb151c20a",
+  "repair_addendum_git_blob": "64e4c6d1689bd72c682c6d891c099b62ddee4bf7",
+  "judge_adapter_git_blob": "f81d42050fc37e1245881cc272a0a39cf1ff909f",
+  "runner_git_blob": "87cb4e9615ff8fe69fe510caade90513c3e9a894",
+  "canary_gate_git_blob": "effb314e49000b978b3c415bde73be5c0a0d8a47",
+  "targeted_test_git_blob": "46a7ead8ae86e8baf0be41909922352445f703ff",
+  "unchanged_candidate_adapter_git_blob": "81b4122bd394c0972d92b8859ceeaac32cefdae7",
+  "hidden_sealed_content_opened": false,
+  "hidden_or_scored_fixture_used_for_repair_or_calibration": false,
+  "scored_qualification_executed": false,
+  "separately_paid_api_used": false,
+  "repair_authoring_model_calls": 0,
+  "findings": [
+    {
+      "id": "REPAIR-OBSERVABILITY-001",
+      "severity": "P0",
+      "observation": "The failed calibration adapter emitted its structured error on stdout, but the outer runner discarded stdout on nonzero exit and retained only empty stderr.",
+      "repair": "The judge adapter now emits a bounded sanitized failure envelope and the runner preserves that envelope across the process boundary.",
+      "verification": "Deterministic tests prove field preservation, path/credential redaction, and tail bounds."
+    },
+    {
+      "id": "REPAIR-RETRY-001",
+      "severity": "P0",
+      "observation": "The previous no-retry policy prevented recovery from a genuinely transient transport interruption but did not distinguish transient from nonretryable failures.",
+      "repair": "One shared retry is preregistered across both public calibration batches, eligible only for TRANSIENT_TRANSPORT after a five-second backoff.",
+      "verification": "Quota/rate-limit, authentication, permission, configuration, model, unknown, content/calibration, professional, candidate, and scored failures remain zero-retry and fail closed."
+    },
+    {
+      "id": "REPAIR-JUDGE-ISOLATION-001",
+      "severity": "P1",
+      "observation": "The targeted continuation requires an explicit judge-isolation gate after calibration.",
+      "repair": "Require two distinct non-null ephemeral thread IDs and workspace digests, correct model/mode identities, and tool-free event streams before candidate execution."
+    }
+  ],
+  "unchanged_invariants_verified": [
+    "Strategist candidate commit, digest, content, and adapter",
+    "12 professional families and 24 scored fixtures",
+    "professional constructs and contrastive requirements",
+    "thresholds, critical hard fails, conservative aggregation, and release criteria",
+    "hidden/scored fixtures excluded from repair and calibration",
+    "scored authorization remains zero",
+    "no separately paid API fallback"
+  ],
+  "static_test_result": "PASS_16_OF_16",
+  "freeze_decision": "FROZEN_FOR_TARGETED_UNSCORED_GATE_EXECUTION"
+}

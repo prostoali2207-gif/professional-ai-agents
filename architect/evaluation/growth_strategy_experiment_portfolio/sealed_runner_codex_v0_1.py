@@ -27,6 +27,13 @@ FLAGS = base.FLAGS
 JUDGE_TRANSPORTS = []
 
 
+class IsolatedRuntimeError(RuntimeError):
+    def __init__(self, returncode: int, envelope: dict):
+        super().__init__(f"isolated runtime failed ({returncode})")
+        self.returncode = returncode
+        self.envelope = envelope
+
+
 def candidate_env() -> dict[str, str]:
     forbidden = ("API_KEY", "ANTHROPIC", "GEMINI", "GROQ", "QUALIFICATION_KEY", "HELDOUT", "GRADER", "SEALED_PACK")
     return {key: value for key, value in os.environ.items() if not any(token in key.upper() for token in forbidden)}
@@ -38,7 +45,20 @@ def invoke(command: str, payload: dict, timeout: int, *, env: dict[str, str] | N
         capture_output=True, timeout=timeout, env=env or os.environ.copy(),
     )
     if proc.returncode != 0:
-        raise RuntimeError(f"isolated runtime failed ({proc.returncode}): {proc.stderr[-1000:]}")
+        try:
+            parsed = json.loads(proc.stdout)
+        except (json.JSONDecodeError, TypeError):
+            parsed = {}
+        envelope = parsed.get("failure_envelope") if isinstance(parsed, dict) else None
+        if not isinstance(envelope, dict):
+            envelope = {
+                "stage": "isolated_runtime",
+                "returncode": proc.returncode,
+                "classification": "UNKNOWN_TECHNICAL",
+                "stdout_tail": proc.stdout[-1600:],
+                "stderr_tail": proc.stderr[-1600:],
+            }
+        raise IsolatedRuntimeError(proc.returncode, envelope)
     value = json.loads(proc.stdout)
     if value.get("status") != "completed":
         raise RuntimeError("isolated runtime did not complete")
