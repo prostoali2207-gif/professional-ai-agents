@@ -1,0 +1,62 @@
+name: Runtime Spline V7 Independent UI Guard
+
+on:
+  push:
+    branches:
+      - runtime/spline-v7-ui-guard-20260831
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SPLINE_BASE: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
+      SPLINE_HEAD: 77a994f8ea64271afab0532b065dc12922be686f
+      SPLINE_PREVIEW_URL: https://auto-parts-landing-fsdjzc9u5-prostoali2207-5636s-projects.vercel.app/
+    steps:
+      - name: Checkout professional core
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout exact Spline PR head
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-parts-landing
+          ref: 77a994f8ea64271afab0532b065dc12922be686f
+          path: spline
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install browser runtime
+        working-directory: spline
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Capture exact preview render evidence
+        run: node runtime/spline_ui_guard/capture.js
+
+      - name: Run fresh independent UI Guard
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python runtime/spline_ui_guard/review.py
+
+      - name: Upload UI Guard evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spline-v7-independent-ui-guard
+          path: |
+            mobile-390-full.png
+            mobile-390-process.png
+            intermediate-768-full.png
+            desktop-1440-full.png
+            ui-guard-output.md
+            ui-guard-metadata.json
+          retention-days: 7
