@@ -1,0 +1,108 @@
+name: Visual Design Art Direction R4 v0.2 semantic static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r4-v0.2.json'
+      - 'architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py'
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py'
+      - '.github/workflows/visual-design-art-direction-r4-v02-semantic-static.yml'
+      - '.github/workflows/visual-design-art-direction-r4-v02-semantic-qualification.yml'
+  push:
+    branches:
+      - 'eval/visual-158-v02-r4-release-freeze'
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r4-v0.2.json'
+      - 'architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py'
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py'
+      - '.github/workflows/visual-design-art-direction-r4-v02-semantic-static.yml'
+      - '.github/workflows/visual-design-art-direction-r4-v02-semantic-qualification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify frozen R4 v0.2 release configuration
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          p='architect/evaluation/visual-design-art-direction/release-configuration-r4-v0.2.json'
+          x=json.load(open(p))
+          assert x['issue']==158
+          assert x['cycle_id']=='visual-design-art-direction-0.2.0-independent-2026-08-30-r4-semantic'
+          assert x['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and x['candidate_calls_at_freeze']==0
+          c=x['candidate']
+          assert c=={
+            'commit':'0116d20f99fde919fa6e39c700726d16310d010b',
+            'skill_blob':'b230a06aeca3cc67d0c275889a65b8b7403b59c0',
+            'professional_model_base_blob':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'professional_model_repair_blob':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'mutation_allowed':False,
+          }
+          h=x['heldout']
+          assert h['source_run']==33306265227 and h['source_head']=='147f1581c1ff24c51b71169aaad7770d6d27f3ce'
+          assert h['artifact_id']==9730714845
+          assert h['artifact_digest']=='sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e'
+          assert h['sealed_ciphertext_sha256']=='b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6'
+          assert h['case_count']==20 and h['family_count']==10 and h['regeneration_or_substitution_allowed'] is False
+          assert len(x['families'])==10 and len(x['p0_hard_fails'])==7
+          cal=x['calibration']['exact_r4']
+          assert cal['run']==33315348031 and cal['status']=='CALIBRATION_PASS' and cal['candidate_calls']==0
+          assert cal['sanitized_report_artifact_id']==9733259354
+          assert cal['sanitized_report_payload_sha256']=='642b2cc24f7e34593d52208bb4f5fcb342471c04104ff145136e1da15d613409'
+          assert cal['gemini_correct']=='20/20' and cal['groq_correct']=='20/20'
+          assert cal['combined_expected_winner_rate']==1.0 and cal['pair_disagreement_rate']==0.0
+          t=x['semantic_release_thresholds']
+          assert t['per_judge_candidate_preference_rate_min']==0.8
+          assert t['combined_candidate_preference_rate_min']==0.9
+          assert t['max_pair_disagreement_rate']==0.25 and t['p0_tolerance']==0
+          assert x['retry_resume_stop']['professional_failure_retry_count']==0
+          assert x['retry_resume_stop']['completed_calls_repeated'] is False
+          assert x['retry_resume_stop']['same_pack_professional_rerun_after_real_failure'] is False
+          assert x['rendered_release_gate']['required_after_semantic_pass'] is True
+          paths={
+            'skill':'architect/evaluation/visual-design-art-direction/candidate/SKILL.md',
+            'base':'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md',
+            'repair':'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md',
+          }
+          expected={'skill':c['skill_blob'],'base':c['professional_model_base_blob'],'repair':c['professional_model_repair_blob']}
+          for key,path in paths.items():
+            actual=subprocess.check_output(['git','rev-parse',f"{c['commit']}:{path}"],text=True).strip()
+            assert actual==expected[key], (key,actual)
+          for key in ('candidate_runtime','semantic_runner'):
+            item=x[key]
+            actual=subprocess.check_output(['git','rev-parse','HEAD:'+item['executor_path' if key=='candidate_runtime' else 'path']],text=True).strip()
+            assert actual==item['executor_blob' if key=='candidate_runtime' else 'blob'], (key,actual)
+          print('VISUAL_R4_V02_RELEASE_FREEZE_STATIC_PASS candidate_calls=0')
+          PY
+      - name: Compile evaluator-only runtime
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r4_v0_2_gemini.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r4_semantic_qualification_v0_2.py
+      - name: Guard paid boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/visual-design-art-direction-r4-v02-semantic-qualification.yml')
+          if not p.exists():
+              raise SystemExit('paid workflow missing')
+          text=p.read_text()
+          assert 'issue_comment:' in text
+          assert 'pull_request:' not in text
+          assert '\n  push:' not in text
+          assert "github.event.issue.number == 158" in text
+          assert "github.actor == 'prostoali2207-gif'" in text
+          assert '/run-visual-r4-v02-semantic' in text
+          assert '/resume-visual-r4-v02-semantic ' in text
+          print('VISUAL_R4_V02_PAID_BOUNDARY_STATIC_PASS')
+          PY
