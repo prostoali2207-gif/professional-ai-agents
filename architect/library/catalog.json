@@ -9,15 +9,55 @@
       "lifecycle": "qualified",
       "artifact_digest": "sha256:882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179",
       "manifest_path": "architect/library/cores/paid-media-performance-marketing/1.0.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/paid-media-performance-marketing/882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179/paid-media-performance-marketing-1-0-0-20260816.json"],
+      "qualification_refs": [
+        "architect/library/qualifications/paid-media-performance-marketing/882477d8941c09538576096fbe93cd286584a77d040eecf1d8c266ffab3a9179/paid-media-performance-marketing-1-0-0-20260816.json"
+      ],
       "search_facets": {
-        "responsibilities": ["Translate business outcomes and unit economics into paid-media decision objectives", "Validate measurement and causal claims", "Allocate, pace, diagnose, test, stop and scale paid-media investment under uncertainty"],
-        "outputs": ["Media allocation and optimization decisions", "Measurement and experiment designs", "Performance diagnosis", "Spend governance and escalation recommendations"],
-        "competencies": ["unit economics", "measurement integrity", "attribution and incrementality", "experimentation", "marginal budget allocation", "auction and automation reasoning", "creative learning", "performance diagnosis", "spend governance"],
-        "domains": ["paid media", "performance marketing", "customer acquisition"],
-        "authority_levels": ["analysis", "recommendation", "delegated spend execution only"],
-        "runtime_features": ["structured reasoning output", "live retrieval for volatile platform or jurisdiction facts", "explicit authority controls for spend-changing tools"],
-        "tags": ["paid-media", "performance-marketing", "acquisition", "measurement", "experimentation", "media-planning"]
+        "responsibilities": [
+          "Translate business outcomes and unit economics into paid-media decision objectives",
+          "Validate measurement and causal claims",
+          "Allocate, pace, diagnose, test, stop and scale paid-media investment under uncertainty"
+        ],
+        "outputs": [
+          "Media allocation and optimization decisions",
+          "Measurement and experiment designs",
+          "Performance diagnosis",
+          "Spend governance and escalation recommendations"
+        ],
+        "competencies": [
+          "unit economics",
+          "measurement integrity",
+          "attribution and incrementality",
+          "experimentation",
+          "marginal budget allocation",
+          "auction and automation reasoning",
+          "creative learning",
+          "performance diagnosis",
+          "spend governance"
+        ],
+        "domains": [
+          "paid media",
+          "performance marketing",
+          "customer acquisition"
+        ],
+        "authority_levels": [
+          "analysis",
+          "recommendation",
+          "delegated spend execution only"
+        ],
+        "runtime_features": [
+          "structured reasoning output",
+          "live retrieval for volatile platform or jurisdiction facts",
+          "explicit authority controls for spend-changing tools"
+        ],
+        "tags": [
+          "paid-media",
+          "performance-marketing",
+          "acquisition",
+          "measurement",
+          "experimentation",
+          "media-planning"
+        ]
       },
       "replacement": null
     },
@@ -28,34 +68,128 @@
       "lifecycle": "qualified",
       "artifact_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
       "manifest_path": "architect/library/cores/video-editing-post-production/0.1.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/video-editing-post-production/7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b/video-editing-post-production-0-1-0-20260817.json"],
+      "qualification_refs": [
+        "architect/library/qualifications/video-editing-post-production/7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b/video-editing-post-production-0-1-0-20260817.json"
+      ],
       "search_facets": {
-        "responsibilities": ["Construct coherent traceable edits from approved source media and intent", "Finish picture audio captions graphics and color inside an approved brief", "Export and directly verify destination-ready media artifacts"],
-        "outputs": ["Review render", "Release master", "Timeline/provenance record", "Technical and perceptual QC evidence"],
-        "competencies": ["editorial structure", "pacing and continuity", "truth preservation", "picture finishing", "audio post-production", "captions and graphics", "color management", "delivery engineering", "artifact-first QC"],
-        "domains": ["video editing", "post-production", "media finishing"],
-        "authority_levels": ["analysis", "recommendation", "reversible edit execution inside approved brief"],
-        "runtime_features": ["structured output", "media metadata inspection", "render-capable adapter for execution claims", "frame and audio observation of exported artifacts"],
-        "tags": ["video-editing", "post-production", "audio", "color", "captions", "delivery", "quality-control"]
+        "responsibilities": [
+          "Construct coherent traceable edits from approved source media and intent",
+          "Finish picture audio captions graphics and color inside an approved brief",
+          "Export and directly verify destination-ready media artifacts"
+        ],
+        "outputs": [
+          "Review render",
+          "Release master",
+          "Timeline/provenance record",
+          "Technical and perceptual QC evidence"
+        ],
+        "competencies": [
+          "editorial structure",
+          "pacing and continuity",
+          "truth preservation",
+          "picture finishing",
+          "audio post-production",
+          "captions and graphics",
+          "color management",
+          "delivery engineering",
+          "artifact-first QC"
+        ],
+        "domains": [
+          "video editing",
+          "post-production",
+          "media finishing"
+        ],
+        "authority_levels": [
+          "analysis",
+          "recommendation",
+          "reversible edit execution inside approved brief"
+        ],
+        "runtime_features": [
+          "structured output",
+          "media metadata inspection",
+          "render-capable adapter for execution claims",
+          "frame and audio observation of exported artifacts"
+        ],
+        "tags": [
+          "video-editing",
+          "post-production",
+          "audio",
+          "color",
+          "captions",
+          "delivery",
+          "quality-control"
+        ]
       },
       "replacement": null
     },
     {
       "id": "growth-experimentation-measurement",
       "canonical_name": "Growth Experimentation & Measurement Practitioner",
-      "version": "1.1.0",
-      "lifecycle": "quarantined",
-      "artifact_digest": "sha256:41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b",
-      "manifest_path": "architect/library/cores/growth-experimentation-measurement/1.1.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/growth-experimentation-measurement/41431ad825ba231a326fab109762712c3737cad150ef8449c0a815a0be18393b/growth-experimentation-measurement-1-1-0-20260823.json"],
+      "version": "1.2.0",
+      "lifecycle": "qualified",
+      "artifact_digest": "sha256:95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d",
+      "manifest_path": "architect/library/cores/growth-experimentation-measurement/1.2.0/manifest.json",
+      "qualification_refs": [
+        "architect/library/qualifications/growth-experimentation-measurement/95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d/growth-experimentation-measurement-1-2-0-20260830.json"
+      ],
       "search_facets": {
-        "responsibilities": ["Validate experiment and registered-estimand integrity", "Reconcile measurement, identity, denominator and outcome-maturity defects", "Separate causal-identification sufficiency from reversible operational-decision sufficiency", "Return bounded experiment decisions with causal and commercial guardrails"],
-        "outputs": ["Experiment decision record", "Measurement-integrity audit", "Reproducible KPI calculations", "Causal conclusion and claim ceiling", "Operational conclusion and bounded next action", "Evidence that would change the operational action"],
-        "competencies": ["pre-registration", "measurement integrity", "registered estimand preservation", "denominator integrity", "identity deduplication", "delayed outcomes", "attribution and incrementality", "causal versus operational decision sufficiency", "materiality", "reversibility", "cost of waiting", "confounder action relevance", "experiment decisioning", "scale guardrails"],
-        "domains": ["growth experimentation", "measurement", "analytics", "causal decision support"],
-        "authority_levels": ["analysis", "recommendation"],
-        "runtime_features": ["structured JSON output", "exact frozen component binding", "deterministic calculation support", "live retrieval for volatile facts when material"],
-        "tags": ["experimentation", "measurement", "analytics", "causal-inference", "growth", "decisioning", "decision-sufficiency"]
+        "responsibilities": [
+          "Validate experiment and registered-estimand integrity",
+          "Reconcile measurement, identity, denominator and outcome-maturity defects",
+          "Separate causal-identification sufficiency from reversible operational-decision sufficiency",
+          "Return bounded experiment decisions with causal and commercial guardrails"
+        ],
+        "outputs": [
+          "Experiment decision record",
+          "Measurement-integrity audit",
+          "Reproducible KPI calculations",
+          "Causal conclusion and claim ceiling",
+          "Operational conclusion and bounded next action",
+          "Evidence that would change the operational action"
+        ],
+        "competencies": [
+          "pre-registration",
+          "measurement integrity",
+          "registered estimand preservation",
+          "denominator integrity",
+          "identity deduplication",
+          "delayed outcomes",
+          "attribution and incrementality",
+          "causal versus operational decision sufficiency",
+          "materiality",
+          "reversibility",
+          "cost of waiting",
+          "confounder action relevance",
+          "experiment decisioning",
+          "scale guardrails",
+          "causal identification versus precision",
+          "decision sufficiency"
+        ],
+        "domains": [
+          "growth experimentation",
+          "measurement",
+          "analytics",
+          "causal decision support"
+        ],
+        "authority_levels": [
+          "analysis",
+          "recommendation"
+        ],
+        "runtime_features": [
+          "structured JSON output",
+          "exact frozen component binding",
+          "deterministic calculation support",
+          "live retrieval for volatile facts when material"
+        ],
+        "tags": [
+          "experimentation",
+          "measurement",
+          "analytics",
+          "causal-inference",
+          "growth",
+          "decisioning",
+          "decision-sufficiency"
+        ]
       },
       "replacement": null
     },
@@ -66,15 +200,62 @@
       "lifecycle": "qualified",
       "artifact_digest": "sha256:4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03",
       "manifest_path": "architect/library/cores/market-competitive-intelligence/1.0.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/market-competitive-intelligence/4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03/market-competitive-intelligence-1-0-0-20260820.json"],
+      "qualification_refs": [
+        "architect/library/qualifications/market-competitive-intelligence/4584599b86125c85c77a10f118eba4b1472f59947bd5106a8a19174ab53f6e03/market-competitive-intelligence-1-0-0-20260820.json"
+      ],
       "search_facets": {
-        "responsibilities": ["Reduce market uncertainty with current traceable evidence", "Research buyers competitors offers and platform signals", "Validate freshness comparability provenance selection and coverage", "Hand bounded intelligence to the accountable decision owner"],
-        "outputs": ["Market intelligence evidence packet", "Evidence ledger", "Buyer competitor offer and platform signal synthesis", "Bounded implications and unknowns", "Decision-owner handoff"],
-        "competencies": ["market research", "competitive intelligence", "source quality", "epistemic calibration", "comparability", "selection bias", "provenance and dependence", "primary research", "social signal interpretation", "longitudinal monitoring", "research stopping"],
-        "domains": ["market intelligence", "competitive intelligence", "market research", "buyer research"],
-        "authority_levels": ["research", "analysis", "bounded recommendation support"],
-        "runtime_features": ["exact frozen component binding", "structured reasoning output", "live retrieval for volatile market facts", "read-only research by default"],
-        "tags": ["market-intelligence", "competitive-intelligence", "market-research", "buyer-research", "evidence", "osint", "social-signals"]
+        "responsibilities": [
+          "Reduce market uncertainty with current traceable evidence",
+          "Research buyers competitors offers and platform signals",
+          "Validate freshness comparability provenance selection and coverage",
+          "Hand bounded intelligence to the accountable decision owner"
+        ],
+        "outputs": [
+          "Market intelligence evidence packet",
+          "Evidence ledger",
+          "Buyer competitor offer and platform signal synthesis",
+          "Bounded implications and unknowns",
+          "Decision-owner handoff"
+        ],
+        "competencies": [
+          "market research",
+          "competitive intelligence",
+          "source quality",
+          "epistemic calibration",
+          "comparability",
+          "selection bias",
+          "provenance and dependence",
+          "primary research",
+          "social signal interpretation",
+          "longitudinal monitoring",
+          "research stopping"
+        ],
+        "domains": [
+          "market intelligence",
+          "competitive intelligence",
+          "market research",
+          "buyer research"
+        ],
+        "authority_levels": [
+          "research",
+          "analysis",
+          "bounded recommendation support"
+        ],
+        "runtime_features": [
+          "exact frozen component binding",
+          "structured reasoning output",
+          "live retrieval for volatile market facts",
+          "read-only research by default"
+        ],
+        "tags": [
+          "market-intelligence",
+          "competitive-intelligence",
+          "market-research",
+          "buyer-research",
+          "evidence",
+          "osint",
+          "social-signals"
+        ]
       },
       "replacement": null
     },
@@ -85,15 +266,60 @@
       "lifecycle": "qualified",
       "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
       "manifest_path": "architect/library/cores/social-content-creative/0.1.0/manifest.json",
-      "qualification_refs": ["architect/library/qualifications/social-content-creative/ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f/social-content-creative-0-1-0-20260823.json"],
+      "qualification_refs": [
+        "architect/library/qualifications/social-content-creative/ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f/social-content-creative-0-1-0-20260823.json"
+      ],
       "search_facets": {
-        "responsibilities": ["Translate an approved communication brief and verified facts into exact truthful social copy and shoot-ready creative execution", "Generate and select bounded creative concepts when exploration is authorized", "Preserve claim truthfulness, experiment locks, platform context and production feasibility"],
-        "outputs": ["Exact hook script on-screen caption and CTA copy", "Bounded creative alternatives and selection rationale", "Visual storytelling and shoot-direction package", "Traceable creative handoff"],
-        "competencies": ["brief fidelity", "truthful persuasion", "claim grounding", "hooks and payoff", "message sequencing", "creative divergence and critique", "visual storytelling", "shootability", "platform adaptation", "experiment integrity", "handoff discipline"],
-        "domains": ["social content", "creative execution", "social copy", "short-form content"],
-        "authority_levels": ["draft", "recommend", "revise inside approved brief"],
-        "runtime_features": ["structured traceable handoff", "authoritative fact access", "live retrieval for volatile platform or jurisdiction rules", "explicit experiment locks and authority context"],
-        "tags": ["social-content", "content-creator", "creative", "copywriting", "short-form", "shoot-direction", "truthfulness"]
+        "responsibilities": [
+          "Translate an approved communication brief and verified facts into exact truthful social copy and shoot-ready creative execution",
+          "Generate and select bounded creative concepts when exploration is authorized",
+          "Preserve claim truthfulness, experiment locks, platform context and production feasibility"
+        ],
+        "outputs": [
+          "Exact hook script on-screen caption and CTA copy",
+          "Bounded creative alternatives and selection rationale",
+          "Visual storytelling and shoot-direction package",
+          "Traceable creative handoff"
+        ],
+        "competencies": [
+          "brief fidelity",
+          "truthful persuasion",
+          "claim grounding",
+          "hooks and payoff",
+          "message sequencing",
+          "creative divergence and critique",
+          "visual storytelling",
+          "shootability",
+          "platform adaptation",
+          "experiment integrity",
+          "handoff discipline"
+        ],
+        "domains": [
+          "social content",
+          "creative execution",
+          "social copy",
+          "short-form content"
+        ],
+        "authority_levels": [
+          "draft",
+          "recommend",
+          "revise inside approved brief"
+        ],
+        "runtime_features": [
+          "structured traceable handoff",
+          "authoritative fact access",
+          "live retrieval for volatile platform or jurisdiction rules",
+          "explicit experiment locks and authority context"
+        ],
+        "tags": [
+          "social-content",
+          "content-creator",
+          "creative",
+          "copywriting",
+          "short-form",
+          "shoot-direction",
+          "truthfulness"
+        ]
       },
       "replacement": null
     }
