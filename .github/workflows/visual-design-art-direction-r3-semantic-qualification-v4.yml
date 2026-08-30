@@ -32,6 +32,8 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
+      - name: Install scorer import dependency before preflight
+        run: python -m pip install --disable-pip-version-check cryptography
       - name: Verify frozen release plus all pre-candidate corrections
         run: |
           python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py
@@ -108,8 +110,6 @@ jobs:
           test -n "$GEMINI_API_KEY" || exit 22
           test -n "$GROQ_API_KEY" || exit 24
           test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
-      - name: Install sealing dependency
-        run: python -m pip install --disable-pip-version-check cryptography
       - name: Candidate runtime contract
         run: python architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py --qualification-contract
       - name: Reuse prior successful public runtime canary evidence
