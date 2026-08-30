@@ -7,7 +7,7 @@
   },
   "run": {
     "started_at": "2026-08-30T06:46:00Z",
-    "ended_at": "2026-08-30T07:11:23Z",
+    "ended_at": "2026-08-30T07:13:51Z",
     "repository_head": "1697c9c688e734582a1354d74593b4279846e847",
     "branch": "codex/issue-168-heldout",
     "executor_environment": {
@@ -59,6 +59,11 @@
     "paid_provider_credentials_present": false,
     "latest_r2_sealed_manifest_present_in_repository_head": false,
     "existing_r1_manifest_static_preflight": "PASS_DIAGNOSTIC_ONLY",
+    "generic_platform_test_sample": {
+      "passed_before_stop": 6,
+      "stopped_on": "Windows lacks POSIX fcntl required by an unrelated Sales sealed-runner test",
+      "interpretation": "HOST_INCOMPATIBILITY_DIAGNOSTIC_ONLY"
+    },
     "sealed_preflight": "NOT_RUN_MISSING_KEY_AND_R2_PACK",
     "codex_runtime_substitution_preserves_frozen_model_identity": false,
     "codex_as_candidate_and_uncalibrated_self_judge_prevented": true,
