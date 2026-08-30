@@ -1,0 +1,45 @@
+name: Visual Design Art Direction R3 input adapter static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix3.py'
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-3.json'
+      - '.github/workflows/visual-design-art-direction-r3-input-adapter-static.yml'
+      - '.github/workflows/visual-design-art-direction-r3-semantic-qualification-v4.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify lossless input adapter without credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix3.py
+          python - <<'PY'
+          import importlib.util,json,subprocess
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix3.py')
+          spec=importlib.util.spec_from_file_location('adapter',p); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          rec=json.load(open('architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-3.json'))
+          assert rec['candidate_calls_before_correction']==0 and rec['completed_judgments_before_correction']==0
+          assert rec['failed_preflight_run']==33298985005
+          assert rec['candidate_executor']['blob']=='6f7934bab4fc86a212ebdcf4a312174e01775afd'
+          assert subprocess.check_output(['git','rev-parse','HEAD:architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py'],text=True).strip()==rec['candidate_executor']['blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+rec['execution_wrapper']['path']],text=True).strip()==rec['execution_wrapper']['blob']
+          captured={}
+          def fake(adapted):
+              captured.update(adapted); return 'STATIC_OK'
+          m._original_candidate_call=fake
+          case={'brief':'b','context':'c','constraints':['Keep CTA visible','Do not invent proof']}
+          assert m.candidate_call_with_constraints_adapter(case)=='STATIC_OK'
+          assert isinstance(captured['constraints'],str)
+          assert json.loads(captured['constraints'])==case['constraints']
+          assert case['constraints']==['Keep CTA visible','Do not invent proof']
+          author=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py').read_text()
+          assert "'constraints': {" in author and "'type': 'array'" in author
+          print('VISUAL_R3_INPUT_ADAPTER_STATIC_PASS')
+          PY
