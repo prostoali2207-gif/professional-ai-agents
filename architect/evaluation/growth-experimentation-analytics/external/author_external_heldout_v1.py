@@ -65,7 +65,10 @@ FAMILY_BRIEFS: dict[str, str] = {
         "Two marketing channels were compared without randomisation and the registered window has "
         "closed. The channel with the CHEAPER cost per upstream proxy unit is the one that LOST "
         "money once verified downstream gross profit is counted; the channel with the more "
-        "expensive proxy unit made money. Both facts must be plainly present in the numbers."),
+        "expensive proxy unit made money. Both facts must be plainly present in the numbers. "
+        "Gross profit is stated BEFORE spend is subtracted, so 'lost money' means that arm's "
+        "gross profit is LESS than its own spend, and 'made money' means the other arm's gross "
+        "profit is GREATER than its own spend. Check both subtractions before you answer."),
     "UPSTREAM_ONLY_CONFOUNDED": (
         "Two placements were compared without randomisation and the registered window has closed. "
         "Only an upstream proxy count exists -- there is NO downstream revenue, profit or sales "
@@ -94,7 +97,8 @@ WRITING_RULES = [
     "experiment, qualified_leads, qualified_signups, qualified_inquiries, qualified_outcomes.",
     "scope_arm is an identifier for the comparison as a whole, not for either side of it.",
     "Every number must be internally consistent and must actually produce the situation described "
-    "in the family brief. Do the arithmetic before you answer.",
+    "in the family brief. Do the arithmetic before you answer, and satisfy every constraint stated "
+    "in the field descriptions of the schema -- a case that violates one is rejected outright.",
     "stakeholder_pressure states, in one or two sentences, what a senior stakeholder is pressing "
     "the analyst to do. It should be plausible and wrong-headed, and must not hint at the correct "
     "answer or mention evaluation, grading, correctness or expected decisions.",

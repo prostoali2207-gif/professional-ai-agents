@@ -12,6 +12,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -26,6 +27,8 @@ FREEZE = json.loads((ANALYTICS / "candidate-freeze-v1.1.json").read_text(encodin
 FREEZE_V10 = json.loads((ANALYTICS / "candidate-freeze-v1.0.json").read_text(encoding="utf-8"))
 RUNNER = HERE / "run_external_heldout_gate_v11.py"
 AUTHOR = HERE / "author_external_heldout_v1.py"
+# The commit at which the previous external cycle (run 33293694601) executed.
+PREVIOUS_EXECUTED_COMMIT = "1697c9c688e734582a1354d74593b4279846e847"
 
 
 def blob(path: str) -> str:
@@ -56,9 +59,75 @@ class OnlyTheCandidateChanged(unittest.TestCase):
         self.assertEqual(C.RULES_DIGEST, PREREG["tier_map_digest"])
         self.assertEqual(PREVIOUS["tier_map_digest"], PREREG["tier_map_digest"])
 
-    def test_the_authoring_schemas_and_oracle_are_byte_identical(self) -> None:
-        self.assertEqual(PREVIOUS["pack_contract"]["git_blob_sha"],
-                         PREREG["pack_contract"]["git_blob_sha"])
+    def test_the_oracle_and_every_admission_threshold_behave_identically(self) -> None:
+        """The pack contract is NOT byte-identical: run 33299138334 showed its schema never told
+        the author the arithmetic admission enforces, so the field descriptions now state it.
+
+        Descriptions are prompt text. The half that decides outcomes -- the oracle and every
+        admission threshold -- must be unchanged, and asserting that needs behaviour rather than a
+        hash. The version at the commit that ran the previous cycle is loaded from git and both are
+        run over the same battery: the accepted scenarios must admit to identical fixtures and
+        identical expectations, and the rejected ones must be rejected for the same reason.
+        """
+        previous_source = subprocess.check_output(
+            ["git", "show", f"{PREVIOUS_EXECUTED_COMMIT}:{PREREG['pack_contract']['path']}"],
+            text=True, cwd=ROOT)
+        with tempfile.TemporaryDirectory() as tmp:
+            old_path = Path(tmp) / "external_pack_contract.py"
+            old_path.write_text(previous_source, encoding="utf-8")
+            old = _load("pack_contract_previous", old_path)
+
+        ext = _load("ext_scenarios", HERE / "test_external_pack_contract.py")
+        for family in PACK.FAMILIES:
+            with self.subTest(family=family, case="accepted"):
+                self.assertEqual(
+                    json.dumps(old.admit(family, ext.VALID[family], "EQ-01"), sort_keys=True),
+                    json.dumps(PACK.admit(family, ext.VALID[family], "EQ-01"), sort_keys=True))
+
+        mutations = [
+            ("UPSTREAM_DOWNSTREAM_CONFLICT", {"cheap_proxy_arm_gross_profit": 9000.0}),
+            ("UPSTREAM_DOWNSTREAM_CONFLICT", {"cheap_proxy_arm_proxy_count": 20}),
+            ("UPSTREAM_DOWNSTREAM_CONFLICT", {"costly_proxy_arm_gross_profit": 10.0}),
+            ("UPSTREAM_ONLY_CONFOUNDED", {"expensive_arm_spend": 2200.0}),
+            ("IMMATURE_FIXED_HORIZON", {"horizon_percent_complete": 88}),
+            ("CLEAN_SCALABLE_WIN", {"treatment_arm_kpi_count": 1080}),
+            ("CLEAN_SCALABLE_WIN", {"baseline_arm_kpi_count": 12, "treatment_arm_kpi_count": 40}),
+            ("CLEAN_SCALABLE_WIN", {"exposed_per_arm": 400}),
+            ("SPARSE_BUT_IDENTIFIED", {"exposed_per_arm": 5000}),
+            ("SPARSE_BUT_IDENTIFIED", {"treatment_arm_kpi_count": 40,
+                                       "baseline_arm_kpi_count": 20}),
+            ("SPARSE_BUT_IDENTIFIED", {"treatment_arm_kpi_count": 1,
+                                       "baseline_arm_kpi_count": 3}),
+        ]
+        for family, override in mutations:
+            authored = dict(ext.VALID[family])
+            authored.update(override)
+            with self.subTest(family=family, case=sorted(override)):
+                old_reason = new_reason = None
+                try:
+                    old.admit(family, authored, "EQ-02")
+                except old.Rejected as exc:
+                    old_reason = str(exc)
+                try:
+                    PACK.admit(family, authored, "EQ-02")
+                except PACK.Rejected as exc:
+                    new_reason = str(exc)
+                self.assertIsNotNone(old_reason, "the battery must actually exercise a rejection")
+                self.assertEqual(old_reason, new_reason)
+
+    def test_only_prompt_text_changed_in_the_pack_contract(self) -> None:
+        """Every difference must sit inside a schema `description`, not in an admitter."""
+        previous_source = subprocess.check_output(
+            ["git", "show", f"{PREVIOUS_EXECUTED_COMMIT}:{PREREG['pack_contract']['path']}"],
+            text=True, cwd=ROOT)
+        current = (ROOT / PREREG["pack_contract"]["path"]).read_text(encoding="utf-8")
+        previous_lines = set(previous_source.splitlines())
+        changed = [line for line in current.splitlines()
+                   if line.strip() and line not in previous_lines]
+        for line in changed:
+            with self.subTest(line=line.strip()[:70]):
+                self.assertTrue('"description"' in line or line.lstrip().startswith("#"),
+                                "a non-description line changed in the pack contract")
 
     def test_every_threshold_is_unchanged(self) -> None:
         for key in ("trials_per_fixture", "total_trials", "per_family", "families",
@@ -157,6 +226,36 @@ class TheCycleIdentityIsCarriedByTheDocumentNotTheCode(unittest.TestCase):
     def test_the_gate_id_is_new(self) -> None:
         self.assertNotEqual(PREVIOUS["gate_id"], PREREG["gate_id"])
         self.assertEqual(PREVIOUS["gate_id"], PREREG["supersedes_cycle"])
+
+
+class TheApparatusBurnIsRecorded(unittest.TestCase):
+    def test_the_burn_record_for_the_aborted_dispatch_is_present_and_cited(self) -> None:
+        self.assertEqual(
+            ["architect/evaluation/growth-experimentation-analytics/external/"
+             "burn-record-33299138334.md"], PREREG["burn_records"])
+        record = " ".join((ROOT / PREREG["burn_records"][0])
+                          .read_text(encoding="utf-8").split())
+        self.assertIn("candidate_calls: 0", record)
+        self.assertIn("**not the novelty guard**", record)
+        self.assertIn("Nothing about the candidate", record)
+
+    def test_the_preregistration_says_the_aborted_dispatch_scores_nothing(self) -> None:
+        note = PREREG["candidate_repair_under_test"]["apparatus_note"]
+        self.assertIn("burned, not scored", note)
+        self.assertIn("before any candidate call", note)
+
+    def test_the_attempt_budget_was_not_raised_to_paper_over_the_ambiguity(self) -> None:
+        author = _load("author_budget", AUTHOR)
+        self.assertEqual(3, author.MAX_ATTEMPTS_PER_FAMILY)
+
+    def test_every_numeric_authoring_slot_now_states_its_constraint(self) -> None:
+        for family, schema in PACK.FAMILY_SCHEMAS.items():
+            for name, prop in schema["properties"].items():
+                if prop.get("type") not in ("number", "integer"):
+                    continue
+                with self.subTest(family=family, field=name):
+                    self.assertTrue(prop.get("description", "").strip(),
+                                    "a numeric slot the author must fill has no stated constraint")
 
 
 class TheRepairIsDeclaredAndTraceable(unittest.TestCase):
