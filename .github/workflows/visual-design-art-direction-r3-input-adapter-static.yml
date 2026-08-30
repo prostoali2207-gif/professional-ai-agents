@@ -16,6 +16,8 @@ jobs:
         with: {fetch-depth: 0}
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
+      - name: Install import dependency
+        run: python -m pip install --disable-pip-version-check cryptography
       - name: Verify lossless input adapter without credentials
         run: |
           python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix3.py
