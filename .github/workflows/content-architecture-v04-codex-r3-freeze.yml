@@ -1,0 +1,207 @@
+name: Content Architecture v0.4 Codex r3 freeze
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-codex-r3/FREEZE-CODEX-R3-v0.1'
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-wheelhouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pinned Windows evaluator dependency
+        shell: bash
+        run: |
+          mkdir -p wheelhouse
+          python -m pip download \
+            --disable-pip-version-check \
+            --no-input \
+            --only-binary=:all: \
+            --platform win_amd64 \
+            --python-version 312 \
+            --implementation cp \
+            --abi cp312 \
+            --dest wheelhouse \
+            cryptography==44.0.2
+      - name: Upload Windows wheelhouse
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-windows-wheelhouse
+          path: wheelhouse/
+          retention-days: 1
+
+  freeze:
+    needs: prepare-wheelhouse
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 20
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download staged evaluator dependency
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-windows-wheelhouse
+          path: ${{ runner.temp }}/ca-v04-codex-r3-wheelhouse
+      - name: Install evaluator dependency offline
+        shell: powershell
+        run: |
+          python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-codex-r3-wheelhouse" cryptography==44.0.2
+      - name: Resolve Codex CLI from interactive user installation
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) {
+              if (Test-Path $candidate) { $resolved = $candidate; break }
+            }
+          }
+          if (-not $resolved) {
+            $npm = Get-Command npm -ErrorAction SilentlyContinue
+            if ($npm) {
+              $prefix = (& npm config get prefix 2>$null | Out-String).Trim()
+              if ($prefix) {
+                foreach ($name in @('codex.cmd','codex.exe')) {
+                  $candidate = Join-Path $prefix $name
+                  if (Test-Path $candidate) { $resolved = $candidate; break }
+                }
+              }
+            }
+          }
+          if (-not $resolved) {
+            $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
+              (Join-Path $env:LOCALAPPDATA 'Programs'),
+              (Join-Path $env:USERPROFILE '.vscode\extensions'),
+              (Join-Path $env:USERPROFILE '.cursor\extensions')
+            )
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -in @('codex.exe','codex.cmd') } |
+                Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found.'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          Write-Host 'codex_cli_resolved=true'
+      - name: Verify secret and exact candidate
+        shell: powershell
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08 main
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+      - name: Verify exact Codex subscription runtime
+        shell: powershell
+        run: |
+          @'
+          import subprocess
+          auth = subprocess.run(['codex','login','status'], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=15)
+          text = (auth.stdout or '') + (auth.stderr or '')
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in text:
+              print(text)
+              raise SystemExit(41)
+          ver = subprocess.run(['codex','--version'], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=15)
+          version = ((ver.stdout or '') + (ver.stderr or '')).strip()
+          print('codex_version=' + version)
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2':
+              raise SystemExit(42)
+          '@ | python -
+      - name: Run unscored Codex adapter regression
+        shell: powershell
+        run: |
+          python architect/evaluation/harness/adapters/test_codex_frozen_artifact_adapter.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python architect/evaluation/harness/adapters/codex_frozen_artifact_live_regression.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Re-run frozen base grader calibration
+        shell: powershell
+        run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+      - name: Author and verify fresh r3 sealed corpus
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-pack'
+          New-Item -ItemType Directory -Force -Path $pack | Out-Null
+          python architect/evaluation/content-architecture-v04-codex-r3/author_pack_r3.py --out $pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:R3_PACK_DIR = $pack
+          @'
+          import importlib.util, json, os, pathlib
+          manifest=json.loads((pathlib.Path(os.environ['R3_PACK_DIR'])/'sealed-manifest.json').read_text())
+          assert manifest['gate_id']=='content-architecture-v0.4-codex-heldout-2026-08-30-r3'
+          assert manifest['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert manifest['fixture_count']==30
+          p=pathlib.Path('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py')
+          spec=importlib.util.spec_from_file_location('grader_r3',p); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+          pack=g.load_pack(pathlib.Path(os.environ['R3_PACK_DIR'])/'sealed-pack.bin')
+          assert pack['gate_id']==manifest['gate_id'] and len(pack['fixtures'])==30
+          print('r3 corpus/grader binding: PASS')
+          '@ | python -
+      - name: Record freeze evidence
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-pack'
+          $evidence = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-freeze-evidence'
+          New-Item -ItemType Directory -Force -Path $evidence | Out-Null
+          Copy-Item (Join-Path $pack 'sealed-manifest.json') (Join-Path $evidence 'sealed-manifest.json')
+          $env:R3_EVIDENCE_DIR = $evidence
+          @'
+          import json, os, pathlib, subprocess
+          out=pathlib.Path(os.environ['R3_EVIDENCE_DIR'])
+          manifest=json.loads((out/'sealed-manifest.json').read_text())
+          def blob(path): return subprocess.check_output(['git','hash-object',path],text=True).strip()
+          evidence={
+            'gate_id': manifest['gate_id'],
+            'candidate_sha': manifest['candidate_sha'],
+            'plain_identity_sha256': manifest['plain_identity_sha256'],
+            'fixture_count': manifest['fixture_count'],
+            'provider': 'codex-cli-chatgpt-subscription',
+            'model': 'gpt-5.6-sol',
+            'reasoning_effort': 'medium',
+            'codex_cli_version': '0.151.0-alpha.7.2',
+            'adapter_git_blob_sha': blob('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py'),
+            'mcp_git_blob_sha': blob('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py'),
+            'author_wrapper_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r3/author_pack_r3.py'),
+            'grader_wrapper_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py'),
+            'runner_git_blob_sha': blob('architect/evaluation/content-architecture-v04-codex-r3/run_gate_r3.py'),
+            'provider_api_keys_used': False,
+            'scored_candidate_calls': 0
+          }
+          (out/'freeze-evidence.json').write_text(json.dumps(evidence,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(evidence,sort_keys=True))
+          '@ | python -
+      - name: Upload r3 freeze evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-freeze-evidence
+          path: ${{ runner.temp }}/ca-v04-codex-r3-freeze-evidence/
+          retention-days: 14
