@@ -1,0 +1,76 @@
+name: Sales 0.5 r4 static pre-score gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r4-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r4.py'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r4.py'
+      - '.github/workflows/sales-0-5-gemini-r4-static.yml'
+      - '.github/workflows/sales-0-5-gemini-r4.yml'
+      - '.github/workflows/sales-0-5-gemini-r4-optin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-30-r4-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  R4_DELTA: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r4-gemini-groq.json
+  EFFECTIVE_PREREG: /tmp/sales-v05-r4-effective-prereg.json
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile r4 evaluator remediation
+        run: python -m py_compile architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r4.py architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r4.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py
+      - name: Assemble and verify frozen r4 contract
+        shell: bash
+        run: |
+          python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r4.py "$EFFECTIVE_PREREG"
+          python - <<'PY'
+          import hashlib,importlib.util,json,os,subprocess
+          d=json.load(open(os.environ['R4_DELTA'])); p=json.load(open(os.environ['EFFECTIVE_PREREG']))
+          assert d['cycle_id']==p['cycle_id']==os.environ['CYCLE_ID']
+          assert d['base_preregistration']['blob']=='1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c'
+          assert subprocess.check_output(['git','hash-object',d['base_preregistration']['path']],text=True).strip()==d['base_preregistration']['blob']
+          assert d['prior_sanitized_evidence']['r3']['run_id']==33310578863
+          assert d['prior_sanitized_evidence']['r3']['candidate_calls']==0
+          assert 'Groq' in d['prior_sanitized_evidence']['r3']['provider_failure']
+          rem=d['authoring_remediation']
+          assert all(rem[k] is False for k in ['semantic_mutation_allowed','native_schema_change_allowed','grader_change_allowed','threshold_change_allowed','candidate_change_allowed'])
+          pr=d['provider_resilience_remediation']
+          assert pr['provider']=='groq-openai-compatible-api' and pr['model']=='openai/gpt-oss-120b'
+          assert pr['retry_count']==1 and pr['maximum_wait_seconds']==2700
+          assert pr['judge_identity_change'] is False and pr['model_change'] is False
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3 and p['fixture_design']['expected_candidate_runs_if_full']==42
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert len(p['fixture_design']['repeated_fixture_slots'])==6
+          r=p['runtime_contract']; assert r['provider']=='gemini-interactions-api' and r['candidate_model']=='gemini-3.5-flash-lite' and r['grader_model']=='gemini-3.5-flash-lite' and r['minimum_seconds_between_requests']==6.0
+          commit=os.environ['CANDIDATE_COMMIT']; m=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in m['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==m['artifact']['content_digest']
+          spec=importlib.util.spec_from_file_location('r4','architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py'); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+          assert abs(mod.parse_retry_wait_seconds(None,'Please try again in 38m13.488s.')-2293.488)<0.001
+          assert mod.parse_retry_wait_seconds('120','ignored')==120.0
+          assert mod.parse_retry_wait_seconds(None,'no retry hint') is None
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py','--qualification-contract'],text=True)); assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['core']=='sales-lead-conversion/0.5.0'
+          print('SALES_V05_R4_STATIC_FREEZE_PASS', actual)
+          PY
+      - name: Verify pinned r3 transport and runtime bases
+        shell: bash
+        run: |
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r3_gemini_groq.py)" = 0c3025e3710b46223a7b27540e4c8bd9f9a7a86f
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py)" = 9bfdd0da131e67aa264e17cfa8e4cd45b34f6d4b
+      - name: Paid workflow guard
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py
