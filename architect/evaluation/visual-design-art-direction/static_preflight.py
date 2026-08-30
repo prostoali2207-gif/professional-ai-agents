@@ -13,7 +13,9 @@ import sys
 ROOT = Path(__file__).resolve().parent
 SKILL = ROOT / "candidate" / "SKILL.md"
 MODEL = ROOT / "professional-model-candidate-v0.1.md"
+REPAIR_MODEL = ROOT / "professional-model-p0-repair-v0.2.md"
 FIXTURES = ROOT / "fixtures-v0.1.json"
+TARGETED = ROOT / "fixtures-v0.2-targeted-regression.json"
 PLAN = ROOT / "qualification-plan-v0.1.md"
 
 
@@ -31,10 +33,18 @@ def require_text(path: Path, needles: list[str]) -> None:
             fail(f"{path.name}: missing required contract marker {needle!r}")
 
 
+def load_json(path: Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        fail(f"{path.name} is not valid JSON: {exc}")
+
+
 def main() -> int:
     require_text(
         SKILL,
         [
+            "version: 0.2.0-candidate",
             "Status: **CANDIDATE — NOT QUALIFIED**",
             "DISCOVER",
             "DIRECT",
@@ -43,6 +53,12 @@ def main() -> int:
             "motion / 3D / WebGL",
             "Never fabricate business imagery",
             "Never issue the independent final product release PASS",
+            "FUNCTION PASS",
+            "MOBILE PASS",
+            "AUTHORITY PASS",
+            "ADVANCED-MEDIA PASS",
+            "UPSTREAM_CONSTRAINT",
+            "unusable collapsed desktop",
         ],
     )
     require_text(
@@ -57,6 +73,20 @@ def main() -> int:
         ],
     )
     require_text(
+        REPAIR_MODEL,
+        [
+            "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
+            "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
+            "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+            "J-01 — Hard-function precedence veto",
+            "J-02 — Mobile viability veto",
+            "J-03 — Authority veto",
+            "J-04 — Advanced-media feasibility before desirability",
+            "J-05 — Ready-state gate",
+            "fresh independent held-out corpus",
+        ],
+    )
+    require_text(
         PLAN,
         [
             "P0 hard-fail behaviors",
@@ -67,11 +97,7 @@ def main() -> int:
         ],
     )
 
-    try:
-        payload = json.loads(FIXTURES.read_text(encoding="utf-8"))
-    except Exception as exc:
-        fail(f"fixtures are not valid JSON: {exc}")
-
+    payload = load_json(FIXTURES)
     families = payload.get("families")
     if not isinstance(families, list) or len(families) < 12:
         fail("expected at least 12 development fixture families")
@@ -115,9 +141,33 @@ def main() -> int:
         if not isinstance(obs, list) or len(obs) < 2 or not all(isinstance(x, str) and x.strip() for x in obs):
             fail(f"{row.get('id')}: must_observe must contain at least two non-empty observations")
 
+    targeted = load_json(TARGETED)
+    boundary = targeted.get("source_boundary", {})
+    if boundary.get("r3_hidden_content_used") is not False or boundary.get("release_use") != "DEVELOPMENT_ONLY":
+        fail("targeted regression source boundary must explicitly exclude hidden R3 content and release use")
+    if boundary.get("fresh_heldout_required_for_v0_2_release") is not True:
+        fail("v0.2 must require a fresh held-out release corpus")
+
+    target_rows = targeted.get("families")
+    if not isinstance(target_rows, list) or len(target_rows) != 4:
+        fail("expected exactly four targeted v0.2 regression families")
+    target_ids = {row.get("id") for row in target_rows}
+    required_targets = {
+        "R20_MOBILE_FUNCTION_VETO",
+        "R21_SPECTACLE_HARD_FUNCTION_VETO",
+        "R22_AUTHORITY_UX_PRODUCT_VETO",
+        "R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION",
+    }
+    if target_ids != required_targets:
+        fail(f"targeted regression ids mismatch: {sorted(target_ids)}")
+    target_p0 = {row.get("id") for row in target_rows if row.get("criticality") == "P0"}
+    if target_p0 != required_targets - {"R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION"}:
+        fail("the three repaired failure classes must remain P0 in development regression")
+
     print(
         "VISUAL_DESIGN_STATIC_PREFLIGHT_PASS "
-        f"families={len(families)} p0={len(p0)} provider_calls=0 creative_quality_claimed=false"
+        f"families={len(families)} p0={len(p0)} targeted={len(target_rows)} "
+        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true"
     )
     return 0
 
