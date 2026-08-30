@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0.0",
+  "status": "FROZEN_READY",
+  "created_at": "2026-08-30T12:00:00+04:00",
+  "cycle_id": "issue-175-market-intelligence-codex-v0.1",
+  "purpose": "Fresh holistic factory release qualification of one representative professional core under current cost and paid-execution policy.",
+  "candidate": {
+    "id": "market-competitive-intelligence-v0.3",
+    "mutation_allowed": false,
+    "assembly_digest": "sha256:7dee471c3b707927fd255a2539548882e2b18765c943d0e6c7dbee9a2edbff62",
+    "ordered_components": [
+      {
+        "path": "architect/research/market-competitive-intelligence/candidate-professional-model-v0.2.md",
+        "git_blob_sha": "7af5b93c1a4d499b5972a0dd20aec8e4253a9651"
+      },
+      {
+        "path": "architect/research/market-competitive-intelligence/epistemic-status-calibration-overlay-v0.1.md",
+        "git_blob_sha": "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21"
+      }
+    ]
+  },
+  "prior_evidence": {
+    "status": "VALID_CALIBRATION_AND_PRIOR_ONLY",
+    "single_decision_run": 32377948412,
+    "practical_run": 32378536989,
+    "candidate_compatibility": "exact same ordered component blobs and assembly digest",
+    "release_limitation": "historical provider-backed workflows ran on pull_request and therefore cannot satisfy the current paid-execution authorization policy for issue #175"
+  },
+  "sealed_pack": {
+    "path": "architect/evaluation/holistic_factory/issue-175-market-intelligence/sealed/heldout-v0.1.aesgcm.json",
+    "format": "aes-256-gcm-v1",
+    "aad": "issue-175-market-intelligence-codex-v0.1",
+    "ciphertext_file_digest": "sha256:98f3f88830bb40bda995989598459a60c4d4c3a8b7a2cb7d03dc26539a1806ce",
+    "plaintext_digest": "sha256:ced2ffe3ee0c8e8755ca192c85ace48bdf99ba52071339045542977350299e60",
+    "plaintext_length": 7949,
+    "sealed_length": 10748,
+    "candidate_visibility": "candidate receives only visible task fields; expected keys and pack path are absent from the candidate prompt/runtime"
+  },
+  "evaluator": {
+    "runner_path": "architect/evaluation/holistic_factory/issue-175-market-intelligence/run_codex_qualification_v0_1.py",
+    "runner_sha256": "sha256:908864398f1f14de66f0a48e147f163fe3d1fb917860440526349be5c68318bd",
+    "single_schema_sha256": "sha256:60baea7e29c0314f1432a3747923220073efe573c9d02cd2dccf14d0363088c6",
+    "practical_schema_sha256": "sha256:5bf4646da39d234d2d26635a475209115e176e97f3f73432b26c53afa50cd5da",
+    "canary_sha256": "sha256:83d523bc436c3df90bcaab831f245f2b559b495a2360b3446104012504000e18",
+    "grading": "deterministic exact decision/state comparison against evaluator-owned hidden keys",
+    "independence": "fresh pack authored after candidate freeze; isolated ephemeral candidate sessions cannot read expected keys"
+  },
+  "runtime": {
+    "route": "chatgpt-subscription-codex-cli",
+    "codex_cli_version": "codex-cli 0.151.0-alpha.7.1",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "timeout_seconds": 600,
+    "sandbox": "read-only",
+    "ephemeral": true,
+    "tools_allowed": false,
+    "web_search_allowed": false,
+    "metered_api_keys_allowed": false,
+    "scored_retries": 0
+  },
+  "evaluation": {
+    "single_case_count": 12,
+    "practical_case_count": 1,
+    "trials": 3,
+    "required_families": [
+      "EPISTEMIC_STATUS",
+      "SOURCE_FIT",
+      "FRESHNESS",
+      "COMPARABILITY",
+      "SELECTION_COVERAGE",
+      "CAUSALITY",
+      "LINEAGE_DEPENDENCE",
+      "NON_OBSERVATION",
+      "LONGITUDINAL_DRIFT",
+      "TRUST_BOUNDARY",
+      "RESEARCH_STOPPING",
+      "AUTHORITY_BOUNDARY"
+    ],
+    "thresholds": {
+      "single_decisions": "12/12 PASS in each of 3 isolated trials",
+      "practical_adversarial": "all frozen expected decision fields PASS in each of 3 isolated trials",
+      "critical_failures_allowed": 0,
+      "candidate_tool_calls_allowed": 0,
+      "best_of_n_forbidden": true,
+      "first_scored_mismatch": "stop and emit REVISE; do not retry"
+    }
+  },
+  "budget_gate": {
+    "objective": "Obtain current-policy-compatible independent release evidence for the exact frozen Market Intelligence assembly.",
+    "decision_impact": "PASS closes issue #175 and keeps generic qualification infrastructure maintenance-only; REVISE preserves prior evidence but blocks closure.",
+    "deterministic_first": true,
+    "reusable_evidence_checked": true,
+    "subscription_route_eligibility": "eligible because the frozen historical provider identity is not reused as the release contract; this is a newly preregistered cross-runtime cycle with exact candidate identity and new evidence",
+    "metered_api_route": "BLOCKED; no unmet evidence requirement justifies an API key while authenticated ChatGPT subscription Codex is available",
+    "planned_subscription_calls": 7,
+    "maximum_subscription_calls": 7,
+    "protected_reserve": "no API quota or provider secret is consumed",
+    "stop_condition": "deterministic preflight failure, canary failure, first scored mismatch, runtime failure, or completed verdict",
+    "mid_run_exhaustion": "preserve completed sanitized aggregates and return NOT_EXECUTABLE; never infer PASS from partial work"
+  },
+  "integrity_rules": [
+    "No candidate, fixture, expected key, schema, runner, threshold, or runtime identity change after the first scored candidate call.",
+    "The public canary is unscored and is not release evidence.",
+    "Historical Gemini runs are prior/calibration evidence only and cannot replace this fresh cycle.",
+    "No metered provider API key may be bound to preflight, canary, or scored execution.",
+    "A runtime/evaluator failure is not a professional candidate failure.",
+    "The rendered gate is NOT_APPLICABLE because the profession's produced artifact is an analytical evidence packet, not visual/media output."
+  ]
+}
