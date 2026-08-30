@@ -1,0 +1,296 @@
+name: Content Architecture v0.4 Codex r3 checkpoint resume
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-codex-r3/RESUME-CODEX-R3-v0.1'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare-wheelhouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pinned Windows evaluator dependency
+        shell: bash
+        run: |
+          mkdir -p wheelhouse
+          python -m pip download \
+            --disable-pip-version-check \
+            --no-input \
+            --only-binary=:all: \
+            --platform win_amd64 \
+            --python-version 312 \
+            --implementation cp \
+            --abi cp312 \
+            --dest wheelhouse \
+            cryptography==44.0.2
+      - name: Upload Windows wheelhouse
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-resume-wheelhouse
+          path: wheelhouse/
+          retention-days: 1
+
+  resume:
+    needs: prepare-wheelhouse
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 60
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download staged evaluator dependency
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-resume-wheelhouse
+          path: ${{ runner.temp }}/ca-v04-codex-r3-resume-wheelhouse
+      - name: Install evaluator dependency offline
+        shell: powershell
+        run: |
+          python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-codex-r3-resume-wheelhouse" cryptography==44.0.2
+      - name: Resolve Codex CLI from interactive user installation
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) {
+              if (Test-Path $candidate) { $resolved = $candidate; break }
+            }
+          }
+          if (-not $resolved) {
+            $npm = Get-Command npm -ErrorAction SilentlyContinue
+            if ($npm) {
+              $prefix = (& npm config get prefix 2>$null | Out-String).Trim()
+              if ($prefix) {
+                foreach ($name in @('codex.cmd','codex.exe')) {
+                  $candidate = Join-Path $prefix $name
+                  if (Test-Path $candidate) { $resolved = $candidate; break }
+                }
+              }
+            }
+          }
+          if (-not $resolved) {
+            $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
+              (Join-Path $env:LOCALAPPDATA 'Programs'),
+              (Join-Path $env:USERPROFILE '.vscode\extensions'),
+              (Join-Path $env:USERPROFILE '.cursor\extensions')
+            )
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -in @('codex.exe','codex.cmd') } |
+                Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found.'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          Write-Host 'codex_cli_resolved=true'
+      - name: Verify frozen r3 identities and exact runtime
+        shell: powershell
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08 main
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+          $checks = @(
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py','d1ef178b739a638a883c5a1d0efe5e431bd3b34d'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py','73e9349391d4aa83dd459ed23e4069a3cf9a2072'),
+            @('architect/evaluation/content-architecture-v04-codex-r3/author_pack_r3.py','4a00a066bb0adad262ef6039fe68e3238b431b33'),
+            @('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py','0c8f7b63638b90e3108496425bd82411110cd96a'),
+            @('architect/evaluation/content-architecture-v04-codex-r3/run_gate_r3.py','79db4642e79bd8044ad2dfa7e89131f49693a0fe'),
+            @('architect/evaluation/content-architecture-v04-fresh/grader_v01.py','a39f0fc980dd38515b2753c046c8856a428784ac'),
+            @('architect/evaluation/content-architecture-v04-fresh/author_pack_v01.py','078ef53a195b07aaeaca9d5b393f2d76ca61df5b')
+          )
+          foreach ($item in $checks) {
+            $actual = (git hash-object $item[0]).Trim()
+            if ($actual -ne $item[1]) { Write-Error "Frozen blob mismatch: $($item[0])"; exit 33 }
+          }
+          @'
+          import json, pathlib, subprocess
+          p=json.loads(pathlib.Path('architect/evaluation/content-architecture-v04-codex-r3/preregistration-r3.json').read_text())
+          assert p['status']=='FROZEN_PRE_SCORE'
+          assert p['candidate_blob_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert p['hidden_corpus']['identity_sha256']=='31ef6b0f0a1286e3860cfc706ece28acc72bd2eea3e77fb1726026e3ba962335'
+          assert p['runtime_eligibility']['codex_cli_version']=='0.151.0-alpha.7.2'
+          auth=subprocess.run(['codex','login','status'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          text=(auth.stdout or '')+(auth.stderr or '')
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in text: raise SystemExit(41)
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          version=((ver.stdout or '')+(ver.stderr or '')).strip()
+          print('codex_version='+version)
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2': raise SystemExit(42)
+          print('frozen identity/runtime binding: PASS')
+          '@ | python -
+      - name: Run one unscored runtime canary
+        shell: powershell
+        run: |
+          python architect/evaluation/harness/adapters/test_codex_frozen_artifact_adapter.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python architect/evaluation/harness/adapters/codex_frozen_artifact_live_regression.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Re-run frozen grader calibration
+        shell: powershell
+        run: python architect/evaluation/content-architecture-v04-fresh/test_grader_v01.py
+      - name: Rebuild and verify exact frozen r3 corpus
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-pack'
+          New-Item -ItemType Directory -Force -Path $pack | Out-Null
+          python architect/evaluation/content-architecture-v04-codex-r3/author_pack_r3.py --out $pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:R3_PACK_DIR = $pack
+          @'
+          import importlib.util, json, os, pathlib
+          d=pathlib.Path(os.environ['R3_PACK_DIR'])
+          m=json.loads((d/'sealed-manifest.json').read_text())
+          assert m['gate_id']=='content-architecture-v0.4-codex-heldout-2026-08-30-r3'
+          assert m['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert m['fixture_count']==30
+          assert m['plain_identity_sha256']=='31ef6b0f0a1286e3860cfc706ece28acc72bd2eea3e77fb1726026e3ba962335'
+          gp=pathlib.Path('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py')
+          spec=importlib.util.spec_from_file_location('grader_r3',gp); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+          plain=g.load_pack(d/'sealed-pack.bin')
+          assert plain['gate_id']==m['gate_id'] and plain['candidate_sha']==m['candidate_sha'] and len(plain['fixtures'])==30
+          print('exact frozen r3 corpus: PASS')
+          '@ | python -
+      - name: Download r3 checkpoint evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-scored-result
+          path: ${{ runner.temp }}/ca-v04-codex-r3-source-checkpoint
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: '33314863746'
+          github-token: ${{ github.token }}
+      - name: Seed only completed checkpoint records
+        shell: powershell
+        run: |
+          $source = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-source-checkpoint'
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-result'
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          $env:R3_SOURCE_DIR = $source
+          $env:R3_RESULT_DIR = $out
+          @'
+          import json, os, pathlib
+          src=pathlib.Path(os.environ['R3_SOURCE_DIR'])
+          out=pathlib.Path(os.environ['R3_RESULT_DIR'])
+          rows=[json.loads(x) for x in (src/'records.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
+          completed=[r for r in rows if r.get('terminal_status')=='COMPLETED']
+          errors=[r for r in rows if r.get('terminal_status')=='ERROR']
+          assert len(rows)==40 and len(completed)==39 and len(errors)==1
+          assert all(r.get('gate_id')=='content-architecture-v0.4-codex-heldout-2026-08-30-r3' for r in rows)
+          assert all(r.get('candidate_sha')=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d' for r in rows)
+          keys=[(r.get('fixture_id'),int(r.get('trial',0))) for r in completed]
+          assert len(keys)==len(set(keys))==39
+          allowed=('codex-cli-chatgpt-subscription','gpt-5.6-sol','codex-cli 0.151.0-alpha.7.2','medium')
+          for r in completed:
+              ident=r.get('runtime_identity') or {}
+              assert (ident.get('provider'),ident.get('model'),ident.get('codex_cli_version'),ident.get('reasoning_effort'))==allowed
+          (out/'records.jsonl').write_text(''.join(json.dumps(r,ensure_ascii=False,sort_keys=True)+'\n' for r in completed),encoding='utf-8')
+          print(json.dumps({'checkpoint_seed_completed':39,'discarded_runtime_errors':1,'blind_retries':0},sort_keys=True))
+          '@ | python -
+          Copy-Item (Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-pack\sealed-manifest.json') (Join-Path $out 'sealed-manifest.json')
+      - name: Resume exactly the missing scored trial
+        id: resume_scored
+        continue-on-error: true
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-pack\sealed-pack.bin'
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-result'
+          python architect/evaluation/content-architecture-v04-codex-r3/run_gate_r3.py `
+            --pack $pack `
+            --candidate-command "python architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py" `
+            --out $out `
+            --timeout 300
+          $code = $LASTEXITCODE
+          Set-Content -Path (Join-Path $out 'workflow-exit-code.txt') -Value $code
+          exit $code
+      - name: Validate complete checkpoint continuation
+        if: always()
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-pack\sealed-pack.bin'
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-result'
+          $env:R3_PACK_FILE = $pack
+          $env:R3_RESULT_DIR = $out
+          @'
+          import importlib.util, json, os, pathlib
+          out=pathlib.Path(os.environ['R3_RESULT_DIR'])
+          rows=[json.loads(x) for x in (out/'records.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
+          gp=pathlib.Path('architect/evaluation/content-architecture-v04-codex-r3/grader_r3.py')
+          spec=importlib.util.spec_from_file_location('grader_r3',gp); g=importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+          pack=g.load_pack(pathlib.Path(os.environ['R3_PACK_FILE']))
+          expected=[]
+          for f in pack['fixtures']:
+              for trial in range(1,int(f.get('trial_count',1))+1): expected.append((f['fixture_id'],trial))
+          completed=[r for r in rows if r.get('terminal_status')=='COMPLETED']
+          errors=[r for r in rows if r.get('terminal_status')=='ERROR']
+          actual=[(r.get('fixture_id'),int(r.get('trial',0))) for r in completed]
+          complete=(len(expected)==40 and len(completed)==40 and not errors and len(actual)==len(set(actual)) and set(actual)==set(expected))
+          evidence={
+              'gate_id':'content-architecture-v0.4-codex-heldout-2026-08-30-r3',
+              'checkpoint_source_run_id':33314863746,
+              'checkpoint_seed_completed_records':39,
+              'completed_records':len(completed),
+              'error_records':len(errors),
+              'expected_trial_records':len(expected),
+              'checkpoint_complete':complete,
+              'provider_api_keys_used':False,
+              'blind_retries':0
+          }
+          (out/'checkpoint-evidence.json').write_text(json.dumps(evidence,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps(evidence,sort_keys=True))
+          if not complete: raise SystemExit(51)
+          if not (out/'grade-report.json').exists() or not (out/'summary.json').exists(): raise SystemExit(52)
+          '@ | python -
+      - name: Upload r3 resume evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r3-resume-result
+          path: |
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/records.jsonl
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/grade-report.json
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/summary.json
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/checkpoint-evidence.json
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/workflow-exit-code.txt
+            ${{ runner.temp }}/ca-v04-codex-r3-resume-result/sealed-manifest.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Apply frozen qualification outcome
+        if: always()
+        shell: powershell
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r3-resume-result'
+          $codePath = Join-Path $out 'workflow-exit-code.txt'
+          if (-not (Test-Path $codePath)) { exit 53 }
+          $code = [int](Get-Content $codePath | Select-Object -First 1)
+          exit $code
