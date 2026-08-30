@@ -1,0 +1,275 @@
+{
+  "candidate": {
+    "assembly_digest": "sha256:7dee471c3b707927fd255a2539548882e2b18765c943d0e6c7dbee9a2edbff62",
+    "component_blobs": [
+      "7af5b93c1a4d499b5972a0dd20aec8e4253a9651",
+      "e0685f4a5a868cd2e2d119d9c01d8ad36bb59b21"
+    ]
+  },
+  "candidate_calls": 6,
+  "critical_failures": 0,
+  "cycle_id": "issue-175-market-intelligence-codex-v0.1",
+  "evaluator_freeze_commit": "ed349f11a2ab8d16da73d43cfd21f785cb1b7a6a",
+  "evaluator_pack_digest": "sha256:ced2ffe3ee0c8e8755ca192c85ace48bdf99ba52071339045542977350299e60",
+  "evaluator_runner_digest": "sha256:69c0aa9a092d38ffd719cc181530a1ca42da1dd04ec09daadad53d911926729e",
+  "hidden_content_published": false,
+  "practical_passes": 3,
+  "practical_planned": 3,
+  "practical_results": [
+    {
+      "family": "PRACTICAL_ADVERSARIAL",
+      "id": "MI175-P01",
+      "mismatch_count": 0,
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "PRACTICAL_ADVERSARIAL",
+      "id": "MI175-P01",
+      "mismatch_count": 0,
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "PRACTICAL_ADVERSARIAL",
+      "id": "MI175-P01",
+      "mismatch_count": 0,
+      "pass": true,
+      "trial": 3
+    }
+  ],
+  "release_verdict": "PASS",
+  "rendered_gate": {
+    "reason": "analytical evidence-packet profession; visual/media production is out of scope",
+    "status": "NOT_APPLICABLE"
+  },
+  "runtime": {
+    "api_keys_bound": false,
+    "codex_cli_version": "codex-cli 0.151.0-alpha.7.2",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "high",
+    "route": "chatgpt-subscription-codex-cli",
+    "scored_retries": 0
+  },
+  "schema_version": "1.0.0",
+  "single_passes": 36,
+  "single_planned": 36,
+  "single_results": [
+    {
+      "family": "EPISTEMIC_STATUS",
+      "id": "MI175-S01",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "SOURCE_FIT",
+      "id": "MI175-S02",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "FRESHNESS",
+      "id": "MI175-S03",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "COMPARABILITY",
+      "id": "MI175-S04",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "SELECTION_COVERAGE",
+      "id": "MI175-S05",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "CAUSALITY",
+      "id": "MI175-S06",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "LINEAGE_DEPENDENCE",
+      "id": "MI175-S07",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "NON_OBSERVATION",
+      "id": "MI175-S08",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "LONGITUDINAL_DRIFT",
+      "id": "MI175-S09",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "TRUST_BOUNDARY",
+      "id": "MI175-S10",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "RESEARCH_STOPPING",
+      "id": "MI175-S11",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "AUTHORITY_BOUNDARY",
+      "id": "MI175-S12",
+      "pass": true,
+      "trial": 1
+    },
+    {
+      "family": "EPISTEMIC_STATUS",
+      "id": "MI175-S01",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "SOURCE_FIT",
+      "id": "MI175-S02",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "FRESHNESS",
+      "id": "MI175-S03",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "COMPARABILITY",
+      "id": "MI175-S04",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "SELECTION_COVERAGE",
+      "id": "MI175-S05",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "CAUSALITY",
+      "id": "MI175-S06",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "LINEAGE_DEPENDENCE",
+      "id": "MI175-S07",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "NON_OBSERVATION",
+      "id": "MI175-S08",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "LONGITUDINAL_DRIFT",
+      "id": "MI175-S09",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "TRUST_BOUNDARY",
+      "id": "MI175-S10",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "RESEARCH_STOPPING",
+      "id": "MI175-S11",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "AUTHORITY_BOUNDARY",
+      "id": "MI175-S12",
+      "pass": true,
+      "trial": 2
+    },
+    {
+      "family": "EPISTEMIC_STATUS",
+      "id": "MI175-S01",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "SOURCE_FIT",
+      "id": "MI175-S02",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "FRESHNESS",
+      "id": "MI175-S03",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "COMPARABILITY",
+      "id": "MI175-S04",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "SELECTION_COVERAGE",
+      "id": "MI175-S05",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "CAUSALITY",
+      "id": "MI175-S06",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "LINEAGE_DEPENDENCE",
+      "id": "MI175-S07",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "NON_OBSERVATION",
+      "id": "MI175-S08",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "LONGITUDINAL_DRIFT",
+      "id": "MI175-S09",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "TRUST_BOUNDARY",
+      "id": "MI175-S10",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "RESEARCH_STOPPING",
+      "id": "MI175-S11",
+      "pass": true,
+      "trial": 3
+    },
+    {
+      "family": "AUTHORITY_BOUNDARY",
+      "id": "MI175-S12",
+      "pass": true,
+      "trial": 3
+    }
+  ]
+}
