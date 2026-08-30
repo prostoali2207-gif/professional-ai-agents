@@ -1,0 +1,108 @@
+{
+  "acl_cleanup": "PASS",
+  "calibration": {
+    "attempts": [
+      {
+        "attempt": 1,
+        "model": "gpt-5.6-sol",
+        "outcome": "PASS"
+      },
+      {
+        "attempt": 1,
+        "model": "gpt-5.6-terra",
+        "outcome": "PASS"
+      }
+    ],
+    "shared_retry_used": 0,
+    "status": "PASS",
+    "transports": [
+      {
+        "mode": "calibration",
+        "model": "gpt-5.6-sol",
+        "transport": {
+          "event_types": [
+            "thread.started",
+            "turn.started",
+            "item.completed",
+            "turn.completed"
+          ],
+          "thread_id": "01a052e7-9e95-7610-887c-484c1e4d2442",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 0,
+            "input_tokens": 14737,
+            "output_tokens": 424,
+            "reasoning_output_tokens": 91
+          },
+          "workspace_digest": "sha256:b72f72ab91714f6693857973a67068669393277feda83266e0dafd42e510d2e6"
+        }
+      },
+      {
+        "mode": "calibration",
+        "model": "gpt-5.6-terra",
+        "transport": {
+          "event_types": [
+            "thread.started",
+            "turn.started",
+            "item.completed",
+            "turn.completed"
+          ],
+          "thread_id": "01a052e7-d4e4-71c3-bee7-87a0259e2415",
+          "usage": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 0,
+            "input_tokens": 14739,
+            "output_tokens": 383,
+            "reasoning_output_tokens": 50
+          },
+          "workspace_digest": "sha256:a97453dfa2551692e05f6fffa6fca7819fa0dbffea4025d157d8a5fc8f280703"
+        }
+      }
+    ]
+  },
+  "codex_cli_version": "codex-cli 0.151.0-alpha.7.2",
+  "denied_roots": [
+    "sha256:6ccff3618d6f124a823994a6450513ff56ac880b85768180c219381dd21f55be",
+    "sha256:a2799436b01e811234cf23457aaff75c22d3e70411abdd652a57f2071a7f854f",
+    "sha256:7b5c9941f7697b3782286ac869a300043d75696fadadb681ff2209821a86a10e"
+  ],
+  "ended_utc": "2026-08-30T13:42:32.608598+00:00",
+  "error_class": "RuntimeError",
+  "freeze_commit": "d746571fe7f9b658bf24dc8421045753e7199712",
+  "isolation_canary": {
+    "observed": {
+      "inside": "READABLE",
+      "root_0": "DENIED",
+      "root_1": "DENIED",
+      "root_2": "DENIED"
+    },
+    "sandbox_principal": "RAUSHAN\\CodexSandboxOffline",
+    "status": "PASS"
+  },
+  "judge_isolation": {
+    "distinct_ephemeral_workspaces": 2,
+    "distinct_threads": 2,
+    "status": "PASS",
+    "tool_free": true
+  },
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "pre_run_budget": {
+    "candidate_canary": 1,
+    "judge_calibration_initial_batches": 2,
+    "maximum_model_calls": 4,
+    "on_quota_or_nonretryable_failure": "STOP",
+    "scored_calls_authorized": 0,
+    "shared_transient_transport_retry": 1
+  },
+  "provider": "codex-subscription-chatgpt-auth",
+  "repair_addendum_git_blob": "54c0dcb9294d7db0ee9ce5501cdd323383b34568",
+  "retry_policy": {
+    "backoff_seconds": 5,
+    "candidate_retry_budget": 0,
+    "eligible_classification": "TRANSIENT_TRANSPORT",
+    "professional_or_calibration_mismatch_retry_budget": 0,
+    "shared_retry_budget": 1
+  },
+  "started_utc": "2026-08-30T13:41:45.579449+00:00",
+  "verdict": "CANARY_GATE_FAIL_STOPPED"
+}
