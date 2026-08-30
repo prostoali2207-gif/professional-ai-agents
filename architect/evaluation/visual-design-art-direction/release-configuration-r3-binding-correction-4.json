@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1",
+  "issue": 158,
+  "status": "FROZEN_FOR_BOUNDED_INFRASTRUCTURE_RESUME",
+  "failed_run": 33299286470,
+  "failure_classification": "GEMINI_JUDGE_OUTPUT_TRANSPORT_CONTRACT_FAILURE",
+  "progress_artifact": {
+    "id": 9728395061,
+    "digest": "sha256:6b8e6027860eaae09d2c9f6f873724fd1c840001217f7e496539b7c1087a2bc3",
+    "candidate_calls": 1,
+    "completed_judgments": 0,
+    "status": "INFRASTRUCTURE_FAILURE",
+    "error": "judge winner invalid"
+  },
+  "resume_checkpoint": {
+    "source_run": 33299286470,
+    "artifact_id": 9728394922,
+    "artifact_name": "visual-design-art-direction-v0-1-r3-semantic-checkpoint",
+    "artifact_digest": "sha256:fc18d02fd72658b8e163c1057c90b1493c626a269ae0a646c421b3c76de8a524",
+    "required_candidate_calls_before_resume": 1,
+    "required_completed_judgments_before_resume": 0,
+    "completed_candidate_calls_must_not_repeat": true
+  },
+  "allowed_correction_only": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "api": "interactions",
+    "thinking_level": "medium",
+    "operation": "add Gemini-native response_format schema enforcement using the already-frozen semantic JUDGE_SCHEMA",
+    "judge_prompt_modified": false,
+    "judge_payload_modified": false,
+    "ab_ordering_modified": false,
+    "professional_criteria_modified": false,
+    "p0_policy_modified": false,
+    "thresholds_modified": false,
+    "candidate_modified": false,
+    "candidate_runtime_modified": false,
+    "heldout_modified": false,
+    "groq_judge_modified": false,
+    "fresh_restart_allowed": false
+  },
+  "execution_wrapper": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix4.py",
+    "blob": "6d250433de3f57531537d8a82ea8ec241ba8c5de"
+  },
+  "previous_corrections": [
+    "architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-1.json",
+    "architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-2.json",
+    "architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-3.json"
+  ],
+  "professional_failure_retry_count": 0
+}

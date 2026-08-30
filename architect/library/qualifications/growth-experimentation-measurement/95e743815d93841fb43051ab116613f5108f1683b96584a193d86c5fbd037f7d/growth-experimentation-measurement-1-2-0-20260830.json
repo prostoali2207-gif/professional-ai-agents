@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "qualification_id": "growth-experimentation-measurement-1-2-0-20260830",
+  "core_id": "growth-experimentation-measurement",
+  "core_version": "1.2.0",
+  "artifact_digest": "sha256:95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d",
+  "status": "pass",
+  "claims": [
+    {
+      "id": "GEM-C1",
+      "statement": "Preserves the registered KPI, denominator, population, window and decision rule rather than moving the goalposts.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C2",
+      "statement": "Blocks unsupported causal winner and SCALE claims when experiment or measurement integrity is materially unresolved.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C3",
+      "statement": "Separates unresolved causal attribution from operational decision sufficiency for bounded reversible actions, in both directions.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C4",
+      "statement": "Treats sample sparsity as a precision problem bearing on the action, never as an identification failure lowering the causal claim.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C5",
+      "statement": "Gives mature verified downstream economics precedence over an upstream acquisition proxy when they rank the arms in opposite directions.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C6",
+      "statement": "Holds fixed-horizon discipline: an incomplete registered window right-censors the registered estimand and does not license an early call.",
+      "criticality": "P0"
+    },
+    {
+      "id": "GEM-C7",
+      "statement": "Identifies the comparison-level scope from the structure of the case rather than from its vocabulary, and aims comparison-level actions at it.",
+      "criticality": "P1"
+    },
+    {
+      "id": "GEM-C8",
+      "statement": "Returns exactly one valid instance of the closed output contract.",
+      "criticality": "P1"
+    }
+  ],
+  "evaluation": {
+    "fixture_refs": [
+      "architect/evaluation/growth-experimentation-analytics/external/external_pack_contract.py",
+      "architect/evaluation/growth-experimentation-analytics/external/external_pack_novelty_v12.py",
+      "Sealed externally authored pack, run 33304743788, artifact 9730260513"
+    ],
+    "grader_refs": [
+      "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+      "architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py",
+      "architect/evaluation/growth-experimentation-analytics/external/run_external_heldout_gate_v11.py"
+    ],
+    "thresholds": [
+      "Preregistered two-tier criterion, unchanged since stability-criterion-audit-2026-08-31.md",
+      "7 independent trials per fixture over 10 fixtures in 5 construct families; 70 trials total",
+      "Tier-1 professional-judgment tolerance: zero",
+      "Tier-2 contract-invalid output: at most 2 per fixture and 6 in total",
+      "Any INVALID trial voids the gate rather than passing or failing it",
+      "Zero retries; no best-of-N; every trial recorded",
+      "Held-out pack authored by a model family different from the candidate runtime, by an author with no access to the candidate and no field able to express an expectation"
+    ],
+    "reliability_trials": 7,
+    "result": "PASS"
+  },
+  "environment": {
+    "runtime": "GitHub Actions manual-dispatch external held-out release gate",
+    "model_or_executor": "gemini-3.5-flash-lite via executor_gemini.py, temperature 0, thinking level medium",
+    "tools": [
+      "Gemini candidate execution",
+      "Groq openai/gpt-oss-120b held-out authoring",
+      "Deterministic structural grading; no model judge"
+    ],
+    "state_contract": "Each held-out fixture evaluates the exact frozen v1.2 assembly with case-supplied context. The executor receives one candidate-facing fixture at a time and never the expectations, the family or the oracle.",
+    "authority_scope": "Analysis and recommendation. Spend changes, campaign execution, commercial approval and legal interpretation remain external authority."
+  },
+  "evidence": {
+    "run_refs": [
+      "GitHub Actions run 33304743788, job 99239171057",
+      "architect/evaluation/growth-experimentation-analytics/external/external-gate-result-v1.2-2026-08-30.md"
+    ],
+    "artifact_refs": [
+      "GitHub Actions artifact 9730260513 (78 files: sealed pack, manifest, 70 trial outputs, ledger)"
+    ],
+    "provenance_refs": [
+      "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.2.json",
+      "architect/evaluation/growth-experimentation-analytics/external/preregistration-external-v1.2-2026-09-09.json",
+      "architect/evaluation/growth-experimentation-analytics/external/release-closure-and-cross-model-revision-2026-09-02.md",
+      "architect/evaluation/growth-experimentation-analytics/stability-criterion-audit-2026-08-31.md",
+      "architect/research/growth-experimentation-analytics/ledger-repair-adjudication-2026-08-30.md"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest and the declared evaluation boundary.",
+    "Qualified on the Gemini candidate runtime family only. Cross-runtime portability is untested by this cycle and is a revalidation trigger, not an inherited PASS. The historical three-runtime protocol was formally revised before execution, not silently dropped; the revision record is release-closure-and-cross-model-revision-2026-09-02.md.",
+    "The held-out author is a language model on an independent family, not a human practitioner.",
+    "Structural output reliability sat at 1 tier-2 of 70 against a total cap of 6; the professional bar was met with zero margin by design, the structural bar with margin but not comfort.",
+    "This qualification does not lift or reinterpret the 1.1.0 quarantine, and it does not cover any Analytics specialization."
+  ],
+  "freshness": {
+    "validity_boundary": "Stable professional decision policies remain qualified while the exact core digest, the frozen criterion and the declared runtime assumptions are unchanged; volatile platform, legal and business facts require live verification at use time.",
+    "revalidation_triggers": [
+      "Any behavior-relevant change to the artifact",
+      "Deployment or evaluation on a candidate runtime family other than Gemini",
+      "Any tier-1 professional-judgment failure observed in production use",
+      "Material runtime, provider or tooling change affecting qualified claims",
+      "Hidden coupling discovered during specialization or composition"
+    ]
+  },
+  "qualified_at": "2026-08-30T09:58:11Z"
+}

@@ -1,0 +1,149 @@
+name: Analytics external heldout release gate v1.1
+
+# Manual only. This stage consumes provider quota, so per
+# architect/evaluation/qualification-platform/paid-execution-policy.md it must never be
+# reachable from push or pull_request.
+#
+# Fresh release cycle for the repaired candidate v1.1, authorised by issue #196. One job by design. The pack is authored on Groq, sealed, and executed against the candidate on
+# Gemini inside the same run, so there is no window in which anyone could read the cases and then
+# adjust anything. The runner prints the sealed pack's digests before the first candidate call,
+# which is what proves in the log that the pack predates every result.
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Candidate runtime family (Gemini is the only eligible one; see the closure record)'
+        required: true
+        default: gemini
+        type: choice
+        options: [gemini]
+      trials:
+        description: 'Independent trials per case (preregistered default is 7)'
+        required: false
+        default: '7'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ANALYTICS_CANDIDATE_MANIFEST: architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.1.json
+      ANALYTICS_CANDIDATE_TIMEOUT_SECONDS: '300'
+      ANALYTICS_MODEL_TIMEOUT_SECONDS: '240'
+      ANALYTICS_TEMPERATURE: '0'
+      ANALYTICS_PACE_SECONDS: '3'
+      GROQ_MIN_INTERVAL_SECONDS: '20'
+      GROQ_PACE_FILE: /tmp/analytics-external-author-pace
+      EXTERNAL: architect/evaluation/growth-experimentation-analytics/external
+      PREREGISTRATION: architect/evaluation/growth-experimentation-analytics/external/preregistration-external-v1.1-2026-09-05.json
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install the reference contract validator and the sealing dependency
+        run: pip install --quiet jsonschema cryptography
+
+      - name: Deterministic checks before any credential is used
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            architect/evaluation/growth-experimentation-analytics/executor_gemini.py \
+            architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py \
+            architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py \
+            "$EXTERNAL/external_pack_contract.py" \
+            "$EXTERNAL/external_pack_novelty_v11.py" \
+            "$EXTERNAL/author_external_heldout_v1.py" \
+            "$EXTERNAL/run_external_heldout_gate_v11.py"
+          python3 "$EXTERNAL/test_external_pack_contract.py"
+          python3 "$EXTERNAL/test_external_gate_preregistration.py"
+          python3 "$EXTERNAL/test_external_gate_preregistration_v11.py"
+          python3 architect/evaluation/growth-experimentation-analytics/test_successor_v11_non_weakening.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_scope_and_grounds_regression_v11.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_trial_outcome_classifier.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_twotier_gate_preregistration.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_freeze_not_weakened_v10.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_consolidation_equivalence_v10.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_consolidation_residual_modes_v10.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_v07_failure_modes_regression.py
+          python3 architect/evaluation/growth-experimentation-analytics/test_oracle_repairs_v07.py
+          python3 architect/evaluation/growth-experimentation-analytics/oracle_audit.py --cycle v07
+
+      - name: Assert the author has no path to the candidate
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path('architect/evaluation/growth-experimentation-analytics/external/author_external_heldout_v1.py').read_text()
+          for forbidden in ('executor_gemini', 'stdio_candidate_adapter', 'GEMINI_API_KEY',
+                            'generativelanguage', 'ANALYTICS_CANDIDATE_CMD',
+                            'ANALYTICS_CANDIDATE_MANIFEST', 'professional-model-consolidated'):
+              assert forbidden not in source, f'author reaches the candidate via {forbidden}'
+          assert '"candidate_calls": 0' in source
+          assert 'api.groq.com' in source
+          print('EXTERNAL_AUTHOR_ISOLATION_PASS')
+          PY
+
+      - name: Bind the candidate runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ inputs.provider }}" = "gemini" || { echo 'only gemini is eligible' >&2; exit 2; }
+          echo "ANALYTICS_CANDIDATE_CMD=python3 architect/evaluation/growth-experimentation-analytics/executor_gemini.py" >> "$GITHUB_ENV"
+          echo "ANALYTICS_MODEL=gemini-3.5-flash-lite" >> "$GITHUB_ENV"
+          echo "GEMINI_THINKING_LEVEL=medium" >> "$GITHUB_ENV"
+
+      - name: Require every credential this cycle needs
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing' >&2; exit 22; }
+          # No Gemini fallback exists for authoring: without Groq the independence property the
+          # revised cross-model rule rests on cannot hold, so the cycle stops rather than degrades.
+          test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing; authoring family unavailable' >&2; exit 24; }
+          test -n "${QUALIFICATION_SEALED_PACK_MASTER_KEY:-}" || { echo 'sealing key missing' >&2; exit 23; }
+
+      - name: Author and seal the external held-out pack
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+        run: |
+          set -euo pipefail
+          python3 "$EXTERNAL/author_external_heldout_v1.py" \
+            --preregistration "$PREREGISTRATION" \
+            --outdir "$RUNNER_TEMP/analytics-external-pack"
+
+      - name: Run the preregistered external release gate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+        run: |
+          set -euo pipefail
+          python3 "$EXTERNAL/run_external_heldout_gate_v11.py" \
+            --preregistration "$PREREGISTRATION" \
+            --pack-dir "$RUNNER_TEMP/analytics-external-pack" \
+            --trials "${{ inputs.trials }}" \
+            --outdir "$RUNNER_TEMP/analytics-external-gate"
+
+      - name: Preserve the sealed pack and every trial
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-external-heldout-v11-${{ inputs.provider }}
+          path: |
+            ${{ runner.temp }}/analytics-external-pack/**
+            ${{ runner.temp }}/analytics-external-gate/*.json
+          if-no-files-found: ignore
+          retention-days: 30

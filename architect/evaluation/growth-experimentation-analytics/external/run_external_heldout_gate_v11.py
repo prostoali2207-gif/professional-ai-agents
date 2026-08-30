@@ -58,12 +58,16 @@ def verify_frozen(prereg: dict[str, Any], freeze: dict[str, Any]) -> None:
         raise SystemExit(f"OUTPUT CONTRACT DRIFT: {freeze['output_contract_path']}")
     if prereg["candidate_assembly_digest"] != freeze["assembly_digest"]:
         raise SystemExit("PREREGISTRATION DIGEST MISMATCH")
-    for key in ("grader", "classifier", "pack_contract", "author", "runner"):
+    # The preregistration names the apparatus it binds, so a cycle that adds a module (the v1.1
+    # novelty guard, say) binds it too without the runner having to be edited for each cycle.
+    for key in prereg.get("bound_apparatus",
+                          ["grader", "classifier", "pack_contract", "author", "runner"]):
         ref = prereg[key]
         if blob(ref["path"]) != ref["git_blob_sha"]:
             raise SystemExit(f"{key.upper()} DRIFT: {ref['path']} was edited after preregistration")
-    print("FROZEN CANDIDATE, OUTPUT CONTRACT, GRADER, CLASSIFIER, PACK CONTRACT, AUTHOR AND "
-          "RUNNER VERIFIED")
+    print("FROZEN CANDIDATE, OUTPUT CONTRACT AND EVERY BOUND APPARATUS COMPONENT VERIFIED: "
+          + ", ".join(prereg.get("bound_apparatus",
+                                 ["grader", "classifier", "pack_contract", "author", "runner"])))
 
 
 def main() -> int:
@@ -97,6 +101,10 @@ def main() -> int:
         raise SystemExit("PACK WAS AUTHORED AGAINST A DIFFERENT CANDIDATE")
     if manifest["candidate_calls"] != 0:
         raise SystemExit("PACK PROVENANCE INVALID: the author called the candidate")
+    if prereg.get("novelty_guard", {}).get("enforced"):
+        if not manifest.get("authoring_policy", {}).get("novelty_enforced"):
+            raise SystemExit("PACK PROVENANCE INVALID: the preregistration requires the novelty "
+                             "guard and the pack was authored without it")
     if manifest["author_family"] == prereg["candidate_model_family"]:
         raise SystemExit("PACK PROVENANCE INVALID: author and candidate share a model family")
     if manifest["fixture_count"] != prereg["fixture_count"]:

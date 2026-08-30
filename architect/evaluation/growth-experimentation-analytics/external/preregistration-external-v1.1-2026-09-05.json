@@ -1,0 +1,162 @@
+{
+  "schema_version": "2.0.0",
+  "status": "PREREGISTERED_BEFORE_EXECUTION",
+  "created_at": "2026-09-05",
+  "gate_id": "analytics-external-heldout-v1.1-2026-09-05",
+  "candidate_id": "growth-experimentation-measurement-v1.1-consolidated",
+  "candidate_assembly_digest": "sha256:3c83f266a4191b2137e8a1cc974bab89d59d2308896b1752a4881205e3019081",
+  "freeze_ref": "architect/evaluation/growth-experimentation-analytics/candidate-freeze-v1.1.json",
+  "supersedes_candidate_digest": "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d",
+  "purpose": "One fresh externally authored held-out release cycle for the repaired consolidated candidate v1.1, per issue #196. The candidate is the only thing that changed: the grader, the classifier, the output contract, the fixture contract, the tier map, the two-tier criterion and the authoring schemas are byte-identical to those bound by the cycle that produced run 33293694601.",
+  "criterion_authority": "architect/evaluation/growth-experimentation-analytics/stability-criterion-audit-2026-08-31.md",
+  "closure_authority": "architect/evaluation/growth-experimentation-analytics/external/release-closure-and-cross-model-revision-2026-09-02.md",
+  "repair_authority": "architect/research/growth-experimentation-analytics/failure-adjudication-2026-08-30.md",
+  "supersedes_cycle": "analytics-external-heldout-2026-09-02",
+  "families": [
+    "UPSTREAM_DOWNSTREAM_CONFLICT",
+    "UPSTREAM_ONLY_CONFOUNDED",
+    "IMMATURE_FIXED_HORIZON",
+    "CLEAN_SCALABLE_WIN",
+    "SPARSE_BUT_IDENTIFIED"
+  ],
+  "per_family": 2,
+  "fixture_count": 10,
+  "trials_per_fixture": 7,
+  "total_trials": 70,
+  "retries_permitted": 0,
+  "best_of_n": false,
+  "tier1_tolerance": 0,
+  "tier2_per_fixture_cap": 2,
+  "tier2_total_cap": 6,
+  "tier_map_digest": "sha256:11f18a82f63493528d281adc69ac3cf50325fd084ebc40b9d96e04f2054f40e4",
+  "pass_rule": "PASS iff: zero tier-1 trials across all 70; tier-2 <= 2 on every fixture; tier-2 <= 6 in total; and zero INVALID trials. Any tier-1 failure is a FAIL. Either tier-2 cap exceeded is a FAIL. Any INVALID trial makes the gate INVALID -- not PASS and not FAIL -- because the apparatus did not measure the candidate on that trial. Best-of-N is not a pass and no trial may be retried.",
+  "criterion_unchanged_from": "preregistration-external-2026-09-02.json, and through it preregistration-v1.0-twotier-2026-09-01.json. Every threshold is the same value. The previous cycle's ledger exposed one weakness in this criterion -- a single INVALID trial voids a run whose measured content was plainly failing -- and it is deliberately left uncorrected here, because changing a threshold in the cycle after the one whose result exposed it would be fitting the criterion to an outcome. It is recorded for a separate criterion review.",
+  "tier_definitions": {
+    "TIER1": "Professional judgment. Every grader failure except those the frozen tier map assigns to TIER2. Zero tolerance across the whole gate.",
+    "TIER2": "The candidate produced output that is not a valid instance of the frozen output contract: a syntactic JSON parse failure, or a frozen-schema violation. Counted and capped. A TIER2 trial is never a judgment PASS -- its professional content was never assessed.",
+    "INVALID": "The measurement apparatus failed: provider transport or HTTP error, unusable response envelope, or harness misconfiguration. No candidate output exists, so there is nothing to score. Voids the gate and preserves the pack."
+  },
+  "candidate_repair_under_test": {
+    "predecessor_result": "External run 33293694601 returned INVALID on one Gemini HTTP 500. Its 69 measured trials carried 15 tier-1 failures and 8 tier-2. That verdict is not reinterpreted by this cycle and is not converted to a FAIL.",
+    "classes_repaired": {
+      "A": "Experiment-scoped CONTINUE/INCONCLUSIVE aimed at an arm, or at the fixture id: 11 tier-1. Repaired by encoding the recognition procedure for the comparison-level identifier in section 5.9 -- the one genuine knowledge gap, since v1.0 required that identifier by name but never taught how to find it.",
+      "B": "decision_basis omitting COST_OF_WAITING or INSUFFICIENT_EVIDENCE: 2 tier-1.",
+      "C": "Decision paralysis against verified mature downstream economics, and sparsity conflated with identification: 2 tier-1. Both were already forbidden by v1.0 and both are P0 claims.",
+      "D": "scale_readiness nested under operational, and malformed JSON: 8 tier-2."
+    },
+    "repair_shape": "Four localized changes to one document. B, C and the nesting half of D add no new professional rule: each restates, as an invalidity condition in section 6.3, a rule sections 4, 5.3, 5.7 or 5.9 already assert elsewhere. Only the class A recognition procedure and the prose-length constraint are new normative content, and both are additive.",
+    "non_weakening_proof": "architect/evaluation/growth-experimentation-analytics/test_successor_v11_non_weakening.py -- every non-blank line of v1.0 survives verbatim in v1.1 apart from three enumerated lines (a version string, a re-wrap, one bullet's terminal punctuation), and the 118-entry v1.0 rule register with its hedge detector and invalidity checks is re-run against v1.1.",
+    "targeted_regressions": "architect/evaluation/growth-experimentation-analytics/test_scope_and_grounds_regression_v11.py -- including vocabulary permutation and the adversarial case in which the treatment arm is literally named `experiment` and the scope identifier is not.",
+    "apparatus_note": "Run 33299138334 was the first dispatch of this preregistration and ended INVALID in authoring, before any candidate call. It is burned, not scored: it says nothing about the v1.1 repair."
+  },
+  "novelty_guard": {
+    "enforced": true,
+    "module": "architect/evaluation/growth-experimentation-analytics/external/external_pack_novelty_v11.py",
+    "rationale": "Issue #196 requires the fresh pack not reuse observed cases verbatim. The previous pack was sealed and its cases were never printed, but its failure lines named identifiers, and those are the part a repaired candidate could conceivably have been tuned toward. Admission fails closed on every identifier that appeared in the run 33293694601 ledger and on every identifier used by the repository's public construct tests.",
+    "not_a_heuristic": "The author is a different model called fresh at temperature 1 on a later date and would be unlikely to reproduce a scenario in any case. That is an argument, not a control. The control is the refusal list."
+  },
+  "external_authorship": {
+    "required": true,
+    "author_family": "Groq",
+    "author_model": "openai/gpt-oss-120b",
+    "candidate_model_family_must_differ": true,
+    "fallback_author_family": null,
+    "author_sees_candidate": false,
+    "author_may_state_an_expectation": false,
+    "author_sees_the_repair": false,
+    "rationale": "Unchanged from the previous cycle. The author is given each family's scenario schema, which has no field capable of carrying a recommendation, ceiling, causal status, scale state or decision basis; expectations are derived afterwards by the frozen oracle from the authored numbers alone. The author is not told that the candidate was repaired, nor which classes failed.",
+    "hard_fail_on_fallback": "If the Groq authoring route is unavailable the cycle ends INVALID / NOT EXECUTABLE. Authoring the pack on the candidate's own family would collapse the independence property this pack exists to establish, so it is forbidden rather than degraded."
+  },
+  "cross_model_requirement": {
+    "resolution": "REUSED WITHOUT REOPENING",
+    "revision_record": "architect/evaluation/growth-experimentation-analytics/external/release-closure-and-cross-model-revision-2026-09-02.md",
+    "basis": "Issue #196 directs that the already-reviewed cross-model protocol from issue #189 be used unless new evidence proves it invalid. Run 33293694601 produced no such evidence: the protocol was not the blocker. The pack was authored on an independent family with zero candidate calls and admitted without a single rejection, and it found behavior the evaluator's own generator did not.",
+    "revised_rule": "One eligible candidate runtime family, named here; plus evaluation-side family independence; plus an explicit portability limitation in the qualification record, with deployment on another family recorded as a revalidation trigger.",
+    "claim_narrowing": "The release claim is scoped to the Gemini candidate runtime family. Cross-runtime portability is unproven by this cycle and is recorded as a limitation and a revalidation trigger, not as an inherited PASS."
+  },
+  "candidate_model_family": "Gemini",
+  "required_model_families": [
+    {
+      "family": "Gemini",
+      "model": "gemini-3.5-flash-lite",
+      "executor": "architect/evaluation/growth-experimentation-analytics/executor_gemini.py",
+      "role": "candidate runtime"
+    }
+  ],
+  "bound_apparatus": [
+    "grader",
+    "classifier",
+    "pack_contract",
+    "novelty",
+    "author",
+    "runner"
+  ],
+  "grader": {
+    "path": "architect/evaluation/growth-experimentation-analytics/grader_v07_structural.py",
+    "git_blob_sha": "98a74faed9b9909f72af261040716d084f69a8b8",
+    "note": "Byte-identical to the grader bound by every gate since v0.7, including the one that produced run 33293694601. Imported unmodified. Repairing the candidate must not be accompanied by any change to what judges it."
+  },
+  "classifier": {
+    "path": "architect/evaluation/growth-experimentation-analytics/trial_outcome_classifier.py",
+    "git_blob_sha": "b62fe0f77417357f991aeebbca5ae3edc3f6ad98"
+  },
+  "pack_contract": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/external_pack_contract.py",
+    "git_blob_sha": "652d99bd61b0a1c7b84f773ab7bc293280a3db34",
+    "note": "NOT byte-identical to the previous cycle. Run 33299138334 aborted in authoring because the schema declared its numeric slots without stating the arithmetic admission enforces, so the author supplied a gross profit below spend three times running. Every numeric slot now carries a description stating that constraint. Descriptions are prompt text: the oracle and every admission threshold are unchanged, proved by behaviour rather than by hash -- both versions are run over the same battery and must admit identical fixtures and reject with identical reasons."
+  },
+  "novelty": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/external_pack_novelty_v11.py",
+    "git_blob_sha": "aea05144aeb422cb16ed8e38bf34672d64cfde67"
+  },
+  "author": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/author_external_heldout_v1.py",
+    "git_blob_sha": "8b64cafdd48c74a0947cd911bfe1a38335e5a84c",
+    "note": "Changed from the previous cycle in three ways: the cycle id and candidate digest are read from this preregistration instead of being hardcoded; the novelty guard is applied; and the UPSTREAM_DOWNSTREAM_CONFLICT brief now states that gross profit is measured before spend. The authoring model, endpoint, attempt policy and schema shape are unchanged."
+  },
+  "runner": {
+    "path": "architect/evaluation/growth-experimentation-analytics/external/run_external_heldout_gate_v11.py",
+    "git_blob_sha": "07e572861ae82849e988a9fc94e9784d16bba4ac",
+    "note": "Changed only in that the bound apparatus list is read from the preregistration rather than hardcoded, and the novelty guard is verified against the pack manifest. The execution loop, the grading call and the verdict arithmetic are unchanged."
+  },
+  "frozen_for_this_cycle": [
+    "candidate assembly (one consolidated component, v1.1)",
+    "output contract result-v4",
+    "fixture contract fixture-v3",
+    "grader grader_v07_structural.py",
+    "classifier trial_outcome_classifier.py",
+    "pack contract and oracle external_pack_contract.py",
+    "novelty guard external_pack_novelty_v11.py",
+    "author author_external_heldout_v1.py",
+    "runner run_external_heldout_gate_v11.py",
+    "the tier map, both tier-2 caps, the tier-1 zero tolerance and the trial count"
+  ],
+  "hard_fails": [
+    "Any tier-1 professional-judgment failure on any trial.",
+    "Tier-2 above 2 on any single fixture, or above 6 in total.",
+    "A pack whose manifest reports any candidate call during authoring.",
+    "A pack whose author family equals the candidate runtime family.",
+    "A pack authored against a different candidate assembly digest.",
+    "A pack authored without the novelty guard while this preregistration requires it.",
+    "Drift in any bound blob, or in the tier map digest, detected at run time.",
+    "A pack whose ciphertext or plaintext digest does not match its manifest."
+  ],
+  "case_provenance": "Cases are authored inside the scored workflow run by the external author, admitted by the frozen contract and the novelty guard, and sealed before the first candidate call. The runner prints the pack's ciphertext and plaintext digests before executing any trial, so the job log proves the pack predates every result.",
+  "execution_policy": "One invocation per trial. No retry on any failure class. No best-of-N. Every trial is recorded, including failures. The executor receives one candidate-facing fixture at a time and never the expectations, the family, or the oracle. Sampling is pinned at temperature 0.",
+  "post_gate_policy": "This is the single fresh release cycle authorised by issue #196. No automatic repair, no rerun, and no further repair cycle after the result. A FAIL ends the cycle with the core quarantined and the blocker recorded. An INVALID means the apparatus did not measure the candidate.",
+  "on_pass": [
+    "Publish the consolidated v1.1 artifact as a new library core version with its own manifest and a qualification record bound to its digest.",
+    "Move the catalog entry to qualified against that new version.",
+    "Supersede qualification-status-v0.3.json and reconcile every conflicting status record.",
+    "Record the portability limitation and its revalidation trigger in the qualification record."
+  ],
+  "qualification_boundary": [
+    "A PASS here is release evidence for the consolidated v1.1 artifact on the Gemini runtime family, on an externally authored held-out set the candidate has never seen.",
+    "Cross-runtime portability is untested. Deployment on another model family is a revalidation trigger.",
+    "The external author is a language model, not a human practitioner. This removes evaluator authorship, not model authorship; admission re-derives every construct from the authored numbers and the novelty guard refuses every previously observed identifier.",
+    "The release does not grant spend, publication or approval authority, and it does not cover any Analytics specialization."
+  ],
+  "burn_records": [
+    "architect/evaluation/growth-experimentation-analytics/external/burn-record-33299138334.md"
+  ]
+}

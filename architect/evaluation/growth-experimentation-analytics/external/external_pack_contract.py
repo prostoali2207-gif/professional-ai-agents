@@ -104,6 +104,13 @@ def _metric(value: Any, what: str) -> str:
 # ---------------------------------------------------------------------------------------
 # The authoring schema handed to the external author.
 #
+# Every numeric slot carries a `description` stating the arithmetic constraint admission will
+# enforce on it. Run 33299138334 died because they did not: the author was told in prose that one
+# arm "made money" but never that `gross_profit` is measured *before* spend, so it supplied a
+# gross profit below spend three times running and admission refused all three. Stating the
+# constraint is a clarification of the ask, not a relaxation of the check -- every threshold in
+# the admitters below is unchanged, and a test proves `admit` still behaves identically.
+#
 # It carries scenario slots only. There is deliberately no field in which an author could
 # record an expected recommendation, ceiling, causal status, scale state or decision basis:
 # the expectation is not the author's to write, and a schema that cannot express it cannot
@@ -124,12 +131,12 @@ FAMILY_SCHEMAS: dict[str, dict[str, Any]] = {
             "cheap_proxy_arm": {"type": "string", "minLength": 3},
             "costly_proxy_arm": {"type": "string", "minLength": 3},
             "scope_arm": {"type": "string", "minLength": 3},
-            "cheap_proxy_arm_spend": {"type": "number"},
-            "cheap_proxy_arm_proxy_count": {"type": "integer"},
-            "cheap_proxy_arm_gross_profit": {"type": "number"},
-            "costly_proxy_arm_spend": {"type": "number"},
-            "costly_proxy_arm_proxy_count": {"type": "integer"},
-            "costly_proxy_arm_gross_profit": {"type": "number"},
+            "cheap_proxy_arm_spend": {"type": "number", "description": "Total spend on this arm. Must be at least 1."},
+            "cheap_proxy_arm_proxy_count": {"type": "integer", "description": "Units of proxy_metric this arm produced, at least 1. Its cost per unit (spend divided by count) MUST be strictly LOWER than the other arm's."},
+            "cheap_proxy_arm_gross_profit": {"type": "number", "description": "Gross profit attributable to this arm BEFORE subtracting spend. Net return is gross_profit minus spend, and for this arm it MUST be NEGATIVE: set gross_profit strictly LESS than this arm's spend."},
+            "costly_proxy_arm_spend": {"type": "number", "description": "Total spend on this arm. Must be at least 1."},
+            "costly_proxy_arm_proxy_count": {"type": "integer", "description": "Units of proxy_metric this arm produced, at least 1. Its cost per unit MUST be strictly HIGHER than the cheap arm's."},
+            "costly_proxy_arm_gross_profit": {"type": "number", "description": "Gross profit attributable to this arm BEFORE subtracting spend. Net return is gross_profit minus spend, and for this arm it MUST be POSITIVE: set gross_profit strictly GREATER than this arm's spend."},
         },
         "required": [*_COMMON, "proxy_metric", "cheap_proxy_arm", "costly_proxy_arm", "scope_arm",
                      "cheap_proxy_arm_spend", "cheap_proxy_arm_proxy_count",
@@ -144,10 +151,10 @@ FAMILY_SCHEMAS: dict[str, dict[str, Any]] = {
             "expensive_arm": {"type": "string", "minLength": 3},
             "efficient_arm": {"type": "string", "minLength": 3},
             "scope_arm": {"type": "string", "minLength": 3},
-            "expensive_arm_spend": {"type": "number"},
-            "expensive_arm_proxy_count": {"type": "integer"},
-            "efficient_arm_spend": {"type": "number"},
-            "efficient_arm_proxy_count": {"type": "integer"},
+            "expensive_arm_spend": {"type": "number", "description": "Total spend on this arm, at least 1."},
+            "expensive_arm_proxy_count": {"type": "integer", "description": "Units of proxy_metric, at least 1. This arm's cost per unit MUST be at least 1.8 times the efficient arm's."},
+            "efficient_arm_spend": {"type": "number", "description": "Total spend on this arm, at least 1."},
+            "efficient_arm_proxy_count": {"type": "integer", "description": "Units of proxy_metric, at least 1. This arm is the clearly cheaper one per unit."},
             "confound": {"type": "string", "minLength": 10},
         },
         "required": [*_COMMON, "proxy_metric", "expensive_arm", "efficient_arm", "scope_arm",
@@ -162,11 +169,11 @@ FAMILY_SCHEMAS: dict[str, dict[str, Any]] = {
             "leading_arm": {"type": "string", "minLength": 3},
             "lagging_arm": {"type": "string", "minLength": 3},
             "scope_arm": {"type": "string", "minLength": 3},
-            "horizon_percent_complete": {"type": "integer"},
-            "leading_arm_spend": {"type": "number"},
-            "leading_arm_kpi_count": {"type": "integer"},
-            "lagging_arm_spend": {"type": "number"},
-            "lagging_arm_kpi_count": {"type": "integer"},
+            "horizon_percent_complete": {"type": "integer", "description": "Percent of the registered fixed horizon elapsed. MUST be between 5 and 60 inclusive."},
+            "leading_arm_spend": {"type": "number", "description": "Spend so far on this arm, at least 1."},
+            "leading_arm_kpi_count": {"type": "integer", "description": "Interim KPI count, at least 1. MUST be strictly GREATER than the lagging arm's, so an early call looks tempting."},
+            "lagging_arm_spend": {"type": "number", "description": "Spend so far on this arm, at least 1."},
+            "lagging_arm_kpi_count": {"type": "integer", "description": "Interim KPI count, at least 0 and strictly LESS than the leading arm's."},
         },
         "required": [*_COMMON, "primary_kpi", "leading_arm", "lagging_arm", "scope_arm",
                      "horizon_percent_complete", "leading_arm_spend", "leading_arm_kpi_count",
@@ -180,11 +187,11 @@ FAMILY_SCHEMAS: dict[str, dict[str, Any]] = {
             "treatment_arm": {"type": "string", "minLength": 3},
             "baseline_arm": {"type": "string", "minLength": 3},
             "scope_arm": {"type": "string", "minLength": 3},
-            "registered_min_relative_lift_percent": {"type": "integer"},
-            "exposed_per_arm": {"type": "integer"},
-            "treatment_arm_kpi_count": {"type": "integer"},
-            "baseline_arm_kpi_count": {"type": "integer"},
-            "spend_per_arm": {"type": "number"},
+            "registered_min_relative_lift_percent": {"type": "integer", "description": "The registered success threshold in percent, at least 5. The observed lift MUST clear it."},
+            "exposed_per_arm": {"type": "integer", "description": "Population exposed in EACH arm. MUST be at least 5000: this family is the well-powered one."},
+            "treatment_arm_kpi_count": {"type": "integer", "description": "KPI count for the treatment arm, not exceeding exposed_per_arm. Observed lift is treatment divided by baseline, minus 1, and it MUST be at least registered_min_relative_lift_percent/100."},
+            "baseline_arm_kpi_count": {"type": "integer", "description": "KPI count for the baseline arm. MUST be at least 200: thin counts belong to the sparse family, not this one."},
+            "spend_per_arm": {"type": "number", "description": "Spend in each arm, at least 1."},
         },
         "required": [*_COMMON, "primary_kpi", "treatment_arm", "baseline_arm", "scope_arm",
                      "registered_min_relative_lift_percent", "exposed_per_arm",
@@ -198,10 +205,10 @@ FAMILY_SCHEMAS: dict[str, dict[str, Any]] = {
             "treatment_arm": {"type": "string", "minLength": 3},
             "baseline_arm": {"type": "string", "minLength": 3},
             "scope_arm": {"type": "string", "minLength": 3},
-            "registered_min_relative_lift_percent": {"type": "integer"},
-            "exposed_per_arm": {"type": "integer"},
-            "treatment_arm_kpi_count": {"type": "integer"},
-            "baseline_arm_kpi_count": {"type": "integer"},
+            "registered_min_relative_lift_percent": {"type": "integer", "description": "The registered success threshold in percent, at least 5."},
+            "exposed_per_arm": {"type": "integer", "description": "Population exposed in EACH arm. MUST be between 80 and 900: this family is the deliberately underpowered one."},
+            "treatment_arm_kpi_count": {"type": "integer", "description": "KPI count for the treatment arm. MUST be between 1 and 8, and strictly GREATER than the baseline arm's."},
+            "baseline_arm_kpi_count": {"type": "integer", "description": "KPI count for the baseline arm. MUST be between 1 and 8, and strictly LESS than the treatment arm's."},
         },
         "required": [*_COMMON, "primary_kpi", "treatment_arm", "baseline_arm", "scope_arm",
                      "registered_min_relative_lift_percent", "exposed_per_arm",

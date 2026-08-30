@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1",
+  "issue": 158,
+  "status": "FROZEN_RESUME_PREFLIGHT_CORRECTION_ONLY",
+  "failed_run": 33299498317,
+  "failure_classification": "RESUME_PREFLIGHT_DERIVED_COUNTER_KEY_ERROR",
+  "new_provider_calls": 0,
+  "new_candidate_calls": 0,
+  "source_checkpoint": {
+    "run": 33299286470,
+    "artifact_id": 9728394922,
+    "candidate_entries": 1,
+    "judge_entries": 0
+  },
+  "failure": "preflight attempted state['candidate_calls']; checkpoint state stores candidate and judges maps and candidate_calls is derived as len(candidate)",
+  "allowed_correction_only": {
+    "old_assertion": "len(candidate)==1 and len(judges)==0 and state['candidate_calls']==1",
+    "new_assertion": "len(candidate)==1 and len(judges)==0",
+    "checkpoint_modified": false,
+    "candidate_modified": false,
+    "candidate_runtime_modified": false,
+    "gemini_judge_transport_modified": false,
+    "groq_judge_modified": false,
+    "judge_semantics_modified": false,
+    "thresholds_modified": false,
+    "p0_modified": false,
+    "heldout_modified": false,
+    "fresh_restart_allowed": false
+  },
+  "professional_failure_retry_count": 0
+}

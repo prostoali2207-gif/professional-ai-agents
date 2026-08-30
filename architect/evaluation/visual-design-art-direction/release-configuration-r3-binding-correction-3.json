@@ -1,0 +1,47 @@
+{
+  "schema_version": "0.1",
+  "issue": 158,
+  "status": "FROZEN_BEFORE_ANY_SCORED_CANDIDATE_CALL",
+  "failed_preflight_run": 33298985005,
+  "failure_classification": "EVALUATOR_INPUT_ADAPTER_CONTRACT_MISMATCH",
+  "candidate_calls_before_correction": 0,
+  "completed_judgments_before_correction": 0,
+  "evidence": {
+    "sanitized_progress_status": "INFRASTRUCTURE_FAILURE",
+    "sanitized_progress_artifact_id": 9728301937,
+    "error_class": "candidate executor rejected constraints because R3 author schema emits array[string] while frozen executor stdin contract requires strings"
+  },
+  "author_schema": {
+    "source_head": "af43f2d12187e1825c596239a7313fd8b7e5da63",
+    "path": "architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r3.py",
+    "constraints_type": "array[string]"
+  },
+  "candidate_executor": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/executor_r3_v0_1_gemini.py",
+    "blob": "6f7934bab4fc86a212ebdcf4a312174e01775afd",
+    "input_protocol": "visual-design-art-direction-r3-candidate-v1",
+    "constraints_type": "string",
+    "unchanged": true
+  },
+  "allowed_correction_only": {
+    "layer": "semantic scorer input adapter",
+    "operation": "canonical lossless JSON serialization of the existing constraints array into the existing executor constraints string field",
+    "round_trip_required": true,
+    "hidden_case_content_modified": false,
+    "candidate_modified": false,
+    "judges_modified": false,
+    "thresholds_modified": false,
+    "p0_modified": false,
+    "runtime_model_modified": false,
+    "retry_stop_modified": false
+  },
+  "execution_wrapper": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/run_r3_semantic_qualification_v0_1_bindingfix3.py",
+    "blob": "fef43883e50b021228f6f8b92f296bae9b689c50"
+  },
+  "previous_corrections": [
+    "architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-1.json",
+    "architect/evaluation/visual-design-art-direction/release-configuration-r3-binding-correction-2.json"
+  ],
+  "professional_failure_retry_count": 0
+}

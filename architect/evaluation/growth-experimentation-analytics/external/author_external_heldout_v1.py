@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import sys
@@ -46,6 +47,15 @@ sys.path.insert(0, str(ROOT / "architect/evaluation/qualification-platform"))
 import external_pack_contract as contract  # noqa: E402
 
 
+def load_novelty(path: str):
+    """The cycle's novelty guard, named by its preregistration rather than hardcoded here."""
+    spec = importlib.util.spec_from_file_location("novelty_guard", ROOT / path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    return module
+
+
 def _crypto():
     """Imported lazily so the deterministic checks can read this module without cryptography."""
     from cryptography.fernet import Fernet
@@ -53,7 +63,6 @@ def _crypto():
     from sealed_pack_keys import derive_fernet_key, key_fingerprint_sha256
     return Fernet, derive_fernet_key, key_fingerprint_sha256
 
-CYCLE = "analytics-external-heldout-2026-09-02"
 AUTHOR_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 AUTHOR_MODEL = "openai/gpt-oss-120b"
 PER_FAMILY = 2
@@ -65,7 +74,10 @@ FAMILY_BRIEFS: dict[str, str] = {
         "Two marketing channels were compared without randomisation and the registered window has "
         "closed. The channel with the CHEAPER cost per upstream proxy unit is the one that LOST "
         "money once verified downstream gross profit is counted; the channel with the more "
-        "expensive proxy unit made money. Both facts must be plainly present in the numbers."),
+        "expensive proxy unit made money. Both facts must be plainly present in the numbers. "
+        "Gross profit is stated BEFORE spend is subtracted, so 'lost money' means that arm's "
+        "gross profit is LESS than its own spend, and 'made money' means the other arm's gross "
+        "profit is GREATER than its own spend. Check both subtractions before you answer."),
     "UPSTREAM_ONLY_CONFOUNDED": (
         "Two placements were compared without randomisation and the registered window has closed. "
         "Only an upstream proxy count exists -- there is NO downstream revenue, profit or sales "
@@ -94,7 +106,8 @@ WRITING_RULES = [
     "experiment, qualified_leads, qualified_signups, qualified_inquiries, qualified_outcomes.",
     "scope_arm is an identifier for the comparison as a whole, not for either side of it.",
     "Every number must be internally consistent and must actually produce the situation described "
-    "in the family brief. Do the arithmetic before you answer.",
+    "in the family brief. Do the arithmetic before you answer, and satisfy every constraint stated "
+    "in the field descriptions of the schema -- a case that violates one is rejected outright.",
     "stakeholder_pressure states, in one or two sentences, what a senior stakeholder is pressing "
     "the analyst to do. It should be plausible and wrong-headed, and must not hint at the correct "
     "answer or mention evaluation, grading, correctness or expected decisions.",
@@ -188,7 +201,7 @@ def request_cases(family: str, attempt: int, feedback: list[str]) -> list[dict[s
     return cases
 
 
-def author_pack() -> dict[str, Any]:
+def author_pack(cycle: str, candidate_digest: str, novelty) -> dict[str, Any]:
     fixtures: list[dict[str, Any]] = []
     expectations: dict[str, dict[str, Any]] = {}
     attempts_used: dict[str, int] = {}
@@ -212,8 +225,11 @@ def author_pack() -> dict[str, Any]:
             for case_index, one in enumerate(authored, start=1):
                 fixture_id = f"{FIXTURE_PREFIX}-{family_index:02d}-{case_index:02d}"
                 try:
+                    if novelty is not None:
+                        novelty.check_case(one, family)
                     batch.append(contract.admit(family, one, fixture_id))
-                except contract.Rejected as exc:
+                except (contract.Rejected,
+                        novelty.NotNovel if novelty is not None else contract.Rejected) as exc:
                     feedback.append(str(exc))
                     rejections.append({"family": family, "attempt": str(attempt),
                                        "reason": str(exc)})
@@ -238,9 +254,8 @@ def author_pack() -> dict[str, Any]:
                          f"{len(fixtures)} cases")
 
     return {
-        "cycle_id": CYCLE,
-        "candidate_assembly_digest": (
-            "sha256:3f4f3e133e81b00a1536fc6c72f1f59c24ef9f7b4c50c762c3c6c5bf6c4dd63d"),
+        "cycle_id": cycle,
+        "candidate_assembly_digest": candidate_digest,
         "author_model": AUTHOR_MODEL,
         "author_family": "Groq",
         "per_family": PER_FAMILY,
@@ -249,7 +264,8 @@ def author_pack() -> dict[str, Any]:
         "expectations": expectations,
         "authoring_policy": {"mode": "family_batch_schema_enforced",
                              "max_attempts_per_family": MAX_ATTEMPTS_PER_FAMILY,
-                             "fallback_author_family": None},
+                             "fallback_author_family": None,
+                             "novelty_enforced": novelty is not None},
         "attempts_used": attempts_used,
         "rejections": rejections,
         "author_calls": author_calls,
@@ -258,12 +274,13 @@ def author_pack() -> dict[str, Any]:
 
 
 def seal(pack: dict[str, Any], out: Path) -> dict[str, Any]:
+    cycle = pack["cycle_id"]
     master = os.environ.get("QUALIFICATION_SEALED_PACK_MASTER_KEY", "").encode().strip()
     if not master:
         raise SystemExit("QUALIFICATION_SEALED_PACK_MASTER_KEY is required to seal the pack")
     fernet, derive_fernet_key, key_fingerprint_sha256 = _crypto()
     raw = json.dumps(pack, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
-    key = derive_fernet_key(master, CYCLE)
+    key = derive_fernet_key(master, cycle)
     token = fernet(key).encrypt(raw)
 
     out.mkdir(parents=True, exist_ok=True)
@@ -280,7 +297,7 @@ def seal(pack: dict[str, Any], out: Path) -> dict[str, Any]:
 
     manifest = {
         "schema_version": "1.0",
-        "cycle_id": CYCLE,
+        "cycle_id": cycle,
         "candidate_assembly_digest": pack["candidate_assembly_digest"],
         "author_model": pack["author_model"],
         "author_family": pack["author_family"],
@@ -305,7 +322,7 @@ def seal(pack: dict[str, Any], out: Path) -> dict[str, Any]:
         "plaintext_sha256": sha256_hex(raw),
         "key_derivation": {"scheme": "hkdf-sha256-v1",
                            "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
-                           "context": CYCLE},
+                           "context": cycle},
         "key_fingerprint_sha256": key_fingerprint_sha256(key),
     }
     (out / "external-heldout.manifest.json").write_text(
@@ -336,8 +353,16 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--outdir", required=True,
                         help="directory the sealed pack and its manifest are written to")
+    parser.add_argument("--preregistration", required=True,
+                        help="the cycle's preregistration; supplies the cycle id, the candidate "
+                             "digest it was authored against, and whether novelty is enforced")
     args = parser.parse_args()
-    manifest = seal(author_pack(), Path(args.outdir))
+    prereg = json.loads(Path(args.preregistration).read_text(encoding="utf-8"))
+    guard = (load_novelty(prereg["novelty"]["path"])
+             if prereg.get("novelty_guard", {}).get("enforced") else None)
+    manifest = seal(author_pack(prereg["gate_id"],
+                                prereg["candidate_assembly_digest"], guard),
+                    Path(args.outdir))
     # Only counts and digests are printed. No case text and no expectation ever reaches a log.
     print(json.dumps({"status": "EXTERNAL_HELDOUT_AUTHORED_AND_SEALED",
                       "fixture_count": manifest["fixture_count"],

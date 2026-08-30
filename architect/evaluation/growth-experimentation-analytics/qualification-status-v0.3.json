@@ -22,7 +22,11 @@
     }
   ],
   "release_gate": {
-    "required_model_families": ["ChatGPT/OpenAI", "Gemini", "Claude"],
+    "required_model_families": [
+      "ChatGPT/OpenAI",
+      "Gemini",
+      "Claude"
+    ],
     "openai": "PASS",
     "gemini": "NOT_EXECUTABLE",
     "claude": "NOT_EXECUTABLE",
@@ -35,5 +39,11 @@
     "fresh_heldout_created_post_freeze": true,
     "grader_repairs_did_not_modify_frozen_candidate": true
   },
-  "next_release_action": "Obtain fresh clean execution of the exact frozen candidate on Gemini and Claude, preserve raw outputs unchanged, grade them against the frozen held-out rules, and promote only if the preregistered release threshold is satisfied."
+  "next_release_action": "Obtain fresh clean execution of the exact frozen candidate on Gemini and Claude, preserve raw outputs unchanged, grade them against the frozen held-out rules, and promote only if the preregistered release threshold is satisfied.",
+  "superseded_by": {
+    "core_version": "1.2.0",
+    "artifact_digest": "sha256:95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d",
+    "qualification_record": "architect/library/qualifications/growth-experimentation-measurement/95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d/growth-experimentation-measurement-1-2-0-20260830.json",
+    "note": "This record's DO_NOT_PROMOTE verdict was correct for the v0.3 assembly it describes and is not withdrawn. It is superseded as the current status: a different artifact, consolidated v1.2, was released on 2026-08-30 on external held-out run 33304743788. The cross-model requirement this record states was formally revised before execution rather than dropped -- see external/release-closure-and-cross-model-revision-2026-09-02.md, which is the evaluator-owned revision that final-qualification-review-2026-08-27.md finding F-6 required."
+  }
 }

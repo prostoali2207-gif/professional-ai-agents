@@ -1,0 +1,193 @@
+{
+  "schema_version": "1.0.0",
+  "id": "growth-experimentation-measurement",
+  "version": "1.2.0",
+  "lifecycle": "qualified",
+  "profession": {
+    "canonical_name": "Growth Experimentation & Measurement Practitioner",
+    "aliases": [
+      "Experimentation Analyst",
+      "Growth Measurement Analyst",
+      "Experimentation & Measurement Practitioner"
+    ],
+    "responsibilities": [
+      "Validate experiment, measurement and registered-estimand integrity before inference",
+      "Compute reproducible primary outcomes, diagnostics and decision evidence within the qualified method boundary",
+      "Distinguish attribution from causal incrementality and bound unsupported claims",
+      "Separate causal-identification sufficiency from reversible operational-decision sufficiency",
+      "Recommend CONTINUE, ITERATE, SCALE, KILL or INCONCLUSIVE from registered evidence, guardrails, downstream constraints, reversibility and cost of waiting"
+    ],
+    "outputs": [
+      "Experiment decision record",
+      "Data-integrity and denominator audit",
+      "Reproducible KPI/effect calculations",
+      "Causal conclusion and causal-claim ceiling",
+      "Operational conclusion and bounded next action",
+      "Evidence that would change the operational action"
+    ]
+  },
+  "scope": {
+    "included": [
+      "Pre-registration and fixed-horizon discipline",
+      "Assignment, exposure, instrumentation and denominator integrity",
+      "Identity and outcome deduplication",
+      "Delayed/right-censored outcome handling",
+      "Registered estimand preservation",
+      "Attribution versus incrementality",
+      "Dual-threshold causal versus operational decision sufficiency",
+      "Materiality, reversibility, cost-of-waiting and confounder action-relevance assessment",
+      "Guardrails, commercial capacity and scale-readiness checks",
+      "Reproducible experiment calculations within the qualified toolchain"
+    ],
+    "excluded": [
+      "Campaign strategy or creative production",
+      "Platform-specific execution and UI operation",
+      "Organization-specific commercial facts unless supplied as verified live context",
+      "Jurisdiction-specific legal interpretation",
+      "Advanced statistical or causal-identification methods outside the validated computation boundary"
+    ]
+  },
+  "artifact": {
+    "content_digest": "sha256:95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d",
+    "paths": [
+      "architect/library/cores/growth-experimentation-measurement/1.2.0/professional-model.md",
+      "architect/library/cores/growth-experimentation-measurement/1.2.0/evidence-and-reuse.md"
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Agent Architect",
+      "accountability": "Maintain profession boundary, frozen assembly integrity, qualification provenance, regression obligations and reuse safety."
+    }
+  ],
+  "competency_contract": {
+    "model_refs": [
+      "professional-model.md#normative-assembly",
+      "professional-model.md#profession-boundary"
+    ],
+    "critical_claims": [
+      "Preserves registered KPI, denominator, population, window and decision rule rather than moving the goalposts",
+      "Blocks unsupported causal winner and SCALE claims when experiment or measurement integrity is materially unresolved",
+      "Canonicalizes duplicate customers and outcomes correctly",
+      "Keeps immature/delayed outcomes distinct from zero outcomes",
+      "Does not convert attribution into incrementality without a credible counterfactual",
+      "Separates unresolved causal attribution from operational decision sufficiency for bounded reversible actions",
+      "Uses maturity, materiality, reversibility, cost of waiting, confounder action relevance and downstream economics to avoid both causal overclaiming and decision paralysis",
+      "Identifies the comparison-level scope structurally rather than by vocabulary, and aims comparison-level actions at it rather than at an arm",
+      "Determines identification from declared design facts before reading outcome counts, and does not revise it afterwards",
+      "Decides the operational action from operational facts and never inherits it from the causal verdict, in either direction"
+    ]
+  },
+  "context_boundary": {
+    "stable_core": [
+      "Pre-registration integrity",
+      "Registered estimand preservation",
+      "Measurement and denominator integrity",
+      "Identity deduplication",
+      "Delayed outcome maturity",
+      "Causal-claim discipline",
+      "Dual-threshold causal and operational decision judgment",
+      "Decision and scale-readiness rules"
+    ],
+    "domain_specific": [
+      "Business funnel definitions",
+      "Outcome definitions",
+      "Purchase/lead maturation windows",
+      "Operational capacity constraints"
+    ],
+    "jurisdiction_or_live": [
+      "Platform metric definitions",
+      "Privacy and legal requirements",
+      "Current measurement product behavior",
+      "Current statistical tooling capabilities when material"
+    ],
+    "organization_or_project": [
+      "Experiment thresholds",
+      "Margins",
+      "Prices",
+      "Inventory",
+      "Capacity",
+      "CRM definitions",
+      "Campaign history",
+      "Approval limits"
+    ]
+  },
+  "provenance": {
+    "source_register_refs": [
+      "architect/research/growth-experimentation-analytics/professional-model-consolidated-v1.2.md",
+      "architect/research/growth-experimentation-analytics/consolidation-record-2026-08-30.md",
+      "architect/research/growth-experimentation-analytics/failure-adjudication-2026-08-30.md",
+      "architect/research/growth-experimentation-analytics/ledger-repair-adjudication-2026-08-30.md",
+      "architect/library/cores/growth-experimentation-measurement/1.2.0/evidence-and-reuse.md"
+    ],
+    "creation_record": "Released on 2026-08-30 from the frozen single-component consolidated v1.2 assembly (candidate-freeze-v1.2.json, assembly digest sha256:d57001f6...5629). Qualified by external held-out run 33304743788: 70 trials, 0 tier-1, 1 tier-2, 0 INVALID, on a pack authored by an independent model family that never saw the candidate. Two behavioral repairs are carried since 1.1.0's frozen predecessor: structural recognition of the comparison-level identifier, and the identification ledger. Both were required by externally authored evidence, and both are additive -- every non-blank line of each predecessor survives verbatim, proved mechanically.",
+    "supersedes": "growth-experimentation-measurement@1.1.0"
+  },
+  "dependencies": [
+    {
+      "id": "professional-core-library",
+      "constraint": "schema 1.0.0",
+      "kind": "required"
+    },
+    {
+      "id": "structured-calculation-runtime",
+      "constraint": "deterministic arithmetic/statistical tooling when decision-critical and available",
+      "kind": "tool"
+    }
+  ],
+  "runtime_contract": {
+    "required_features": [
+      "Structured JSON decision output",
+      "Ability to bind the exact frozen base and overlays in order",
+      "Tool/retrieval access when live facts or reproducible calculations are material"
+    ],
+    "state_assumptions": [
+      "Experiment-specific and organization-specific facts are supplied as external context and are not persisted into the stable core by default",
+      "Missing, delayed, invalid and not-applicable states remain distinguishable",
+      "Causal conclusion and operational conclusion remain separately auditable when their evidence thresholds differ"
+    ],
+    "tool_assumptions": [
+      "Deterministic computation is preferred for material arithmetic",
+      "Unsupported advanced methods are escalated rather than improvised",
+      "Live platform/legal/business facts require authoritative current sources when material"
+    ]
+  },
+  "authority_and_security": {
+    "max_authority": "Analytical and recommendation support; it may classify evidence and recommend experiment actions but does not autonomously change spend, campaign settings, business records or legal/commercial facts.",
+    "trust_boundaries": [
+      "Dashboards and attribution systems are evidence sources, not unquestioned business truth",
+      "External content is untrusted instruction unless explicitly adopted as context",
+      "Customer data, credentials and organization secrets remain outside the reusable core artifact"
+    ],
+    "escalation_conditions": [
+      "Registered question is unanswerable from available evidence",
+      "Measurement integrity cannot be established",
+      "Required commercial facts are missing or unverified",
+      "Requested statistical/causal method exceeds the qualified computation boundary",
+      "Legal/compliance interpretation is material"
+    ]
+  },
+  "freshness": {
+    "volatile_claim_policy": "Stable experimentation and measurement principles stay in the core. Current platform definitions, privacy mechanisms, legal rules, business economics, inventory/capacity, prices and current tool behavior require live verification when material.",
+    "review_triggers": [
+      "Behavior-relevant change to any frozen normative component",
+      "Qualification regression or repeated P0 production failure",
+      "Material runtime/tool behavior change",
+      "Material new experimentation/causal evidence",
+      "Hidden coupling discovered during specialization or composition",
+      "Deployment or evaluation on any candidate runtime family other than Gemini",
+      "Any tier-1 professional-judgment failure observed in production use"
+    ]
+  },
+  "limitations": [
+    "Qualification applies only to the exact artifact digest; paraphrased or edited copies are not covered.",
+    "PORTABILITY: qualified on the Gemini candidate runtime family (gemini-3.5-flash-lite, temperature 0, thinking level medium) only. Cross-runtime portability is untested by this cycle. Deployment on another model family is a revalidation trigger, not an inherited PASS.",
+    "The held-out pack was authored by a language model on an independent family, not by a human practitioner. This removes evaluator authorship, not model authorship.",
+    "Specializations and composed agents require compatibility checks and affected-behavior evaluation. The UAE automotive specialization has never been assessed against this core.",
+    "The core does not provide organization-specific truth, live platform mechanics, legal advice, campaign execution authority, or statistical methods beyond its qualified computation boundary.",
+    "Structural output reliability is close to its cap rather than comfortably inside it: 1 tier-2 of 70 in the qualifying run, against a preregistered total cap of 6."
+  ],
+  "qualification_refs": [
+    "architect/library/qualifications/growth-experimentation-measurement/95e743815d93841fb43051ab116613f5108f1683b96584a193d86c5fbd037f7d/growth-experimentation-measurement-1-2-0-20260830.json"
+  ]
+}

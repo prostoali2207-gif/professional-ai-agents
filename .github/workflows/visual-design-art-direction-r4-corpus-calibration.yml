@@ -1,0 +1,154 @@
+name: Visual Design Art Direction exact R4 corpus calibration
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  calibrate:
+    if: github.event.issue.number == 158 && github.actor == 'prostoali2207-gif' && (github.event.comment.body == '/calibrate-visual-heldout-r4-v02' || startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r4-v02 '))
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-r4-corpus-calibration-groq-pace
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: '33306265227'
+      SOURCE_HEAD_SHA: 147f1581c1ff24c51b71169aaad7770d6d27f3ce
+      SOURCE_ARTIFACT_ID: '9730714845'
+      SOURCE_ARTIFACT_NAME: visual-design-art-direction-v0-2-encrypted-heldout-pack-r4
+      SOURCE_ARTIFACT_DIGEST: sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e
+      SOURCE_CIPHERTEXT_SHA256: b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static preflight before provider use
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_r4_corpus_calibration_v0_2.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/calibration/run_r4_corpus_calibration_v0_2.py').read_text()
+          pre=Path('architect/evaluation/visual-design-art-direction/r4-corpus-calibration-preregistration.md').read_text()
+          assert "base.SOURCE_RUN_ID = '33306265227'" in p
+          assert "base.SOURCE_HEAD_SHA = '147f1581c1ff24c51b71169aaad7770d6d27f3ce'" in p
+          assert "base.SOURCE_ARTIFACT_ID = '9730714845'" in p
+          assert "base.SOURCE_ARTIFACT_DIGEST = 'sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e'" in p
+          assert "EXPECTED_CIPHERTEXT_SHA256 = 'b6147b01b838aa447fcaff711668771d6347a329f97ac21c7c97f9c9d6e85bf6'" in p
+          assert 'CANDIDATE_EXECUTOR' not in p and 'candidate_response' not in p and 'run_candidate' not in p
+          assert 'completed `CALIBRATION_FAIL` is terminal' in pre
+          print('R4_CORPUS_CALIBRATION_PRE_CREDENTIAL_STATIC_PASS')
+          PY
+      - name: Verify exact source artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > r4-artifact-meta.json
+          python - <<'PY'
+          import json,os
+          m=json.load(open('r4-artifact-meta.json'))
+          assert str(m['id'])==os.environ['SOURCE_ARTIFACT_ID']
+          assert m['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert m['digest']==os.environ['SOURCE_ARTIFACT_DIGEST']
+          assert str(m['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert m['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert m['expired'] is False
+          print('EXACT_R4_ARTIFACT_METADATA_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Download exact R4 sealed pack
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-encrypted-heldout-pack-r4
+          path: r4-source
+          github-token: ${{ github.token }}
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: 33306265227
+      - name: Verify internal sealed ciphertext binding
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path('r4-source')
+          m=json.load(open(d/'heldout-r4.manifest.json'))
+          ciphertext=''.join(p.read_text() for p in sorted((d/'heldout-r4.parts').iterdir())).encode()
+          assert m['ciphertext_sha256']==os.environ['SOURCE_CIPHERTEXT_SHA256']
+          assert hashlib.sha256(ciphertext).hexdigest()==os.environ['SOURCE_CIPHERTEXT_SHA256']
+          print('EXACT_R4_CIPHERTEXT_PASS')
+          PY
+      - name: Restore encrypted checkpoint for bounded resume
+        if: startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r4-v02 ')
+        shell: bash
+        run: |
+          set -euo pipefail
+          checkpoint_run="${{ github.event.comment.body }}"
+          checkpoint_run="${checkpoint_run#'/resume-calibrate-visual-heldout-r4-v02 '}"
+          [[ "$checkpoint_run" =~ ^[0-9]+$ ]]
+          mkdir -p checkpoint-source
+          gh run download "$checkpoint_run" -n visual-design-art-direction-v0-2-r4-corpus-calibration-checkpoint --dir checkpoint-source
+          cp checkpoint-source/visual-r4-corpus-calibration-checkpoint.enc ./visual-r4-corpus-calibration-checkpoint.enc
+      - name: Run blind exact-R4 corpus calibration
+        id: calibration
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/calibration/run_r4_corpus_calibration_v0_2.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload encrypted resumable checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-corpus-calibration-checkpoint
+          path: visual-r4-corpus-calibration-checkpoint.enc
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-corpus-calibration-progress
+          path: visual-r4-corpus-calibration-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-2-r4-corpus-calibration-report
+          path: visual-r4-corpus-calibration-sanitized-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Enforce pre-score calibration gate
+        if: always()
+        run: |
+          test "${{ steps.calibration.outputs.exit_code }}" = 0
+          test -f visual-r4-corpus-calibration-sanitized-report.json
+          python - <<'PY'
+          import json
+          r=json.load(open('visual-r4-corpus-calibration-sanitized-report.json'))
+          assert r['status']=='CALIBRATION_PASS'
+          assert r['candidate_calls']==0
+          assert r['source']['run_id']=='33306265227'
+          assert r['source']['head_sha']=='147f1581c1ff24c51b71169aaad7770d6d27f3ce'
+          assert r['source']['artifact_id']=='9730714845'
+          assert r['source']['artifact_digest']=='sha256:fbe4b03ffc1eede30b3e36dcaa13e7bf96e29c28cf40d722ae2e376355f0e73e'
+          assert r['policy']=={
+            'per_judge_expected_winner_rate_min':0.8,
+            'combined_expected_winner_rate_min':0.9,
+            'max_pair_disagreement_rate':0.25,
+          }
+          print('EXACT_R4_CORPUS_CALIBRATION_PASS_ENFORCED')
+          PY
