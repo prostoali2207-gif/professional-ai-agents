@@ -34,7 +34,8 @@
     "base_author_git_blob_sha": "078ef53a195b07aaeaca9d5b393f2d76ca61df5b",
     "fixture_count": 30,
     "identity_sha256": "31ef6b0f0a1286e3860cfc706ece28acc72bd2eea3e77fb1726026e3ba962335",
-    "sealed_sha256": "0a802036401d7040d8b93dadb3c7798ad01ca19ce06d2c422ec8245da1ffae31",
+    "freeze_ciphertext_sha256": "0a802036401d7040d8b93dadb3c7798ad01ca19ce06d2c422ec8245da1ffae31",
+    "ciphertext_identity_policy": "Fernet ciphertext is randomized; plain identity_sha256 is the canonical corpus identity and regenerated ciphertext hashes are not expected to match.",
     "status": "FROZEN"
   },
   "runtime_eligibility": {
