@@ -1,0 +1,71 @@
+{
+  "cycle_id": "sales-0.4-fresh-independent-2026-08-30-r10-gemini-groq",
+  "status": "PRE_SCORE_TRANSPORT_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "d00bb8057ba0eaae24b918e13941fb61b0b8616d",
+    "artifact_digest": "sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.4.0/manifest.json"
+  },
+  "prior_cycle_evidence": {
+    "r8_run_id": 33300473042,
+    "r9_run_id": 33301068662,
+    "candidate_calls": 0,
+    "hidden_content_printed": false,
+    "r9_authoring_status": "AUTHORED_AUDITED_SEALED",
+    "r9_fixture_count": 36,
+    "r9_family_count": 12,
+    "r9_repeat_fixture_count": 6,
+    "r9_author_calls": 3,
+    "r9_audit_calls": 3,
+    "r9_audit_rejections": 0,
+    "r9_structural_rejections": 0,
+    "r9_transport_failure": "Fresh source pack passed sealed preflight, then reseal_provider_pack.py failed before candidate calls because SOURCE_PACK_DIGEST was not exported by the workflow.",
+    "decision": "Keep r9 authoring semantics and exact r6 native schema unchanged. In r10 only repair transport: preserve the encrypted source pack immediately after authoring, resolve SOURCE_PACK_DIGEST from SOURCE_MANIFEST, export it before reseal, then continue the unchanged canary and FULL qualification path."
+  },
+  "construct_inheritance": {
+    "base_preregistration_path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r6-gemini-groq.json",
+    "base_preregistration_blob": "65d826075ded39ab9e465bfaf0a7bb3a254d15f9",
+    "authoring_implementation_path": "architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r9_gemini_groq.py",
+    "authoring_implementation_blob": "5e5193039528da68930d9356396e629874eca29b",
+    "inherited_without_semantic_change": ["families", "construct", "fixture_design", "critical_hard_fail_policy", "grader_methodology", "runtime_contract", "stochastic_retry_policy", "thresholds", "heldout_authoring_semantics"],
+    "rule": "R10 is a transport-only remediation. It reuses the exact r9 authoring implementation and r6 native AUTHOR_SCHEMA; candidate, grader, thresholds, hard-fails, repeats, family semantics and acceptance logic do not change."
+  },
+  "scope": {"purpose": "release", "decision": "FULL", "fixture_count": 36, "family_count": 12, "per_family": 3},
+  "fixture_count": 36,
+  "per_family": 3,
+  "families": ["OWN", "LIFE", "MIX", "SEC", "FACT", "INTENT", "OBJ", "NEXT", "FUP", "STATE", "ID", "OPS"],
+  "thresholds": {
+    "task_pass_score_min": 5,
+    "release_tasks_passed_min": 34,
+    "per_family_tasks_passed_min": 2,
+    "critical_hard_fails_max": 0,
+    "professional_failure_retry": 0,
+    "critical_repeat_rule": "every repeated trial must pass"
+  },
+  "heldout_authoring": {
+    "author_provider": "gemini-interactions-api",
+    "author_model": "gemini-3.5-flash-lite",
+    "construct_audit_provider": "groq-openai-compatible-api",
+    "construct_audit_model": "openai/gpt-oss-120b",
+    "family_groups": [["OWN", "LIFE", "MIX", "SEC"], ["FACT", "INTENT", "OBJ", "NEXT"], ["FUP", "STATE", "ID", "OPS"]],
+    "max_author_attempts_per_group": 3,
+    "max_construct_audit_calls_per_group": 3,
+    "native_schema_rule": "Use exactly the pinned r6 AUTHOR_SCHEMA with no field, nesting, cardinality or type changes.",
+    "authoring_rule": "Use the pinned r9 authoring implementation unchanged except cycle/output binding. Rejected hidden payloads are never inspected, repaired, ranked or reused.",
+    "audit_reason_codes": ["accepted", "missing_slot_semantic_coverage", "reference_not_grounded_in_case_facts", "candidate_visible_leakage", "invalid_hard_fail_semantics", "unrealistic_or_not_self_contained", "other_construct_failure"]
+  },
+  "transport_remediation": {
+    "source_pack_preservation": "Upload the encrypted r10 source pack immediately after successful authoring and before reseal.",
+    "source_digest_binding": "Read sealed_pack.pack_digest from SOURCE_MANIFEST and export it as SOURCE_PACK_DIGEST before invoking reseal_provider_pack.py.",
+    "semantic_mutation_allowed": false,
+    "candidate_calls_before_reseal_success": 0
+  },
+  "runtime_contract": {
+    "provider": "gemini-interactions-api",
+    "candidate_model": "gemini-3.5-flash-lite",
+    "grader_model": "gemini-3.5-flash-lite",
+    "qualification_contract_version": 1,
+    "minimum_seconds_between_requests": 6.0
+  },
+  "release_rule": "PASS only after a COMPLETE sanitized FULL report validates against r10, at least 34/36 base tasks pass, every family is at least 2/3, all six inherited repeated critical trials pass and zero inherited critical hard-fails occur. Otherwise REVISE or NOT_EXECUTABLE under the frozen protocol."
+}
