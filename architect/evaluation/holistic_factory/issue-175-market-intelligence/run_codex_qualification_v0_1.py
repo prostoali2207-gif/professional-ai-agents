@@ -219,6 +219,7 @@ def invoke_codex(prereg: dict[str, Any], contract: str, task: str, schema: Path)
             command,
             input=prompt,
             text=True,
+            encoding="utf-8",
             capture_output=True,
             timeout=prereg["runtime"]["timeout_seconds"],
             env=env,

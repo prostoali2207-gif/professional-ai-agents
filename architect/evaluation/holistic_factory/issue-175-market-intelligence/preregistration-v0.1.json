@@ -38,7 +38,7 @@
   },
   "evaluator": {
     "runner_path": "architect/evaluation/holistic_factory/issue-175-market-intelligence/run_codex_qualification_v0_1.py",
-    "runner_sha256": "sha256:908864398f1f14de66f0a48e147f163fe3d1fb917860440526349be5c68318bd",
+    "runner_sha256": "sha256:69c0aa9a092d38ffd719cc181530a1ca42da1dd04ec09daadad53d911926729e",
     "single_schema_sha256": "sha256:60baea7e29c0314f1432a3747923220073efe573c9d02cd2dccf14d0363088c6",
     "practical_schema_sha256": "sha256:5bf4646da39d234d2d26635a475209115e176e97f3f73432b26c53afa50cd5da",
     "canary_sha256": "sha256:83d523bc436c3df90bcaab831f245f2b559b495a2360b3446104012504000e18",
