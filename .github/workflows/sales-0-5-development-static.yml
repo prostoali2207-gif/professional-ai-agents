@@ -1,0 +1,59 @@
+name: Sales 0.5 development static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/library/cores/sales-lead-conversion/0.5.0/**'
+      - 'architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py'
+      - '.github/workflows/sales-0-5-development-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile development harness
+        run: python -m py_compile architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py
+      - name: Verify candidate artifact digest and public case contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import ast, hashlib, json, pathlib, subprocess
+          manifest_path = pathlib.Path('architect/library/cores/sales-lead-conversion/0.5.0/manifest.json')
+          manifest = json.loads(manifest_path.read_text())
+          canonical = ''
+          for p in manifest['artifact']['paths']:
+              blob = subprocess.check_output(['git','rev-parse',f'HEAD:{p}'], text=True).strip()
+              canonical += f'{p}:{blob}\n'
+          actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual == 'sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9'
+          assert actual == manifest['artifact']['content_digest'], (actual, manifest['artifact']['content_digest'])
+
+          src = pathlib.Path('architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py').read_text()
+          tree = ast.parse(src)
+          cases = None
+          for node in tree.body:
+              if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'CASES' for t in node.targets):
+                  cases = ast.literal_eval(node.value)
+                  break
+          assert isinstance(cases, list) and len(cases) == 13
+          ids = [c['id'] for c in cases]
+          assert len(ids) == len(set(ids))
+          families = {}
+          for c in cases:
+              families[c['family']] = families.get(c['family'], 0) + 1
+          expected = {'APPT': 6, 'FACT': 1, 'ID': 1, 'OWN': 1, 'SEC': 1, 'FUP': 1, 'STATE': 1, 'OPS': 1}
+          assert families == expected, families
+          assert all('hidden' not in c['id'].lower() for c in cases)
+          print('SALES_0_5_STATIC_PASS', actual, families)
+          PY
+      - name: Paid workflow guard
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py
