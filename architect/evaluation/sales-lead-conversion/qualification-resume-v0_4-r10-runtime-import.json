@@ -10,6 +10,18 @@
     "canary_status": "PASS",
     "failure": "The sealed runner failed before scored candidate execution with ModuleNotFoundError: gemini_rate_limiter. No sanitized qualification report was produced."
   },
+  "resume_attempts": [
+    {
+      "run_id": 33302325011,
+      "job_id": 99232647011,
+      "scored_candidate_calls": 0,
+      "import_probe": "PASS",
+      "artifact_download": "PASS",
+      "candidate_and_pack_digest_binding_before_failure": "PASS",
+      "failure": "Local binding check raised KeyError on non-contract top-level manifest field fixture_count. The exact downloaded artifact archive digest matched the preserved artifact and candidate/pack digest assertions passed first. Generic sealed preflight and scoring did not run.",
+      "classification": "PRE_SCORE_LOCAL_ASSERTION_FAILURE"
+    }
+  ],
   "frozen_candidate": {
     "commit": "d00bb8057ba0eaae24b918e13941fb61b0b8616d",
     "artifact_digest": "sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0"
@@ -20,7 +32,7 @@
     "artifact_archive_digest": "sha256:f10fb41df7cb7039c63f650fdd653176f172aa7b1f3ef2db82fe66b69727fc19",
     "pack_digest": "sha256:f22b1837d6891191129c0ecedf1a630c4200c127eef24aa18db7cc14f7bb105b",
     "fixture_count": 36,
-    "rule": "Download and score this exact encrypted pack. Do not author, regenerate, reseal, modify, decrypt for inspection, or substitute fixtures."
+    "rule": "Download and score this exact encrypted pack. Do not author, regenerate, reseal, modify, decrypt for inspection, or substitute fixtures. Fixture cardinality is verified by the generic sealed preflight and preregistration; do not require a non-contract top-level manifest fixture_count field."
   },
   "runtime_fix": {
     "missing_module_path": "architect/evaluation/sales-lead-conversion/gemini_rate_limiter.py",
@@ -47,6 +59,6 @@
     "grader_model": "gemini-3.5-flash-lite",
     "minimum_seconds_between_requests": 6.0
   },
-  "execution_rule": "Before any scored call, verify the exact artifact/pack/candidate bindings and perform a no-API import probe of the frozen runner with the repaired PYTHONPATH. Then run the exact unmodified sealed runner once. No authoring and no professional retry are permitted.",
+  "execution_rule": "Before any scored call, verify the exact artifact/pack/candidate bindings and perform a no-API import probe of the frozen runner with the repaired PYTHONPATH. Generic sealed preflight verifies the preserved pack structure and cardinality. Then run the exact unmodified sealed runner once. No authoring and no professional retry are permitted.",
   "release_rule": "Accept only a COMPLETE sanitized report validated against qualification-preregistration-v0_4-r10-gemini-groq.json and the exact frozen pack digest. PASS still requires >=34/36, >=2/3 in every family, every critical repeat PASS and zero critical hard-fails."
 }
