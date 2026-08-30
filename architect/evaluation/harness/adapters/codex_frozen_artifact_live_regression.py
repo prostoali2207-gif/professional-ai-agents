@@ -12,13 +12,21 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[4]
 ADAPTER = Path(__file__).with_name("codex_frozen_artifact_adapter.py")
-FAKE = ROOT / "architect/evaluation/harness/smoke/codex_fake_frozen_candidate.md"
+FAKE_REPO_PATH = "architect/evaluation/harness/smoke/codex_fake_frozen_candidate.md"
 
 
 def main() -> int:
-    digest = subprocess.run(
-        ["git", "hash-object", "-w", str(FAKE)], capture_output=True, text=True, check=True,
-    ).stdout.strip()
+    # Resolve the already-tracked fake artifact blob instead of writing a new Git
+    # object. This keeps the unscored regression compatible with read-only-ish
+    # Actions checkouts while preserving the adapter's exact Git-blob identity path.
+    digest_proc = subprocess.run(
+        ["git", "rev-parse", f"HEAD:{FAKE_REPO_PATH}"],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    if digest_proc.returncode != 0 or len(digest_proc.stdout.strip()) != 40:
+        print(json.dumps({"status": "FAIL", "reason": "fake_blob_unavailable"}))
+        return 1
+    digest = digest_proc.stdout.strip()
     with tempfile.TemporaryDirectory(prefix="codex-frozen-artifact-live-regression-") as raw:
         workspace = Path(raw)
         payload = {
