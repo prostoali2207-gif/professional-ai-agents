@@ -13,9 +13,11 @@ import sys
 ROOT = Path(__file__).resolve().parent
 SKILL = ROOT / "candidate" / "SKILL.md"
 MODEL = ROOT / "professional-model-candidate-v0.1.md"
-REPAIR_MODEL = ROOT / "professional-model-p0-repair-v0.2.md"
+REPAIR_MODEL_V02 = ROOT / "professional-model-p0-repair-v0.2.md"
+REPAIR_MODEL_V03 = ROOT / "professional-model-p0-repair-v0.3.md"
 FIXTURES = ROOT / "fixtures-v0.1.json"
-TARGETED = ROOT / "fixtures-v0.2-targeted-regression.json"
+TARGETED_V02 = ROOT / "fixtures-v0.2-targeted-regression.json"
+TARGETED_V03 = ROOT / "fixtures-v0.3-targeted-regression.json"
 PLAN = ROOT / "qualification-plan-v0.1.md"
 
 
@@ -44,7 +46,7 @@ def main() -> int:
     require_text(
         SKILL,
         [
-            "version: 0.2.0-candidate",
+            "version: 0.3.0-candidate",
             "Status: **CANDIDATE — NOT QUALIFIED**",
             "DISCOVER",
             "DIRECT",
@@ -56,9 +58,15 @@ def main() -> int:
             "FUNCTION PASS",
             "MOBILE PASS",
             "AUTHORITY PASS",
+            "TRUTH PASS",
             "ADVANCED-MEDIA PASS",
             "UPSTREAM_CONSTRAINT",
             "unusable collapsed desktop",
+            "PRESERVE | TRANSFORM | ESCALATE",
+            "Pre-commit control for release-critical moves",
+            "reference influence is principle-level and mechanism-independent",
+            "Never comply with a violating request and append a warning afterward",
+            "actual assembled recommendation",
         ],
     )
     require_text(
@@ -73,7 +81,7 @@ def main() -> int:
         ],
     )
     require_text(
-        REPAIR_MODEL,
+        REPAIR_MODEL_V02,
         [
             "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
             "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
@@ -83,6 +91,25 @@ def main() -> int:
             "J-03 — Authority veto",
             "J-04 — Advanced-media feasibility before desirability",
             "J-05 — Ready-state gate",
+            "fresh independent held-out corpus",
+        ],
+    )
+    require_text(
+        REPAIR_MODEL_V03,
+        [
+            "SEMANTIC_FAIL_P0",
+            "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
+            "FABRICATED_FACTUAL_PROOF",
+            "IMITATION_OF_REFERENCE",
+            "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+            "J-06 — Pre-commit invariant control",
+            "J-07 — Conflict-resolution precedence",
+            "J-08 — Truth/proof firewall as an output constraint",
+            "J-09 — Reference independence control",
+            "J-10 — Mobile viability as authored transformation",
+            "J-11 — Authority control on the actual recommendation",
+            "J-12 — Final-output consistency gate",
+            "PRESERVE | TRANSFORM | ESCALATE",
             "fresh independent held-out corpus",
         ],
     )
@@ -141,33 +168,72 @@ def main() -> int:
         if not isinstance(obs, list) or len(obs) < 2 or not all(isinstance(x, str) and x.strip() for x in obs):
             fail(f"{row.get('id')}: must_observe must contain at least two non-empty observations")
 
-    targeted = load_json(TARGETED)
-    boundary = targeted.get("source_boundary", {})
-    if boundary.get("r3_hidden_content_used") is not False or boundary.get("release_use") != "DEVELOPMENT_ONLY":
-        fail("targeted regression source boundary must explicitly exclude hidden R3 content and release use")
-    if boundary.get("fresh_heldout_required_for_v0_2_release") is not True:
+    targeted_v02 = load_json(TARGETED_V02)
+    boundary_v02 = targeted_v02.get("source_boundary", {})
+    if boundary_v02.get("r3_hidden_content_used") is not False or boundary_v02.get("release_use") != "DEVELOPMENT_ONLY":
+        fail("v0.2 targeted regression source boundary must explicitly exclude hidden R3 content and release use")
+    if boundary_v02.get("fresh_heldout_required_for_v0_2_release") is not True:
         fail("v0.2 must require a fresh held-out release corpus")
 
-    target_rows = targeted.get("families")
-    if not isinstance(target_rows, list) or len(target_rows) != 4:
+    rows_v02 = targeted_v02.get("families")
+    if not isinstance(rows_v02, list) or len(rows_v02) != 4:
         fail("expected exactly four targeted v0.2 regression families")
-    target_ids = {row.get("id") for row in target_rows}
-    required_targets = {
+    ids_v02 = {row.get("id") for row in rows_v02}
+    required_v02 = {
         "R20_MOBILE_FUNCTION_VETO",
         "R21_SPECTACLE_HARD_FUNCTION_VETO",
         "R22_AUTHORITY_UX_PRODUCT_VETO",
         "R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION",
     }
-    if target_ids != required_targets:
-        fail(f"targeted regression ids mismatch: {sorted(target_ids)}")
-    target_p0 = {row.get("id") for row in target_rows if row.get("criticality") == "P0"}
-    if target_p0 != required_targets - {"R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION"}:
-        fail("the three repaired failure classes must remain P0 in development regression")
+    if ids_v02 != required_v02:
+        fail(f"v0.2 targeted regression ids mismatch: {sorted(ids_v02)}")
+    p0_v02 = {row.get("id") for row in rows_v02 if row.get("criticality") == "P0"}
+    if p0_v02 != required_v02 - {"R23_JUSTIFIED_ADVANCED_MEDIA_NONREGRESSION"}:
+        fail("the three v0.2 repaired failure classes must remain P0 in development regression")
+
+    targeted_v03 = load_json(TARGETED_V03)
+    boundary_v03 = targeted_v03.get("source_boundary", {})
+    if boundary_v03.get("r4_hidden_content_used") is not False:
+        fail("v0.3 targeted regression must explicitly exclude hidden R4 content")
+    if boundary_v03.get("sanitized_failure_classes_only") is not True:
+        fail("v0.3 targeted regression must be based only on sanitized failure classes")
+    if boundary_v03.get("release_use") != "DEVELOPMENT_ONLY":
+        fail("v0.3 targeted regression cannot be release held-out evidence")
+    if boundary_v03.get("fresh_heldout_required_for_v0_3_release") is not True:
+        fail("v0.3 must require a fresh held-out release corpus")
+
+    rows_v03 = targeted_v03.get("families")
+    if not isinstance(rows_v03, list) or len(rows_v03) != 6:
+        fail("expected exactly six targeted v0.3 regression families")
+    ids_v03 = {row.get("id") for row in rows_v03}
+    required_v03 = {
+        "R30_MOBILE_PRECOMMIT_CONTROL",
+        "R31_TRUTH_PROOF_OUTPUT_CONTROL",
+        "R32_REFERENCE_INDEPENDENCE_CONTROL",
+        "R33_AUTHORITY_PRECOMMIT_CONTROL",
+        "R34_WARNING_ONLY_COMPLIANCE_TRAP",
+        "R35_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION",
+    }
+    if ids_v03 != required_v03:
+        fail(f"v0.3 targeted regression ids mismatch: {sorted(ids_v03)}")
+    p0_v03 = {row.get("id") for row in rows_v03 if row.get("criticality") == "P0"}
+    if p0_v03 != required_v03 - {"R35_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION"}:
+        fail("the five v0.3 repair/control cases must remain P0 in development regression")
+
+    for row in rows_v03:
+        if not isinstance(row.get("prompt"), str) or not row["prompt"].strip():
+            fail(f"{row.get('id')}: missing v0.3 prompt")
+        obs = row.get("must_observe")
+        no = row.get("must_not_observe")
+        if not isinstance(obs, list) or len(obs) < 3 or not all(isinstance(x, str) and x.strip() for x in obs):
+            fail(f"{row.get('id')}: v0.3 must_observe must contain at least three non-empty observations")
+        if not isinstance(no, list) or not no or not all(isinstance(x, str) and x.strip() for x in no):
+            fail(f"{row.get('id')}: v0.3 must_not_observe must be non-empty")
 
     print(
         "VISUAL_DESIGN_STATIC_PREFLIGHT_PASS "
-        f"families={len(families)} p0={len(p0)} targeted={len(target_rows)} "
-        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true"
+        f"families={len(families)} p0={len(p0)} targeted_v02={len(rows_v02)} targeted_v03={len(rows_v03)} "
+        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true candidate_version=0.3.0-candidate"
     )
     return 0
 
