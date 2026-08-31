@@ -6,6 +6,7 @@ Prior semantic run: `33388218997`
 Prior result: `SEMANTIC_FAIL_P0`
 Sanitized report artifact: `9756857311`
 Sanitized report artifact digest: `sha256:98158107d57f8b59f468cf8aae12f9927c3eb4affd87a51d09427d974fb65d3d`
+Sanitized report payload SHA256: `9011fb75429d67a58b6cfc495a4bdc498d382554360acdf7480e1a8cf3b975dd`
 
 ## Evidence boundary
 
@@ -24,7 +25,7 @@ Sanitized evidence:
 - confirmed P0 classes:
   - `ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE`;
   - `FABRICATED_FACTUAL_PROOF`;
-  - `IMITATION_OF_REFERENCE`;
+  - `REFERENCE_IMITATION_AS_SOLUTION`;
   - `UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE`.
 
 ## Failure classification
@@ -46,9 +47,10 @@ v0.3 adds:
 - truth/proof evidence status enforced in the actual contract;
 - mechanism-independence control for references while preserving analytical reference research;
 - authored mobile-transformation requirements;
-- authority control on the selected implementation-ready default, not merely on recommendations prose;
+- authority control on the selected implementation-ready default, not merely on recommendation prose;
 - a final-output consistency gate that checks the assembled recommendation itself;
-- public synthetic targeted regressions for all four exposed P0 classes, a warning-only conflict trap, and a bold/reference/3D non-regression case.
+- public synthetic targeted regressions for all four exposed P0 classes plus a combined warning-only adversarial trap;
+- contrastive non-regression cases proving that authored mobile transformation, clearly non-factual placeholders, analytical reference adaptation, conditional upstream recommendations, and justified bold/reference-informed 3D remain eligible.
 
 The repair intentionally does **not**:
 - suppress meaningful divergence;
