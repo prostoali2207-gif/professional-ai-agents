@@ -19,6 +19,8 @@ jobs:
       MESSAGING_MODEL_TIMEOUT_SECONDS: '120'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -26,6 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           test -n "$OPENAI_API_KEY" || { echo 'CREDENTIAL_MISSING: OPENAI_API_KEY' >&2; exit 23; }
+          git cat-file -e "7019f6717b1b61806f4a221a297d049a4ad3b8cb^{commit}"
           python -m py_compile architect/evaluation/conversion_messaging_web_copy/executor_v0_1_responses.py
           python -m py_compile architect/evaluation/conversion_messaging_web_copy/canary_v0_1.py
           python architect/evaluation/conversion_messaging_web_copy/canary_v0_1.py
