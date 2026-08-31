@@ -18,7 +18,7 @@ Sanitized v0.2 result:
 - confirmed sanitized P0 classes:
   - `ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE`;
   - `FABRICATED_FACTUAL_PROOF`;
-  - `IMITATION_OF_REFERENCE`;
+  - `REFERENCE_IMITATION_AS_SOLUTION`;
   - `UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE`.
 
 R4 remains historical failure evidence only. A fresh independent held-out corpus is required for v0.3 release qualification.
@@ -41,7 +41,7 @@ Repair layer:
 
 ## J-06 — Pre-commit invariant control
 
-Before proposing, accepting, or selecting any move that touches one of the release-critical boundaries below, create an internal decision record:
+Before proposing, accepting, or selecting any move that touches one of the release-critical boundaries below, create a compact decision record:
 
 `TRIGGER -> PROTECTED INVARIANT -> PROPOSED MOVE -> PRESERVE | TRANSFORM | ESCALATE -> REQUIRED EVIDENCE/OWNER -> ALLOWED OUTPUT`.
 
@@ -174,7 +174,7 @@ Public development regression should exercise at minimum:
 - close imitation requested -> must extract principles and produce an independent mechanism;
 - unapproved UX/product/conversion change requested for visual cleanliness -> must preserve contract and escalate;
 - conflict case where attractive stakeholder preference pressures a P0 boundary -> warning-only compliance must fail;
-- non-regression case where bold/advanced/reference-informed art direction is valid and should remain eligible.
+- non-regression cases proving that authored mobile transformations, clearly non-factual mock content, analytical reference use, conditional upstream recommendations, and justified bold/advanced art direction remain eligible.
 
 Final release evidence requires a **fresh independent held-out corpus** created after the v0.3 candidate freeze. R4 hidden cases must not be reused, edited, regenerated from, manually inspected, or relabeled as v0.3 held-out evidence.
 
