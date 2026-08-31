@@ -1,0 +1,66 @@
+name: Sales 0.5 r6 exact-pack scoring resume static gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-resume-v0_5-r6-scoring-metadata.json'
+      - '.github/workflows/sales-0-5-gemini-r6-scoring-resume*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify exact-pack resume freeze and digest normalization
+        env:
+          CYCLE_ID: sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq
+          CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+          CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+          SOURCE_RUN_ID: '33369211233'
+          SOURCE_ARTIFACT_ID: '9749457258'
+          SOURCE_ARTIFACT_OUTPUT_DIGEST: 44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a
+          SOURCE_ARTIFACT_REST_DIGEST: sha256:44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a
+          PACK_DIGEST: sha256:7b11c14b5c4884d144aab41e4fe7f562ee8048cff087911f8ae52f0dea4e6704
+          RESUME_RECORD: architect/evaluation/sales-lead-conversion/qualification-resume-v0_5-r6-scoring-metadata.json
+          EFFECTIVE_PREREGISTRATION: /tmp/sales-v05-r6-effective-prereg.json
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r6.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py
+          python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r6.py "$EFFECTIVE_PREREGISTRATION"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          q=json.load(open(os.environ['RESUME_RECORD'])); p=json.load(open(os.environ['EFFECTIVE_PREREGISTRATION']))
+          assert q['cycle_id']==p['cycle_id']==os.environ['CYCLE_ID']
+          s=q['source_run']; assert s['run_id']==int(os.environ['SOURCE_RUN_ID']) and s['scored_candidate_calls']==0 and s['pack_download_started'] is False and s['canary_started'] is False and s['full_scoring_started'] is False
+          f=q['frozen_candidate']; assert f['commit']==os.environ['CANDIDATE_COMMIT'] and f['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          a=q['exact_scoring_pack']; assert a['artifact_id']==int(os.environ['SOURCE_ARTIFACT_ID']) and a['artifact_output_digest']==os.environ['SOURCE_ARTIFACT_OUTPUT_DIGEST'] and a['artifact_rest_digest']==os.environ['SOURCE_ARTIFACT_REST_DIGEST']=='sha256:'+os.environ['SOURCE_ARTIFACT_OUTPUT_DIGEST'] and a['pack_digest']==os.environ['PACK_DIGEST']
+          fix=q['runtime_fix'];
+          for k in ('semantic_change','candidate_change','grader_change','pack_change','threshold_change','hard_fail_change','provider_change','model_change','retry_policy_change'): assert fix[k] is False
+          assert fix['authoring_allowed'] is False and fix['reseal_allowed'] is False
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert p['fixture_design']['expected_candidate_runs_if_full']==42 and len(p['fixture_design']['repeated_fixture_slots'])==6
+          commit=os.environ['CANDIDATE_COMMIT']; cm=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in cm['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==cm['artifact']['content_digest']
+          print('SALES_V05_R6_SCORING_RESUME_STATIC_PASS')
+          PY
+      - name: Resume workflow is scoring-only explicit opt-in
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/sales-0-5-gemini-r6-scoring-resume.yml').read_text()
+          assert 'workflow_dispatch:' in p and 'workflow_call:' in p and 'confirm_provider_run' in p
+          assert "inputs.confirm_provider_run == 'RUN'" in p
+          assert 'GROQ_API_KEY' not in p
+          assert 'author_sealed_pack' not in p and 'reseal_provider_pack' not in p
+          assert 'Run frozen FULL qualification exactly once' in p
+          assert 'Preserve sanitized FULL progress regardless of verdict' in p
+          assert '\n  pull_request:' not in p and '\n  push:' not in p and '\n  schedule:' not in p
+          print('SALES_V05_R6_SCORING_RESUME_GUARD_PASS')
+          PY
