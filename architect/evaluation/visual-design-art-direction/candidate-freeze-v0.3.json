@@ -9,7 +9,8 @@
     "result": "SEMANTIC_FAIL_P0",
     "semantic_run": 33388218997,
     "sanitized_report_artifact_id": 9756857311,
-    "sanitized_report_artifact_digest": "sha256:98158107d57f8b59f468cf8aae12f9927c3eb4affd87a51d09427d974fb65d3d"
+    "sanitized_report_artifact_digest": "sha256:98158107d57f8b59f468cf8aae12f9927c3eb4affd87a51d09427d974fb65d3d",
+    "sanitized_report_payload_sha256": "9011fb75429d67a58b6cfc495a4bdc498d382554360acdf7480e1a8cf3b975dd"
   },
   "components": [
     {
@@ -29,7 +30,7 @@
     },
     {
       "path": "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md",
-      "git_blob_sha": "8d1017e13d2985cc61300c9bb19b024ef18ed563",
+      "git_blob_sha": "dd42d50f07b804c1ddd3c93b96704e0c6256440c",
       "role": "targeted v0.3 pre-commit and final-output execution-control repair"
     }
   ],
@@ -46,7 +47,7 @@
     },
     {
       "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json",
-      "git_blob_sha": "15b599379a8fd6e09451ef3e066ad7b413772e11",
+      "git_blob_sha": "9f1249638c07a59336961a20b0518d6cc8c116a4",
       "qualification_use": "targeted development regression only; sanitized v0.2 failure classes; not held-out"
     }
   ],
