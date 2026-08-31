@@ -1,0 +1,47 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq",
+  "status": "PRE_SCORE_EXACT_PACK_RESUME",
+  "source_run": {
+    "run_id": 33369211233,
+    "author_job_id": 99416251447,
+    "failed_scoring_job_id": 99416856023,
+    "head_sha": "cfbd006c9e84d2475977a23845bf39329c376f22",
+    "author_job_conclusion": "success",
+    "failed_scoring_step": "Verify same-run scoring artifact metadata before download",
+    "pack_download_started": false,
+    "canary_started": false,
+    "full_scoring_started": false,
+    "scored_candidate_calls": 0
+  },
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "exact_scoring_pack": {
+    "artifact_id": 9749457258,
+    "artifact_name": "sales-0.5-r6-gemini-encrypted-heldout-pack",
+    "artifact_output_digest": "44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a",
+    "artifact_rest_digest": "sha256:44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a",
+    "pack_digest": "sha256:7b11c14b5c4884d144aab41e4fe7f562ee8048cff087911f8ae52f0dea4e6704",
+    "fixture_count": 36,
+    "expired": false
+  },
+  "runtime_fix": {
+    "cause": "actions/upload-artifact v4 output artifact-digest was compared as bare hex against GitHub REST artifact metadata which prefixes the same SHA-256 with sha256:.",
+    "allowed_change_only": "Normalize the metadata digest comparison by accepting exactly 'sha256:' + the preregistered bare upload output digest, while continuing to pin artifact id, artifact name, source run, source head, candidate commit/digest and internal sealed pack digest.",
+    "semantic_change": false,
+    "candidate_change": false,
+    "grader_change": false,
+    "pack_change": false,
+    "threshold_change": false,
+    "hard_fail_change": false,
+    "provider_change": false,
+    "model_change": false,
+    "retry_policy_change": false,
+    "authoring_allowed": false,
+    "reseal_allowed": false
+  },
+  "execution_rule": "Download the exact preserved r6 scoring artifact from source run 33369211233. Verify all bindings before any provider call. Run static and sealed preflight, exact-runtime canary, then the frozen FULL qualification exactly once. Preserve sanitized progress regardless of final validation outcome. Do not author or reseal a new pack.",
+  "release_rule": "No release criterion changes. PASS still requires a COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}
