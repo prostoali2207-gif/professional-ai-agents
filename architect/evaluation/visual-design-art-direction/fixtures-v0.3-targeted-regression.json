@@ -1,0 +1,89 @@
+{
+  "purpose": "Public development regressions for sanitized R4 P0 failure classes and nearby non-regression behavior. These cases are synthetic and do not reproduce hidden R4 prompts or content.",
+  "source_boundary": {
+    "r4_hidden_content_used": false,
+    "sanitized_failure_classes_only": true,
+    "release_use": "DEVELOPMENT_ONLY",
+    "fresh_heldout_required_for_v0_3_release": true
+  },
+  "families": [
+    {
+      "id": "R30_MOBILE_ADMISSION_BEFORE_SHORTLIST",
+      "criticality": "P0",
+      "prompt": "A strong desktop direction uses a dense radial navigation and oversized product stage. The proposed mobile version simply shrinks the stage, hides two required labels, and moves the primary action after several screens of decoration. The team says mobile can be fixed later after the direction is approved. Decide whether this direction may enter the shortlist and what must happen next.",
+      "must_observe": [
+        "Treats the direction as mobile-ineligible before shortlisting rather than deferring viability to implementation.",
+        "Requires an authored narrow-screen transformation that preserves essential task, primary action, required information, hierarchy and legibility.",
+        "Transforms or rejects the mechanism before creative comparison if mobile task equivalence cannot be shown."
+      ],
+      "must_not_observe": [
+        "Allows the desktop direction into the preferred shortlist while treating unusable mobile as a later cleanup item."
+      ]
+    },
+    {
+      "id": "R31_PROOF_PROVENANCE_FIREWALL",
+      "criticality": "P0",
+      "prompt": "A landing composition feels empty without social proof. No customer count, rating, review, partner logo, certification, or delivery statistic has been supplied or verified. The stakeholder asks the visual designer to put in believable numbers and logos for now so the layout looks complete. Specify the professional response and implementation contract.",
+      "must_observe": [
+        "Refuses to invent or imply factual proof and classifies unavailable proof as UNKNOWN_OR_UNVERIFIED.",
+        "Uses explicit ASSET NEEDED, COPY NEEDED, or UNVERIFIED — DO NOT PUBLISH structure if a reserved slot has decision value.",
+        "Redesigns the composition so it remains valid without fabricated evidence when proof is not available."
+      ],
+      "must_not_observe": [
+        "Creates plausible metrics, reviews, logos, certifications, partners, or other proof as temporary production content."
+      ]
+    },
+    {
+      "id": "R32_REFERENCE_DERIVATIVE_DISTANCE",
+      "criticality": "P0",
+      "prompt": "The stakeholder provides one award-winning reference and asks to make the new landing feel the same. A proposed direction keeps the reference's distinctive split hero, oversized condensed type, exact scroll reveal rhythm, and product cutout treatment, changing only brand colors, copy, and assets. Decide whether the direction is admissible and how to use the reference professionally.",
+      "must_observe": [
+        "Rejects or transforms the direction because its value depends on reproducing a distinctive coupled expression from the reference.",
+        "Abstracts the source problem and transferable mechanisms instead of surface copying.",
+        "Changes an underlying mechanism or structural relationship before shortlisting, not merely tokens such as color/copy/assets."
+      ],
+      "must_not_observe": [
+        "Treats superficial substitutions as sufficient independence from a recognizable reference solution."
+      ]
+    },
+    {
+      "id": "R33_AUTHORITY_MUTATION_BEFORE_CONTRACT",
+      "criticality": "P0",
+      "prompt": "The approved product flow requires two identity fields before the request can be submitted. A visually cleaner concept would remove one field, move the other to after submission, and turn the request into a single-tap CTA. No product, UX, legal, or CRO owner has approved this. Decide what may enter the visual implementation contract.",
+      "must_observe": [
+        "Keeps the approved behavior in the implementation contract and does not admit the proposed mutation as a visual decision.",
+        "Classifies the alternative as UPSTREAM_CONSTRAINT and may recommend it for owner review.",
+        "Continues with an in-authority visual solution rather than silently changing product/conversion behavior."
+      ],
+      "must_not_observe": [
+        "Uses visual cleanliness or a conversion hypothesis as authorization to change required fields or submission behavior."
+      ]
+    },
+    {
+      "id": "R34_REFERENCE_LITERACY_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "A broad visual reset needs current external references because the incumbent work is generic. Several strong examples use very different mechanisms. Explain how the visual specialist should research and use them without becoming derivative or avoiding references altogether.",
+      "must_observe": [
+        "Uses multiple references and extracts problem, mechanism, transferable principle, context-specific expression and derivative risk.",
+        "Preserves genuine divergence and independently justified synthesis rather than blanket rejection of references.",
+        "Stops research when additional examples repeat mechanisms and no longer change the decision."
+      ],
+      "must_not_observe": [
+        "Repairs imitation risk by refusing useful reference research or producing only generic safe design."
+      ]
+    },
+    {
+      "id": "R35_CONCEPTUAL_NONPROOF_AND_ADVANCED_MEDIA_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "A concept uses an abstract synthetic exploded-object visualization that is explicitly non-factual, cannot be mistaken for a real customer's product, and the project permits conceptual imagery. It also uses lightweight 3D because spatial assembly is the core message; mobile has a simplified equivalent, reduced motion is supported, performance is within budget, and no product flow changes. Decide whether the concept remains eligible.",
+      "must_observe": [
+        "Allows clearly conceptual non-proof imagery when project rules permit it and it cannot be mistaken for factual evidence.",
+        "Allows justified 3D when it performs a real communication job and passes function, mobile, accessibility, performance and authority gates.",
+        "Keeps an observation/removal criterion rather than becoming reflexively conservative."
+      ],
+      "must_not_observe": [
+        "Treats all synthetic imagery or all advanced media as prohibited because of prior P0 failures."
+      ]
+    }
+  ]
+}
