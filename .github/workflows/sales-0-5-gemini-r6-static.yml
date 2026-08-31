@@ -1,0 +1,70 @@
+name: Sales 0.5 r6 static pre-score transport split gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/**'
+      - 'architect/library/cores/sales-lead-conversion/**'
+      - '.github/workflows/sales-0-5-gemini-r6*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile and verify frozen r6 contract
+        env:
+          CYCLE_ID: sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq
+          CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+          CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+          R6_DELTA: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r6-gemini-groq.json
+          EFFECTIVE_PREREGISTRATION: /tmp/sales-v05-r6-effective-prereg.json
+        run: |
+          python -m py_compile \
+            architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r6.py \
+            architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r6_gemini_groq.py \
+            architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r6.py \
+            architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py
+          python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r6.py "$EFFECTIVE_PREREGISTRATION"
+          python - <<'PY'
+          import hashlib,importlib.util,json,os,subprocess
+          d=json.load(open(os.environ['R6_DELTA'])); p=json.load(open(os.environ['EFFECTIVE_PREREGISTRATION']))
+          assert p['cycle_id']==os.environ['CYCLE_ID'] and p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          r5=d['prior_sanitized_evidence']['r5']; assert r5['candidate_calls']==0 and r5['run_id']==33331641468
+          assert r5['structural_reason_codes']==['hidden_reference_tagged_shape','hidden_reference_tagged_shape','tool_scenario_json_parse']
+          tr=d['authoring_transport_remediation']; assert tr['semantic_mutation_allowed'] is False and tr['native_outer_schema_change_allowed'] is False and tr['grader_change_allowed'] is False and tr['threshold_change_allowed'] is False and tr['candidate_change_allowed'] is False
+          split=d['execution_split_remediation']; assert split['fresh_r6_pack_required'] is True and split['prior_pack_reuse_allowed'] is False and split['author_job_timeout_minutes']==180 and split['scoring_job_timeout_minutes']==180
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert p['fixture_design']['expected_candidate_runs_if_full']==42 and len(p['fixture_design']['repeated_fixture_slots'])==6
+          commit=os.environ['CANDIDATE_COMMIT']; m=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in m['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==m['artifact']['content_digest']
+          path='architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r6_gemini_groq.py'; spec=importlib.util.spec_from_file_location('probe',path); mod=importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+          class Fake: ALLOWED_HARD_FAILS=['unauthorized_external_action']
+          a='PD=ok; R1N=a; R1P=b; R1F=c; R2N=d; R2P=e; R2F=f; R3N=g; R3P=h; R3F=i; HF=NONE; BE=j; AI=k'
+          ref=mod.decode_tagged_reference(a,'probe',Fake); assert len(ref['rubric'])==3 and ref['critical_hard_fail_triggers']==[]
+          assert mod.decode_object("{'authority': {}, 'tools': []}",'probe','tool_scenario_json_parse','tool_scenario_json_type')=={'authority':{},'tools':[]}
+          assert mod.decode_object('```json\n{"authority":{},"tools":[]}\n```','probe','tool_scenario_json_parse','tool_scenario_json_type')=={'authority':{},'tools':[]}
+          print('SALES_V05_R6_STATIC_PASS')
+          PY
+      - name: Paid workflow remains explicit opt-in only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/sales-0-5-gemini-r6.yml').read_text()
+          assert 'workflow_dispatch:' in p and 'workflow_call:' in p
+          assert 'confirm_provider_run' in p
+          assert "inputs.confirm_provider_run == 'RUN'" in p
+          assert '\n  pull_request:' not in p and '\n  push:' not in p and '\n  schedule:' not in p
+          assert 'timeout-minutes: 180' in p
+          assert 'Preserve sanitized FULL report even on REVISE or truncation' in p
+          print('SALES_V05_R6_PAID_GUARD_PASS')
+          PY
