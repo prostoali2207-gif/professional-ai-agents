@@ -1,0 +1,20 @@
+name: Sales 0.5 fresh held-out r6 opt-in
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  authorize:
+    if: >-
+      github.event.label.name == 'run-sales-0-5-final-qualification-r6' &&
+      github.event.pull_request.head.ref == 'agent/sales-lead-conversion-core-0.4.0-2026-08-29' &&
+      github.event.pull_request.draft == true
+    uses: ./.github/workflows/sales-0-5-gemini-r6.yml
+    with:
+      confirm_provider_run: RUN
+    secrets: inherit
