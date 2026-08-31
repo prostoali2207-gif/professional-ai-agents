@@ -2,15 +2,18 @@
 """Zero-provider structural preflight for the Visual Design / Art Direction candidate.
 
 This does not grade creative quality. It only fails closed when release-critical
-contracts or development-fixture coverage are missing before any model/judge spend.
+contracts, development-regression coverage, or the candidate freeze are inconsistent
+before any model/judge spend.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
+REPO_ROOT = ROOT.parents[2]
 SKILL = ROOT / "candidate" / "SKILL.md"
 MODEL = ROOT / "professional-model-candidate-v0.1.md"
 REPAIR_MODEL_V02 = ROOT / "professional-model-p0-repair-v0.2.md"
@@ -18,6 +21,7 @@ REPAIR_MODEL_V03 = ROOT / "professional-model-p0-repair-v0.3.md"
 FIXTURES = ROOT / "fixtures-v0.1.json"
 TARGETED_V02 = ROOT / "fixtures-v0.2-targeted-regression.json"
 TARGETED_V03 = ROOT / "fixtures-v0.3-targeted-regression.json"
+FREEZE_V03 = ROOT / "candidate-freeze-v0.3.json"
 PLAN = ROOT / "qualification-plan-v0.1.md"
 
 
@@ -28,7 +32,7 @@ def fail(message: str) -> None:
 
 def require_text(path: Path, needles: list[str]) -> None:
     if not path.exists():
-        fail(f"missing file: {path.relative_to(ROOT.parent.parent.parent)}")
+        fail(f"missing file: {path.relative_to(REPO_ROOT)}")
     text = path.read_text(encoding="utf-8")
     for needle in needles:
         if needle not in text:
@@ -40,6 +44,21 @@ def load_json(path: Path):
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
         fail(f"{path.name} is not valid JSON: {exc}")
+
+
+def git_blob_sha(path: Path) -> str:
+    data = path.read_bytes()
+    header = f"blob {len(data)}\0".encode("ascii")
+    return hashlib.sha1(header + data).hexdigest()
+
+
+def verify_freeze_blob(rel_path: str, expected_sha: str) -> None:
+    path = REPO_ROOT / rel_path
+    if not path.exists():
+        fail(f"freeze references missing path: {rel_path}")
+    actual = git_blob_sha(path)
+    if actual != expected_sha:
+        fail(f"freeze blob mismatch for {rel_path}: expected {expected_sha}, got {actual}")
 
 
 def main() -> int:
@@ -100,7 +119,7 @@ def main() -> int:
             "SEMANTIC_FAIL_P0",
             "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
             "FABRICATED_FACTUAL_PROOF",
-            "IMITATION_OF_REFERENCE",
+            "REFERENCE_IMITATION_AS_SOLUTION",
             "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
             "J-06 — Pre-commit invariant control",
             "J-07 — Conflict-resolution precedence",
@@ -203,8 +222,8 @@ def main() -> int:
         fail("v0.3 must require a fresh held-out release corpus")
 
     rows_v03 = targeted_v03.get("families")
-    if not isinstance(rows_v03, list) or len(rows_v03) != 6:
-        fail("expected exactly six targeted v0.3 regression families")
+    if not isinstance(rows_v03, list) or len(rows_v03) != 10:
+        fail("expected exactly ten targeted v0.3 regression families")
     ids_v03 = {row.get("id") for row in rows_v03}
     required_v03 = {
         "R30_MOBILE_PRECOMMIT_CONTROL",
@@ -212,13 +231,27 @@ def main() -> int:
         "R32_REFERENCE_INDEPENDENCE_CONTROL",
         "R33_AUTHORITY_PRECOMMIT_CONTROL",
         "R34_WARNING_ONLY_COMPLIANCE_TRAP",
-        "R35_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION",
+        "R35_AUTHORED_MOBILE_NONREGRESSION",
+        "R36_TRUTH_PLACEHOLDER_NONREGRESSION",
+        "R37_REFERENCE_ADAPTATION_NONREGRESSION",
+        "R38_AUTHORITY_RECOMMENDATION_NONREGRESSION",
+        "R39_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION",
     }
     if ids_v03 != required_v03:
         fail(f"v0.3 targeted regression ids mismatch: {sorted(ids_v03)}")
     p0_v03 = {row.get("id") for row in rows_v03 if row.get("criticality") == "P0"}
-    if p0_v03 != required_v03 - {"R35_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION"}:
-        fail("the five v0.3 repair/control cases must remain P0 in development regression")
+    expected_p0_v03 = {
+        "R30_MOBILE_PRECOMMIT_CONTROL",
+        "R31_TRUTH_PROOF_OUTPUT_CONTROL",
+        "R32_REFERENCE_INDEPENDENCE_CONTROL",
+        "R33_AUTHORITY_PRECOMMIT_CONTROL",
+        "R34_WARNING_ONLY_COMPLIANCE_TRAP",
+    }
+    if p0_v03 != expected_p0_v03:
+        fail(f"v0.3 P0 regression set mismatch: {sorted(p0_v03)}")
+    p1_v03 = {row.get("id") for row in rows_v03 if row.get("criticality") == "P1"}
+    if p1_v03 != required_v03 - expected_p0_v03:
+        fail(f"v0.3 non-regression contrastive set mismatch: {sorted(p1_v03)}")
 
     for row in rows_v03:
         if not isinstance(row.get("prompt"), str) or not row["prompt"].strip():
@@ -230,10 +263,49 @@ def main() -> int:
         if not isinstance(no, list) or not no or not all(isinstance(x, str) and x.strip() for x in no):
             fail(f"{row.get('id')}: v0.3 must_not_observe must be non-empty")
 
+    freeze = load_json(FREEZE_V03)
+    if freeze.get("candidate_version") != "0.3.0-candidate":
+        fail("v0.3 freeze candidate_version mismatch")
+    if freeze.get("freeze_status") != "candidate-frozen-for-independent-qualification":
+        fail("v0.3 freeze status mismatch")
+    if freeze.get("current_verdict") != "NOT_QUALIFIED":
+        fail("v0.3 must remain NOT_QUALIFIED before independent release evidence")
+    base = freeze.get("base_candidate", {})
+    if base.get("semantic_run") != 33388218997 or base.get("result") != "SEMANTIC_FAIL_P0":
+        fail("v0.3 freeze must bind the exact prior terminal semantic failure")
+    if base.get("sanitized_report_artifact_id") != 9756857311:
+        fail("v0.3 freeze sanitized report artifact id mismatch")
+    if base.get("sanitized_report_artifact_digest") != "sha256:98158107d57f8b59f468cf8aae12f9927c3eb4affd87a51d09427d974fb65d3d":
+        fail("v0.3 freeze sanitized report artifact digest mismatch")
+    if base.get("sanitized_report_payload_sha256") != "9011fb75429d67a58b6cfc495a4bdc498d382554360acdf7480e1a8cf3b975dd":
+        fail("v0.3 freeze sanitized report payload hash mismatch")
+
+    frozen_entries = freeze.get("components", []) + freeze.get("development_fixtures", [])
+    if not frozen_entries:
+        fail("v0.3 freeze has no frozen entries")
+    frozen_paths = {row.get("path") for row in frozen_entries}
+    required_frozen_paths = {
+        "architect/evaluation/visual-design-art-direction/candidate/SKILL.md",
+        "architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md",
+        "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md",
+        "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md",
+        "architect/evaluation/visual-design-art-direction/fixtures-v0.1.json",
+        "architect/evaluation/visual-design-art-direction/fixtures-v0.2-targeted-regression.json",
+        "architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json",
+    }
+    if frozen_paths != required_frozen_paths:
+        fail(f"v0.3 freeze path set mismatch: {sorted(frozen_paths)}")
+    for row in frozen_entries:
+        rel = row.get("path")
+        sha = row.get("git_blob_sha")
+        if not isinstance(rel, str) or not isinstance(sha, str):
+            fail("v0.3 freeze entry missing path or git_blob_sha")
+        verify_freeze_blob(rel, sha)
+
     print(
         "VISUAL_DESIGN_STATIC_PREFLIGHT_PASS "
         f"families={len(families)} p0={len(p0)} targeted_v02={len(rows_v02)} targeted_v03={len(rows_v03)} "
-        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true candidate_version=0.3.0-candidate"
+        "provider_calls=0 creative_quality_claimed=false fresh_holdout_required=true candidate_version=0.3.0-candidate freeze_verified=true"
     )
     return 0
 
