@@ -1,0 +1,103 @@
+name: Runtime Spline V7 Product Independent UI Guard
+
+on:
+  push:
+    branches:
+      - runtime/spline-v7-product-ui-guard-20260831
+
+permissions:
+  contents: read
+
+jobs:
+  ui-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SPLINE_BASE: 572cd2e663e15acf438e02cd86f5dad7b43a0674
+      SPLINE_HEAD: d25930da7c52e43070503016b6fb0e9ea9e3aed5
+      SPLINE_URL: http://127.0.0.1:3000/
+    steps:
+      - name: Checkout UI Guard runtime
+        uses: actions/checkout@v4
+
+      - name: Checkout exact Spline PR head
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/auto-parts-landing
+          ref: d25930da7c52e43070503016b6fb0e9ea9e3aed5
+          path: spline
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install and build exact head
+        working-directory: spline
+        run: |
+          npm install
+          npm run build
+          npx playwright install --with-deps chromium
+
+      - name: Record exact base-to-head diff
+        working-directory: spline
+        run: |
+          git fetch origin "$SPLINE_BASE"
+          {
+            echo "BASE=$SPLINE_BASE"
+            echo "HEAD=$SPLINE_HEAD"
+            echo
+            echo "CHANGED FILES"
+            git diff --name-status "$SPLINE_BASE" "$SPLINE_HEAD"
+            echo
+            echo "STAT"
+            git diff --stat "$SPLINE_BASE" "$SPLINE_HEAD"
+            echo
+            echo "PAGE LOGIC DIFF"
+            git diff --exit-code "$SPLINE_BASE" "$SPLINE_HEAD" -- app/page.tsx && echo "app/page.tsx: UNCHANGED"
+          } > ../ui-guard-diff.txt
+
+      - name: Start exact head locally
+        working-directory: spline
+        run: |
+          npm run start -- -p 3000 > /tmp/spline-ui-guard.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/spline-ui-guard.log
+          exit 1
+
+      - name: Capture exact rendered evidence
+        run: node runtime/spline_ui_guard/capture.js
+
+      - name: Run fresh independent UI Guard
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python runtime/spline_ui_guard/review.py
+
+      - name: Upload UI Guard evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: spline-v7-product-independent-ui-guard
+          path: |
+            ui-guard-390-full.png
+            ui-guard-390-hero.png
+            ui-guard-390-process.png
+            ui-guard-390-request.png
+            ui-guard-390-layout.json
+            ui-guard-768-full.png
+            ui-guard-768-hero.png
+            ui-guard-768-process.png
+            ui-guard-768-request.png
+            ui-guard-768-layout.json
+            ui-guard-1440-full.png
+            ui-guard-1440-hero.png
+            ui-guard-1440-process.png
+            ui-guard-1440-request.png
+            ui-guard-1440-layout.json
+            ui-guard-diff.txt
+            ui-guard-output.md
+            ui-guard-metadata.json
+          retention-days: 7
