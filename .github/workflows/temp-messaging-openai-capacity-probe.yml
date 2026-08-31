@@ -1,0 +1,31 @@
+name: TEMP messaging OpenAI capacity probe
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  probe:
+    if: ${{ github.event.issue.number == 93 && github.event.comment.body == 'CHECK_OPENAI_CAPACITY_V0_1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MESSAGING_MODEL: gpt-5.6-terra
+      MESSAGING_MODEL_TIMEOUT_SECONDS: '120'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Frozen runtime one-call availability probe
+        run: |
+          set -euo pipefail
+          test -n "$OPENAI_API_KEY" || { echo 'CREDENTIAL_MISSING: OPENAI_API_KEY' >&2; exit 23; }
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/executor_v0_1_responses.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/canary_v0_1.py
+          python architect/evaluation/conversion_messaging_web_copy/canary_v0_1.py
