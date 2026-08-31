@@ -63,12 +63,14 @@ def main() -> int:
     agents = Path("spline/AGENTS.md").read_text()
     design = Path("spline/DESIGN.md").read_text()
     taste = Path("spline/.agents/skills/visual-taste-agent/SKILL.md").read_text()
+    scorecard = Path("spline/docs/visual-quality-scorecard.md").read_text()
 
     system = (
         "You are a fresh, isolated execution of the frozen Visual Design / Art Direction professional core v0.2. "
-        "Act as the Spline Visual Taste specialist for a narrow post-render review. Use direct rendered evidence as primary truth. "
-        "Do not inherit any previous assistant verdict or score. Do not redesign for novelty. Decide independently whether the current production render should be kept or narrowly refined. "
-        "Respect function, mobile viability, truth, authority boundaries, and project visual contracts.\n\n"
+        "Act as the Spline Visual Taste specialist. Direct rendered evidence is primary truth. "
+        "Do not inherit any previous assistant conclusion, score, or proposed solution. Treat every proposed improvement as a hypothesis. "
+        "This is a narrow professional refinement decision after V7, not permission to redesign for novelty or imitate competitors. "
+        "Respect function, mobile viability, truth, authority boundaries, accessibility, and all project contracts.\n\n"
         "--- FROZEN PROFESSIONAL CORE ---\n" + skill
         + "\n\n--- PROFESSIONAL MODEL BASE ---\n" + base
         + "\n\n--- P0 REPAIR MODEL ---\n" + repair
@@ -76,16 +78,26 @@ def main() -> int:
 
     spline_commit = os.environ["SPLINE_COMMIT"]
     spline_url = os.environ["SPLINE_URL"]
-    prompt = f"""Review the exact current production render of Spline at commit {spline_commit}.
+    prompt = f"""Review the exact Spline render built from commit {spline_commit}, together with four current user-supplied competitor/reference pages captured directly in Chromium.
 
-The user is specifically asking whether the mobile design still needs work after V7 refinement. This is a NARROW REFINE decision, not permission for another reset.
+USER QUESTION / DECISION TO MAKE
+The user wants to continue improving the current V7 landing. Two possible gaps have been proposed, but they are hypotheses and MUST NOT be assumed true:
+H1: the hero's exploded mechanical object may be too abstract and may need a more unmistakably automotive-part-specific identity.
+H2: the request/form surface may visually fall below the art-direction level of the hero and may need stronger continuity.
 
-The supplied images are, in order:
-1. current 390px full-page production render;
-2. current 390px process-section crop;
-3. current 1440px full-page production render.
+Decide independently whether H1 and/or H2 are supported by the rendered evidence. If either is unsupported, explicitly reject it. This is visual-only unless a genuine release-critical usability problem is visible. Preserve the request flow, form fields, copy, validation, analytics, endpoint, CRM contract, success/error semantics and business claims by default.
 
-Project source-of-truth context follows.
+IMAGE ORDER
+1. Spline 390px full page.
+2. Spline 390px hero crop.
+3. Spline 390px request/form section crop.
+4. Spline 1440px full page.
+5. shamsiiii19/sh at 390px — user-supplied competitor/reference.
+6. albinagas/lll at 390px — user-supplied competitor/reference.
+7. samirka11/smm at 390px — user-supplied competitor/reference.
+8. nissanr34ol/samirprobrand at 390px — user-supplied competitor/reference.
+
+The competitor pages are different categories. Compare only transferable visual mechanisms: focal strength, direct product visuality, typography, scale contrast, section rhythm, CTA integration, perceived finish, and mobile composition. Do NOT copy their niche-specific motifs, proof, claims, card systems, gradients, or imagery merely because they exist.
 
 --- SPLINE AGENTS ---
 {agents}
@@ -96,23 +108,36 @@ Project source-of-truth context follows.
 --- VISUAL TASTE PROJECT SKILL ---
 {taste}
 
-Return a concise professional review using exactly these headings:
+--- VISUAL QUALITY SCORECARD ---
+{scorecard}
+
+Return a concise implementation-ready professional review using exactly these headings:
 VERDICT: KEEP | REFINE | RESET
+REFERENCE_READ
 P0
 P1
 P2
-HERO
-PROCESS
-EVIDENCE_CHAPTER
-REQUEST_FORM
+H1_HERO_OBJECT
+H2_REQUEST_SURFACE
+MOBILE
+DESKTOP
+TRANSFERABLE_MECHANISMS
+DO_NOT_COPY
 EXACT_CHANGE_CONTRACT
+DO_NOT_TOUCH
+VISUAL_TASTE_STATUS
 
-Rules:
-- Base every finding on visible render evidence or the supplied contracts.
-- If there is no P1, write NONE.
-- If REFINE, give only the minimum exact changes needed; identify elements that must not be touched.
-- Do not write CSS or implementation code.
-- Do not invent benchmark observations, business facts, or unsupported claims.
+Requirements:
+- Base every finding on visible rendered evidence or supplied contracts.
+- Do not reward novelty by itself and do not inflate scores to validate prior work.
+- RESET requires compelling evidence that narrow refinement cannot solve the observed problem.
+- If REFINE, prescribe the smallest coherent change set. Be exact about geometry, visual metaphor/object identity, framing, material treatment, section transition, form treatment, hierarchy and responsive behavior as applicable.
+- If an automotive-specific hero object is warranted, specify what visual identity/category it should read as and why; do not invent a real product, supplier, fitment, price or availability claim.
+- If request-surface continuity is warranted, specify visual changes without turning the form into CRM/dashboard UI or reducing field clarity/tapability.
+- Identify elements that must remain untouched.
+- Do not write CSS, JSX or implementation code.
+- Do not invent benchmark observations or business facts.
+- End VISUAL_TASTE_STATUS with exactly one of: VISUAL TASTE: READY FOR FRONTEND | VISUAL TASTE: RESEARCH / DIRECTION INSUFFICIENT | RENDER BLOCKED.
 """
 
     body = {
@@ -120,9 +145,14 @@ Rules:
         "system_instruction": system,
         "input": [
             {"type": "text", "text": prompt},
-            image_part("mobile-full.png"),
-            image_part("mobile-process.png"),
-            image_part("desktop-full.png"),
+            image_part("spline-mobile-full.png"),
+            image_part("spline-mobile-hero.png"),
+            image_part("spline-mobile-form.png"),
+            image_part("spline-desktop-full.png"),
+            image_part("competitor-sh-mobile.png"),
+            image_part("competitor-lll-mobile.png"),
+            image_part("competitor-smm-mobile.png"),
+            image_part("competitor-samirprobrand-mobile.png"),
         ],
         "store": False,
         "generation_config": {"thinking_level": "medium"},
@@ -149,13 +179,19 @@ Rules:
     Path("visual-taste-metadata.json").write_text(
         json.dumps(
             {
-                "runtime": "fresh-provider-backed-multimodal",
+                "runtime": "fresh-provider-backed-multimodal-with-rendered-references",
                 "provider": "gemini-interactions-api",
                 "model": MODEL,
                 "candidate_commit": CANDIDATE_COMMIT,
                 "candidate_skill_blob": blob,
                 "spline_commit": spline_commit,
-                "production_url": spline_url,
+                "spline_render_url": spline_url,
+                "rendered_references": [
+                    "https://shamsiiii19.github.io/sh/",
+                    "https://albinagas.github.io/lll/",
+                    "https://samirka11.github.io/smm/",
+                    "https://nissanr34ol.github.io/samirprobrand/",
+                ],
                 "interaction_id": raw.get("id"),
             },
             indent=2,
