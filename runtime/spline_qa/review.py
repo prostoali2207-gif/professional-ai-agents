@@ -44,6 +44,7 @@ def main() -> int:
     qa_skill = Path("spline/.agents/skills/qa-agent/SKILL.md").read_text()
     agents = Path("spline/AGENTS.md").read_text()
     design = Path("spline/DESIGN.md").read_text()
+    contract = Path("spline/docs/v7-product-specific-refinement.md").read_text()
     diff = Path("qa-diff.txt").read_text()
     e2e = Path("qa-e2e.log").read_text()
     smoke = Path("qa-real-crm-smoke.json").read_text()
@@ -56,23 +57,27 @@ def main() -> int:
         "--- QA AGENT SKILL ---\n" + qa_skill
     )
 
-    prompt = f"""Perform the independent pre-merge release gate for Spline PR #25.
+    prompt = f"""Perform the independent pre-merge release gate for Spline PR #26.
 
 Exact scope:
 - base: {os.environ['SPLINE_BASE']}
 - head: {os.environ['SPLINE_HEAD']}
-- change intent: repair the 360/390 mobile process number/copy collision only.
+- change intent: visual-only V7 refinement to make the CSS-authored hero assembly read as automotive/mechanical and to carry V7 visual continuity into the request/form surface.
+- app/page.tsx and request behavior are required to remain unchanged.
 
 Important evidence boundary:
-- A fresh independent UI Guard runtime has already returned PASS on exact head at 390/768/1440, with P0 none, P1 none, and explicit confirmation that 01/02/03 no longer overlap copy. Treat that as an upstream visual-gate result, not as proof of functional QA.
+- A fresh independent UI Guard runtime on exact head has already returned PASS at 390/768/1440, with FUNCTION/MOBILE/AUTHORITY/TRUTH all PASS, P0 none and P1 none. Treat that only as the upstream visual-gate result, not as proof of functional QA.
 - This QA run itself built and tested exact head, then made one clearly identified REAL browser submission from the exact locally served head to the existing production create-landing-request endpoint. The raw observable result is supplied below.
-- Decide independently whether that evidence is sufficient for PASS under the narrow changed scope. If any required verification is missing, return BLOCKED rather than assuming.
+- Decide independently whether that evidence is sufficient for PASS under the actual changed scope. If any required verification is missing, return BLOCKED rather than assuming.
 
 --- PROJECT AGENTS ---
 {agents}
 
 --- DESIGN CONTRACT ---
 {design}
+
+--- V7 PRODUCT-SPECIFIC IMPLEMENTATION CONTRACT ---
+{contract}
 
 --- EXACT BASE..HEAD DIFF EVIDENCE ---
 {diff}
@@ -106,10 +111,12 @@ List residual risks accurately; do not inflate unrelated unchanged scope into a 
 State exactly what, if anything, must run after merge in production.
 
 Rules:
+- Verify from diff evidence that request logic/source did not change before relying on regression coverage.
 - Do not claim photo upload security is proven beyond the executed client-side tests.
 - Distinguish mocked E2E success paths from the one real CRM-backed browser smoke.
 - If the real smoke shows an accepted numbered request, CRM acceptance for that exact head is verified at the browser-to-endpoint boundary.
 - Do not infer internal CRM field mapping beyond what the observable smoke proves unless explicit evidence is present.
+- Do not substitute the UI Guard PASS for functional, validation, or CRM evidence.
 """
 
     body = {
