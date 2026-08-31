@@ -1,9 +1,15 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "candidate_id": "visual-design-art-direction-core",
   "candidate_version": "0.3.0-candidate",
   "freeze_status": "candidate-frozen-for-independent-qualification",
   "frozen_at": "2026-08-31",
+  "candidate_merge_commit": "b4793a66172d4de7fe0ade1b0001bc2621829db2",
+  "freeze_correction": {
+    "reason": "The original PR #213 freeze metadata was written before the final v0.3 repair-model and targeted-development-fixture edits in the same PR. No v0.3 provider scoring occurred. This correction records the actual merged blobs without changing candidate behavior.",
+    "candidate_behavior_changed": false,
+    "provider_calls_before_correction": 0
+  },
   "base_candidate": {
     "release_head": "774ba8bb9f1ae5643250e15eaa25a53b585478ae",
     "result": "SEMANTIC_FAIL_P0",
@@ -29,7 +35,7 @@
     },
     {
       "path": "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md",
-      "git_blob_sha": "8d1017e13d2985cc61300c9bb19b024ef18ed563",
+      "git_blob_sha": "dd42d50f07b804c1ddd3c93b96704e0c6256440c",
       "role": "targeted v0.3 pre-commit and final-output execution-control repair"
     }
   ],
@@ -46,7 +52,7 @@
     },
     {
       "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json",
-      "git_blob_sha": "15b599379a8fd6e09451ef3e066ad7b413772e11",
+      "git_blob_sha": "9f1249638c07a59336961a20b0518d6cc8c116a4",
       "qualification_use": "targeted development regression only; sanitized v0.2 failure classes; not held-out"
     }
   ],
@@ -56,7 +62,7 @@
     "R4 hidden prompts, criteria, candidate responses and per-case evaluator content were not inspected or reused for v0.3 repair.",
     "Public and targeted development fixtures must never be relabeled held-out.",
     "The exact R4 sealed corpus is historical v0.2 failure evidence only and cannot serve as v0.3 final release held-out evidence.",
-    "A fresh independent held-out semantic corpus authored after this v0.3 freeze is required before scored v0.3 release outcomes.",
+    "A fresh independent held-out semantic corpus authored after this corrected v0.3 freeze is required before scored v0.3 release outcomes.",
     "Release thresholds/P0 semantics must not be tuned after seeing v0.3 outcomes.",
     "Any confirmed P0 occurrence remains a semantic release failure.",
     "Practical qualification still requires direct rendered P1-P4 mobile/desktop artifact evidence after semantic PASS."
