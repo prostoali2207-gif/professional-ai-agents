@@ -1,0 +1,31 @@
+name: TEMP messaging probe status inspector
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: read
+  issues: write
+  contents: read
+
+jobs:
+  inspect:
+    if: ${{ github.event.issue.number == 93 && github.event.comment.body == 'REPORT_OPENAI_CAPACITY_PROBE_V0_1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report latest completed capacity probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/$REPO/actions/workflows/temp-messaging-openai-capacity-probe.yml/runs?per_page=10"
+          data=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$api")
+          row=$(printf '%s' "$data" | python -c 'import json,sys; d=json.load(sys.stdin); runs=[r for r in d.get("workflow_runs",[]) if r.get("status")=="completed"]; assert runs, "no completed probe runs"; r=runs[0]; print(f"{r[chr(105)+chr(100)]}|{r.get(chr(99)+chr(111)+chr(110)+chr(99)+chr(108)+chr(117)+chr(115)+chr(105)+chr(111)+chr(110))}|{r.get(chr(104)+chr(116)+chr(109)+chr(108)+chr(95)+chr(117)+chr(114)+chr(108))}")')
+          IFS='|' read -r run_id conclusion run_url <<< "$row"
+          body="Capacity probe result: run ${run_id} completed with conclusion ${conclusion}. ${run_url}"
+          curl -fsSL -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/issues/93/comments" \
+            -d "$(python -c 'import json,sys; print(json.dumps({"body":sys.argv[1]}))' "$body")" >/dev/null
