@@ -85,7 +85,7 @@
   },
   "pre_run_budget_gate": {
     "migration_issue_model_calls": 0,
-    "next_uns cored_gate_max_calls": 4,
+    "next_unscored_gate_max_calls": 4,
     "next_unscored_gate_breakdown": "2 initial public judge calibration calls + at most 1 shared TRANSIENT_TRANSPORT retry + 1 exact candidate canary",
     "scored_calls_authorized_here": 0,
     "release_reserve": "preserve capacity for 24 candidate fixture calls plus 2 isolated hidden judge batches after explicit authorization",
