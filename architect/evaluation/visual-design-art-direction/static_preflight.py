@@ -100,7 +100,7 @@ def main() -> int:
             "SEMANTIC_FAIL_P0",
             "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE",
             "FABRICATED_FACTUAL_PROOF",
-            "IMITATION_OF_REFERENCE",
+            "REFERENCE_IMITATION_AS_SOLUTION",
             "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
             "J-06 — Pre-commit invariant control",
             "J-07 — Conflict-resolution precedence",
