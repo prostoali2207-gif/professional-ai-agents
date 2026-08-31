@@ -1,9 +1,9 @@
-name: Runtime Spline V7 Independent QA Agent
+name: Runtime Spline V7 Product Independent QA Agent
 
 on:
   push:
     branches:
-      - runtime/spline-v7-qa-20260831
+      - runtime/spline-v7-product-qa-20260831
 
 permissions:
   contents: read
@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      SPLINE_BASE: ef792c9f38dbdcab3888bf15caa71e31bb8027d8
-      SPLINE_HEAD: 77a994f8ea64271afab0532b065dc12922be686f
+      SPLINE_BASE: 572cd2e663e15acf438e02cd86f5dad7b43a0674
+      SPLINE_HEAD: d25930da7c52e43070503016b6fb0e9ea9e3aed5
     steps:
       - name: Checkout QA runtime
         uses: actions/checkout@v4
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: prostoali2207-gif/auto-parts-landing
-          ref: 77a994f8ea64271afab0532b065dc12922be686f
+          ref: d25930da7c52e43070503016b6fb0e9ea9e3aed5
           path: spline
           fetch-depth: 0
 
@@ -85,12 +85,12 @@ jobs:
           (async () => {
             const browser = await chromium.launch({ headless: true });
             const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-            const url = 'http://127.0.0.1:3000/?utm_source=qa-agent&utm_medium=release-gate&utm_campaign=v7_process_collision';
+            const url = 'http://127.0.0.1:3000/?utm_source=qa-agent&utm_medium=release-gate&utm_campaign=v7_product_surface';
             await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await page.locator('input[name="vin"]').fill('SMOKETESTVIN000001');
-            await page.locator('input[name="partName"]').fill('QA TEST V7 PROCESS - DO NOT PROCESS');
-            await page.locator('input[name="contact"]').fill('qa-agent-v7-process');
-            await page.locator('input[name="clientName"]').fill('QA Agent V7 Process');
+            await page.locator('input[name="partName"]').fill('QA TEST V7 PRODUCT SURFACE - DO NOT PROCESS');
+            await page.locator('input[name="contact"]').fill('qa-agent-v7-product-surface');
+            await page.locator('input[name="clientName"]').fill('QA Agent V7 Product Surface');
             await page.getByRole('button', { name: 'Отправить заявку' }).click();
             const status = page.locator('[role="status"]');
             await status.waitFor({ state: 'visible', timeout: 20000 });
@@ -106,9 +106,9 @@ jobs:
               status_text: statusText,
               test_identity: {
                 vin: 'SMOKETESTVIN000001',
-                part_name: 'QA TEST V7 PROCESS - DO NOT PROCESS',
-                contact: 'qa-agent-v7-process',
-                client_name: 'QA Agent V7 Process'
+                part_name: 'QA TEST V7 PRODUCT SURFACE - DO NOT PROCESS',
+                contact: 'qa-agent-v7-product-surface',
+                client_name: 'QA Agent V7 Product Surface'
               }
             }, null, 2));
             console.log(statusText);
@@ -124,7 +124,7 @@ jobs:
       - name: Upload QA evidence
         uses: actions/upload-artifact@v4
         with:
-          name: spline-v7-independent-qa-agent
+          name: spline-v7-product-independent-qa-agent
           path: |
             qa-diff.txt
             qa-e2e.log
