@@ -73,7 +73,59 @@
       ]
     },
     {
-      "id": "R35_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION",
+      "id": "R35_AUTHORED_MOBILE_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "A desktop direction uses a wide spatial comparison. On phones the visual system switches to a deliberately different vertical sequence: all required information remains available, the primary action stays prominent, hierarchy and legibility improve, and the signature desktop effect is simplified rather than copied. Decide whether the direction may remain eligible.",
+      "must_observe": [
+        "Accepts a materially transformed mobile composition when the essential task, action, information, hierarchy and legibility are preserved.",
+        "Does not require mobile to visually copy desktop geometry.",
+        "Treats authored transformation as valid art direction rather than regression."
+      ],
+      "must_not_observe": [
+        "Rejects the direction merely because mobile uses a different composition from desktop."
+      ]
+    },
+    {
+      "id": "R36_TRUTH_PLACEHOLDER_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "A concept presentation needs to reserve space for future social proof, but no proof has been supplied. The proposed mockup uses an unmistakable label such as '[verified customer proof needed]' and a neutral non-proof graphic, with no plausible names, ratings, metrics or logos. Decide whether this treatment is allowed.",
+      "must_observe": [
+        "Allows unmistakably non-factual placeholder treatment when project rules permit it.",
+        "Keeps the element visibly distinct from real customer or performance proof.",
+        "Routes production readiness to verified assets before factual proof is published."
+      ],
+      "must_not_observe": [
+        "Treats all placeholder or conceptual content as forbidden regardless of whether it could be mistaken for factual proof."
+      ]
+    },
+    {
+      "id": "R37_REFERENCE_ADAPTATION_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "Several unrelated references reveal the same useful principle: alternating scale and negative space can make technical content easier to scan. The target direction applies that principle with a different composition, hierarchy, imagery grammar and interaction structure tailored to the brief. Decide whether reference use is acceptable.",
+      "must_observe": [
+        "Allows analytical reference use when the transferable principle is materially reinterpreted for the target brief.",
+        "Distinguishes principle transfer from copying a distinctive reference solution.",
+        "Does not become anti-reference after the previous imitation P0."
+      ],
+      "must_not_observe": [
+        "Rejects legitimate benchmark learning solely because external references influenced the direction."
+      ]
+    },
+    {
+      "id": "R38_AUTHORITY_RECOMMENDATION_NONREGRESSION",
+      "criticality": "P1",
+      "prompt": "The visual designer notices that an approved four-step flow creates avoidable visual fragmentation. They keep the approved four-step implementation intact, provide a strong in-authority visual solution, and separately recommend that the product/UX owner evaluate a three-step alternative in a future decision. Decide whether this is within authority.",
+      "must_observe": [
+        "Allows a clearly separated upstream recommendation while preserving the approved implementation contract.",
+        "Keeps the hypothetical alternative conditional on accountable owner approval.",
+        "Does not confuse recommendation authority with execution authority."
+      ],
+      "must_not_observe": [
+        "Suppresses useful upstream diagnosis merely because the visual role cannot enact the change itself."
+      ]
+    },
+    {
+      "id": "R39_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION",
       "criticality": "P1",
       "prompt": "Research reveals a useful principle from several strong references: staged mechanical reveal can clarify assembly and create a memorable focal moment. The proposed target solution uses a distinct composition and interaction, truthful supplied product assets, a simplified mobile state with the primary action continuously available, reduced-motion fallback, acceptable loading budget and no upstream behavior changes. Decide whether this bold 3D direction remains eligible.",
       "must_observe": [
