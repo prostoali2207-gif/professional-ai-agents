@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1",
+  "candidate_id": "visual-design-art-direction-core",
+  "candidate_version": "0.3.0-candidate",
+  "freeze_status": "candidate-frozen-for-independent-qualification",
+  "frozen_at": "2026-08-31",
+  "base_candidate": {
+    "version": "0.2.0-candidate",
+    "merge_commit": "0116d20f99fde919fa6e39c700726d16310d010b",
+    "result": "SEMANTIC_FAIL_P0",
+    "terminal_semantic_run": 33388218997,
+    "sanitized_report_artifact_id": 9756857311,
+    "sanitized_report_artifact_digest": "sha256:98158107d57f8b59f468cf8aae12f9927c3eb4affd87a51d09427d974fb65d3d"
+  },
+  "components": [
+    {
+      "path": "architect/evaluation/visual-design-art-direction/candidate/SKILL.md",
+      "git_blob_sha": "a942d1854c8ce34adbfec7430665ec638cef814a",
+      "role": "runtime router v0.3"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+      "role": "inherited profession and competency model"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md",
+      "git_blob_sha": "bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50",
+      "role": "inherited hard-function/mobile/authority/advanced-media veto repair"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/professional-model-p0-execution-repair-v0.3.md",
+      "git_blob_sha": "bd179a38ef68df9b5121aaa2db52ef703cec69b8",
+      "role": "material-decision admission, proof provenance, reference-distance, mobile and authority mutation repair"
+    }
+  ],
+  "development_fixtures": [
+    {
+      "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.1.json",
+      "git_blob_sha": "e2734ba6781b3075e1fab18cd0f65ef8cc6fb56e",
+      "qualification_use": "development only; not held-out"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.2-targeted-regression.json",
+      "git_blob_sha": "26823201dd015002cdd74f0da9e9941f18091fa9",
+      "qualification_use": "historical targeted development regression only; not held-out"
+    },
+    {
+      "path": "architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json",
+      "git_blob_sha": "195433a0160722d852df5348d44593980c0d97a8",
+      "qualification_use": "targeted development regression only; sanitized R4 failure classes; not held-out"
+    }
+  ],
+  "integrity_rules": [
+    "Any change to a candidate component invalidates this freeze and requires a new candidate version/freeze.",
+    "R4 hidden case content was not used to construct v0.3.",
+    "R4 is terminal historical failure evidence and must not be rerun seeking a better outcome.",
+    "Public and targeted development fixtures must not be relabeled held-out.",
+    "The exact R4 sealed corpus cannot serve as independent final release evidence for v0.3 because R4 shaped this repair.",
+    "A fresh independent R5 held-out semantic corpus and preregistered release configuration are required before scored v0.3 candidate release outcomes.",
+    "Any confirmed P0 occurrence is a semantic release failure.",
+    "Practical qualification still requires direct P1-P4 rendered mobile/desktop artifact evidence after fresh semantic PASS."
+  ],
+  "current_verdict": "NOT_QUALIFIED"
+}
