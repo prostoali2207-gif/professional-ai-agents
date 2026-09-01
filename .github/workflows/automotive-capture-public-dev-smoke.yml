@@ -23,7 +23,6 @@ jobs:
       AUTOMOTIVE_CAPTURE_GROQ_JUDGE_MODEL: qwen/qwen3.6-27b
       AUTOMOTIVE_CAPTURE_CANDIDATE_PACE: '5'
       AUTOMOTIVE_CAPTURE_JUDGE_PACE: '22'
-      AUTOMOTIVE_CAPTURE_DEV_REPORT: ${{ runner.temp }}/automotive-capture-dev-smoke.json
 
     steps:
       - uses: actions/checkout@v4
@@ -80,6 +79,8 @@ jobs:
         run: python architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py --canary
 
       - name: Run public development smoke
+        env:
+          AUTOMOTIVE_CAPTURE_DEV_REPORT: ${{ runner.temp }}/automotive-capture-dev-smoke.json
         run: python architect/evaluation/automotive-capture-direction/run_public_dev_smoke_v0_1.py
 
       - name: Upload sanitized development evidence
