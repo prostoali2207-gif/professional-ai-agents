@@ -1,0 +1,205 @@
+{
+  "schema_version": "1.0.0",
+  "status": "FROZEN_READY",
+  "cycle_id": "automotive-capture-direction-artifact-v0.1",
+  "purpose": "Fresh multimodal practical gate for the frozen Automotive Commercial Capture Direction extension. Evaluator observations and exact keys were fixed after media acquisition/inspection and before any candidate artifact call.",
+  "candidate": {
+    "commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+    "blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+    "host_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "mutation_allowed": false
+  },
+  "evaluator": {
+    "runner_path": "architect/evaluation/automotive-capture-direction/run_artifact_gate_v0_1.py",
+    "runner_blob_sha": "343129b639a5f360a2702929c9d8c26f9d31a0b0",
+    "grading": "mechanical exact choice comparison against evaluator-owned preregistered keys",
+    "first_scored_mismatch": "REVISE and stop; no scored retry",
+    "observation_freeze_rule": "all media observations below were written before any candidate saw these artifacts"
+  },
+  "runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "candidate_calls_max": 2,
+    "scored_retries": 0,
+    "tools_allowed": false,
+    "external_research_allowed": false,
+    "media_delivery": "inline base64; image/jpeg and video/webm"
+  },
+  "media_freeze": {
+    "workflow_run_id": 33502896037,
+    "workflow_head_sha": "5d1f3686e01d73778357cee51759ccb3f3a322ec",
+    "workflow_artifact_digest": "sha256:def3e3dab54226079468e4117a009e5de73fe7043bc570cd0f125cb1af469fc6",
+    "candidate_calls_during_freeze": 0,
+    "judge_calls_during_freeze": 0
+  },
+  "cases": [
+    {
+      "id": "ARTIFACT_STILL_01",
+      "media_type": "image",
+      "mime_type": "image/jpeg",
+      "local_name": "still.jpg",
+      "sha256": "sha256:5306fa2bf5e0132f4718081c6e523b2ce363ad9b86011ff5e5358bff1bd17f97",
+      "source_page": "https://commons.wikimedia.org/wiki/File:1937_Buick_Limited.jpg",
+      "license": "CC BY 2.0; Don O'Brien",
+      "function": "Assess this supplied image as a candidate primary listing hero for selling a used vehicle. Judge only what is visible. Choose one option per question.",
+      "evaluator_visible_observations_not_candidate_prompt": [
+        "Front three-quarter vehicle view is readable.",
+        "A second vehicle occupies much of the left background and display/sign material is visible through/on the subject windshield.",
+        "Glossy black surfaces contain substantial environment reflections; some describe curvature/body form while other reflected/highlight elements add visual clutter.",
+        "The image does not establish the capture device or unseen vehicle condition."
+      ],
+      "questions": [
+        {
+          "id": "S-HERO-FIT",
+          "prompt": "For the stated primary listing hero function, what is the correct disposition?",
+          "options": [
+            {"choice": "A", "text": "Accept as a clean primary listing hero with no meaningful capture issue."},
+            {"choice": "B", "text": "Reject for primary hero use and plan a cleaner reshoot; the vehicle is visible but the frame is not clean enough for that function."},
+            {"choice": "C", "text": "Treat this single image as complete vehicle-condition proof."}
+          ]
+        },
+        {
+          "id": "S-REFLECTIONS",
+          "prompt": "How should the visible reflections be judged?",
+          "options": [
+            {"choice": "A", "text": "The vehicle surfaces are effectively reflection-free."},
+            {"choice": "B", "text": "All reflections erase the vehicle's form and therefore every reflection should be removed."},
+            {"choice": "C", "text": "The reflections are mixed: some help reveal glossy form/curvature while others are distracting; manage geometry rather than applying a universal no-reflection rule."}
+          ]
+        },
+        {
+          "id": "S-BACKGROUND",
+          "prompt": "What is the most important visible background judgment?",
+          "options": [
+            {"choice": "A", "text": "Adjacent vehicle/display elements compete with the subject, so the product is not cleanly isolated."},
+            {"choice": "B", "text": "The background is a clean isolated product backdrop."},
+            {"choice": "C", "text": "No background is visible enough to affect the shot."}
+          ]
+        },
+        {
+          "id": "S-RESHOOT",
+          "prompt": "What should be corrected first on a reshoot?",
+          "options": [
+            {"choice": "A", "text": "Increase saturation before changing capture geometry."},
+            {"choice": "B", "text": "Clean the background and adjust car/camera geometry to control reflections while preserving useful body-form highlights; then fine-tune exposure/settings."},
+            {"choice": "C", "text": "Add camera movement even though this is a still-photo hero task."}
+          ]
+        },
+        {
+          "id": "S-DEVICE",
+          "prompt": "What device-specific instruction is justified from this artifact alone?",
+          "options": [
+            {"choice": "A", "text": "Assume an iPhone Pro and require Apple Log."},
+            {"choice": "B", "text": "Infer exact shutter and lens settings from the visible pixels and mandate them."},
+            {"choice": "C", "text": "Do not invent device-specific settings; verify the current equipment packet first."}
+          ]
+        }
+      ],
+      "expected": {
+        "S-HERO-FIT": "B",
+        "S-REFLECTIONS": "C",
+        "S-BACKGROUND": "A",
+        "S-RESHOOT": "B",
+        "S-DEVICE": "C"
+      }
+    },
+    {
+      "id": "ARTIFACT_VIDEO_01",
+      "media_type": "video",
+      "mime_type": "video/webm",
+      "local_name": "motion.webm",
+      "sha256": "sha256:a9a949f5cba6968b2779391d865191a71fe7d2f358c478b83f08181c7348d7e1",
+      "source_page": "https://commons.wikimedia.org/wiki/File:The_car_jumped_up_with_joy..webm",
+      "license": "Public domain per Commons file page",
+      "function": "Assess this supplied video as candidate sales media for presenting a specific used vehicle. Judge only what the footage establishes. Choose one option per question.",
+      "evaluator_visible_observations_not_candidate_prompt": [
+        "Footage is a forward road/tunnel driving view at night/twilight; the environment moves through frame while the viewpoint is broadly fixed relative to the recording vehicle.",
+        "The vehicle being sold is not shown with exterior/interior/condition coverage sufficient for product identification or proof.",
+        "The scene has very dark regions and bright road/tunnel light sources, limiting product readability for a vehicle-sale function.",
+        "The finished footage alone does not establish that a driver handheld a phone or otherwise used an unsafe capture method.",
+        "The file is 854x332, 30 fps, 22.3 seconds; device identity remains unknown."
+      ],
+      "questions": [
+        {
+          "id": "V-PRODUCT-VISIBILITY",
+          "prompt": "Does the footage provide sufficient vehicle coverage for primary sale hero or condition proof?",
+          "options": [
+            {"choice": "A", "text": "Yes; it provides sufficient full-vehicle sale coverage."},
+            {"choice": "B", "text": "No; the vehicle product itself is insufficiently shown for primary hero or condition-proof use."},
+            {"choice": "C", "text": "Yes; it is equivalent to a complete exterior walk-around."}
+          ]
+        },
+        {
+          "id": "V-BEST-USE",
+          "prompt": "What is the most defensible current sales-content use, if any?",
+          "options": [
+            {"choice": "A", "text": "Condition proof of body panels and defects."},
+            {"choice": "B", "text": "Primary vehicle listing hero."},
+            {"choice": "C", "text": "At most atmospheric/route driving B-roll when that supports a concept; not product proof."}
+          ]
+        },
+        {
+          "id": "V-LIGHT",
+          "prompt": "What visible lighting/exposure condition matters for the stated vehicle-sale function?",
+          "options": [
+            {"choice": "A", "text": "High-contrast low-light footage with bright practical lights limits product readability."},
+            {"choice": "B", "text": "Even daylight illumination makes all vehicle details clearly readable."},
+            {"choice": "C", "text": "The body paint is visibly overexposed across a complete exterior view."}
+          ]
+        },
+        {
+          "id": "V-MOTION-VIEW",
+          "prompt": "Which description best matches the visible camera/view behavior?",
+          "options": [
+            {"choice": "A", "text": "An orbiting exterior camera continuously reveals the whole car."},
+            {"choice": "B", "text": "A broadly fixed forward-facing viewpoint with road/environment motion through the frame."},
+            {"choice": "C", "text": "A handheld stationary walk-around of the vehicle."}
+          ]
+        },
+        {
+          "id": "V-SAFETY-INFERENCE",
+          "prompt": "What safety claim is justified from the finished footage alone?",
+          "options": [
+            {"choice": "A", "text": "Assert that the driver was holding a phone while driving."},
+            {"choice": "B", "text": "Assert the exact mount/rig used even though it is not shown."},
+            {"choice": "C", "text": "Do not infer unsafe driver camera operation or an exact rig from footage that does not establish it; any future capture plan must still use a safe controlled method."}
+          ]
+        },
+        {
+          "id": "V-RESHOOT",
+          "prompt": "What is the highest-value next capture change for selling the vehicle?",
+          "options": [
+            {"choice": "A", "text": "Capture the vehicle itself from controlled external/static or safely rigged product-revealing views, chosen for the required hero/proof function."},
+            {"choice": "B", "text": "Add more tunnel footage without changing product visibility."},
+            {"choice": "C", "text": "Digitally zoom farther into the road ahead."}
+          ]
+        },
+        {
+          "id": "V-DEVICE",
+          "prompt": "What device-specific setting can be mandated from this video alone?",
+          "options": [
+            {"choice": "A", "text": "Require Apple ProRes because the footage must have come from an iPhone Pro."},
+            {"choice": "B", "text": "None beyond visible file properties; verify the actual equipment packet before prescribing device-specific capture modes."},
+            {"choice": "C", "text": "Assume the camera supports every modern Log/HDR mode."}
+          ]
+        }
+      ],
+      "expected": {
+        "V-PRODUCT-VISIBILITY": "B",
+        "V-BEST-USE": "C",
+        "V-LIGHT": "A",
+        "V-MOTION-VIEW": "B",
+        "V-SAFETY-INFERENCE": "C",
+        "V-RESHOOT": "A",
+        "V-DEVICE": "B"
+      }
+    }
+  ],
+  "thresholds": {
+    "artifact_decisions": "12/12 PASS",
+    "critical_failures_allowed": 0,
+    "scored_retries": 0,
+    "first_mismatch": "stop and emit REVISE"
+  },
+  "claim_boundary": "This gate qualifies observation-driven still/video capture judgment on the two frozen real artifacts. It does not replace an applied human-operated AM Motors/iPhone field test for instruction executability and reshoot improvement."
+}
