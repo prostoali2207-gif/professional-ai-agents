@@ -1,0 +1,63 @@
+name: Visual Design Art Direction v0.3 R6 heldout static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/heldout-v0.3-r6-pair-contract-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py'
+      - '.github/workflows/visual-design-art-direction-heldout-r6-v03-static.yml'
+      - '.github/workflows/visual-design-art-direction-heldout-r6-v03-author.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Validate preregistered R6 evaluator contract without credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py
+          python architect/evaluation/visual-design-art-direction/static_preflight.py
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py').read_text()
+          pre=Path('architect/evaluation/visual-design-art-direction/heldout-v0.3-r6-pair-contract-preregistration.md').read_text()
+          freeze=json.load(open('architect/evaluation/visual-design-art-direction/candidate-freeze-v0.3.json'))
+          assert "CYCLE = 'visual-design-art-direction-0.3.0-independent-2026-09-01-r6-semantic'" in p
+          assert "CANDIDATE_COMMIT = 'b4793a66172d4de7fe0ade1b0001bc2621829db2'" in p
+          assert "FREEZE_INTEGRITY_COMMIT = '347491bbedeaee6fbda038db9639f16040a41301'" in p
+          assert "FREEZE_BLOB = '84db2da24f784591c7cc1feb5f1f9a9c22220e40'" in p
+          assert "MAX_ATTEMPTS_PER_FAMILY = 3" in p
+          assert 'PAIR_CONTRACT_SCHEMA' in p and 'PAIRED_AUTHOR_SCHEMA' in p and 'UNPAIRED_AUTHOR_SCHEMA' in p
+          assert 'controlled_material_fact' in p and 'held_constant_facts' in p
+          assert 'audit_paired_family' in p
+          assert "'mime_type': 'application/json'" in p
+          assert "candidate_calls': 0" in p
+          assert "historical_r3_reused': False" in p and "historical_r4_reused': False" in p and "historical_r5_reused': False" in p
+          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          assert 'author_sealed_heldout_r5_v03' not in p
+          assert 'Status: **PRE-SCORE / preregistered before R6 implementation or provider calls**' in pre
+          assert 'R5 run `33420302302` ended `NOT_EXECUTABLE_HELDOUT_AUTHORING_GATE_R5`' in pre
+          assert 'No accepted-but-unsealed R5 family pair may be carried forward.' in pre
+          assert 'This interface repair applies uniformly to all five paired families' in pre
+          assert 'Maximum attempts: **3 per family**' in pre
+          assert 'candidate scoring remains forbidden until true `CALIBRATION_PASS` on exact R6.' in pre
+          assert 'No final `QUALIFIED` claim without rendered P1–P4 PASS.' in pre
+          assert freeze['candidate_version']=='0.3.0-candidate'
+          assert freeze['candidate_merge_commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          expected={
+            'architect/evaluation/visual-design-art-direction/candidate/SKILL.md':'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md':'dd42d50f07b804c1ddd3c93b96704e0c6256440c',
+            'architect/evaluation/visual-design-art-direction/candidate-freeze-v0.3.json':'84db2da24f784591c7cc1feb5f1f9a9c22220e40',
+          }
+          for path, blob in expected.items():
+            actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+            assert actual==blob,(path,actual,blob)
+          print('VISUAL_V03_R6_HELDOUT_STATIC_PASS provider_calls=0 candidate_calls=0 pair_contract=true')
+          PY
