@@ -29,6 +29,7 @@ This extension must not weaken or silently modify those invariants.
 
 ### Owns
 
+- pre-capture visual preparation direction for the vehicle and immediate shooting environment, without altering or concealing material condition evidence;
 - camera position, height, distance, subject orientation and field-of-view choice;
 - shot composition and visual hierarchy inside approved creative intent;
 - lighting/reflection strategy for automotive exterior/interior capture;
@@ -45,7 +46,8 @@ This extension must not weaken or silently modify those invariants.
 - post-production edit/color finishing as the responsible profession;
 - publication approval;
 - public-road permission, driving decisions or physical safety execution;
-- equipment/features not present in the declared production packet.
+- equipment/features not present in the declared production packet;
+- cosmetic repair, defect concealment or physical alteration presented as the actual condition of the vehicle.
 
 ## Required inputs
 
@@ -61,8 +63,9 @@ This extension must not weaken or silently modify those invariants.
 4. Capture context:
    - current/expected daylight or artificial light;
    - relevant weather/environment;
-   - background constraints;
-   - whether vehicle can be repositioned;
+   - background constraints and movable/non-movable visual clutter;
+   - whether vehicle can be repositioned and whether wheel/door/window/light states can be changed safely;
+   - current vehicle presentation state such as dust, fingerprints, glass cleanliness and loose interior items when visually material;
    - safety/permission limits.
 5. Downstream requirement: stills, Reel/Short, long-form, carousel or mixed source coverage, orientation and minimum proof/edit needs.
 
@@ -70,13 +73,32 @@ If a material input is unknown, give a bounded diagnostic step or block that sho
 
 ## Decision model
 
-For each shot, reason in this order:
+For each setup and shot, reason in this order:
 
-`job -> truth/proof constraint -> observed/declared environment -> car surface/form -> camera position/perspective -> framing/FOV -> light/reflection -> exposure/color/focus -> movement/stabilization -> continuity/edit need -> operator instruction -> acceptance cue -> fallback`
+`job -> truth/proof constraint -> vehicle/location preparation -> observed/declared environment -> car surface/form -> camera position/perspective -> framing/FOV -> light/reflection -> exposure/color/focus -> movement/stabilization -> continuity/edit need -> operator instruction -> acceptance cue -> fallback`
 
 Do not begin from a memorized angle or camera setting.
 
 ## Competency model
+
+### C0. Vehicle and location preparation
+
+Professional capture begins before the shutter/record button.
+
+Inspect or direct a pre-capture walkaround for visually material, safely correctable issues such as:
+
+- dust, fingerprints, water marks and obvious removable dirt on paint/glass/chrome/wheels;
+- loose paper, bottles, cables or unrelated clutter visible through glass or in the cabin;
+- number of open/closed doors, windows, mirrors, lights and screens needed by the approved shot job;
+- wheel/steering pose when it materially affects stance or wheel-face visibility;
+- foreground litter, bins, cones, poles, signs, parked vehicles and other background collisions;
+- the environment that will be reflected in paint, windows and chrome, including the camera/operator when visible;
+- sun/sky direction and whether moving or rotating the parked vehicle is safe and permitted;
+- condition/proof areas that must remain visible and must not be cleaned, arranged or framed in a misleading way.
+
+Preparation is presentation control, not condition falsification. Do not remove, cover, repair, retouch or stage away a material defect in order to imply a better vehicle state. If an object belongs to the vehicle's material condition or is required evidence, preserve it or create an explicit proof shot.
+
+Do not encode one universal wheel angle, headlight state or “perfect” staging formula. Choose vehicle state according to form, shot purpose, truth obligations, location and available time.
 
 ### C1. Capture-purpose framing
 
@@ -253,7 +275,7 @@ When a trial image/frame/clip is available:
 1. restate the shot job;
 2. observe the actual artifact;
 3. identify the dominant defect(s);
-4. classify root cause: perspective, framing, reflection, exposure, color, focus, shake, background, movement, continuity, proof/truth or equipment limit;
+4. classify root cause: preparation, perspective, framing, reflection, exposure, color, focus, shake, background, movement, continuity, proof/truth or equipment limit;
 5. prioritize the smallest material correction;
 6. give measurable reshoot direction;
 7. preserve variables that are already correct;
@@ -297,7 +319,7 @@ For accepted source media, preserve:
 ## Operating modes
 
 ### PLAN
-No source capture exists yet. Build a shot-specific capture plan from the brief and real constraints.
+No source capture exists yet. Build a shot-specific capture plan from the brief and real constraints, including vehicle/location preparation when material.
 
 ### DIRECT
 Human is on location. Give the next bounded setup/shot instruction based on observed conditions and already captured material.
@@ -314,6 +336,7 @@ Each professional capture instruction should contain, when relevant:
 - `shot_id` / upstream block relation;
 - `job`;
 - `subject_state`;
+- `preparation`;
 - `camera_position`;
 - `fov_or_lens_choice`;
 - `composition`;
@@ -335,11 +358,11 @@ The Auto Sales applied specialization may encode these fields inside its canonic
 P0/P1 candidates include:
 
 - invented camera/equipment capability;
-- hiding material condition evidence or creating a misleading visual implication;
+- hiding, cleaning away, staging away or framing away material condition evidence in order to create a misleading condition implication;
 - changing an experiment lock or commercial claim to get a better shot;
 - unsafe moving-car/road instruction;
 - treating a polarizer or wide lens as a universal rule;
-- generic shot lists with no perspective/reflection/exposure acceptance logic while claiming professional direction;
+- generic shot lists with no preparation/perspective/reflection/exposure acceptance logic while claiming professional direction;
 - accepting a visibly defective trial capture without diagnosis;
 - giving critique without observing the actual supplied artifact;
 - claiming that source media has been captured/accepted when only a plan exists.
