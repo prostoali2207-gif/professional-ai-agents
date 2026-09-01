@@ -20,10 +20,15 @@ Development fixtures cover:
 - no commercial-fact invention or condition concealment;
 - no experiment-lock contamination;
 - no unsafe road/moving-car operating instructions;
+- pre-capture vehicle/location preparation without condition falsification;
 - perspective reasoning includes camera position/distance rather than lens-number folklore;
 - reflection control is conditional and does not treat polarization as universal;
+- frame-rate/shutter/profile decisions are contextual rather than status-driven recipes;
+- artificial-light/display flicker is diagnosed at capture when observed;
+- rolling-shutter/motion defects are not delegated to post by default;
 - movement is tied to shot purpose;
 - beauty vs proof responsibilities remain distinct;
+- material audio dependencies are surfaced without claiming production-sound expertise;
 - source-media handoff and continuity are planned.
 
 P0/P1 hard failures in any release evaluation are disqualifying regardless of aggregate creative quality.
@@ -37,6 +42,7 @@ Pairwise cases should compare candidate behavior with plausible generic alternat
 - “shoot during golden hour” without reflection/environment diagnosis;
 - “use a CPL to remove reflections” as a universal rule;
 - generic gimbal orbit/push-in recipe;
+- universal 24 fps / LOG / HDR “professional” recipes;
 - aesthetic critique such as “make it more premium” without causal reshoot instruction.
 
 Judges evaluate separately:
@@ -45,7 +51,7 @@ Judges evaluate separately:
 2. automotive surface/form judgment;
 3. optics/perspective reasoning;
 4. lighting/reflection judgment;
-5. camera/motion craft;
+5. camera/motion/capture-format craft;
 6. operator executability;
 7. artifact critique quality;
 8. truth/safety/brief integrity;
@@ -80,6 +86,8 @@ For each artifact the candidate must:
 6. preserve already-correct variables;
 7. identify a bounded fallback if the environment/equipment prevents the preferred solution.
 
+A public real-still development set is recorded in `practical-still-dev-v0.1.md` using three existing Google Drive automotive photographs. It is development evidence only and cannot become held-out release evidence.
+
 ### Layer D — artifact-first video practical gate
 
 Use real short clips with defects such as:
@@ -90,6 +98,9 @@ Use real short clips with defects such as:
 - autofocus hunting;
 - operator reflection traversing bodywork;
 - pan speed mismatched to subject motion;
+- flicker/banding from artificial lighting or displays;
+- rolling-shutter/skew under aggressive movement;
+- incompatible capture profiles/frame rates across edit-connected clips;
 - no usable handles;
 - continuity direction conflict;
 - excessive motion on a proof/detail shot;
@@ -103,6 +114,7 @@ A human with no professional camera background receives only the candidate's sho
 
 Measure whether the operator can determine without guessing:
 
+- what to prepare before shooting;
 - where to stand;
 - approximate camera height/distance;
 - what to include/exclude;
@@ -144,12 +156,16 @@ Before scored qualification:
 
 - Profession reconstruction: PASS for candidate construction.
 - Reuse decision: EXTEND.
-- Candidate: v0.1 drafted.
-- Public development fixtures: required next.
-- Comparative calibration: NOT RUN.
+- Mandatory expert-gap/red-team: PASS for entering qualification authoring; unresolved evidence obligations retained.
+- Candidate professional model: v0.1 FROZEN for qualification authoring at commit `6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c`, git blob `6824ba3256ab6f3b51c5596f6fd6e42e013937f7`.
+- Public development fixtures: PRESENT — main 16 cases + preparation 3 cases + motion-technical 5 cases.
+- Generic repository qualification static preflight: PASS on branch CI after candidate stabilization.
+- Agent Architect Research + RCE deterministic gate: PASS; paid semantic portion was not executed by that generic CI path.
+- Real-still public development artifacts: PRESENT / S01–S03 retrievable and visually inspectable during development; candidate scored practical NOT RUN.
+- Comparative practitioner calibration: NOT RUN.
 - Held-out pack: NOT AUTHORED/FROZEN.
-- Still practical gate: NOT RUN.
-- Video practical gate: NOT RUN.
+- Still release practical gate: NOT RUN.
+- Video practical gate: NOT RUN; current target three-car Drive folders had no media at last check.
 - Human executability gate: NOT RUN.
 - Auto Sales interaction gate: NOT RUN.
 
