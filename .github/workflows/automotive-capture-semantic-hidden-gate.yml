@@ -21,7 +21,6 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
-      AUTOMOTIVE_CAPTURE_SEMANTIC_REPORT: ${{ runner.temp }}/automotive-capture-semantic-hidden-report.json
 
     steps:
       - uses: actions/checkout@v4
@@ -73,6 +72,8 @@ jobs:
           PY
 
       - name: Run frozen hidden semantic qualification
+        env:
+          AUTOMOTIVE_CAPTURE_SEMANTIC_REPORT: ${{ runner.temp }}/automotive-capture-semantic-hidden-report.json
         run: python architect/evaluation/automotive-capture-direction/run_semantic_hidden_gate_v0_1.py
 
       - name: Upload sanitized release evidence
