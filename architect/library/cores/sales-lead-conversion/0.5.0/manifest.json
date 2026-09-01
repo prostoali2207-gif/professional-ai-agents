@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "id": "sales-lead-conversion",
   "version": "0.5.0",
-  "lifecycle": "candidate",
+  "lifecycle": "qualified",
   "profession": {
     "canonical_name": "Sales / Lead Conversion Practitioner",
     "aliases": ["Inbound Sales Practitioner", "Lead Conversion Specialist", "Consultative Sales Practitioner"],
@@ -215,14 +215,17 @@
     ]
   },
   "limitations": [
-    "This 0.5.0 artifact is a revision candidate and has not passed public targeted regression or fresh held-out release qualification.",
-    "Run 33302424996 is failure evidence for 0.4.0 and cannot be reused as unbiased release evidence for 0.5.0.",
-    "The exact hard-fail identifier from the 0.4.0 critical stop was not preserved in public evidence and is not inferred by this repair.",
-    "The repair must pass both authorized-action and no-authority/pending-result negative controls so it cannot solve false success by blanket refusal.",
-    "It does not itself grant autonomous customer communication, public reply, moderation, booking, identity-record mutation, negotiation or payment authority."
+    "Qualification applies only to the exact 0.5.0 artifact digest and declared runtime/model contract.",
+    "Fresh held-out release evidence passed 35/36 base tasks and 41/42 trials with zero critical hard failures; the single noncritical miss was in LIFE, which still passed its frozen 2/3 family threshold.",
+    "All repeated critical families OWN, SEC, FACT, STATE, ID and OPS passed 4/4 trials under the frozen repeat rule.",
+    "Current inventory, price, mileage, condition, damage/repair history, finance, warranty, discounts, appointment availability and jurisdiction/platform rules remain live/deployment facts outside the stable core.",
+    "This qualification does not itself grant autonomous customer communication, public reply, moderation, booking, identity-record mutation, negotiation, finance approval, deposit/payment or contract authority.",
+    "UAE automotive specialization and concrete CRM/tool bindings require compatibility/regression evidence before a composed applied Sales agent is production-ready."
   ],
   "qualification_refs": [
-    "sales 0.4 fresh FULL resume run 33302424996: runner REVISE after 27 trials / 23 passes / 1 critical hard fail; validator TRUNCATED under stop-on-critical protocol",
-    "public protocol localization: NEXT/appointment-ready at deterministic trial 27"
+    "architect/library/qualifications/sales-lead-conversion/0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9/sales-lead-conversion-0-5-0-20260901.json",
+    "github-actions:33308300691 public targeted regression 13/13 PASS",
+    "github-actions:33369732014 fresh FULL runner PASS: 35/36 base tasks, 41/42 trials, 0 critical hard fails",
+    "github-actions:33476297002 zero-model exact-evidence revalidation PASS"
   ]
 }
