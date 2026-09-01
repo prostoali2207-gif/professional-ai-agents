@@ -1,0 +1,21 @@
+name: Temporary Sales 186 ready transition
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  ready:
+    if: github.event.pull_request.number == 186 && github.event.label.name == 'mark-sales-186-ready'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Mark PR 186 ready for review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr ready "$PR_URL"
