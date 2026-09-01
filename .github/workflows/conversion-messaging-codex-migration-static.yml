@@ -1,0 +1,39 @@
+name: Conversion Messaging Codex migration static gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/conversion_messaging_web_copy/qualification-codex-migration-v0.1.json'
+      - 'architect/evaluation/conversion_messaging_web_copy/codex_candidate_adapter_v0_1.py'
+      - 'architect/evaluation/conversion_messaging_web_copy/codex_judge_adapter_v0_1.py'
+      - 'architect/evaluation/conversion_messaging_web_copy/codex_migration_static_preflight.py'
+      - '.github/workflows/conversion-messaging-codex-migration-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-migration-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Assert no separately billed model credentials are present
+        run: |
+          for n in OPENAI_API_KEY ANTHROPIC_API_KEY GEMINI_API_KEY GROQ_API_KEY XAI_API_KEY; do
+            test -z "${!n:-}" || { echo "unexpected paid API credential: $n" >&2; exit 2; }
+          done
+      - name: Run zero-model migration preflight
+        run: python architect/evaluation/conversion_messaging_web_copy/codex_migration_static_preflight.py
+      - name: Compile adapters
+        run: |
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/codex_candidate_adapter_v0_1.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/codex_judge_adapter_v0_1.py
+      - name: Diff hygiene
+        run: git diff --check origin/main...HEAD

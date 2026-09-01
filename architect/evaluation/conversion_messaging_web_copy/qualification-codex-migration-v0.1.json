@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_ZERO_MODEL_ONLY",
+  "issue": 222,
+  "parent_issue": 93,
+  "migration_id": "conversion-messaging-web-copy-v0.1-codex-subscription-migration-2026-08-31",
+  "classification": "ROUTE_SUBSCRIPTION",
+  "source_cycle": "conversion-messaging-web-copy-v0.1-heldout-2026-08-23-r1",
+  "frozen_candidate": {
+    "commit": "7019f6717b1b61806f4a221a297d049a4ad3b8cb",
+    "artifact_digest": "sha256:da7662f95dcf132d9a9875849b7bb5d5d831d1d54821f0b109b543a1f299e1d2",
+    "manifest_path": "agents/conversion-messaging-web-copy/0.1.0/artifact-manifest.json",
+    "skill_path": "agents/conversion-messaging-web-copy/0.1.0/SKILL.md",
+    "mutation_allowed": false
+  },
+  "unchanged_professional_contract": {
+    "scope": "FULL",
+    "families": ["CM-EV", "CM-CL", "CM-MH", "CM-DV", "CM-OP", "CM-UX", "CM-PL", "CM-CR", "CM-EX", "CM-BD", "CM-PR", "CM-E2E"],
+    "scored_fixture_count": 24,
+    "contrastive_pair_count": 4,
+    "dimensions": ["evidence_integrity", "task_clarity", "professional_judgment", "functional_craft", "boundary_integrity"],
+    "hard_fails": ["MATERIAL_FABRICATION", "INVENTED_CUSTOMER_EVIDENCE", "HARMFUL_UX_CONTRADICTION", "UNAUTHORIZED_STRATEGY_CHANGE", "GUARANTEED_CAUSAL_LIFT"],
+    "fixture_pass_rule": "both calibrated judges pass; conservative minimum for every dimension >= 1; zero hard fail",
+    "release_threshold": {
+      "critical_hard_fails": 0,
+      "minimum_fixture_passes": 22,
+      "all_contrastive_pairs_consistent": true,
+      "family_floor": {
+        "evidence_integrity": 1.5,
+        "task_clarity": 1.5,
+        "professional_judgment": 1.5,
+        "functional_craft": 1.25,
+        "boundary_integrity": 1.5
+      }
+    }
+  },
+  "migration_diff": {
+    "changed_only": [
+      "candidate transport: openai-responses-api -> ChatGPT-authenticated Codex CLI ephemeral execution",
+      "judge transport: Gemini/OpenAI metered APIs -> two isolated ChatGPT-authenticated Codex CLI judge invocations",
+      "transport observability and technical retry classification"
+    ],
+    "explicitly_unchanged": [
+      "candidate content and identity",
+      "profession construct and family semantics",
+      "held-out fixture/references when integrity remains valid",
+      "dimensions",
+      "hard-fail taxonomy",
+      "thresholds and conservative aggregation",
+      "contrastive-pair rule",
+      "FULL release semantics",
+      "fail-closed distinction between infrastructure failure and PROFESSIONAL_REVISE"
+    ]
+  },
+  "runtime": {
+    "provider": "codex-subscription-chatgpt-auth",
+    "candidate_model": "gpt-5.6-terra",
+    "judge_models": ["gpt-5.6-sol", "gpt-5.6-terra"],
+    "candidate_tool_protocol": "none-v1",
+    "candidate_state_protocol": "stateless-ephemeral-v1",
+    "candidate_visible_fields": ["task", "context", "constraints"],
+    "paid_api_fallback": "FORBIDDEN",
+    "forbidden_api_env": ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "XAI_API_KEY"]
+  },
+  "independence": {
+    "candidate": "fresh ephemeral candidate workspace/process per fixture; frozen candidate plus only current visible task fields; no pack path, expected answer, grader reference, judge prompt, qualification key or release result",
+    "filesystem_gate": "candidate workspace must be readable while sealed-pack/grader/key roots are mechanically denied before any model call and cleanup is verified",
+    "judge": "fresh ephemeral process/workspace per judge call; judges are blind to each other and release outcome; no tools/filesystem/web/MCP",
+    "same_family_limitation": "candidate and judge-B may use the same model family; independence claim is process/context/filesystem separation, not provider-family independence",
+    "ordering": "all candidate responses are completed and persisted in evaluator-owned state before grader.json is loaded for hidden judging"
+  },
+  "calibration": {
+    "source": "public CAL cases already present in sealed_runner_template_v0_1.py",
+    "scored_heldout_forbidden": true,
+    "required_judges": 2,
+    "both_must_pass_before_hidden_grading": true,
+    "schema_rule": "calibration response schema contains results only; pair_results exists and is required only in heldout mode"
+  },
+  "retry_policy": {
+    "shared_unscored_transport_retry_budget": 1,
+    "eligible_only": "TRANSIENT_TRANSPORT",
+    "nonretryable": ["quota", "rate-limit", "authentication", "permission", "invalid schema/configuration", "unknown model", "calibration mismatch", "professional answer quality", "judge disagreement", "threshold failure", "scored outcome"],
+    "scored_professional_retry_budget": 0,
+    "all_attempts_recorded": true
+  },
+  "pre_run_budget_gate": {
+    "migration_issue_model_calls": 0,
+    "next_unscored_gate_max_calls": 4,
+    "next_unscored_gate_breakdown": "2 initial public judge calibration calls + at most 1 shared TRANSIENT_TRANSPORT retry + 1 exact candidate canary",
+    "scored_calls_authorized_here": 0,
+    "release_reserve": "preserve capacity for 24 candidate fixture calls plus 2 isolated hidden judge batches after explicit authorization",
+    "on_quota_or_nonretryable_failure": "STOP_AND_PRESERVE_EVIDENCE"
+  },
+  "gates": [
+    "deterministic migration static preflight",
+    "sealed no-model integrity preflight",
+    "candidate filesystem-denial isolation canary",
+    "two-judge public calibration",
+    "exact unscored candidate canary",
+    "explicit evaluator review and scored authorization",
+    "FULL scored qualification",
+    "sanitized release record and fail-closed verdict"
+  ],
+  "migration_issue_stop_rule": "Run zero-model deterministic/static checks only. If they pass, record MIGRATION_READY and stop before any Codex model invocation."
+}
