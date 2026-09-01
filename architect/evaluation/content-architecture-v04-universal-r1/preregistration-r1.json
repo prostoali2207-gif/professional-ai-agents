@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "status": "PREREGISTERED_PRE_FREEZE",
+  "status": "FROZEN_PRE_SCORE",
   "gate_id": "content-architecture-v0.4-universal-release-2026-09-01-r1",
   "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
   "candidate_mutation_allowed": false,
@@ -85,11 +85,25 @@
     "checkpoint_policy": "No automatic blind retry. Preserve completed evidence and diagnose runtime failure before any resume."
   },
   "freeze_evidence": {
-    "corpus_identity_sha256": null,
-    "calibration_report_sha256": null,
-    "freeze_workflow_run_id": null,
-    "freeze_artifact_id": null,
-    "status": "PENDING"
+    "corpus_identity_sha256": "70dfeee5435add3cb72c3b7b8a55e2846691c7b63fd575efec2cd4a05013d2f1",
+    "calibration_report_sha256": "6efae841d7a861bdf2fa87a2caf0b65eec185053ce39eebc1c48e68036bb44cc",
+    "calibration_status": "CALIBRATION_PASS",
+    "calibration_per_judge_expected_winner_rate": {
+      "senior_practitioner": 1.0,
+      "competency_assessor": 1.0
+    },
+    "calibration_combined_expected_winner_rate": 1.0,
+    "calibration_pair_disagreement_rate": 0.0,
+    "freeze_workflow_run_id": 33500421538,
+    "freeze_workflow_attempt": 2,
+    "freeze_artifact_id": 9797746627,
+    "freeze_artifact_digest_sha256": "28522d08cd3900a270ceb3846ab2610f67ca9703f4ff6879cf07c664fcc80dd8",
+    "pre_score_candidate_calls": 0,
+    "pre_score_judge_calls": 8,
+    "provider_api_keys_used": false,
+    "runtime_diagnostic_run_id": 33500793991,
+    "runtime_diagnostic_result": "PASS_AFTER_TRANSIENT_CODEX_NONZERO",
+    "status": "FROZEN"
   },
   "required_post_gate_checks": ["UAE_COMPOSITION", "PRACTICAL_HANDOFF"],
   "integrity_rules": [
