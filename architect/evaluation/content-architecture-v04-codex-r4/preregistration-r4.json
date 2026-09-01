@@ -24,11 +24,14 @@
     "r3_defect": "Hidden canonical response tokens were required by the grader but not published in candidate-visible tasks; deterministic invariant was also incorrectly implemented as all professional decisions passing.",
     "r4_rule": "Every response field and every permitted enum/list token required by deterministic grading is published in the task. The candidate must make the professional choice from plausible visible alternatives; hidden expectations contain only which published alternative is correct.",
     "fresh_cases_required": true,
-    "r3_case_or_record_reuse_for_scoring": false
+    "r3_case_or_record_reuse_for_scoring": false,
+    "pre_freeze_tightening": "Before any r4 freeze or scored call, F6 was tightened so locked dimensions cannot pass as extra changed dimensions, and F9 gained an explicit visible metric-threshold exclusion decision."
   },
   "hidden_corpus": {
-    "author_path": "architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4.py",
-    "author_git_blob_sha": "d13d9a80e2d0810db4dcbaafdd50c78a15343cc1",
+    "author_path": "architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4_v2.py",
+    "author_git_blob_sha": "d83aa864a0bdea178a175f1a8d160ff23e3c607e",
+    "base_author_path": "architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4.py",
+    "base_author_git_blob_sha": "d13d9a80e2d0810db4dcbaafdd50c78a15343cc1",
     "fixture_count": 30,
     "expected_scored_trials": 40,
     "identity_sha256": null,
