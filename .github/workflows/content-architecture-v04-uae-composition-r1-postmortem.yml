@@ -1,0 +1,72 @@
+name: Content Architecture UAE composition r1 postmortem
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-uae-composition-r1
+    paths:
+      - 'architect/evaluation/content-architecture-v04-uae-composition-r1/POSTMORTEM-UAE-R1-v0.1'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 15
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r1-scored-result
+          path: ${{ runner.temp }}/uae-r1-result
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: '33504286965'
+          github-token: ${{ github.token }}
+      - name: Produce sanitized construct diagnostic
+        shell: powershell
+        run: |
+          $env:RESULT_DIR = Join-Path $env:RUNNER_TEMP 'uae-r1-result'
+          $env:OUT_DIR = Join-Path $env:RUNNER_TEMP 'uae-r1-postmortem'
+          New-Item -ItemType Directory -Force -Path $env:OUT_DIR | Out-Null
+          @'
+          import base64, hashlib, hmac, json, os, pathlib
+          from cryptography.fernet import Fernet
+          gate='content-architecture-v0.4-uae-composition-2026-09-01-r1'
+          master=os.environ['QUALIFICATION_SEALED_PACK_MASTER_KEY'].encode().strip()
+          key=base64.urlsafe_b64encode(hmac.new(master,gate.encode()+b'|run-records',hashlib.sha256).digest())
+          root=pathlib.Path(os.environ['RESULT_DIR']); out=pathlib.Path(os.environ['OUT_DIR'])
+          raw=Fernet(key).decrypt((root/'sealed-run-records.bin').read_bytes())
+          rows=json.loads(raw)
+          sanitized=[]
+          for row in rows:
+              obj=json.loads(row['candidate_output'])
+              sanitized.append({
+                'id':row['id'],
+                'mechanical_failures':row['mechanical']['failures'],
+                'mechanical_hard_failures':row['mechanical']['hard_failures'],
+                'status':obj.get('status'),
+                'decision_results':[
+                  {k:x.get(k) for k in ['decision_id','disposition','public_use','basis']}
+                  for x in (obj.get('decision_results') or []) if isinstance(x,dict)
+                ],
+                'lock_results':[
+                  {k:x.get(k) for k in ['lock_id','preserved']}
+                  for x in (obj.get('lock_results') or []) if isinstance(x,dict)
+                ],
+                'judge':row['judge']
+              })
+          (out/'sanitized-postmortem.json').write_text(json.dumps(sanitized,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps([{'id':x['id'],'mechanical_failures':x['mechanical_failures']} for x in sanitized],sort_keys=True))
+          '@ | python -
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r1-postmortem
+          path: ${{ runner.temp }}/uae-r1-postmortem/
+          retention-days: 30
