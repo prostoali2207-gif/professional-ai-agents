@@ -22,7 +22,6 @@ def check(cond: bool, message: str) -> None:
         raise RuntimeError(message)
     checks += 1
 
-# Professional construct and candidate identity must be byte-for-byte equivalent as data.
 check(NEW["candidate"] == OLD["candidate"], "candidate drift")
 check(NEW["construct"] == OLD["construct"], "construct/threshold drift")
 check(NEW["authoring"] == OLD["authoring"], "author/reviewer drift")
@@ -41,10 +40,9 @@ check(sealing.get("secret_visible_to_author_or_reviewer") is False, "secret visi
 source = RUNNER.read_text(encoding="utf-8")
 for bad in ("urllib.request", "api.openai.com", "generativelanguage.googleapis.com", "api.groq.com", "api.anthropic.com"):
     check(bad not in source, f"metered API transport present: {bad}")
-for required in ("MESSAGING_ISSUE225_SEALED_PACK_KEY", "key_bytes(p)", "base.cli_facts()", "base.invoke", "Fernet(key).encrypt", '"key_env": key_env'):
+for required in ("key_bytes(p)", "base.cli_facts()", "base.invoke", "Fernet(key).encrypt", '"key_env": key_env', 'p["sealing"]["key_env"]'):
     check(required in source, f"missing direct-key transport invariant: {required}")
 
-# Verify the inherited child-environment sanitizer strips the new secret before author/reviewer Codex calls.
 spec = importlib.util.spec_from_file_location("issue225_base", BASE)
 if spec is None or spec.loader is None:
     raise RuntimeError("cannot import issue225 base")
@@ -55,7 +53,6 @@ child = base.clean_env()
 check(sealing["key_env"] not in child, "direct pack key leaks into child Codex environment")
 os.environ.pop(sealing["key_env"], None)
 
-# Verify generic qualification-platform direct-key resolver remains compatible with the frozen key_env shape.
 sys.path.insert(0, str(ROOT / "architect/evaluation/qualification-platform"))
 from sealed_pack_keys import resolve_effective_key
 valid_key = b"MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
