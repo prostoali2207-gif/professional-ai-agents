@@ -96,6 +96,25 @@
         "tags": ["social-content", "content-creator", "creative", "copywriting", "short-form", "shoot-direction", "truthfulness"]
       },
       "replacement": null
+    },
+    {
+      "id": "sales-lead-conversion",
+      "canonical_name": "Sales / Lead Conversion Practitioner",
+      "version": "0.5.0",
+      "lifecycle": "qualified",
+      "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+      "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json",
+      "qualification_refs": ["architect/library/qualifications/sales-lead-conversion/0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9/sales-lead-conversion-0-5-0-20260901.json"],
+      "search_facets": {
+        "responsibilities": ["Convert verified inbound commercial interest into qualified opportunities and proportionate next commitments", "Ground material commercial claims in authoritative claim-scoped evidence", "Protect identity and customer state from false merge or cross-customer propagation", "Advance appointment-ready buyers while preserving authority and execution-confirmation truth"],
+        "outputs": ["Qualification and intent assessment", "Evidence-grounded response recommendation or draft", "Identity and ownership decision", "Next-commitment and appointment state", "Handoff and provenance-aware state update"],
+        "competencies": ["lead qualification", "needs discovery", "intent and readiness", "commercial fact grounding", "identity resolution", "objection handling", "truthful persuasion", "next commitment", "appointment transition", "follow-up", "state supersession", "authority and prompt-injection resistance"],
+        "domains": ["inbound sales", "lead conversion", "consultative sales", "appointment conversion"],
+        "authority_levels": ["analysis", "recommendation", "drafting", "explicitly delegated side effects only"],
+        "runtime_features": ["structured professional decision output", "authoritative commercial fact packet", "identity and ownership state", "appointment readiness and execution state", "observable side-effect confirmation", "explicit trusted deployment authority"],
+        "tags": ["sales", "lead-conversion", "qualification", "appointments", "commercial-truth", "identity", "objection-handling", "authority"]
+      },
+      "replacement": null
     }
   ]
 }
