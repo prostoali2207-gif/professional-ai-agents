@@ -5,7 +5,7 @@ on:
     branches:
       - eval/content-architecture-v04-universal-release-r1
     paths:
-      - 'architect/evaluation/content-architecture-v04-universal-r1/RUNTIME-DIAG-UNIVERSAL-R1-v0.1'
+      - 'architect/evaluation/content-architecture-v04-universal-r1/RUNTIME-DIAG-UNIVERSAL-R1-v0.2'
 
 permissions:
   contents: read
@@ -25,29 +25,61 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Resolve Codex CLI
+      - name: Resolve Codex CLI exactly as qualification workflows
         shell: powershell
         run: |
           $resolved = $null
           $cmd = Get-Command codex -ErrorAction SilentlyContinue
           if ($cmd) { $resolved = $cmd.Source }
           if (-not $resolved) {
-            $roots = @((Join-Path $env:LOCALAPPDATA 'Programs'),(Join-Path $env:USERPROFILE '.vscode\extensions'),(Join-Path $env:USERPROFILE '.cursor\extensions'))
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) { if (Test-Path $candidate) { $resolved = $candidate; break } }
+          }
+          if (-not $resolved) {
+            $npm = Get-Command npm -ErrorAction SilentlyContinue
+            if ($npm) {
+              $prefix = (& npm config get prefix 2>$null | Out-String).Trim()
+              if ($prefix) {
+                foreach ($name in @('codex.cmd','codex.exe')) {
+                  $candidate = Join-Path $prefix $name
+                  if (Test-Path $candidate) { $resolved = $candidate; break }
+                }
+              }
+            }
+          }
+          if (-not $resolved) {
+            $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
+              (Join-Path $env:LOCALAPPDATA 'Programs'),
+              (Join-Path $env:USERPROFILE '.vscode\extensions'),
+              (Join-Path $env:USERPROFILE '.cursor\extensions')
+            )
             foreach ($root in $roots) {
               if (-not (Test-Path $root)) { continue }
-              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -in @('codex.exe','codex.cmd') } | Select-Object -First 1
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -in @('codex.exe','codex.cmd') } |
+                Select-Object -First 1
               if ($found) { $resolved = $found.FullName; break }
             }
           }
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          Write-Host "codex_path=$resolved"
           & $resolved --version
           & $resolved login status
       - name: Run one unscored judge diagnostic
         shell: powershell
         continue-on-error: true
         run: |
-          $work = Join-Path $env:RUNNER_TEMP 'ca-universal-r1-judge-diag'
+          $work = Join-Path $env:RUNNER_TEMP 'ca-universal-r1-judge-diag-v02'
           New-Item -ItemType Directory -Force -Path $work | Out-Null
           $env:FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE = Join-Path $work 'adapter-diagnostic.json'
           $env:DIAG_WORK = $work
@@ -68,14 +100,16 @@ jobs:
           (work/'adapter-stderr.txt').write_text(p.stderr or '',encoding='utf-8')
           (work/'exit-code.txt').write_text(str(p.returncode),encoding='utf-8')
           print('adapter_exit_code='+str(p.returncode))
-          print((p.stdout or '')[-2000:])
-          if pathlib.Path(os.environ['FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE']).exists():
-              print(pathlib.Path(os.environ['FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE']).read_text(encoding='utf-8',errors='replace')[-4000:])
+          print('adapter_stdout_tail='+(p.stdout or '')[-2000:])
+          print('adapter_stderr_tail='+(p.stderr or '')[-2000:])
+          dp=pathlib.Path(os.environ['FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE'])
+          if dp.exists():
+              print('codex_diagnostic='+dp.read_text(encoding='utf-8',errors='replace')[-8000:])
           '@ | python -
       - name: Upload runtime diagnostic
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: content-architecture-universal-r1-runtime-diagnostic
-          path: ${{ runner.temp }}/ca-universal-r1-judge-diag/
+          name: content-architecture-universal-r1-runtime-diagnostic-v02
+          path: ${{ runner.temp }}/ca-universal-r1-judge-diag-v02/
           retention-days: 7
