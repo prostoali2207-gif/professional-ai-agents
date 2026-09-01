@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "status": "PREREGISTERED_PRE_FREEZE",
+  "status": "FROZEN_PRE_SCORE",
   "gate_id": "content-architecture-v0.4-codex-targeted-2026-09-01-r4",
   "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
   "candidate_mutation_allowed": false,
@@ -34,8 +34,8 @@
     "base_author_git_blob_sha": "d13d9a80e2d0810db4dcbaafdd50c78a15343cc1",
     "fixture_count": 30,
     "expected_scored_trials": 40,
-    "identity_sha256": null,
-    "status": "PREREGISTERED_NOT_YET_FROZEN"
+    "identity_sha256": "9b5acde5fec025a58f5311cb7e8d2a4440e585c34bbd1d86b43711445bc38120",
+    "status": "FROZEN"
   },
   "grader_contract": {
     "path": "architect/evaluation/content-architecture-v04-codex-r4/grader_r4.py",
@@ -43,7 +43,7 @@
     "calibration_path": "architect/evaluation/content-architecture-v04-codex-r4/test_grader_r4.py",
     "calibration_git_blob_sha": "fcee234bcf6899302e40c57ca670df40c7a6881b",
     "mode": "visible-contract deterministic mechanics + hidden professional decision key",
-    "status": "PREREGISTERED"
+    "status": "FROZEN_EXECUTABLE_CONFIRMED"
   },
   "runner_contract": {
     "path": "architect/evaluation/content-architecture-v04-codex-r4/run_gate_r4.py",
@@ -72,6 +72,18 @@
     "maximum_scored_calls": 40,
     "blind_retries_allowed": 0,
     "stop_on_runtime_error": true
+  },
+  "freeze_evidence": {
+    "workflow_run_id": 33476800407,
+    "workflow_head_sha": "4d2e03d1b00c2e652bb3be5037226b4d6674fb30",
+    "artifact_id": 9788470797,
+    "artifact_digest_sha256": "e578f2599c346be7d74459aba6b4c7985b6fe012efbc59b1ff0701c9ed7cbe73",
+    "plain_identity_sha256": "9b5acde5fec025a58f5311cb7e8d2a4440e585c34bbd1d86b43711445bc38120",
+    "adapter_regression": "PASS",
+    "grader_calibration": "PASS",
+    "hidden_token_audit": "PASS",
+    "provider_api_keys_used": false,
+    "scored_candidate_calls": 0
   },
   "integrity_rules": [
     "Do not modify candidate, thresholds, P0 definitions, repeat policy or r4 grader/author after the first scored r4 call.",
