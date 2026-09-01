@@ -1,0 +1,55 @@
+name: Sales 0.4 r8 static pre-score gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r8-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r8_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_4_gemini_r8.py'
+      - '.github/workflows/sales-0-4-gemini-r8*.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Verify r8 exact-r6-schema diagnostic freeze
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r8_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_4_gemini_r8.py architect/evaluation/sales-lead-conversion/executor_v0_4_gemini_contract_v1.py
+          python - <<'PY'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          p=json.loads(Path('architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r8-gemini-groq.json').read_text())
+          assert p['cycle_id']=='sales-0.4-fresh-independent-2026-08-30-r8-gemini-groq'
+          assert p['frozen_candidate']['commit']=='d00bb8057ba0eaae24b918e13941fb61b0b8616d'
+          assert p['frozen_candidate']['artifact_digest']=='sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0'
+          assert p['prior_cycle_evidence']['r6_run_id']==33300009986 and p['prior_cycle_evidence']['r7_run_id']==33300320053 and p['prior_cycle_evidence']['candidate_calls']==0
+          assert p['construct_inheritance']['base_preregistration_blob']=='65d826075ded39ab9e465bfaf0a7bb3a254d15f9'
+          base=Path(p['construct_inheritance']['base_preregistration_path'])
+          assert subprocess.check_output(['git','hash-object',str(base)],text=True).strip()==p['construct_inheritance']['base_preregistration_blob']
+          assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3 and len(p['families'])==12
+          assert p['thresholds']['release_tasks_passed_min']==34 and p['thresholds']['per_family_tasks_passed_min']==2 and p['thresholds']['task_pass_score_min']==5 and p['thresholds']['critical_hard_fails_max']==0 and p['thresholds']['professional_failure_retry']==0
+          assert p['heldout_authoring']['native_schema_rule'].startswith('Use exactly the pinned r6 AUTHOR_SCHEMA')
+          assert len(p['heldout_authoring']['safe_structural_reason_codes'])==19
+          assert p['runtime_contract']['provider']=='gemini-interactions-api' and p['runtime_contract']['candidate_model']=='gemini-3.5-flash-lite' and p['runtime_contract']['grader_model']=='gemini-3.5-flash-lite' and p['runtime_contract']['minimum_seconds_between_requests']==6.0
+          commit=p['frozen_candidate']['commit']; manifest=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in manifest['artifact']['paths']:
+              canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==p['frozen_candidate']['artifact_digest']==manifest['artifact']['content_digest']
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_4_gemini_contract_v1.py','--qualification-contract'],text=True)); assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['provider']=='gemini-interactions-api'
+          print('SALES_V04_R8_STATIC_FREEZE_PASS')
+          PY
+      - name: Verify explicit opt-in only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          paid=Path('.github/workflows/sales-0-4-gemini-r8.yml').read_text(); optin=Path('.github/workflows/sales-0-4-gemini-r8-optin.yml').read_text()
+          assert 'workflow_dispatch:' in paid and 'workflow_call:' in paid and 'push:' not in paid and 'pull_request:' not in paid
+          assert "github.event.label.name == 'run-sales-0-4-final-qualification-r8'" in optin and 'types: [labeled]' in optin
+          print('SALES_V04_R8_EXPLICIT_OPTIN_PASS')
+          PY

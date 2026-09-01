@@ -1,0 +1,71 @@
+name: Sales 0.5 r2 static pre-score gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r2-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r2.py'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r2_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r2.py'
+      - '.github/workflows/sales-0-5-gemini-r2-static.yml'
+      - '.github/workflows/sales-0-5-gemini-r2.yml'
+      - '.github/workflows/sales-0-5-gemini-r2-optin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-30-r2-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  R2_DELTA: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r2-gemini-groq.json
+  EFFECTIVE_PREREG: /tmp/sales-v05-r2-effective-prereg.json
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile r2 evaluator remediation
+        run: python -m py_compile architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r2.py architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r2_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r2.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py
+      - name: Assemble and verify frozen effective contract
+        shell: bash
+        run: |
+          python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r2.py "$EFFECTIVE_PREREG"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          delta=json.load(open(os.environ['R2_DELTA']))
+          p=json.load(open(os.environ['EFFECTIVE_PREREG']))
+          assert delta['cycle_id']==p['cycle_id']==os.environ['CYCLE_ID']
+          assert delta['base_preregistration']['blob']=='1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c'
+          assert subprocess.check_output(['git','hash-object',delta['base_preregistration']['path']],text=True).strip()==delta['base_preregistration']['blob']
+          assert delta['r1_sanitized_evidence']['run_id']==33308744663
+          assert delta['r1_sanitized_evidence']['candidate_calls']==0
+          assert delta['r1_sanitized_evidence']['failed_group_structural_reason_codes']==['hidden_reference_json_parse']*3
+          rem=delta['authoring_remediation']
+          assert rem['semantic_mutation_allowed'] is False and rem['native_schema_change_allowed'] is False
+          assert rem['grader_change_allowed'] is False and rem['threshold_change_allowed'] is False and rem['candidate_change_allowed'] is False
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3 and p['fixture_design']['expected_candidate_runs_if_full']==42
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert len(p['fixture_design']['repeated_fixture_slots'])==6
+          commit=os.environ['CANDIDATE_COMMIT']; manifest=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in manifest['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==manifest['artifact']['content_digest']
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py','--qualification-contract'],text=True)); assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['core']=='sales-lead-conversion/0.5.0'
+          print('SALES_V05_R2_STATIC_FREEZE_PASS', actual)
+          PY
+      - name: Verify pinned inherited author/schema/diagnostic/runtime blobs
+        shell: bash
+        run: |
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r5_gemini_groq.py)" = 9274d096b590bf207ea2c72ab46d0b9677497c5f
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r6_gemini_groq.py)" = 555a4a3e3df2c2e7d94dd5165478b26f90b04a08
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r8_gemini_groq.py)" = 08e7f47b39abe0bf7b5daf03bc5e7f2c9bd1d4b4
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py)" = 9bfdd0da131e67aa264e17cfa8e4cd45b34f6d4b
+      - name: Paid workflow guard
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py

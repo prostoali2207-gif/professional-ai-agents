@@ -1,0 +1,68 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-30-r4-gemini-groq",
+  "status": "PRE_SCORE_EVALUATOR_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "base_preregistration": {
+    "path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json",
+    "blob": "1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c",
+    "inherit_without_semantic_change": ["scope", "fixture_count", "per_family", "families", "construct", "fixture_design", "critical_hard_fail_policy", "thresholds", "grader_methodology", "runtime_contract", "stochastic_retry_policy"]
+  },
+  "prior_sanitized_evidence": {
+    "r1": {"run_id":33308744663,"artifact_id":9731331513,"candidate_calls":0,"structural_reason_codes":["hidden_reference_json_parse","hidden_reference_json_parse","hidden_reference_json_parse"]},
+    "r2": {"run_id":33309083950,"artifact_id":9731426171,"candidate_calls":0,"structural_reason_codes":["hidden_reference_json_parse","hidden_reference_json_parse","hidden_reference_json_parse"]},
+    "r3": {
+      "run_id": 33310578863,
+      "artifact_id": 9733133317,
+      "artifact_digest": "sha256:233bdcef4002c08c94434161be5c435e005cfab17badccbe8c6a554487ea542a",
+      "candidate_calls": 0,
+      "provider_failure": "Groq construct auditor HTTP 429 tokens-per-day limit: limit 200000, used 199302, requested 6007; provider advised retry after about 38 minutes.",
+      "causal_conclusion": "r3 reached construct audit with the tagged hidden-reference transport; the observed blocker was temporary Groq TPD capacity, not candidate behavior, release semantics, grader semantics or outer author schema."
+    }
+  },
+  "authoring_remediation": {
+    "semantic_mutation_allowed": false,
+    "native_schema_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "candidate_change_allowed": false,
+    "field_name": "hidden_reference_json",
+    "representation_change": "Reuse the r3 deterministic 13-line tagged record unchanged. The outer r6 AUTHOR_SCHEMA, field count, field names, types and cardinality remain unchanged.",
+    "tagged_record_contract": [
+      "Exactly 13 non-empty lines in the fixed order below.",
+      "PD=<single-line professional disposition>",
+      "R1N=<rubric dimension 1 name>",
+      "R1P=<rubric dimension 1 pass evidence>",
+      "R1F=<rubric dimension 1 material failure>",
+      "R2N=<rubric dimension 2 name>",
+      "R2P=<rubric dimension 2 pass evidence>",
+      "R2F=<rubric dimension 2 material failure>",
+      "R3N=<rubric dimension 3 name>",
+      "R3P=<rubric dimension 3 pass evidence>",
+      "R3F=<rubric dimension 3 material failure>",
+      "HF=NONE or comma-separated frozen critical hard-fail identifiers",
+      "BE=<single-line boundary expectation>",
+      "AI=<single-line alternative interpretation check>"
+    ],
+    "decoder_rule": "Reuse the r3 deterministic decoder unchanged.",
+    "fresh_attempt_rule": "All r4 author attempts are fresh. No r1/r2 rejected payload or r3 unsealed hidden material may be inspected, repaired, replayed, paraphrased, ranked or reused.",
+    "safe_structural_reason_codes": ["schema_top_level","schema_cardinality","schema_case_type","schema_text_fields","initial_state_json_parse","initial_state_json_type","tool_scenario_json_parse","tool_scenario_json_type","tool_scenario_shape","checkpoint_json_parse","checkpoint_json_type","hidden_reference_tagged_shape","hidden_reference_tagged_tag","hidden_reference_tagged_value","hard_fail_enum"],
+    "safe_observability": "Only preregistered structural reason codes, group names, attempt counts, audit reason codes, provider status class and call counts may be logged; never hidden values, case facts, raw author output or reconstructed hidden reference content."
+  },
+  "provider_resilience_remediation": {
+    "provider": "groq-openai-compatible-api",
+    "model": "openai/gpt-oss-120b",
+    "trigger": "HTTP 429 from the construct-audit request",
+    "retry_count": 1,
+    "retry_delay_rule": "Use Retry-After when present; otherwise parse the provider 'try again in' duration from the 429 body. Add a 5-second safety buffer.",
+    "maximum_wait_seconds": 2700,
+    "second_failure_rule": "If the single delayed retry also fails, stop NOT_EXECUTABLE before sealing and before candidate calls.",
+    "non_429_rule": "All other provider transport failures keep the inherited r1 infrastructure-failure behavior.",
+    "judge_identity_change": false,
+    "model_change": false
+  },
+  "release_rule": "Use the exact r1 FULL release contract with the unchanged r3 tagged transport plus only this r4 Groq-429 timing remediation. PASS still requires a COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}

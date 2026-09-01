@@ -1,0 +1,72 @@
+name: Sales 0.5 r5 static pre-score split gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r5-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r5.py'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r5_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r5.py'
+      - '.github/workflows/sales-0-5-gemini-r5-static.yml'
+      - '.github/workflows/sales-0-5-gemini-r5.yml'
+      - '.github/workflows/sales-0-5-gemini-r5-optin.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-30-r5-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  R5_DELTA: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r5-gemini-groq.json
+  EFFECTIVE_PREREG: /tmp/sales-v05-r5-effective-prereg.json
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile r5 execution remediation
+        run: python -m py_compile architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r5.py architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r5_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r5.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py
+      - name: Assemble and verify frozen r5 contract
+        shell: bash
+        run: |
+          python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r5.py "$EFFECTIVE_PREREG"
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          from pathlib import Path
+          d=json.load(open(os.environ['R5_DELTA'])); p=json.load(open(os.environ['EFFECTIVE_PREREG']))
+          assert d['cycle_id']==p['cycle_id']==os.environ['CYCLE_ID']
+          assert subprocess.check_output(['git','hash-object',os.environ['R5_DELTA']],text=True).strip()=='bd130a6b080fee6bd78ad2347d6494a0efd4f175'
+          assert subprocess.check_output(['git','hash-object','architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r5.py'],text=True).strip()=='99bda7ddaad179534339ef75cc5b7439d207f0cd'
+          assert subprocess.check_output(['git','hash-object','architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r5_gemini_groq.py'],text=True).strip()=='5778d2b8a29cae32098c193bc45cd8b1f7ca5929'
+          assert subprocess.check_output(['git','hash-object','architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r5.py'],text=True).strip()=='c3fcd0608c480bc8c020909605104b6b8ca326be'
+          assert subprocess.check_output(['git','hash-object','architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r4_gemini_groq.py'],text=True).strip()=='014a4baad3aa7777e70b2a34eb49fc8d85e2aa44'
+          r4=d['prior_sanitized_evidence']['r4']; assert r4['run_id']==33315346775 and r4['scoring_pack_artifact_id']==9735496701 and r4['scoring_pack_digest']=='sha256:a2c7e8229b306cc12416d03402f05fbfa09acece49ddfe6ffa8d91ee22a52ced'
+          assert r4['full_scoring_started'] is True and r4['sanitized_report_written'] is False and r4['checkpoint_available'] is False and r4['pack_reuse_for_scoring_allowed'] is False
+          split=d['execution_split_remediation']; assert split['fresh_r5_pack_required'] is True and split['r4_pack_reuse_allowed'] is False and split['partial_r4_resume_allowed'] is False and split['author_job_timeout_minutes']==180 and split['scoring_job_timeout_minutes']==180
+          for key in ('candidate_change_allowed','grader_change_allowed','threshold_change_allowed','hard_fail_change_allowed','candidate_provider_change_allowed','candidate_model_change_allowed','professional_retry_change_allowed'): assert split[key] is False
+          assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3 and p['fixture_design']['expected_candidate_runs_if_full']==42
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert len(p['fixture_design']['repeated_fixture_slots'])==6
+          r=p['runtime_contract']; assert r['provider']=='gemini-interactions-api' and r['candidate_model']=='gemini-3.5-flash-lite' and r['grader_model']=='gemini-3.5-flash-lite' and r['minimum_seconds_between_requests']==6.0
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          commit=os.environ['CANDIDATE_COMMIT']; m=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in m['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==m['artifact']['content_digest']
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py','--qualification-contract'],text=True)); assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['core']=='sales-lead-conversion/0.5.0'
+          w=Path('.github/workflows/sales-0-5-gemini-r5.yml').read_text()
+          assert '\n  author:\n' in w and '\n  scoring:\n' in w and 'needs: author' in w
+          author, scoring = w.split('\n  scoring:\n',1)
+          assert 'Exact-runtime paced Gemini canary in scoring job' not in author and 'Run preregistered FULL paced qualification exactly once' not in author
+          assert 'Author audit and immediately seal fresh Sales 0.5 r5 corpus' not in scoring and 'GROQ_API_KEY:' not in scoring
+          assert 'Download exact r5 scoring pack produced by author job' in scoring and 'Verify same-run scoring artifact metadata before download' in scoring
+          print('SALES_V05_R5_STATIC_SPLIT_PASS',actual)
+          PY
+      - name: Paid workflow guard
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py

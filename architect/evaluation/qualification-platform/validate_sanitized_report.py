@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -30,13 +31,52 @@ def fail(message: str) -> int:
     return 2
 
 
+def _expected_trial_count(prereg: dict, expected_tasks: int) -> int:
+    fixture_design = prereg.get("fixture_design")
+    if not isinstance(fixture_design, dict):
+        return expected_tasks
+    value = fixture_design.get("expected_candidate_runs_if_full")
+    if isinstance(value, int) and value >= expected_tasks:
+        return value
+    return expected_tasks
+
+
+def _repeat_counts_by_family(prereg: dict) -> Counter[str]:
+    fixture_design = prereg.get("fixture_design")
+    if not isinstance(fixture_design, dict):
+        return Counter()
+    slots = fixture_design.get("repeated_fixture_slots")
+    if not isinstance(slots, list):
+        return Counter()
+    out: Counter[str] = Counter()
+    for slot in slots:
+        if not isinstance(slot, str) or "-" not in slot:
+            continue
+        family, _ = slot.split("-", 1)
+        if family:
+            out[family] += 1
+    return out
+
+
+def _family_tasks_attempted(aggregate: dict) -> int | None:
+    # Historical runners used `attempted`; current runners expose base-task
+    # completeness as `tasks_total` and trial completeness separately.
+    for key in ("tasks_attempted", "attempted", "tasks_total"):
+        value = aggregate.get(key)
+        if isinstance(value, int):
+            return value
+    return None
+
+
 def completeness_status(report: dict, prereg: dict) -> str:
     expected_tasks = int(prereg["fixture_count"])
     per_family = int(prereg["per_family"])
     expected_families = prereg["families"]
+    expected_trials = _expected_trial_count(prereg, expected_tasks)
+    repeat_counts = _repeat_counts_by_family(prereg)
 
-    tasks_attempted = report.get("tasks_attempted", report.get("attempted"))
-    if not isinstance(tasks_attempted, int) or tasks_attempted < expected_tasks:
+    trials_attempted = report.get("tasks_attempted", report.get("attempted"))
+    if not isinstance(trials_attempted, int) or trials_attempted < expected_trials:
         return "TRUNCATED"
 
     families = report.get("family_level_aggregate")
@@ -47,15 +87,20 @@ def completeness_status(report: dict, prereg: dict) -> str:
         aggregate = families[family]
         if not isinstance(aggregate, dict):
             return "TRUNCATED"
-        attempted = aggregate.get("tasks_attempted", aggregate.get("attempted"))
-        if not isinstance(attempted, int) or attempted < per_family:
+        task_attempted = _family_tasks_attempted(aggregate)
+        if task_attempted is None or task_attempted < per_family:
+            return "TRUNCATED"
+
+        expected_family_trials = per_family + repeat_counts.get(family, 0)
+        family_trials_attempted = aggregate.get("trials_attempted")
+        if repeat_counts.get(family, 0):
+            if not isinstance(family_trials_attempted, int) or family_trials_attempted < expected_family_trials:
+                return "TRUNCATED"
+        elif isinstance(family_trials_attempted, int) and family_trials_attempted < per_family:
             return "TRUNCATED"
 
     if str(report.get("execution_status", "")).lower() == "completed":
-        if tasks_attempted < expected_tasks or any(
-            families[family].get("tasks_attempted", families[family].get("attempted")) < per_family
-            for family in expected_families
-        ):
+        if trials_attempted < expected_trials:
             return "TRUNCATED"
     return "COMPLETE"
 

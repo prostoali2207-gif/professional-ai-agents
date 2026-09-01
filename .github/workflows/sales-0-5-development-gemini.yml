@@ -1,0 +1,83 @@
+name: Sales 0.5 development Gemini
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_provider_run:
+        description: 'Type RUN to execute the public development gate'
+        required: true
+        default: 'NO'
+  workflow_call:
+    inputs:
+      confirm_provider_run:
+        required: true
+        type: string
+    secrets:
+      GEMINI_API_KEY:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  development:
+    if: ${{ inputs.confirm_provider_run == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      SALES_MODEL: gemini-3.5-flash-lite
+      SALES_MODEL_TIMEOUT_SECONDS: '120'
+      GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+      GEMINI_PACE_FILE: /tmp/sales-0-5-dev-gemini-pace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Free preflight - compile, digest and public case contract
+        shell: bash
+        run: |
+          python -m py_compile architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py
+          python - <<'PY'
+          import ast, hashlib, json, pathlib, subprocess
+          p = pathlib.Path('architect/library/cores/sales-lead-conversion/0.5.0/manifest.json')
+          m = json.loads(p.read_text())
+          canonical = ''
+          for path in m['artifact']['paths']:
+              blob = subprocess.check_output(['git','rev-parse',f'HEAD:{path}'], text=True).strip()
+              canonical += f'{path}:{blob}\n'
+          actual = 'sha256:' + hashlib.sha256(canonical.encode()).hexdigest()
+          expected_digest = 'sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9'
+          assert actual == expected_digest
+          assert actual == m['artifact']['content_digest']
+
+          src = pathlib.Path('architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py').read_text()
+          tree = ast.parse(src)
+          cases = None
+          for node in tree.body:
+              if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'CASES' for t in node.targets):
+                  cases = ast.literal_eval(node.value)
+                  break
+          assert isinstance(cases, list) and len(cases) == 13
+          ids = [c['id'] for c in cases]
+          assert len(ids) == len(set(ids))
+          families = {}
+          for c in cases:
+              families[c['family']] = families.get(c['family'], 0) + 1
+          expected_families = {'APPT': 6, 'FACT': 1, 'ID': 1, 'OWN': 1, 'SEC': 1, 'FUP': 1, 'STATE': 1, 'OPS': 1}
+          assert families == expected_families, families
+          print('SALES_0_5_FREE_PREFLIGHT_PASS', actual, families)
+          PY
+      - name: Run public Sales 0.5 development regression
+        shell: bash
+        run: |
+          set -o pipefail
+          python architect/evaluation/sales-lead-conversion/development_regression_v0_5_gemini.py | tee sales-0.5-development-report.json
+      - name: Upload development report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-development-report
+          path: sales-0.5-development-report.json
+          retention-days: 14

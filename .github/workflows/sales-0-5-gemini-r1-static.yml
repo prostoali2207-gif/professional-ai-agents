@@ -1,0 +1,78 @@
+name: Sales 0.5 r1 static pre-score gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/library/cores/sales-lead-conversion/0.5.0/**'
+      - 'architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json'
+      - 'architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r1_gemini_groq.py'
+      - 'architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r1.py'
+      - 'architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py'
+      - 'architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py'
+      - '.github/workflows/sales-0-5-gemini-r1.yml'
+      - '.github/workflows/sales-0-5-gemini-r1-optin.yml'
+      - '.github/workflows/sales-0-5-gemini-r1-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-30-r1-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  PREREGISTRATION: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Compile frozen 0.5 evaluation runtime
+        run: python -m py_compile architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_5_r1_gemini_groq.py architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_5_gemini_r1.py architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py architect/evaluation/sales-lead-conversion/canary_v0_5_gemini.py
+      - name: Verify frozen candidate and release contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          p=json.load(open(os.environ['PREREGISTRATION']))
+          assert p['cycle_id']==os.environ['CYCLE_ID']
+          assert p['status']=='PRE_SCORE_FROZEN'
+          assert p['scope']['decision']=='FULL' and p['fixture_count']==36 and p['per_family']==3
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT']
+          assert p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['repair_evidence']['public_development_run_id']==33308300691
+          assert '13/13 PASS' in p['repair_evidence']['public_development_result']
+          assert 'No prior Sales hidden corpus' in p['repair_evidence']['independence_rule']
+          t=p['thresholds']
+          assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5
+          assert t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert p['fixture_design']['expected_candidate_runs_if_full']==42
+          assert len(p['fixture_design']['repeated_fixture_slots'])==6
+          r=p['runtime_contract']
+          assert r['provider']=='gemini-interactions-api' and r['candidate_model']=='gemini-3.5-flash-lite' and r['grader_model']=='gemini-3.5-flash-lite'
+          assert r['executor']=='sales-lead-conversion/executor_v0_5_gemini_contract_v1.py@v1-paced' and r['minimum_seconds_between_requests']==6.0
+          commit=os.environ['CANDIDATE_COMMIT']
+          manifest=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True))
+          canonical=''
+          for path in manifest['artifact']['paths']:
+              canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual==os.environ['CANDIDATE_DIGEST']==manifest['artifact']['content_digest']
+          c=json.loads(subprocess.check_output(['python','architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py','--qualification-contract'],text=True))
+          assert c['candidate_commit']==commit and c['candidate_digest']==actual and c['core']=='sales-lead-conversion/0.5.0'
+          print('SALES_V05_R1_STATIC_FREEZE_PASS', actual)
+          PY
+      - name: Verify pinned inherited infrastructure blobs
+        shell: bash
+        run: |
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r5_gemini_groq.py)" = 9274d096b590bf207ea2c72ab46d0b9677497c5f
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r6_gemini_groq.py)" = 555a4a3e3df2c2e7d94dd5165478b26f90b04a08
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/author_sealed_pack_v0_4_r8_gemini_groq.py)" = 08e7f47b39abe0bf7b5daf03bc5e7f2c9bd1d4b4
+          test "$(git hash-object architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_3_gemini_r8.py)" = 9bfdd0da131e67aa264e17cfa8e4cd45b34f6d4b
+      - name: Paid workflow guard
+        run: python architect/evaluation/qualification-platform/paid_workflow_guard.py

@@ -1,0 +1,96 @@
+{
+  "cycle_id": "sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq",
+  "status": "PRE_SCORE_AUTHOR_TRANSPORT_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df",
+    "artifact_digest": "sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.5.0/manifest.json"
+  },
+  "base_preregistration": {
+    "path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_5-r1-gemini-groq.json",
+    "blob": "1ca4bc61bdeb78364eae0d715ddd7243e9b4bd5c",
+    "inherit_without_semantic_change": [
+      "scope",
+      "fixture_count",
+      "per_family",
+      "families",
+      "construct",
+      "fixture_design",
+      "critical_hard_fail_policy",
+      "thresholds",
+      "grader_methodology",
+      "runtime_contract",
+      "stochastic_retry_policy"
+    ]
+  },
+  "prior_sanitized_evidence": {
+    "r5": {
+      "run_id": 33331641468,
+      "job_id": 99311100182,
+      "artifact_id": 9737915703,
+      "artifact_digest": "sha256:fe4ef8f29bb659b5e3cc7d4d0b8474983adec2224e92dafeb027eb601e207d17",
+      "candidate_calls": 0,
+      "author_calls": 5,
+      "audit_calls": 2,
+      "failed_group": ["FUP", "STATE", "ID", "OPS"],
+      "structural_reason_codes": ["hidden_reference_tagged_shape", "hidden_reference_tagged_shape", "tool_scenario_json_parse"],
+      "causal_conclusion": "r5 stopped inside held-out authoring before source-pack preservation, seal transport, canary or candidate scoring. Two failures were strict tagged-record shape parsing and one was tool_scenario JSON-string syntax parsing. This is evaluator transport evidence, not candidate evidence."
+    },
+    "r4": {
+      "run_id": 33315346775,
+      "full_scoring_terminal_state": "CANCELLED_BY_JOB_WALL_CLOCK",
+      "scored_candidate_calls": "UNKNOWN_NONZERO_POSSIBLE",
+      "checkpoint_available": false,
+      "pack_reuse_for_scoring_allowed": false
+    }
+  },
+  "authoring_transport_remediation": {
+    "semantic_mutation_allowed": false,
+    "native_outer_schema_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "candidate_change_allowed": false,
+    "hidden_reference_normalization": {
+      "representation": "The same thirteen required tagged semantic fields are retained, but decoder no longer requires exactly thirteen physical lines.",
+      "required_tag_order": ["PD", "R1N", "R1P", "R1F", "R2N", "R2P", "R2F", "R3N", "R3P", "R3F", "HF", "BE", "AI"],
+      "parser_rule": "Find each required TAG= marker exactly once and in frozen order, independent of whitespace/newline/semicolon separators. Extract each non-empty value up to the next required marker. Do not infer, fill, rewrite or reorder missing semantic values.",
+      "hard_fail_rule": "HF remains NONE or a comma-separated list containing only frozen critical hard-fail identifiers."
+    },
+    "json_string_normalization": {
+      "fields": ["initial_state_json", "tool_scenario_json", "checkpoint_json"],
+      "parser_rule": "First parse strict JSON. If that fails, strip only a whole-value Markdown code fence and retry strict JSON. If that still fails, use Python ast.literal_eval for literal containers/scalars only. Never execute code, resolve names, repair keys, synthesize values, or coerce semantic content.",
+      "double_encoded_rule": "If the first parse yields a string whose complete value is itself a serialized literal/JSON value, parse exactly one additional layer.",
+      "postconditions": {
+        "initial_state_json": "object",
+        "tool_scenario_json": "object with authority object and tools array",
+        "checkpoint_json": "null or object"
+      }
+    },
+    "fresh_attempt_rule": "All r6 author attempts are fresh. No r5 rejected payload, r4 pack, earlier hidden fixture, raw candidate response or hidden grader material may be inspected, repaired, replayed, paraphrased, ranked or reused.",
+    "safe_observability": "Only group name, attempt count, preregistered structural reason code, aggregate syntax-normalization counters, audit reason code, provider status class and call counts may be logged. Never hidden values, raw author output, case facts or reconstructed hidden reference content."
+  },
+  "provider_resilience_remediation": {
+    "inherit_from_r5_without_change": true,
+    "provider": "groq-openai-compatible-api",
+    "model": "openai/gpt-oss-120b",
+    "retry_count": 1,
+    "maximum_wait_seconds": 2700,
+    "judge_identity_change": false,
+    "model_change": false
+  },
+  "execution_split_remediation": {
+    "inherit_from_r5_without_change": true,
+    "author_job_timeout_minutes": 180,
+    "scoring_job_timeout_minutes": 180,
+    "fresh_r6_pack_required": true,
+    "prior_pack_reuse_allowed": false,
+    "candidate_change_allowed": false,
+    "grader_change_allowed": false,
+    "threshold_change_allowed": false,
+    "hard_fail_change_allowed": false,
+    "candidate_provider_change_allowed": false,
+    "candidate_model_change_allowed": false,
+    "professional_retry_change_allowed": false
+  },
+  "release_rule": "Use the exact r1 FULL release contract. R6 changes only value-preserving author-output syntax normalization plus the already-preregistered r5 job split and r4 Groq-429 resilience. PASS still requires one COMPLETE fresh FULL report, at least 34/36 base tasks, every family at least 2/3, all six repeated critical trials passing and zero critical hard-fails."
+}

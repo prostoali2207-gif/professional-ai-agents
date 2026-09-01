@@ -1,0 +1,19 @@
+name: Sales 0.5 development opt-in
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  authorize:
+    if: >-
+      github.event.label.name == 'run-sales-0-5-development' &&
+      github.event.pull_request.head.ref == 'agent/sales-lead-conversion-core-0.4.0-2026-08-29' &&
+      github.event.pull_request.draft == true
+    uses: ./.github/workflows/sales-0-5-development-gemini.yml
+    with:
+      confirm_provider_run: RUN
+    secrets: inherit

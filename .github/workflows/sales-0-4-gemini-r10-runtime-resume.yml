@@ -1,0 +1,141 @@
+name: Sales 0.4 r10 exact-pack runtime resume
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_provider_run:
+        required: true
+        default: 'NO'
+        description: 'Type RUN to resume the exact preserved r10 scoring pack'
+  workflow_call:
+    inputs:
+      confirm_provider_run: {required: true, type: string}
+    secrets:
+      GEMINI_API_KEY: {required: true}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: {required: true}
+permissions:
+  contents: read
+  actions: read
+env:
+  CYCLE_ID: sales-0.4-fresh-independent-2026-08-30-r10-gemini-groq
+  CANDIDATE_COMMIT: d00bb8057ba0eaae24b918e13941fb61b0b8616d
+  CANDIDATE_DIGEST: sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0
+  SOURCE_RUN_ID: '33301954952'
+  SOURCE_ARTIFACT_NAME: sales-0.4-r10-gemini-encrypted-heldout-pack
+  PACK_DIGEST: sha256:f22b1837d6891191129c0ecedf1a630c4200c127eef24aa18db7cc14f7bb105b
+  QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.4-r10-gemini/qualification.json
+  PREREGISTRATION: architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r10-gemini-groq.json
+  RESUME_RECORD: architect/evaluation/sales-lead-conversion/qualification-resume-v0_4-r10-runtime-import.json
+  SALES_MODEL: gemini-3.5-flash-lite
+  SALES_GRADER_MODEL: gemini-3.5-flash-lite
+  SALES_MODEL_TIMEOUT_SECONDS: '120'
+  GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+  GEMINI_PACE_FILE: /tmp/sales-v04-r10-gemini-pace
+  QUALIFICATION_FIXTURE_COUNT: '36'
+  QUALIFICATION_RELEASE_TASKS_PASSED_MIN: '34'
+  QUALIFICATION_PER_FAMILY_TASKS_PASSED_MIN: '2'
+  QUALIFICATION_TASK_PASS_SCORE_MIN: '5'
+  QUALIFICATION_CRITICAL_HARD_FAILS_MAX: '0'
+jobs:
+  qualify:
+    if: ${{ inputs.confirm_provider_run == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_4_gemini_contract_v1.py
+      SANITIZED_REPORT_PATH: sales-v04-r10-gemini-report.json
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Verify resume record and frozen local runtime
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          p=json.load(open(os.environ['RESUME_RECORD']))
+          assert p['cycle_id']==os.environ['CYCLE_ID']
+          assert p['source_run']['run_id']==int(os.environ['SOURCE_RUN_ID']) and p['source_run']['scored_candidate_calls']==0
+          assert p['resume_attempts'][-1]['run_id']==33302325011 and p['resume_attempts'][-1]['scored_candidate_calls']==0 and p['resume_attempts'][-1]['classification']=='PRE_SCORE_LOCAL_ASSERTION_FAILURE'
+          assert p['frozen_candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and p['frozen_candidate']['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['exact_scoring_pack']['artifact_name']==os.environ['SOURCE_ARTIFACT_NAME'] and p['exact_scoring_pack']['pack_digest']==os.environ['PACK_DIGEST'] and p['exact_scoring_pack']['fixture_count']==36
+          fix=p['runtime_fix']; assert not any(fix[k] for k in ('semantic_change','candidate_change','grader_change','pack_change','threshold_change','retry_policy_change'))
+          actual=subprocess.check_output(['git','hash-object',fix['missing_module_path']],text=True).strip(); assert actual==fix['missing_module_blob']=='7c07caa9a633d5bf96db528c6a6d9dfeae2825f2'
+          print('R10_RESUME_BINDING_PASS')
+          PY
+      - name: Repair Python import path and no-API probe frozen runner
+        run: |
+          echo "PYTHONPATH=$GITHUB_WORKSPACE/architect/evaluation/sales-lead-conversion${PYTHONPATH:+:$PYTHONPATH}" >> "$GITHUB_ENV"
+          PYTHONPATH="$GITHUB_WORKSPACE/architect/evaluation/sales-lead-conversion${PYTHONPATH:+:$PYTHONPATH}" python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          path=Path('architect/evaluation/sales-lead-conversion/sealed_runner_provider_wrapper_v0_4_gemini_r10.py')
+          spec=importlib.util.spec_from_file_location('r10_resume_import_probe',path); m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          import gemini_rate_limiter
+          print('R10_RUNTIME_IMPORT_PROBE_PASS')
+          PY
+      - name: Require scoring credentials
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY"
+          test -n "$GEMINI_API_KEY"
+      - name: Download exact preserved r10 scoring pack
+        uses: actions/download-artifact@v4
+        with:
+          name: sales-0.4-r10-gemini-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.4-r10-gemini
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 33301954952
+      - name: Verify exact pack and candidate binding
+        run: |
+          python - <<'PY'
+          import json,os
+          m=json.load(open(os.environ['QUALIFICATION_MANIFEST']))
+          assert m['cycle_id']==os.environ['CYCLE_ID']
+          assert m['candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and m['candidate']['digest']==os.environ['CANDIDATE_DIGEST']
+          assert m['sealed_pack']['pack_digest']==os.environ['PACK_DIGEST']
+          print('R10_EXACT_PACK_BINDING_PASS')
+          PY
+      - name: Generic static preflight on preserved pack
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+      - name: Generic sealed no-API preflight on preserved pack
+        id: sealed_preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-v04-r10-resume-pack"
+      - name: Run exact preregistered FULL qualification once
+        if: steps.sealed_preflight.outcome == 'success'
+        shell: bash
+        run: |
+          set +e
+          python "$RUNNER_TEMP/sales-v04-r10-resume-pack/runner.py"
+          echo "qualification_exit_code=$?" >> "$GITHUB_ENV"
+          exit 0
+      - name: Validate sanitized r10 report
+        if: always() && steps.sealed_preflight.outcome == 'success'
+        id: validate
+        run: python architect/evaluation/qualification-platform/validate_sanitized_report.py --report "$SANITIZED_REPORT_PATH" --preregistration "$PREREGISTRATION" --cycle-id "$CYCLE_ID" --candidate-commit "$CANDIDATE_COMMIT" --candidate-digest "$CANDIDATE_DIGEST" --pack-digest "$PACK_DIGEST" --model "$SALES_MODEL" --runner-exit-code "${qualification_exit_code:-255}" --ledger-out sales-v04-r10-gemini-release-evidence.json
+      - name: Upload sanitized r10 resume qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.4-r10-runtime-resume-sanitized-qualification-evidence
+          path: |
+            sales-v04-r10-gemini-report.json
+            sales-v04-r10-gemini-release-evidence.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce frozen verdict protocol
+        if: always()
+        run: |
+          test "${{ steps.sealed_preflight.outcome }}" = success
+          test "${{ steps.validate.outcome }}" = success
+          test "${{ steps.upload.outcome }}" = success
+          case "${qualification_exit_code:-missing}" in
+            0) python -c "import json; assert json.load(open('sales-v04-r10-gemini-report.json')).get('verdict') in {'PASS','REVISE'}" ;;
+            10) python -c "import json; assert json.load(open('sales-v04-r10-gemini-report.json')).get('verdict') == 'REVISE'" ;;
+            *) exit 1 ;;
+          esac

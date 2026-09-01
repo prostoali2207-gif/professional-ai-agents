@@ -1,0 +1,59 @@
+{
+  "cycle_id": "sales-0.4-fresh-independent-2026-08-30-r9-gemini-groq",
+  "status": "PRE_SCORE_EVALUATOR_TARGETED_AUTHORING_REMEDIATION",
+  "frozen_candidate": {
+    "commit": "d00bb8057ba0eaae24b918e13941fb61b0b8616d",
+    "artifact_digest": "sha256:ce111538b204c4c694404a4b4ff13010c3909cc6918a9241600c818462fb62f0",
+    "manifest_path": "architect/library/cores/sales-lead-conversion/0.4.0/manifest.json"
+  },
+  "prior_cycle_evidence": {
+    "r8_run_id": 33300473042,
+    "candidate_calls": 0,
+    "hidden_content_printed": false,
+    "accepted_groups": ["OWN/LIFE/MIX/SEC", "FACT/INTENT/OBJ/NEXT"],
+    "failed_group": "FUP/STATE/ID/OPS",
+    "safe_failure_classes": ["hidden_reference_json_parse", "candidate_visible_leakage", "invalid_hard_fail_semantics"],
+    "decision": "Keep the exact r6 native schema and all qualification semantics. Change only author instructions for the previously failing FUP/STATE/ID/OPS group so hidden_reference_json is emitted as valid JSON text, candidate-visible fields remain neutral scenario facts, and hard-fail identifiers are used only when directly supported by supplied facts."
+  },
+  "construct_inheritance": {
+    "base_preregistration_path": "architect/evaluation/sales-lead-conversion/qualification-preregistration-v0_4-r6-gemini-groq.json",
+    "base_preregistration_blob": "65d826075ded39ab9e465bfaf0a7bb3a254d15f9",
+    "inherited_without_semantic_change": ["families", "construct", "fixture_design", "critical_hard_fail_policy", "grader_methodology", "runtime_contract", "stochastic_retry_policy", "thresholds"],
+    "rule": "R9 keeps the pinned r6 construct, release semantics and exact native AUTHOR_SCHEMA. Only evaluator authoring instructions and safe diagnostics change before any candidate call."
+  },
+  "scope": {"purpose": "release", "decision": "FULL", "fixture_count": 36, "family_count": 12, "per_family": 3},
+  "fixture_count": 36,
+  "per_family": 3,
+  "families": ["OWN", "LIFE", "MIX", "SEC", "FACT", "INTENT", "OBJ", "NEXT", "FUP", "STATE", "ID", "OPS"],
+  "thresholds": {
+    "task_pass_score_min": 5,
+    "release_tasks_passed_min": 34,
+    "per_family_tasks_passed_min": 2,
+    "critical_hard_fails_max": 0,
+    "professional_failure_retry": 0,
+    "critical_repeat_rule": "every repeated trial must pass"
+  },
+  "heldout_authoring": {
+    "author_provider": "gemini-interactions-api",
+    "author_model": "gemini-3.5-flash-lite",
+    "construct_audit_provider": "groq-openai-compatible-api",
+    "construct_audit_model": "openai/gpt-oss-120b",
+    "family_groups": [["OWN", "LIFE", "MIX", "SEC"], ["FACT", "INTENT", "OBJ", "NEXT"], ["FUP", "STATE", "ID", "OPS"]],
+    "max_author_attempts_per_group": 3,
+    "max_construct_audit_calls_per_group": 3,
+    "native_schema_rule": "Use exactly the pinned r6 AUTHOR_SCHEMA with no field, nesting, cardinality or type changes.",
+    "targeted_instruction_change": "Only for FUP/STATE/ID/OPS: hidden_reference_json must be a syntactically valid compact JSON object string; candidate-visible fields contain neutral scenario/request/state/tool facts only and never evaluation language or expected behavior; critical_hard_fail_triggers defaults to [] and may contain a frozen identifier only when the candidate-visible facts directly and unambiguously expose that material failure.",
+    "acceptance_rule": "Each structurally invalid model result consumes one attempt and is discarded. Each structurally valid attempt receives one independent Groq construct audit. First ACCEPT is retained. No rejected hidden payload is inspected, repaired, ranked or reused.",
+    "safe_structural_reason_codes": ["schema_top_level", "schema_cardinality", "schema_case_type", "schema_text_fields", "initial_state_json_parse", "initial_state_json_type", "tool_scenario_json_parse", "tool_scenario_json_type", "tool_scenario_shape", "checkpoint_json_parse", "checkpoint_json_type", "hidden_reference_json_parse", "hidden_reference_json_type", "professional_disposition", "rubric_cardinality", "rubric_item", "hard_fail_enum", "boundary_expectation", "alternative_interpretation_check"],
+    "safe_observability": "Only preregistered structural/audit reason codes, group names and call counts may be logged; never field values, hidden reference text, task text, expected content or raw model output.",
+    "audit_reason_codes": ["accepted", "missing_slot_semantic_coverage", "reference_not_grounded_in_case_facts", "candidate_visible_leakage", "invalid_hard_fail_semantics", "unrealistic_or_not_self_contained", "other_construct_failure"]
+  },
+  "runtime_contract": {
+    "provider": "gemini-interactions-api",
+    "candidate_model": "gemini-3.5-flash-lite",
+    "grader_model": "gemini-3.5-flash-lite",
+    "qualification_contract_version": 1,
+    "minimum_seconds_between_requests": 6.0
+  },
+  "release_rule": "PASS only after a COMPLETE sanitized FULL report validates against r9, at least 34/36 base tasks pass, every family is at least 2/3, all six inherited repeated critical trials pass and zero inherited critical hard-fails occur. Otherwise REVISE or NOT_EXECUTABLE under the frozen protocol."
+}

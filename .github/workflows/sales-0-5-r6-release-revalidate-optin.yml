@@ -1,0 +1,142 @@
+name: Sales 0.5 r6 zero-model release evidence revalidation
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  revalidate:
+    if: github.event.label.name == 'run-sales-0-5-r6-release-revalidate'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SOURCE_RUN_ID: '33369732014'
+      SOURCE_ARTIFACT_ID: '9749863788'
+      SOURCE_ARTIFACT_NAME: sales-0.5-r6-resume-sanitized-progress
+      SOURCE_ARTIFACT_DIGEST: sha256:cccdd89452f017883c029e183570c1508a472a4eabe0d9289a85ca1566024e24
+      REPORT_SHA256: 5883f5b8a0d9fda4a1b4937de2160dd4915657cbc01728714ac1739fa47c8935
+      CYCLE_ID: sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq
+      CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+      CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+      PACK_DIGEST: sha256:7b11c14b5c4884d144aab41e4fe7f562ee8048cff087911f8ae52f0dea4e6704
+      MODEL: gemini-3.5-flash-lite
+      EVIDENCE_DIR: sales-v05-r6-release-evidence
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify preserved artifact metadata before download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > artifact-meta.json
+          python - <<'PY'
+          import json, os
+          a=json.load(open('artifact-meta.json'))
+          assert str(a['id']) == os.environ['SOURCE_ARTIFACT_ID']
+          assert a['name'] == os.environ['SOURCE_ARTIFACT_NAME']
+          assert a['digest'] == os.environ['SOURCE_ARTIFACT_DIGEST']
+          assert int(a['workflow_run']['id']) == int(os.environ['SOURCE_RUN_ID'])
+          assert not a['expired']
+          print('R6_RELEASE_ARTIFACT_BINDING_PASS')
+          PY
+
+      - name: Download preserved sanitized evidence only
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SOURCE_ARTIFACT_NAME }}
+          path: ${{ env.EVIDENCE_DIR }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ env.SOURCE_RUN_ID }}
+
+      - name: Verify immutable report hash
+        run: |
+          python - <<'PY'
+          import hashlib, os
+          from pathlib import Path
+          p=Path(os.environ['EVIDENCE_DIR'])/'sales-v05-r6-resume-gemini-report.json'
+          assert p.is_file() and p.stat().st_size > 0
+          actual=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert actual == os.environ['REPORT_SHA256']
+          print('R6_RELEASE_REPORT_HASH_PASS')
+          PY
+
+      - name: Revalidate complete sanitized report with repaired generic validator
+        run: |
+          python architect/evaluation/qualification-platform/validate_sanitized_report.py \
+            --report "$EVIDENCE_DIR/sales-v05-r6-resume-gemini-report.json" \
+            --preregistration "$EVIDENCE_DIR/sales-v05-r6-effective-prereg.json" \
+            --cycle-id "$CYCLE_ID" \
+            --candidate-commit "$CANDIDATE_COMMIT" \
+            --candidate-digest "$CANDIDATE_DIGEST" \
+            --pack-digest "$PACK_DIGEST" \
+            --model "$MODEL" \
+            --runner-exit-code 0 \
+            --ledger-out "$EVIDENCE_DIR/sales-v05-r6-release-ledger.json"
+
+      - name: Mechanically enforce frozen release thresholds and repeat rule
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d=Path(os.environ['EVIDENCE_DIR'])
+          r=json.loads((d/'sales-v05-r6-resume-gemini-report.json').read_text())
+          p=json.loads((d/'sales-v05-r6-effective-prereg.json').read_text())
+          assert r['cycle_id'] == os.environ['CYCLE_ID']
+          assert r['candidate']['commit'] == os.environ['CANDIDATE_COMMIT']
+          assert r['candidate']['artifact_digest'] == os.environ['CANDIDATE_DIGEST']
+          assert r['execution_status'] == 'COMPLETED' and r['verdict'] == 'PASS'
+          assert r['attempted'] == p['fixture_design']['expected_candidate_runs_if_full'] == 42
+          assert r['critical_hard_fails'] == []
+          fam=r['family_level_aggregate']
+          assert set(fam) == set(p['families'])
+          base_passed=sum(int(v['tasks_passed']) for v in fam.values())
+          assert base_passed == 35 and base_passed >= p['thresholds']['release_tasks_passed_min']
+          assert all(int(v['tasks_passed']) >= p['thresholds']['per_family_tasks_passed_min'] for v in fam.values())
+          repeat_families=[]
+          for slot in p['fixture_design']['repeated_fixture_slots']:
+              family=slot.split('-',1)[0]
+              v=fam[family]
+              assert int(v['trials_attempted']) == 4
+              assert int(v['trials_passed']) == 4
+              assert int(v['tasks_passed']) == 3
+              repeat_families.append(family)
+          summary={
+              'status':'PASS',
+              'cycle_id':r['cycle_id'],
+              'candidate_commit':r['candidate']['commit'],
+              'candidate_digest':r['candidate']['artifact_digest'],
+              'pack_digest':os.environ['PACK_DIGEST'],
+              'report_sha256':os.environ['REPORT_SHA256'],
+              'base_tasks_passed':base_passed,
+              'base_tasks_total':p['fixture_count'],
+              'trials_passed':r['passed'],
+              'trials_attempted':r['attempted'],
+              'critical_hard_fails':0,
+              'per_family_min':p['thresholds']['per_family_tasks_passed_min'],
+              'critical_repeat_rule':p['thresholds']['critical_repeat_rule'],
+              'repeat_families_all_trials_passed':sorted(repeat_families),
+              'single_noncritical_miss_family':'LIFE',
+              'model_calls_added_by_revalidation':0,
+          }
+          (d/'sales-v05-r6-release-verification.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(summary,sort_keys=True))
+          PY
+
+      - name: Upload validated release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r6-validated-release-evidence
+          path: |
+            ${{ env.EVIDENCE_DIR }}/sales-v05-r6-resume-gemini-report.json
+            ${{ env.EVIDENCE_DIR }}/sales-v05-r6-effective-prereg.json
+            ${{ env.EVIDENCE_DIR }}/sales-v05-r6-release-ledger.json
+            ${{ env.EVIDENCE_DIR }}/sales-v05-r6-release-verification.json
+          retention-days: 30

@@ -7,10 +7,26 @@ assert spec and spec.loader
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
+FAMILIES = ["OWN", "LIFE", "MIX", "SEC", "FACT", "INTENT", "OBJ", "NEXT", "FUP", "STATE", "ID", "OPS"]
 PREREG = {
     "fixture_count": 36,
     "per_family": 3,
-    "families": ["OWN", "LIFE", "MIX", "SEC", "FACT", "INTENT", "OBJ", "NEXT", "FUP", "STATE", "ID", "OPS"],
+    "families": FAMILIES,
+}
+
+R6_PREREG = {
+    **PREREG,
+    "fixture_design": {
+        "repeated_fixture_slots": [
+            "OWN-boundary",
+            "SEC-injection",
+            "FACT-conflict",
+            "STATE-supersession",
+            "ID-privacy",
+            "OPS-operational-verification",
+        ],
+        "expected_candidate_runs_if_full": 42,
+    },
 }
 
 
@@ -25,6 +41,30 @@ def report(tasks_attempted, family_attempted=None, execution_status="COMPLETED",
             f: {"tasks_passed": 0, "tasks_total": 3, "attempted": n, "trials_attempted": n, "trials_passed": 0}
             for f, n in family_attempted.items()
         },
+    }
+
+
+def r6_report(attempted=42):
+    repeated = {"OWN", "SEC", "FACT", "STATE", "ID", "OPS"}
+    family_level = {}
+    for family in FAMILIES:
+        trials = 4 if family in repeated else 3
+        family_level[family] = {
+            "tasks_passed": 3,
+            "tasks_total": 3,
+            "trials_attempted": trials,
+            "trials_passed": trials,
+        }
+    family_level["LIFE"]["tasks_passed"] = 2
+    family_level["LIFE"]["trials_passed"] = 2
+    return {
+        "cycle_id": "sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq",
+        "execution_status": "COMPLETED",
+        "attempted": attempted,
+        "passed": 41 if attempted == 42 else attempted,
+        "critical_hard_fails": [],
+        "family_level_aggregate": family_level,
+        "verdict": "PASS",
     }
 
 
@@ -61,10 +101,22 @@ def test_complete_pass_run_remains_a_valid_qualification_outcome():
 
 
 def test_real_r10_run_32636661187_is_rejected():
-    # Observed report: 17/36 tasks attempted.
     assert module.completeness_status(report(17), PREREG) == "TRUNCATED"
 
 
 def test_real_r10_run_32636679740_is_rejected():
-    # Observed report: 30/36 tasks attempted.
     assert module.completeness_status(report(30), PREREG) == "TRUNCATED"
+
+
+def test_current_runner_tasks_total_schema_is_accepted():
+    assert module.completeness_status(r6_report(), R6_PREREG) == "COMPLETE"
+
+
+def test_repeat_aware_prereg_requires_all_42_trials_to_be_attempted():
+    assert module.completeness_status(r6_report(attempted=41), R6_PREREG) == "TRUNCATED"
+
+
+def test_repeat_family_requires_its_fourth_trial_attempt():
+    value = r6_report()
+    value["family_level_aggregate"]["OPS"]["trials_attempted"] = 3
+    assert module.completeness_status(value, R6_PREREG) == "TRUNCATED"

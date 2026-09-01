@@ -1,0 +1,179 @@
+name: Sales 0.5 r6 exact-pack scoring resume
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_provider_run:
+        required: true
+        default: 'NO'
+        description: 'Type RUN to score the exact preserved r6 pack'
+  workflow_call:
+    inputs:
+      confirm_provider_run: {required: true, type: string}
+    secrets:
+      GEMINI_API_KEY: {required: true}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: {required: true}
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  CYCLE_ID: sales-0.5-fresh-independent-2026-08-31-r6-gemini-groq
+  CANDIDATE_COMMIT: 2b8a397d16f2b0e8d7ad93c341f0031ec7dce4df
+  CANDIDATE_DIGEST: sha256:0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9
+  SOURCE_RUN_ID: '33369211233'
+  SOURCE_HEAD_SHA: cfbd006c9e84d2475977a23845bf39329c376f22
+  SOURCE_ARTIFACT_ID: '9749457258'
+  SOURCE_ARTIFACT_NAME: sales-0.5-r6-gemini-encrypted-heldout-pack
+  SOURCE_ARTIFACT_OUTPUT_DIGEST: 44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a
+  SOURCE_ARTIFACT_REST_DIGEST: sha256:44a3a4b28d198d5aadd463215d4b1834f5ce013956bfc459933a7bd2e5cfd23a
+  PACK_DIGEST: sha256:7b11c14b5c4884d144aab41e4fe7f562ee8048cff087911f8ae52f0dea4e6704
+  RESUME_RECORD: architect/evaluation/sales-lead-conversion/qualification-resume-v0_5-r6-scoring-metadata.json
+  EFFECTIVE_PREREGISTRATION: sales-v05-r6-effective-prereg.json
+  QUALIFICATION_MANIFEST: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r6-gemini/qualification.json
+  SALES_MODEL: gemini-3.5-flash-lite
+  SALES_GRADER_MODEL: gemini-3.5-flash-lite
+  SALES_MODEL_TIMEOUT_SECONDS: '120'
+  GEMINI_MIN_INTERVAL_SECONDS: '6.0'
+  GEMINI_PACE_FILE: /tmp/sales-v05-r6-resume-gemini-pace
+  QUALIFICATION_FIXTURE_COUNT: '36'
+  QUALIFICATION_RELEASE_TASKS_PASSED_MIN: '34'
+  QUALIFICATION_PER_FAMILY_TASKS_PASSED_MIN: '2'
+  QUALIFICATION_TASK_PASS_SCORE_MIN: '5'
+  QUALIFICATION_CRITICAL_HARD_FAILS_MAX: '0'
+  PYTHONPATH: architect/evaluation/sales-lead-conversion
+
+jobs:
+  scoring:
+    if: ${{ inputs.confirm_provider_run == 'RUN' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      SALES_EXECUTOR_CMD: python architect/evaluation/sales-lead-conversion/executor_v0_5_gemini_contract_v1.py
+      SANITIZED_REPORT_PATH: sales-v05-r6-resume-gemini-report.json
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Install deterministic qualification dependencies
+        run: python -m pip install --disable-pip-version-check cryptography jsonschema
+      - name: Assemble exact effective r6 preregistration
+        run: python architect/evaluation/sales-lead-conversion/effective_prereg_v0_5_r6.py "$EFFECTIVE_PREREGISTRATION"
+      - name: Verify exact-pack resume contract before provider calls
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,subprocess
+          q=json.load(open(os.environ['RESUME_RECORD'])); p=json.load(open(os.environ['EFFECTIVE_PREREGISTRATION']))
+          assert q['cycle_id']==p['cycle_id']==os.environ['CYCLE_ID']
+          s=q['source_run']; assert s['run_id']==int(os.environ['SOURCE_RUN_ID']) and s['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert s['author_job_conclusion']=='success' and s['pack_download_started'] is False and s['canary_started'] is False and s['full_scoring_started'] is False and s['scored_candidate_calls']==0
+          f=q['frozen_candidate']; assert f['commit']==os.environ['CANDIDATE_COMMIT'] and f['artifact_digest']==os.environ['CANDIDATE_DIGEST']
+          a=q['exact_scoring_pack']; assert a['artifact_id']==int(os.environ['SOURCE_ARTIFACT_ID']) and a['artifact_name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert a['artifact_output_digest']==os.environ['SOURCE_ARTIFACT_OUTPUT_DIGEST'] and a['artifact_rest_digest']==os.environ['SOURCE_ARTIFACT_REST_DIGEST'] and a['pack_digest']==os.environ['PACK_DIGEST'] and a['fixture_count']==36
+          fix=q['runtime_fix'];
+          for k in ('semantic_change','candidate_change','grader_change','pack_change','threshold_change','hard_fail_change','provider_change','model_change','retry_policy_change'): assert fix[k] is False
+          assert fix['authoring_allowed'] is False and fix['reseal_allowed'] is False
+          t=p['thresholds']; assert t['release_tasks_passed_min']==34 and t['per_family_tasks_passed_min']==2 and t['task_pass_score_min']==5 and t['critical_hard_fails_max']==0 and t['professional_failure_retry']==0
+          assert p['fixture_design']['expected_candidate_runs_if_full']==42 and len(p['fixture_design']['repeated_fixture_slots'])==6
+          commit=os.environ['CANDIDATE_COMMIT']; cm=json.loads(subprocess.check_output(['git','show',f"{commit}:{p['frozen_candidate']['manifest_path']}"],text=True)); canonical=''
+          for path in cm['artifact']['paths']: canonical += f"{path}:{subprocess.check_output(['git','rev-parse',f'{commit}:{path}'],text=True).strip()}\n"
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest(); assert actual==os.environ['CANDIDATE_DIGEST']==cm['artifact']['content_digest']
+          print('SALES_V05_R6_RESUME_CONTRACT_PASS')
+          PY
+      - name: Require scoring credentials
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY"
+          test -n "$GEMINI_API_KEY"
+      - name: Verify exact preserved artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > sales-v05-r6-resume-artifact-meta.json
+          python - <<'PY'
+          import json,os
+          a=json.load(open('sales-v05-r6-resume-artifact-meta.json'))
+          assert str(a['id'])==os.environ['SOURCE_ARTIFACT_ID']
+          assert a['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert a['digest']==os.environ['SOURCE_ARTIFACT_REST_DIGEST']=='sha256:'+os.environ['SOURCE_ARTIFACT_OUTPUT_DIGEST']
+          assert int(a['workflow_run']['id'])==int(os.environ['SOURCE_RUN_ID'])
+          assert a['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert not a['expired']
+          print('SALES_V05_R6_RESUME_ARTIFACT_BINDING_PASS')
+          PY
+      - name: Download exact preserved r6 scoring pack
+        uses: actions/download-artifact@v4
+        with:
+          name: sales-0.5-r6-gemini-encrypted-heldout-pack
+          path: architect/evaluation/sales-lead-conversion/sealed/runtime-sales-0.5-r6-gemini
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 33369211233
+      - name: Verify exact pack candidate and release binding
+        run: |
+          python - <<'PY'
+          import json,os
+          m=json.load(open(os.environ['QUALIFICATION_MANIFEST']))
+          assert m['cycle_id']==os.environ['CYCLE_ID']
+          assert m['candidate']['commit']==os.environ['CANDIDATE_COMMIT'] and m['candidate']['digest']==os.environ['CANDIDATE_DIGEST']
+          assert m['sealed_pack']['pack_digest']==os.environ['PACK_DIGEST']
+          print('SALES_V05_R6_RESUME_EXACT_PACK_PASS')
+          PY
+      - name: Generic static preflight on exact preserved pack
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase static --require-runtime-secret
+      - name: Generic sealed no-API preflight on exact preserved pack
+        id: sealed_preflight
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase sealed --out-dir "$RUNNER_TEMP/sales-v05-r6-resume-pack"
+      - name: Exact-runtime paced Gemini canary
+        if: steps.sealed_preflight.outcome == 'success'
+        id: canary
+        run: python architect/evaluation/qualification-platform/qualification_preflight.py --manifest "$QUALIFICATION_MANIFEST" --phase canary --require-runtime-secret
+      - name: Run frozen FULL qualification exactly once
+        if: steps.canary.outcome == 'success'
+        shell: bash
+        run: |
+          set +e
+          python "$RUNNER_TEMP/sales-v05-r6-resume-pack/runner.py"
+          echo "qualification_exit_code=$?" >> "$GITHUB_ENV"
+          exit 0
+      - name: Preserve sanitized FULL progress regardless of verdict
+        if: always() && steps.canary.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r6-resume-sanitized-progress
+          path: |
+            sales-v05-r6-resume-gemini-report.json
+            sales-v05-r6-effective-prereg.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Validate sanitized r6 resume report
+        if: always() && steps.sealed_preflight.outcome == 'success' && steps.canary.outcome == 'success'
+        id: validate
+        run: python architect/evaluation/qualification-platform/validate_sanitized_report.py --report "$SANITIZED_REPORT_PATH" --preregistration "$EFFECTIVE_PREREGISTRATION" --cycle-id "$CYCLE_ID" --candidate-commit "$CANDIDATE_COMMIT" --candidate-digest "$CANDIDATE_DIGEST" --pack-digest "$PACK_DIGEST" --model "$SALES_MODEL" --runner-exit-code "${qualification_exit_code:-255}" --ledger-out sales-v05-r6-resume-release-evidence.json
+      - name: Upload validated r6 resume qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.5-r6-resume-sanitized-qualification-evidence
+          path: |
+            sales-v05-r6-resume-gemini-report.json
+            sales-v05-r6-resume-release-evidence.json
+            sales-v05-r6-effective-prereg.json
+            architect/evaluation/sales-lead-conversion/qualification-resume-v0_5-r6-scoring-metadata.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce frozen r6 resume verdict protocol
+        if: always()
+        run: |
+          test "${{ steps.sealed_preflight.outcome }}" = success
+          test "${{ steps.canary.outcome }}" = success
+          test "${{ steps.validate.outcome }}" = success
+          test "${{ steps.upload.outcome }}" = success
+          case "${qualification_exit_code:-missing}" in
+            0) python -c "import json; assert json.load(open('sales-v05-r6-resume-gemini-report.json')).get('verdict') in {'PASS','REVISE'}" ;;
+            10) python -c "import json; assert json.load(open('sales-v05-r6-resume-gemini-report.json')).get('verdict') == 'REVISE'" ;;
+            *) exit 1 ;;
+          esac
