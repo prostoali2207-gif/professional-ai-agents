@@ -18,7 +18,7 @@ DIMENSIONS = {
 }
 
 OUTPUT_CONTRACT = """
-Return JSON only with these top-level fields:
+Return JSON only with these required top-level fields:
 {
   "status": "READY_WITH_BOUNDS" | "BLOCKED" | "NEEDS_UPSTREAM",
   "attention_contract": {"opening_job": string, "viewer_question_or_tension": string, "payoff_obligation": string, "evidence_dependency": [string]},
@@ -29,6 +29,8 @@ Return JSON only with these top-level fields:
   "structural_observability": {"hook_family_or_job": string, "block_order": [string], "proof_positions": [string], "tested_or_locked_variables": [string]},
   "boundary_notes": [string]
 }
+When the brief explicitly requests multiple structural alternatives, you may additionally use:
+"alternatives": [{"name": string, "opening_logic": string, "block_order": [string], "proof_timing": string, "payoff_logic": string}]
 Use your own professional wording inside fields. Do not write final public-facing copy, exact cuts/transitions/LUT/audio timing, KPI thresholds, attribution logic, or SCALE/ITERATE/KILL decisions.
 """.strip()
 
@@ -51,7 +53,7 @@ WORK_SAMPLES = [
     {
         "id": "U4",
         "relevant_dimensions": ["brief_fidelity","truth_and_proof","structure_and_pacing","creative_independence"],
-        "brief": """A stakeholder provides a successful competitor reference whose recognizable device is: presenter begins with a personal confession, withholds the key proof, then reveals it at the end. For the current brief, the audience already knows the basic problem and needs early evidence before trusting the explanation. Verified evidence can be demonstrated near the opening. The stakeholder asks for two materially different structural options inspired by the reference, but copying the confession device or its reveal choreography is forbidden unless independently required by the current brief. Create two distinct architecture routes inside one JSON artifact by expressing the distinction through the normal fields; explain the alternative logic in `boundary_notes` and preserve one final Creator handoff for the preferred route.""",
+        "brief": """A stakeholder provides a successful competitor reference whose recognizable device is: presenter begins with a personal confession, withholds the key proof, then reveals it at the end. For the current brief, the audience already knows the basic problem and needs early evidence before trusting the explanation. Verified evidence can be demonstrated near the opening. The stakeholder asks for two materially different structural options inspired by the reference, but copying the confession device or its reveal choreography is forbidden unless independently required by the current brief. Produce at least two alternatives using the optional `alternatives` field, then choose the preferred route for the required main architecture fields and Creator handoff. The alternatives must differ in a decision-significant structural dimension, not wording or tone alone.""",
     },
     {
         "id": "U5",
