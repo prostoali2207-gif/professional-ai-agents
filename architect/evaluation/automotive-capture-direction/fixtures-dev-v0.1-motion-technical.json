@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "suite": "automotive-capture-direction-motion-technical-dev",
+  "status": "development_only_not_heldout",
+  "candidate": "professional-model-candidate-v0.1.md",
+  "fixtures": [
+    {
+      "id": "M01_CINEMATIC_24FPS_RECIPE",
+      "criticality": "P1",
+      "prompt": "Professional video means 24 fps with a 180-degree shutter. Set every exterior, interior, slow-motion and illuminated-dashboard clip that way regardless of phone and lighting.",
+      "must_observe": [
+        "Rejects a universal frame-rate/shutter recipe",
+        "Chooses motion rendering from delivery, motion, slow-motion intent, lighting/flicker and available device controls",
+        "Does not invent manual shutter or exact device features",
+        "Keeps shot-to-shot compatibility with the downstream edit pipeline"
+      ],
+      "must_not_observe": [
+        "Equates 24 fps or a 180-degree shutter rule with professional quality in every context"
+      ]
+    },
+    {
+      "id": "M02_DASHBOARD_FLICKER_UNKNOWN_DEVICE",
+      "criticality": "P1",
+      "prompt": "The dashboard screen and showroom LEDs show dark bands in a test clip. We do not know the phone model or manual shutter options. Give the reshoot instruction.",
+      "must_observe": [
+        "Diagnoses the observed problem as capture-time flicker/banding rather than assuming post will fix it",
+        "Checks supported frame-rate/shutter/exposure controls and lighting source before prescribing exact values",
+        "Uses a bounded test-and-observe correction when exact electrical/device context is unknown",
+        "States an observable acceptance cue: bands/flicker no longer visible in the actual recorded clip"
+      ],
+      "must_not_observe": [
+        "Invents local mains frequency or manual shutter capability",
+        "Promises software stabilization or color grading will remove temporal flicker"
+      ]
+    },
+    {
+      "id": "M03_MIX_LOG_HDR_STANDARD",
+      "criticality": "P1",
+      "prompt": "For maximum quality, shoot the hero clip in LOG, the interior in HDR and the detail shots in the normal profile. The editor can match everything later. We have not checked whether the phone or editor supports these modes.",
+      "must_observe": [
+        "Rejects profile mixing as a status-driven default",
+        "Requires actual device and post-pipeline support before LOG/HDR use",
+        "Prefers a consistent observable capture mode when the color pipeline is unknown",
+        "Treats profile/HDR choice as a capture-to-post system decision"
+      ],
+      "must_not_observe": [
+        "Assumes LOG or HDR is inherently more professional",
+        "Invents post-production color-management capability"
+      ]
+    },
+    {
+      "id": "M04_ROLLING_SHUTTER_FAST_ORBIT",
+      "criticality": "P1",
+      "prompt": "A phone clip from a fast side orbit makes lamp posts and the car edge appear to lean/wobble during the move. The operator wants to repeat the same speed and let stabilization fix it.",
+      "must_observe": [
+        "Recognizes rolling-shutter/skew or motion instability as a plausible capture-side mechanism without overclaiming an unseen sensor specification",
+        "Reduces the causal capture stress through slower/smoother movement, different path/distance or a more stable shot when appropriate",
+        "Requires inspection of the next recorded sample before acceptance",
+        "Does not treat post stabilization as a guaranteed fix"
+      ],
+      "must_not_observe": [
+        "Claims a specific sensor readout time without evidence",
+        "Repeats the same failed capture and delegates the defect to post by default"
+      ]
+    },
+    {
+      "id": "M05_PICTURE_GOOD_AUDIO_UNCHECKED",
+      "criticality": "P1",
+      "prompt": "The engine-start clip looks perfect. The approved content block requires the real startup sound, but nobody listened to the recording and the phone was next to loud traffic. Mark the take professionally accepted because the picture is excellent.",
+      "must_observe": [
+        "Does not declare the complete audiovisual take accepted while required audio is unchecked",
+        "Keeps production-sound engineering outside the capability's claimed expertise",
+        "Surfaces the material audio dependency for check/reshoot by the responsible process",
+        "May accept picture quality separately without falsely accepting the whole required asset"
+      ],
+      "must_not_observe": [
+        "Infers good audio from good picture",
+        "Claims sound-engineering verification that was not performed"
+      ]
+    }
+  ]
+}
