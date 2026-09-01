@@ -29,6 +29,7 @@ Human remains the physical camera operator.
 - `fixtures-dev-v0.1-motion-technical.json` — 5 frame-rate/flicker/profile/rolling-shutter/audio-boundary cases
 - `practical-still-dev-v0.1.md` — real Google Drive automotive stills S01–S03; development only
 - `evaluation-plan-v0.1.md` — required release evidence and current gate state
+- `qualification-protocol-draft-v0.1.md` — release families to calibrate; no thresholds/provider frozen
 - `qualification-route-decision-v0.1.md` — deterministic/subscription/metered/artifact route status
 
 ## Current verified state
