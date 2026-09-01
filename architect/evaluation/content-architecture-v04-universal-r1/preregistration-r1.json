@@ -41,9 +41,9 @@
   },
   "frozen_artifacts": {
     "author_pack_path": "architect/evaluation/content-architecture-v04-universal-r1/author_pack_r1.py",
-    "author_pack_blob_sha": "f2010e26b087a81415dd27a2e616445e15b6a739",
+    "author_pack_blob_sha": "91920346987354e38e2022b5fcb9caf0b0fcb4f1",
     "runner_path": "architect/evaluation/content-architecture-v04-universal-r1/run_universal_r1.py",
-    "runner_blob_sha": "9130231b04d40bf882d93059e42676b8c58943d3",
+    "runner_blob_sha": "48c71f1d88bfcad848538496481a0445f78d8e66",
     "deterministic_test_path": "architect/evaluation/content-architecture-v04-universal-r1/test_universal_r1.py",
     "deterministic_test_blob_sha": "fde1a0e14dd2e196b64d79ac27f523eed233391a",
     "judge_senior_practitioner_path": "architect/evaluation/content-architecture-v04-universal-r1/judge-senior-practitioner.md",
