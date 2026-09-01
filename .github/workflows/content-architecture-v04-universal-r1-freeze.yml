@@ -107,12 +107,12 @@ jobs:
           git fetch origin agent/content-architecture-core-2026-08 main
           if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
           $checks = @(
-            @('architect/evaluation/content-architecture-v04-universal-r1/author_pack_r1.py','f2010e26b087a81415dd27a2e616445e15b6a739'),
-            @('architect/evaluation/content-architecture-v04-universal-r1/run_universal_r1.py','9130231b04d40bf882d93059e42676b8c58943d3'),
+            @('architect/evaluation/content-architecture-v04-universal-r1/author_pack_r1.py','91920346987354e38e2022b5fcb9caf0b0fcb4f1'),
+            @('architect/evaluation/content-architecture-v04-universal-r1/run_universal_r1.py','48c71f1d88bfcad848538496481a0445f78d8e66'),
             @('architect/evaluation/content-architecture-v04-universal-r1/test_universal_r1.py','fde1a0e14dd2e196b64d79ac27f523eed233391a'),
             @('architect/evaluation/content-architecture-v04-universal-r1/judge-senior-practitioner.md','99bf30695e502b154d76f1d27b80ebc01ea5b4fd'),
             @('architect/evaluation/content-architecture-v04-universal-r1/judge-assessor.md','e726fdf8534ced97ea8c4fd4060f5eeb058d6f75'),
-            @('architect/evaluation/content-architecture-v04-universal-r1/preregistration-r1.json','4e8efa20a0ecd4dcd937d57992c0f9c647e32df9'),
+            @('architect/evaluation/content-architecture-v04-universal-r1/preregistration-r1.json','a50fc6f882efa622c098e1df7aed434a0cbeed59'),
             @('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py','d1ef178b739a638a883c5a1d0efe5e431bd3b34d'),
             @('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py','73e9349391d4aa83dd459ed23e4069a3cf9a2072')
           )
