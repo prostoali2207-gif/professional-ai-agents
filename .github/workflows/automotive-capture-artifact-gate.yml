@@ -1,0 +1,116 @@
+name: Automotive Capture multimodal artifact gate
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/artifact-preregistration-v0.1.json'
+      - 'architect/evaluation/automotive-capture-direction/run_artifact_gate_v0_1.py'
+      - '.github/workflows/automotive-capture-artifact-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  artifact-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run freeze, budget and evaluator identity gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'objective=multimodal release evidence for still/video observation-driven capture judgment'
+          echo 'candidate_calls_max=2 Gemini fixed'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'
+          echo 'threshold=12/12 exact artifact decisions; first mismatch REVISE'
+          python -m py_compile architect/evaluation/automotive-capture-direction/run_artifact_gate_v0_1.py
+          python - <<'PY'
+          import json,subprocess
+          p=json.load(open('architect/evaluation/automotive-capture-direction/artifact-preregistration-v0.1.json'))
+          assert p['status']=='FROZEN_READY'
+          assert p['cycle_id']=='automotive-capture-direction-artifact-v0.1'
+          assert p['candidate']['commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert p['candidate']['blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          assert p['runtime']['model']=='gemini-3.5-flash-lite'
+          assert p['runtime']['candidate_calls_max']==2
+          assert p['runtime']['scored_retries']==0
+          assert p['thresholds']['artifact_decisions']=='12/12 PASS'
+          path=p['evaluator']['runner_path']
+          observed=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+          assert observed==p['evaluator']['runner_blob_sha'], (observed,p['evaluator']['runner_blob_sha'])
+          assert sum(len(c['expected']) for c in p['cases'])==12
+          print('FROZEN ARTIFACT CONTRACT PASS')
+          PY
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing; zero scored calls attempted' >&2; exit 21; }
+
+      - name: Verify candidate model access without generation
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request
+          req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models',headers={'x-goog-api-key':os.environ['GEMINI_API_KEY']})
+          with urllib.request.urlopen(req,timeout=30) as r: p=json.loads(r.read().decode())
+          names={m.get('name','').split('/')[-1] for m in p.get('models',[])}
+          assert 'gemini-3.5-flash-lite' in names
+          print('MODEL ACCESS PASS')
+          PY
+
+      - name: Reacquire exact frozen media and verify digests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/capture-artifact-media"
+          UA='professional-ai-agents-evaluator/1.0 (qualification artifact retrieval)'
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" \
+            'https://upload.wikimedia.org/wikipedia/commons/5/5e/1937_Buick_Limited.jpg' \
+            -o "$RUNNER_TEMP/capture-artifact-media/still.jpg"
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" \
+            'https://upload.wikimedia.org/wikipedia/commons/f/f5/The_car_jumped_up_with_joy..webm' \
+            -o "$RUNNER_TEMP/capture-artifact-media/motion.webm"
+          python - <<'PY'
+          import hashlib,json,os,pathlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'capture-artifact-media'
+          p=json.load(open('architect/evaluation/automotive-capture-direction/artifact-preregistration-v0.1.json'))
+          by_name={c['local_name']:c['sha256'] for c in p['cases']}
+          for name,expected in by_name.items():
+              actual='sha256:'+hashlib.sha256((root/name).read_bytes()).hexdigest()
+              assert actual==expected,(name,actual,expected)
+          print('FROZEN MEDIA DIGEST PASS')
+          PY
+
+      - name: Run scored multimodal artifact qualification
+        env:
+          AUTOMOTIVE_CAPTURE_ARTIFACT_MEDIA_ROOT: ${{ runner.temp }}/capture-artifact-media
+          AUTOMOTIVE_CAPTURE_ARTIFACT_REPORT: ${{ runner.temp }}/automotive-capture-artifact-report.json
+        run: python architect/evaluation/automotive-capture-direction/run_artifact_gate_v0_1.py
+
+      - name: Upload sanitized artifact qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-artifact-gate
+          path: ${{ runner.temp }}/automotive-capture-artifact-report.json
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'planned_candidate_calls_max=2'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'
