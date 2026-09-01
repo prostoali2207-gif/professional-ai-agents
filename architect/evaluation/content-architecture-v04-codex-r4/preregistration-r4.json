@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED_PRE_FREEZE",
+  "gate_id": "content-architecture-v0.4-codex-targeted-2026-09-01-r4",
+  "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_mutation_allowed": false,
+  "purpose": "Fresh construct-valid targeted/P0 qualification for the exact frozen Content Architecture v0.4 candidate after r3 was burned for evaluator construct defects.",
+  "prior_cycle_policy": "r1 and r2 remain NOT_EXECUTABLE; r3 is CLOSED/CONSTRUCT_INVALID. No prior-cycle scored record may be reused as r4 evidence.",
+  "required_families": ["F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","F11","F12"],
+  "p0_hard_failures_allowed": 0,
+  "per_family_min_pass_rate": 0.80,
+  "aggregate_p1_min_pass_rate": 0.90,
+  "deterministic_invariant_pass_rate": 1.0,
+  "deterministic_invariant_definition": "All scored records must preserve exact candidate/gate identity, complete successfully, produce parseable JSON, include every candidate-visible required field, and use only the candidate-visible published value vocabulary/types. Professional answer correctness is not itself a deterministic invariant.",
+  "stochastic_policy": {
+    "repeated_families": ["F2","F5","F6","F11","F12"],
+    "trials_per_designated_fixture": 3,
+    "all_repeats_must_pass": true,
+    "fresh_isolated_context_per_trial": true,
+    "best_of_n_forbidden": true
+  },
+  "required_post_gate_checks": ["UNIVERSAL_RELEASE_QUALIFICATION","UAE_COMPOSITION","PRACTICAL_HANDOFF"],
+  "construct_repair": {
+    "r3_defect": "Hidden canonical response tokens were required by the grader but not published in candidate-visible tasks; deterministic invariant was also incorrectly implemented as all professional decisions passing.",
+    "r4_rule": "Every response field and every permitted enum/list token required by deterministic grading is published in the task. The candidate must make the professional choice from plausible visible alternatives; hidden expectations contain only which published alternative is correct.",
+    "fresh_cases_required": true,
+    "r3_case_or_record_reuse_for_scoring": false
+  },
+  "hidden_corpus": {
+    "author_path": "architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4.py",
+    "author_git_blob_sha": "d13d9a80e2d0810db4dcbaafdd50c78a15343cc1",
+    "fixture_count": 30,
+    "expected_scored_trials": 40,
+    "identity_sha256": null,
+    "status": "PREREGISTERED_NOT_YET_FROZEN"
+  },
+  "grader_contract": {
+    "path": "architect/evaluation/content-architecture-v04-codex-r4/grader_r4.py",
+    "git_blob_sha": "0596c72d0f0ceeb8efb4d5f2f0ee4b8b9e82eda0",
+    "calibration_path": "architect/evaluation/content-architecture-v04-codex-r4/test_grader_r4.py",
+    "calibration_git_blob_sha": "fcee234bcf6899302e40c57ca670df40c7a6881b",
+    "mode": "visible-contract deterministic mechanics + hidden professional decision key",
+    "status": "PREREGISTERED"
+  },
+  "runner_contract": {
+    "path": "architect/evaluation/content-architecture-v04-codex-r4/run_gate_r4.py",
+    "git_blob_sha": "bdd8347227f3f22cf90344bbfaa17057f14727ef",
+    "blind_retries_allowed": 0,
+    "checkpoint_resume_allowed_only_after_diagnosed_runtime_failure": true
+  },
+  "runtime_eligibility": {
+    "provider": "codex-cli-chatgpt-subscription",
+    "adapter_path": "architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py",
+    "adapter_git_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d",
+    "mcp_git_blob_sha": "73e9349391d4aa83dd459ed23e4069a3cf9a2072",
+    "codex_cli_version": "0.151.0-alpha.7.2",
+    "candidate_model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "auth": "ChatGPT subscription",
+    "openai_api_key_forbidden": true,
+    "gemini_api_forbidden": true,
+    "groq_api_forbidden": true,
+    "runtime_drift_rule": "If the observed CLI version differs before the first scored r4 call, close r4 NOT_EXECUTABLE and preregister a new cycle rather than silently changing the pin."
+  },
+  "budget_gate": {
+    "objective": "Obtain valid targeted/P0 evidence without paid API credentials.",
+    "preflight_required": true,
+    "scored_calls_before_freeze_allowed": 0,
+    "maximum_scored_calls": 40,
+    "blind_retries_allowed": 0,
+    "stop_on_runtime_error": true
+  },
+  "integrity_rules": [
+    "Do not modify candidate, thresholds, P0 definitions, repeat policy or r4 grader/author after the first scored r4 call.",
+    "Freeze exact r4 plain corpus identity before any scored call.",
+    "Do not expose hidden expected answers, nonces, sealed pack contents or master key.",
+    "Do not reuse r3 scored records as r4 evidence.",
+    "If a construct defect is discovered after scored r4 calls, burn r4 rather than patching it."
+  ]
+}
