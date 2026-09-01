@@ -1,0 +1,174 @@
+name: Content Architecture v0.4 UAE composition r1 scored
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-uae-composition-r1
+    paths:
+      - 'architect/evaluation/content-architecture-v04-uae-composition-r1/RUN-UAE-R1-SCORED-v0.1'
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-wheelhouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pinned Windows evaluator dependency
+        shell: bash
+        run: |
+          mkdir -p wheelhouse
+          python -m pip download --disable-pip-version-check --no-input --only-binary=:all: --platform win_amd64 --python-version 312 --implementation cp --abi cp312 --dest wheelhouse cryptography==44.0.2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r1-scored-wheelhouse
+          path: wheelhouse/
+          retention-days: 1
+
+  score:
+    needs: prepare-wheelhouse
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 60
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r1-scored-wheelhouse
+          path: ${{ runner.temp }}/ca-v04-uae-r1-scored-wheelhouse
+      - name: Install evaluator dependency offline
+        shell: powershell
+        run: python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-uae-r1-scored-wheelhouse" cryptography==44.0.2
+      - name: Resolve Codex CLI from interactive user installation
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) { if (Test-Path $candidate) { $resolved = $candidate; break } }
+          }
+          if (-not $resolved) {
+            $npm = Get-Command npm -ErrorAction SilentlyContinue
+            if ($npm) {
+              $prefix = (& npm config get prefix 2>$null | Out-String).Trim()
+              if ($prefix) {
+                foreach ($name in @('codex.cmd','codex.exe')) {
+                  $candidate = Join-Path $prefix $name
+                  if (Test-Path $candidate) { $resolved = $candidate; break }
+                }
+              }
+            }
+          }
+          if (-not $resolved) {
+            $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
+              (Join-Path $env:LOCALAPPDATA 'Programs'),
+              (Join-Path $env:USERPROFILE '.vscode\extensions'),
+              (Join-Path $env:USERPROFILE '.cursor\extensions')
+            )
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -in @('codex.exe','codex.cmd') } |
+                Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          & $resolved --version
+          & $resolved login status
+      - name: Verify frozen components and exact runtime
+        shell: powershell
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08 main
+          git fetch https://github.com/prostoali2207-gif/auto-sales-growth-system.git agent/content-analyst-rebuild-2026-08
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+          if ((git cat-file -t 7f41c2d1ba40c3b4c59e3eba2fb264c04162c320) -ne 'blob') { exit 33 }
+          $checks = @(
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/author_pack_r1.py','bbeb247434074c9e081cec4e16cbaf7a0f7445c8'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/author_pack_r1_v2.py','ab3f34232dd08efbf416ea5c8455dc67861be4be'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/run_uae_r1.py','00c9a71b3dd02b57ff8d408a630d734ea585396d'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/test_uae_r1.py','361e678c4619452f708d47ca71fa36571d01ba23'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/judge-uae-composition.md','669cdfcd0195d0507637d377b48f2650b4a870dd'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/preregistration-r1.json','5318f5b4cf5886a424752e85cb6f43f8232655d3'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py','d1ef178b739a638a883c5a1d0efe5e431bd3b34d'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py','73e9349391d4aa83dd459ed23e4069a3cf9a2072')
+          )
+          foreach ($item in $checks) {
+            $actual = (git hash-object $item[0]).Trim()
+            if ($actual -ne $item[1]) { Write-Error "Frozen blob mismatch: $($item[0])"; exit 34 }
+          }
+          @'
+          import subprocess
+          auth=subprocess.run(['codex','login','status'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in ((auth.stdout or '')+(auth.stderr or '')): raise SystemExit(41)
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          version=((ver.stdout or '')+(ver.stderr or '')).strip()
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2': raise SystemExit(42)
+          print('frozen UAE composition runtime: PASS')
+          '@ | python -
+      - name: Run deterministic evaluator tests
+        shell: powershell
+        run: python architect/evaluation/content-architecture-v04-uae-composition-r1/test_uae_r1.py
+      - name: Rebuild and verify exact frozen corpus and composition
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r1-scored-pack'
+          New-Item -ItemType Directory -Force -Path $pack | Out-Null
+          python architect/evaluation/content-architecture-v04-uae-composition-r1/author_pack_r1_v2.py --out $pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:PACK_DIR = $pack
+          @'
+          import importlib.util, json, os, pathlib
+          p=pathlib.Path(os.environ['PACK_DIR']); m=json.loads((p/'sealed-manifest.json').read_text())
+          assert m['plain_identity_sha256']=='eca4ab3b87accca88969ec3896ca4eb30762f9c5441a40919a1de5e7a9888390'
+          assert m['case_count']==8 and m['calibration_pair_count']==3
+          assert m['core_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert m['specialization_sha']=='7f41c2d1ba40c3b4c59e3eba2fb264c04162c320'
+          spec=importlib.util.spec_from_file_location('r','architect/evaluation/content-architecture-v04-uae-composition-r1/run_uae_r1.py'); r=importlib.util.module_from_spec(spec); spec.loader.exec_module(r)
+          sha, ident=r.assemble_composed_blob()
+          assert sha=='1daa9b961c17c277bb093c41235cbae4eff50587'
+          assert ident=='0db2dd098b1ae0df6f4e21bc150de286006168295c45d795449975c64cdc218a'
+          print('frozen corpus/composition: PASS')
+          '@ | python -
+      - name: Run scored UAE composition qualification
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r1-scored-pack\sealed-pack.bin'
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r1-scored-result'
+          python architect/evaluation/content-architecture-v04-uae-composition-r1/run_uae_r1.py --mode score --pack $pack --out $out --timeout 300
+          $code=$LASTEXITCODE
+          Set-Content -Path (Join-Path $out 'workflow-exit-code.txt') -Value $code
+          exit $code
+      - name: Upload UAE composition r1 scored evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r1-scored-result
+          path: ${{ runner.temp }}/ca-v04-uae-r1-scored-result/
+          retention-days: 30
