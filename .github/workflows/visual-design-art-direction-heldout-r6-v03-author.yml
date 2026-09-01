@@ -1,0 +1,94 @@
+name: Visual Design Art Direction v0.3 R6 heldout author
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+jobs:
+  author:
+    if: github.event.issue.number == 158 && github.event.comment.body == '/author-visual-heldout-r6-v03' && github.actor == 'prostoali2207-gif'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-v03-heldout-r6-groq-pace
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static preflight before credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py
+          python architect/evaluation/visual-design-art-direction/static_preflight.py
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py').read_text()
+          pre=Path('architect/evaluation/visual-design-art-direction/heldout-v0.3-r6-pair-contract-preregistration.md').read_text()
+          assert "CYCLE = 'visual-design-art-direction-0.3.0-independent-2026-09-01-r6-semantic'" in p
+          assert "CANDIDATE_COMMIT = 'b4793a66172d4de7fe0ade1b0001bc2621829db2'" in p
+          assert "FREEZE_INTEGRITY_COMMIT = '347491bbedeaee6fbda038db9639f16040a41301'" in p
+          assert "FREEZE_BLOB = '84db2da24f784591c7cc1feb5f1f9a9c22220e40'" in p
+          assert "MAX_ATTEMPTS_PER_FAMILY = 3" in p
+          assert 'PAIR_CONTRACT_SCHEMA' in p and 'audit_paired_family' in p
+          assert "candidate_calls': 0" in p
+          assert "historical_r3_reused': False" in p and "historical_r4_reused': False" in p and "historical_r5_reused': False" in p
+          assert 'candidate_response' not in p and 'CANDIDATE_EXECUTOR' not in p
+          assert 'Status: **PRE-SCORE / preregistered before R6 implementation or provider calls**' in pre
+          expected={
+            'architect/evaluation/visual-design-art-direction/candidate/SKILL.md':'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md':'dd42d50f07b804c1ddd3c93b96704e0c6256440c',
+            'architect/evaluation/visual-design-art-direction/candidate-freeze-v0.3.json':'84db2da24f784591c7cc1feb5f1f9a9c22220e40',
+          }
+          for path, blob in expected.items():
+            actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+            assert actual==blob,(path,actual,blob)
+          print('VISUAL_V03_R6_STATIC_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Author audit and seal fresh R6 corpus
+        run: python architect/evaluation/visual-design-art-direction/heldout/author_sealed_heldout_r6_v03.py
+      - name: Verify sealed manifest
+        run: |
+          python - <<'PY'
+          import json
+          p='architect/evaluation/visual-design-art-direction/heldout/sealed-r6-v03/heldout-r6.manifest.json'
+          m=json.load(open(p))
+          assert m['cycle_id']=='visual-design-art-direction-0.3.0-independent-2026-09-01-r6-semantic'
+          assert m['candidate_commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          assert m['freeze_integrity_commit']=='347491bbedeaee6fbda038db9639f16040a41301'
+          assert m['candidate_freeze_blob']=='84db2da24f784591c7cc1feb5f1f9a9c22220e40'
+          assert m['candidate_blobs']=={
+            'skill':'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'professional_model_base':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'professional_model_repair_v02':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'professional_model_repair_v03':'dd42d50f07b804c1ddd3c93b96704e0c6256440c'}
+          assert m['item_count']==20 and m['family_count']==10 and m['pair_count']==5
+          assert m['pair_contract_count']==5 and m['pair_contract_schema_version']=='0.1'
+          assert m['authoring_policy']=={'mode':'family_first_pass_schema_enforced_pair_contract_v1','max_attempts_per_family':3}
+          assert m['candidate_calls']==0 and m['hidden_content_printed'] is False
+          assert m['historical_r3_reused'] is False and m['historical_r4_reused'] is False and m['historical_r5_reused'] is False
+          assert all(1 <= int(v) <= 3 for v in m['attempts_used'].values()) and len(m['attempts_used'])==10
+          print('VISUAL_V03_R6_SEAL_PASS',m['ciphertext_sha256'])
+          PY
+      - name: Upload encrypted R6 heldout pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-3-encrypted-heldout-pack-r6
+          path: architect/evaluation/visual-design-art-direction/heldout/sealed-r6-v03
+          if-no-files-found: error
+          retention-days: 14
