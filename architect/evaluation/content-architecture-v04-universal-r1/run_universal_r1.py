@@ -61,7 +61,7 @@ def call_artifact(artifact_sha: str, task: str, workspace: Path, timeout: int) -
     }
     proc = subprocess.run(
         [sys.executable, str(ADAPTER)], input=json.dumps(payload), capture_output=True,
-        text=True, encoding="utf-8", errors="replace", timeout=timeout,
+        text=True, encoding="utf-8", errors="replace", timeout=timeout + 30,
     )
     if proc.returncode != 0:
         detail = (proc.stdout or "") + "\n" + (proc.stderr or "")
@@ -92,6 +92,8 @@ def mechanical_contract(obj: dict) -> list[str]:
     for key, typ in required_types.items():
         if not isinstance(obj.get(key), typ):
             failures.append(f"{key} wrong type or missing")
+    if "alternatives" in obj and not isinstance(obj.get("alternatives"), list):
+        failures.append("alternatives wrong type")
     ac = obj.get("attention_contract") if isinstance(obj.get("attention_contract"), dict) else {}
     for key in ["opening_job","viewer_question_or_tension","payoff_obligation","evidence_dependency"]:
         if key not in ac: failures.append(f"attention_contract.{key} missing")
@@ -142,7 +144,7 @@ def run_calibration(pack: dict, out: Path, timeout: int) -> int:
     judge_total = {name: 0 for name in JUDGES}
     disagreements = 0
     for pair in pack["calibration_pairs"]:
-        winners = {}
+        chosen_strong = {}
         for judge_name, judge_sha in JUDGES.items():
             swap = int(hashlib.sha256(f"{GATE_ID}|{pair['id']}|{judge_name}".encode()).hexdigest()[:2], 16) % 2 == 1
             a, b = (pair["challenger"], pair["strong"]) if swap else (pair["strong"], pair["challenger"])
@@ -152,11 +154,12 @@ def run_calibration(pack: dict, out: Path, timeout: int) -> int:
             winner = obj.get("winner")
             if winner not in {"A","B"}:
                 raise RuntimeError("invalid calibration judge output")
-            winners[judge_name] = winner
+            is_strong = winner == expected
+            chosen_strong[judge_name] = is_strong
             judge_total[judge_name] += 1
-            if winner == expected: judge_correct[judge_name] += 1
-        if len(set(winners.values())) > 1: disagreements += 1
-        rows.append({"id": pair["id"], "judges": winners})
+            if is_strong: judge_correct[judge_name] += 1
+        if len(set(chosen_strong.values())) > 1: disagreements += 1
+        rows.append({"id": pair["id"], "judge_chose_strong": chosen_strong})
     n = len(pack["calibration_pairs"])
     rates = {j: judge_correct[j] / judge_total[j] for j in JUDGES}
     combined = sum(judge_correct.values()) / sum(judge_total.values())
@@ -201,7 +204,6 @@ def run_score(pack: dict, out: Path, timeout: int) -> int:
     out.mkdir(parents=True, exist_ok=True)
     full_records = []
     sanitized_cases = []
-    all_mechanical = True
     judge_score_values = {j: [] for j in JUDGES}
     hard_failures_total = 0
     all_case_judge_pass = True
@@ -212,7 +214,6 @@ def run_score(pack: dict, out: Path, timeout: int) -> int:
         artifact_text = raw.get("final_output", "")
         artifact_obj = parse_json(artifact_text)
         mechanical_failures = mechanical_contract(artifact_obj)
-        if mechanical_failures: all_mechanical = False
         judge_rows = {}
         for judge_name, judge_sha in JUDGES.items():
             jraw = call_artifact(judge_sha, assess_task(case, pack["dimensions"], artifact_text), out / "judge-work" / case["id"] / judge_name, timeout)
