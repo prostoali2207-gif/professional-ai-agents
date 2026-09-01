@@ -1,0 +1,102 @@
+{
+  "BLOCKER": {
+    "error_class": "RuntimeError",
+    "gate": "exact unscored candidate canary"
+  },
+  "FACT": [],
+  "NEXT_ACTION": "Repair only the narrow evidenced blocker under a new frozen addendum; do not retry this run.",
+  "VERDICT": "CANARY_GATE_FAIL_STOPPED",
+  "addendum_git_blob": "8018668f8837394618021800ea9c62701fd9df48",
+  "audit_git_blob": "9b8aa94a9eb4acc671c56d27415be622b2d9d785",
+  "candidate_adapter_git_blob": "ca9980d51828c0e2b8d1e3a3686385df0c847277",
+  "candidate_attempts": [
+    {
+      "attempt": 1,
+      "failure_envelope": {
+        "classification": "LAUNCHER_OR_SCHEMA_CONFIGURATION",
+        "returncode": 1,
+        "stage": "codex_exec",
+        "stderr_byte_count": 158,
+        "stderr_tail": "2026-09-01T06:15:40.059207Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell\n",
+        "stdout_diagnostics": {
+          "byte_count": 879,
+          "error_summaries": [
+            {
+              "code": "invalid_json_schema",
+              "message": "Invalid schema for response_format 'codex_output_schema': In context=('properties', 'business_objective'), schema must have a 'type' key.",
+              "param": "text.format.schema",
+              "type": "invalid_request_error"
+            },
+            {
+              "message": "{\n  \"type\": \"error\",\n  \"error\": {\n    \"type\": \"invalid_request_error\",\n    \"code\": \"invalid_json_schema\",\n    \"message\": \"Invalid schema for response_format 'codex_output_schema': In context=('properties', 'business_objective'), schema must have a 'type' key.\",\n    \"param\": \"text.format.schema\"\n  },\n  \"status\": 400\n}"
+            }
+          ],
+          "event_types": [
+            "thread.started",
+            "turn.started",
+            "error",
+            "turn.failed"
+          ],
+          "unparsed_digest": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "unparsed_line_count": 0
+        }
+      },
+      "model_call_attempted": true,
+      "outcome": "TECHNICAL_FAILURE"
+    }
+  ],
+  "candidate_isolation": {
+    "observed": {
+      "inside": "READABLE",
+      "root_0": "DENIED",
+      "root_1": "DENIED",
+      "root_2": "DENIED",
+      "root_3": "DENIED",
+      "root_4": "DENIED",
+      "root_5": "DENIED"
+    },
+    "sandbox_principal": "RAUSHAN\\CodexSandboxOffline",
+    "status": "PASS"
+  },
+  "cleanup": "PASS",
+  "denied_roots": [
+    "sha256:a2799436b01e811234cf23457aaff75c22d3e70411abdd652a57f2071a7f854f",
+    "sha256:9383176bb85daa7a8c3a599638dbb925052f6bbe79285069a75ebf9cbf9696f6",
+    "sha256:bd70e50445740073740c79e1ff2e8262f6be789fa68d7a4bd5a32848f92946bc",
+    "sha256:6ccff3618d6f124a823994a6450513ff56ac880b85768180c219381dd21f55be",
+    "sha256:2564181bfaf6b71a7773116d3dcd46da66f60d853da9bf32fb98e425f0818f9c",
+    "sha256:7b5c9941f7697b3782286ac869a300043d75696fadadb681ff2209821a86a10e"
+  ],
+  "ended_utc": "2026-09-01T06:15:56.180434+00:00",
+  "freeze_commit": "1bcc2046ef7901935effaca2105789dfc5ee2a1b",
+  "issue": 211,
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "post_run_accounting": {
+    "candidate_model_call_attempts": 1,
+    "candidate_process_attempts": 1,
+    "completed_candidate_results": 0,
+    "retry_count": 0,
+    "scored_calls": 0,
+    "separately_billed_api_calls": 0
+  },
+  "pre_run_budget": {
+    "initial_candidate_canary_calls": 1,
+    "maximum_candidate_model_call_attempts": 2,
+    "scored_calls_authorized": 0,
+    "separately_billed_api_calls_authorized": 0,
+    "transient_transport_retry_reserve": 1
+  },
+  "provider": "codex-subscription-chatgpt-auth",
+  "retry_policy": {
+    "backoff_seconds": 5,
+    "eligible_classification": "TRANSIENT_TRANSPORT",
+    "maximum_attempts": 2,
+    "original_failure_retained": true
+  },
+  "reused_judge_evidence": {
+    "evidence_digest": "sha256:34ad4c70b40bc97d3fb020d59c39bb158176e53231cfd90fa0e1bf3543c210b6",
+    "evidence_freeze_commit": "d746571fe7f9b658bf24dc8421045753e7199712",
+    "status": "PASS_REUSED_UNCHANGED_JUDGE_LAYER"
+  },
+  "started_utc": "2026-09-01T06:15:19.516616+00:00"
+}
