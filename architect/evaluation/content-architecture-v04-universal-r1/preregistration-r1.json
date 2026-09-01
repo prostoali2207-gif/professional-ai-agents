@@ -51,7 +51,9 @@
     "judge_competency_assessor_path": "architect/evaluation/content-architecture-v04-universal-r1/judge-assessor.md",
     "judge_competency_assessor_blob_sha": "e726fdf8534ced97ea8c4fd4060f5eeb058d6f75",
     "candidate_adapter_path": "architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py",
-    "candidate_adapter_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d"
+    "candidate_adapter_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d",
+    "evaluator_mcp_path": "architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py",
+    "evaluator_mcp_blob_sha": "73e9349391d4aa83dd459ed23e4069a3cf9a2072"
   },
   "release_policy": {
     "mechanical_contract_pass_rate": 1.0,
