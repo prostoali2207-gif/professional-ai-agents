@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -22,11 +23,118 @@ CANDIDATE_PATH = "architect/research/growth-strategy-experiment-portfolio/candid
 CANDIDATE_MANIFEST = "architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json"
 DEFAULT_MODEL = "gpt-5.6-terra"
 PROVIDER = "codex-subscription"
-ADAPTER_VERSION = "strategist-codex-candidate-adapter-v0.1"
+ADAPTER_VERSION = "strategist-codex-candidate-adapter-v0.2-observable-transport"
 FORBIDDEN_ENV_FRAGMENTS = (
     "API_KEY", "ANTHROPIC", "GEMINI", "GROQ", "QUALIFICATION_KEY",
     "HELDOUT", "GRADER", "SEALED_PACK",
 )
+
+
+class CandidateTransportFailure(RuntimeError):
+    def __init__(
+        self, returncode: int | None, stdout: str, stderr: str,
+        *, stage: str = "codex_exec", protected_values: tuple[str, ...] = (),
+        forced_classification: str | None = None,
+    ):
+        super().__init__(f"candidate transport failed at {stage}")
+        self.envelope = candidate_failure_envelope(
+            returncode, stdout, stderr, stage=stage,
+            protected_values=protected_values,
+            forced_classification=forced_classification,
+        )
+
+
+def sanitize_diagnostic(value: str, protected_values: tuple[str, ...] = (), limit: int = 1600) -> str:
+    text = value.replace("\r", "")
+    for protected in protected_values:
+        if protected:
+            text = text.replace(protected, "<protected-input>")
+    text = re.sub(r"(?is)--- BEGIN (?:FROZEN CANDIDATE|TASK) ---.*?--- END (?:FROZEN CANDIDATE|TASK) ---", "<protected-input>", text)
+    text = re.sub(r"(?i)bearer\s+[a-z0-9._~+/=-]+", "Bearer <redacted>", text)
+    text = re.sub(r"(?i)(api[_-]?key|access[_-]?token|refresh[_-]?token|authorization)(\s*[:=]\s*)[^\s,;}]+", r"\1\2<redacted>", text)
+    text = re.sub(r"(?i)[a-z]:[\\/][^\r\n\t\"'<>|]+", "<path>", text)
+    return text[-limit:]
+
+
+def _decoded_error(value: object) -> dict:
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return {"message": value}
+        return _decoded_error(parsed)
+    if not isinstance(value, dict):
+        return {}
+    nested = value.get("error")
+    if isinstance(nested, (dict, str)):
+        inner = _decoded_error(nested)
+        if inner:
+            return inner
+    return {key: value.get(key) for key in ("type", "code", "status", "param", "message") if value.get(key) is not None}
+
+
+def classify_candidate_failure(text: str) -> str:
+    value = text.lower()
+    if any(marker in value for marker in ("invalid_json_schema", "invalid schema", "invalid_request_error", "invalid argument")):
+        return "LAUNCHER_OR_SCHEMA_CONFIGURATION"
+    if any(marker in value for marker in ("quota", "rate limit", "429")):
+        return "QUOTA_OR_RATE_LIMIT"
+    if any(marker in value for marker in ("unauthorized", "authentication", "permission denied", "access is denied", "unknown model", "model not found")):
+        return "AUTH_PERMISSION_OR_MODEL_CONFIGURATION"
+    if any(marker in value for marker in ("timed out", "timeout", "connection reset", "connection closed", "websocket", "temporarily unavailable", "http 500", "http 502", "http 503", "http 504", "status 500", "status 502", "status 503", "status 504")):
+        return "TRANSIENT_TRANSPORT"
+    return "UNKNOWN_TECHNICAL"
+
+
+def candidate_failure_envelope(
+    returncode: int | None, stdout: str, stderr: str, *, stage: str,
+    protected_values: tuple[str, ...] = (), forced_classification: str | None = None,
+) -> dict:
+    event_types: list[str] = []
+    error_summaries: list[dict] = []
+    unparsed: list[str] = []
+    for line in stdout.splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            unparsed.append(line)
+            continue
+        if not isinstance(event, dict):
+            continue
+        event_type = str(event.get("type", "unknown"))[:80]
+        event_types.append(event_type)
+        if event_type in {"error", "turn.failed"}:
+            summary = _decoded_error(event.get("error") if event_type == "turn.failed" else event.get("message"))
+            if summary:
+                error_summaries.append({
+                    key: sanitize_diagnostic(str(value), protected_values, 600)
+                    for key, value in summary.items()
+                })
+    stderr_tail = sanitize_diagnostic(stderr, protected_values)
+    diagnostic_text = json.dumps(error_summaries, ensure_ascii=False) + "\n" + stderr_tail
+    classification = forced_classification or classify_candidate_failure(diagnostic_text)
+    return {
+        "stage": stage[:80],
+        "returncode": returncode,
+        "classification": classification,
+        "stdout_diagnostics": {
+            "event_types": event_types[-32:],
+            "error_summaries": error_summaries[-4:],
+            "unparsed_line_count": len(unparsed),
+            "unparsed_digest": "sha256:" + hashlib.sha256("\n".join(unparsed).encode()).hexdigest(),
+            "byte_count": len(stdout.encode()),
+        },
+        "stderr_tail": stderr_tail,
+        "stderr_byte_count": len(stderr.encode()),
+    }
+
+
+def adapter_failure_envelope(exc: Exception) -> dict:
+    classification = "RUNTIME_OUTPUT" if isinstance(exc, (json.JSONDecodeError, FileNotFoundError, KeyError)) else "UNKNOWN_TECHNICAL"
+    return candidate_failure_envelope(
+        None, "", f"{type(exc).__name__}: {exc}", stage="candidate_adapter",
+        forced_classification=classification,
+    )
 
 
 def git_show(commit: str, path: str) -> str:
@@ -104,12 +212,24 @@ def run_codex(candidate: str, task: str, model: str, timeout: int) -> tuple[dict
             "--json", "--color", "never", "-C", str(root),
             "-c", 'approval_policy="never"',
         ]
-        proc = subprocess.run(
-            cmd, input=prompt, text=True, capture_output=True, timeout=timeout,
-            cwd=root, env=sanitized_env(),
-        )
+        try:
+            proc = subprocess.run(
+                cmd, input=prompt, text=True, capture_output=True, timeout=timeout,
+                cwd=root, env=sanitized_env(),
+            )
+        except subprocess.TimeoutExpired as exc:
+            stdout = exc.stdout.decode(errors="replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+            stderr = exc.stderr.decode(errors="replace") if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+            raise CandidateTransportFailure(
+                None, stdout, stderr, stage="codex_exec_timeout",
+                protected_values=(candidate, task, prompt),
+                forced_classification="TRANSIENT_TRANSPORT",
+            ) from exc
         if proc.returncode != 0:
-            raise RuntimeError(f"Codex candidate runtime failed ({proc.returncode}): {proc.stderr[-1000:]}")
+            raise CandidateTransportFailure(
+                proc.returncode, proc.stdout, proc.stderr,
+                protected_values=(candidate, task, prompt),
+            )
         events = []
         for line in proc.stdout.splitlines():
             try:
@@ -119,10 +239,25 @@ def run_codex(candidate: str, task: str, model: str, timeout: int) -> tuple[dict
             if isinstance(value, dict):
                 events.append(value)
         if any(forbidden_event(event) for event in events):
-            raise RuntimeError("candidate emitted a forbidden tool/command event")
-        answer = json.loads(result_path.read_text(encoding="utf-8"))
+            raise CandidateTransportFailure(
+                proc.returncode, proc.stdout, proc.stderr,
+                stage="codex_exec_policy", protected_values=(candidate, task, prompt),
+                forced_classification="FORBIDDEN_EVENT",
+            )
+        try:
+            answer = json.loads(result_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, FileNotFoundError) as exc:
+            raise CandidateTransportFailure(
+                proc.returncode, proc.stdout, f"{proc.stderr}\n{type(exc).__name__}: {exc}",
+                stage="codex_exec_output", protected_values=(candidate, task, prompt),
+                forced_classification="RUNTIME_OUTPUT",
+            ) from exc
         if set(answer) != set(output_schema()["required"]):
-            raise RuntimeError("candidate output does not match the frozen JSON field contract")
+            raise CandidateTransportFailure(
+                proc.returncode, proc.stdout, proc.stderr,
+                stage="codex_exec_output", protected_values=(candidate, task, prompt),
+                forced_classification="RUNTIME_OUTPUT",
+            )
         completed = [e for e in events if e.get("type") == "turn.completed"]
         started = [e for e in events if e.get("type") == "thread.started"]
         last_completed = completed[-1] if completed else {}
@@ -187,6 +322,9 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
+    except CandidateTransportFailure as exc:
+        print(json.dumps({"status": "runtime_error", "failure_envelope": exc.envelope}, ensure_ascii=False))
+        raise SystemExit(2)
     except Exception as exc:
-        print(json.dumps({"status": "runtime_error", "error": str(exc)}, ensure_ascii=False))
+        print(json.dumps({"status": "runtime_error", "failure_envelope": adapter_failure_envelope(exc)}, ensure_ascii=False))
         raise SystemExit(2)

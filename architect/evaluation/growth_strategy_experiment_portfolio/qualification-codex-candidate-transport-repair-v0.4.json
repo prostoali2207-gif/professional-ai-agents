@@ -1,0 +1,82 @@
+{
+  "repair_id": "strategist-v0.1-codex-candidate-transport-observability-2026-09-01",
+  "issue": 211,
+  "migration_id": "strategist-v0.1-codex-subscription-migration-2026-08-30",
+  "status": "FROZEN_FOR_MINIMUM_UNSCORED_CANDIDATE_GATES",
+  "base_schema_freeze_commit": "d746571fe7f9b658bf24dc8421045753e7199712",
+  "candidate_failure_evidence_commit": "4768507e2188bb6a5b0b32e186f9d4d5c9acddb8",
+  "observed_failure_path": {
+    "candidate_adapter": "On a nonzero Codex subprocess exit, retained stderr only, raised RuntimeError, and printed a generic runtime_error object to adapter stdout.",
+    "candidate_launcher": "On a nonzero adapter exit, retained launcher stderr only and discarded the adapter stdout error object.",
+    "diagnostic_consequence": "The exact unscored canary exit code 2 was preserved, but its nested Codex stdout diagnostics were lost."
+  },
+  "repair_scope": {
+    "candidate_adapter_runtime_version": "strategist-codex-candidate-adapter-v0.2-observable-transport",
+    "candidate_content_changed": false,
+    "candidate_contract_changed": false,
+    "candidate_transport_observability_changed": true,
+    "candidate_canary_launcher_changed": true,
+    "judge_layer_changed": false,
+    "scored_runner_entry_point_changed": false
+  },
+  "failure_envelope": {
+    "fields": ["stage", "returncode", "classification", "stdout_diagnostics", "stderr_tail", "stderr_byte_count"],
+    "stdout_diagnostics": ["bounded event types", "bounded structured error summaries", "unparsed line count", "unparsed content digest only", "byte count"],
+    "maximum_event_types": 32,
+    "maximum_error_summaries": 4,
+    "maximum_error_value_characters": 600,
+    "maximum_stderr_characters": 1600,
+    "excluded": ["raw non-JSON stdout", "task or prompt", "candidate text", "hidden fixture content", "grader references", "absolute Windows paths", "credential-like values", "environment dump", "chain-of-thought"],
+    "outer_launcher_rule": "Whitelist and re-sanitize every envelope field before persistence; construct a bounded fallback envelope when adapter stdout is absent or invalid."
+  },
+  "candidate_technical_retry_policy": {
+    "maximum_attempts": 2,
+    "maximum_retries": 1,
+    "eligible_classification": "TRANSIENT_TRANSPORT",
+    "eligible_evidence": ["subprocess timeout", "connection reset or closed", "websocket interruption", "temporary unavailable", "HTTP 500/502/503/504"],
+    "ineligible": ["schema or launcher configuration", "authentication", "permission", "model configuration", "quota or rate limit", "unknown technical failure", "runtime output parsing", "professional answer quality", "grader disagreement", "threshold or hard-fail result", "scored outcome"],
+    "backoff_seconds": 5,
+    "idempotence_basis": "The public unscored canary is stateless, tool-free, has no side effects, and uses a fresh ephemeral Codex thread/workspace per attempt.",
+    "audit_rule": "The original failed attempt and its sanitized envelope remain in candidate_attempts; a retry appends rather than replaces evidence.",
+    "stop_rule": "Stop immediately on any ineligible failure, exhausted retry, repeated failure, isolation failure, invalid candidate identity/output, forbidden event, or cleanup failure. No ad-hoc rerun."
+  },
+  "reused_unchanged_evidence": {
+    "source": "architect/evaluation/growth_strategy_experiment_portfolio/qualification-codex-canary-record-v0.3.json",
+    "source_freeze_commit": "d746571fe7f9b658bf24dc8421045753e7199712",
+    "public_calibration": "PASS",
+    "judge_isolation": "PASS",
+    "reuse_basis": "Issue 211 changes neither judge adapter, judge prompt/schema, calibration anchors, nor judge-isolation verifier. Repeating those model calls has no decision-relevant information gain."
+  },
+  "frozen_invariants": {
+    "strategist_candidate_commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "strategist_candidate_digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "candidate_identity_or_content_changed": false,
+    "professional_constructs_or_families_changed": false,
+    "thresholds_changed": false,
+    "hard_fails_changed": false,
+    "release_decision_semantics_changed": false,
+    "grader_calibration_criteria_changed": false,
+    "hidden_or_scored_fixture_used": false,
+    "scored_qualification_authorized": false,
+    "separately_billed_provider_api_fallback": "FORBIDDEN"
+  },
+  "minimum_gate_order": [
+    "deterministic/static candidate transport regression passes",
+    "candidate-only filesystem isolation denies every repository worktree root and CODEX_HOME while allowing only the dedicated candidate root",
+    "exact public unscored frozen candidate canary executes under the bounded technical retry policy",
+    "candidate identity, safe decision, evidence contract, tool-free/stateless behavior, and transport events pass",
+    "ACL cleanup passes",
+    "stop with READY_FOR_SCORED_AUTHORIZATION only if every gate passes; otherwise stop with CANARY_GATE_FAIL_STOPPED"
+  ],
+  "pre_run_budget": {
+    "provider": "Codex subscription with existing ChatGPT authentication",
+    "initial_candidate_canary_calls": 1,
+    "transient_transport_retry_reserve": 1,
+    "maximum_candidate_model_call_attempts": 2,
+    "judge_model_calls": 0,
+    "scored_model_calls_authorized": 0,
+    "separately_billed_api_calls_authorized": 0
+  },
+  "success_verdict": "READY_FOR_SCORED_AUTHORIZATION",
+  "failure_verdict": "CANARY_GATE_FAIL_STOPPED"
+}

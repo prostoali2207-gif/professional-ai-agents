@@ -1,0 +1,58 @@
+{
+  "audit_id": "strategist-codex-candidate-transport-independent-audit-2026-09-01",
+  "issue": 211,
+  "review_role": "independent evaluator and infrastructure author; not the Strategist candidate",
+  "architect_skill_source": {
+    "ref": "origin/main",
+    "commit": "ca5aada57f735264f429247bde7ed5412790a847",
+    "reviewed_before_change": true
+  },
+  "reviewed_base_evidence_commit": "4768507e2188bb6a5b0b32e186f9d4d5c9acddb8",
+  "transport_addendum_git_blob": "8018668f8837394618021800ea9c62701fd9df48",
+  "candidate_adapter_git_blob": "ca9980d51828c0e2b8d1e3a3686385df0c847277",
+  "candidate_canary_gate_git_blob": "aa993c60eb901540330c836a211d9c694a05f3bd",
+  "targeted_test_git_blob": "bcbc72c2724d36cfb0500722b8eb535c781e193d",
+  "unchanged_judge_adapter_git_blob": "7106e064d45208983fd2d49054eefb525ad3be62",
+  "unchanged_scored_runner_git_blob": "87cb4e9615ff8fe69fe510caade90513c3e9a894",
+  "unchanged_candidate_artifact_git_blob": "b22bac7a4deed11c466c014f41960f5e2deec2d1",
+  "unchanged_candidate_manifest_git_blob": "c615d3f82bf26ada07bdbb4c0b8e8803a9d00603",
+  "candidate_commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+  "candidate_digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+  "hidden_sealed_content_opened": false,
+  "hidden_or_scored_fixture_used_for_debugging_or_canary": false,
+  "scored_qualification_executed": false,
+  "separately_billed_api_used": false,
+  "repair_authoring_model_calls": 0,
+  "findings": [
+    {
+      "id": "CANDIDATE-OBSERVABILITY-001",
+      "severity": "P0",
+      "observation": "The candidate adapter converted nested Codex failure into a generic stdout error, while the outer launcher discarded adapter stdout on nonzero exit.",
+      "repair": "Preserve a structured candidate failure envelope across both process boundaries, whitelist/re-sanitize it before persistence, retain only bounded structured stdout diagnostics and a digest for unparsed lines, and bound/redact stderr.",
+      "verification": "Representative schema, transient transport, timeout, malformed launcher output, and success paths are deterministic regressions."
+    },
+    {
+      "id": "CANDIDATE-RETRY-001",
+      "severity": "P0",
+      "observation": "The prior exact candidate canary had zero technical retries and insufficient evidence to classify its failure.",
+      "repair": "Freeze at most two attempts with exactly one retry eligible only for TRANSIENT_TRANSPORT after five seconds. Preserve the original failed attempt and envelope; all other failures stop immediately.",
+      "verification": "Tests prove one shared candidate retry, no retry for schema/configuration, and append-only attempt evidence."
+    },
+    {
+      "id": "CANDIDATE-BOUNDARY-001",
+      "severity": "P0",
+      "observation": "Candidate isolation must cover every current worktree of the common repository, not only the issue-211 worktree, because each checkout can contain protected evaluation artifacts.",
+      "repair": "The frozen run command must deny every exact git-worktree root plus CODEX_HOME and attest each denial before the model call."
+    }
+  ],
+  "unchanged_invariants_verified": [
+    "Strategist candidate identity, content, manifest, and output contract",
+    "professional constructs, families, thresholds, hard fails, and release semantics",
+    "judge adapter, public calibration criteria, and judge-isolation evidence",
+    "scored runner and hidden/scored fixture secrecy",
+    "candidate-only filesystem isolation and tool-free/stateless behavior",
+    "no separately billed provider API fallback"
+  ],
+  "static_test_result": "PASS_29_OF_29",
+  "freeze_decision": "FROZEN_FOR_MINIMUM_UNSCORED_CANDIDATE_GATES"
+}
