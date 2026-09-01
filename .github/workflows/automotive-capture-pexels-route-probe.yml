@@ -1,0 +1,68 @@
+name: Automotive Capture Pexels route probe
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - '.github/workflows/automotive-capture-pexels-route-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Discover exact public media routes without model calls
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/pexels-route
+          UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36'
+          curl -fL --retry 2 --retry-delay 2 -A "$UA" 'https://www.pexels.com/photo/reflection-photography-of-black-car-2498076/' -o /tmp/pexels-route/still.html
+          curl -fL --retry 2 --retry-delay 2 -A "$UA" 'https://www.pexels.com/video/low-angle-shot-of-a-moving-red-car-7624584/' -o /tmp/pexels-route/video.html
+          python - <<'PY'
+          from pathlib import Path
+          import html,json,re
+          out={}
+          for kind,name in [('still','still.html'),('video','video.html')]:
+              text=Path('/tmp/pexels-route/'+name).read_text(errors='replace')
+              urls=[]
+              patterns=[
+                r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)',
+                r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+                r'<meta[^>]+property=["\']og:video(?::url)?["\'][^>]+content=["\']([^"\']+)',
+                r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:video(?::url)?["\']',
+                r'https://images\.pexels\.com/[^"\'<> ]+',
+                r'https://videos\.pexels\.com/[^"\'<> ]+\.mp4[^"\'<> ]*',
+              ]
+              for pat in patterns:
+                  for m in re.findall(pat,text,re.I):
+                      u=html.unescape(m if isinstance(m,str) else m[0])
+                      u=u.replace('\\u0026','&').replace('\\/','/')
+                      if u.startswith('http') and u not in urls: urls.append(u)
+              out[kind]={'html_bytes':len(text.encode()),'media_candidates':urls[:40]}
+          Path('/tmp/pexels-route/routes.json').write_text(json.dumps(out,indent=2)+'\n')
+          print(json.dumps({k:{'html_bytes':v['html_bytes'],'candidate_count':len(v['media_candidates']),'first_candidates':v['media_candidates'][:5]} for k,v in out.items()},indent=2))
+          if not out['still']['media_candidates'] or not out['video']['media_candidates']:
+              raise SystemExit(3)
+          PY
+
+      - name: Upload route evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-pexels-route-probe
+          path: /tmp/pexels-route/routes.json
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'candidate_calls=0'
+          echo 'judge_calls=0'
+          echo 'purpose=transport discovery only'
