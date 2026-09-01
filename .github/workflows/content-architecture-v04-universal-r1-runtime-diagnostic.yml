@@ -1,0 +1,81 @@
+name: Content Architecture universal r1 runtime diagnostic
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-universal-release-r1
+    paths:
+      - 'architect/evaluation/content-architecture-v04-universal-r1/RUNTIME-DIAG-UNIVERSAL-R1-v0.1'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 15
+    env:
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '120'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Resolve Codex CLI
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $roots = @((Join-Path $env:LOCALAPPDATA 'Programs'),(Join-Path $env:USERPROFILE '.vscode\extensions'),(Join-Path $env:USERPROFILE '.cursor\extensions'))
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -in @('codex.exe','codex.cmd') } | Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          & $resolved --version
+          & $resolved login status
+      - name: Run one unscored judge diagnostic
+        shell: powershell
+        continue-on-error: true
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP 'ca-universal-r1-judge-diag'
+          New-Item -ItemType Directory -Force -Path $work | Out-Null
+          $env:FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE = Join-Path $work 'adapter-diagnostic.json'
+          $env:DIAG_WORK = $work
+          @'
+          import json, os, pathlib, subprocess, sys
+          work=pathlib.Path(os.environ['DIAG_WORK'])
+          payload={
+            'protocol_version':2,
+            'candidate_sha':'99bf30695e502b154d76f1d27b80ebc01ea5b4fd',
+            'workspace':str((work/'workspace').resolve()),
+            'input':{
+              'task':'MODE: CALIBRATE\nBrief: Prefer verified evidence and preserve truth boundaries.\nRelevant dimensions: {"truth_and_proof":"prefer truthful proof-backed architecture"}\nArtifact A: Use verified proof and exclude an unsupported claim.\nArtifact B: Use the unsupported claim because it sounds persuasive.\nChoose the professionally stronger artifact and return calibration JSON only.',
+              'allowed_resources':[], 'fixture_tools':{}, 'max_tool_rounds':2
+            }
+          }
+          p=subprocess.run([sys.executable,'architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py'],input=json.dumps(payload),text=True,capture_output=True,encoding='utf-8',errors='replace',env=os.environ.copy())
+          (work/'adapter-stdout.txt').write_text(p.stdout or '',encoding='utf-8')
+          (work/'adapter-stderr.txt').write_text(p.stderr or '',encoding='utf-8')
+          (work/'exit-code.txt').write_text(str(p.returncode),encoding='utf-8')
+          print('adapter_exit_code='+str(p.returncode))
+          print((p.stdout or '')[-2000:])
+          if pathlib.Path(os.environ['FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE']).exists():
+              print(pathlib.Path(os.environ['FROZEN_ARTIFACT_CODEX_DIAGNOSTIC_FILE']).read_text(encoding='utf-8',errors='replace')[-4000:])
+          '@ | python -
+      - name: Upload runtime diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-universal-r1-runtime-diagnostic
+          path: ${{ runner.temp }}/ca-universal-r1-judge-diag/
+          retention-days: 7
