@@ -1,0 +1,160 @@
+name: Content Architecture v0.4 Codex r4 freeze v2
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-fresh-gate-2026-08
+    paths:
+      - 'architect/evaluation/content-architecture-v04-codex-r4/FREEZE-CODEX-R4-v0.2'
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-wheelhouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pinned Windows evaluator dependency
+        shell: bash
+        run: |
+          mkdir -p wheelhouse
+          python -m pip download --disable-pip-version-check --no-input --only-binary=:all: --platform win_amd64 --python-version 312 --implementation cp --abi cp312 --dest wheelhouse cryptography==44.0.2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r4-freeze-v2-wheelhouse
+          path: wheelhouse/
+          retention-days: 1
+
+  freeze:
+    needs: prepare-wheelhouse
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 30
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r4-freeze-v2-wheelhouse
+          path: ${{ runner.temp }}/ca-v04-codex-r4-v2-wheelhouse
+      - name: Install evaluator dependency offline
+        shell: powershell
+        run: python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-codex-r4-v2-wheelhouse" cryptography==44.0.2
+      - name: Resolve Codex CLI
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) { if (Test-Path $candidate) { $resolved = $candidate; break } }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          Write-Host 'codex_cli_resolved=true'
+      - name: Verify exact preregistered identities and runtime
+        shell: powershell
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08 main
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+          $checks = @(
+            @('architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4.py','d13d9a80e2d0810db4dcbaafdd50c78a15343cc1'),
+            @('architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4_v2.py','d83aa864a0bdea178a175f1a8d160ff23e3c607e'),
+            @('architect/evaluation/content-architecture-v04-codex-r4/grader_r4.py','0596c72d0f0ceeb8efb4d5f2f0ee4b8b9e82eda0'),
+            @('architect/evaluation/content-architecture-v04-codex-r4/test_grader_r4.py','fcee234bcf6899302e40c57ca670df40c7a6881b'),
+            @('architect/evaluation/content-architecture-v04-codex-r4/run_gate_r4.py','bdd8347227f3f22cf90344bbfaa17057f14727ef'),
+            @('architect/evaluation/content-architecture-v04-codex-r4/preregistration-r4.json','a6c7884a51e75609a644263e424f274434688791'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py','d1ef178b739a638a883c5a1d0efe5e431bd3b34d'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py','73e9349391d4aa83dd459ed23e4069a3cf9a2072')
+          )
+          foreach ($item in $checks) {
+            $actual = (git hash-object $item[0]).Trim()
+            if ($actual -ne $item[1]) { Write-Error "Preregistered blob mismatch: $($item[0])"; exit 33 }
+          }
+          @'
+          import json, pathlib, subprocess
+          p=json.loads(pathlib.Path('architect/evaluation/content-architecture-v04-codex-r4/preregistration-r4.json').read_text())
+          assert p['status']=='PREREGISTERED_PRE_FREEZE'
+          assert p['candidate_blob_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert p['p0_hard_failures_allowed']==0
+          assert p['per_family_min_pass_rate']==0.80
+          assert p['aggregate_p1_min_pass_rate']==0.90
+          assert p['deterministic_invariant_pass_rate']==1.0
+          auth=subprocess.run(['codex','login','status'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in ((auth.stdout or '')+(auth.stderr or '')): raise SystemExit(41)
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          version=((ver.stdout or '')+(ver.stderr or '')).strip()
+          print('codex_version='+version)
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2': raise SystemExit(42)
+          print('r4 v2 identity/runtime binding: PASS')
+          '@ | python -
+      - name: Run unscored adapter regression
+        shell: powershell
+        run: |
+          python architect/evaluation/harness/adapters/test_codex_frozen_artifact_adapter.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python architect/evaluation/harness/adapters/codex_frozen_artifact_live_regression.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Run r4 grader calibration
+        shell: powershell
+        run: python architect/evaluation/content-architecture-v04-codex-r4/test_grader_r4.py
+      - name: Author and audit exact r4 v2 corpus
+        shell: powershell
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-codex-r4-freeze-v2'
+          New-Item -ItemType Directory -Force -Path $out | Out-Null
+          python architect/evaluation/content-architecture-v04-codex-r4/author_pack_r4_v2.py --out $out
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:R4_FREEZE_DIR = $out
+          @'
+          import json, os, pathlib, subprocess
+          d=pathlib.Path(os.environ['R4_FREEZE_DIR'])
+          m=json.loads((d/'sealed-manifest.json').read_text())
+          assert m['gate_id']=='content-architecture-v0.4-codex-targeted-2026-09-01-r4'
+          assert m['candidate_sha']=='5d440e1bf3e20fbd35c6ab276310a904e36cc06d'
+          assert m['fixture_count']==30 and m['scored_trial_count']==40
+          assert m['hidden_token_audit']=='PASS'
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          freeze={
+            'gate_id':m['gate_id'], 'candidate_sha':m['candidate_sha'],
+            'plain_identity_sha256':m['plain_identity_sha256'],
+            'fixture_count':m['fixture_count'], 'scored_trial_count':m['scored_trial_count'],
+            'construct':m['construct'], 'hidden_token_audit':m['hidden_token_audit'],
+            'provider':'codex-cli-chatgpt-subscription','model':'gpt-5.6-sol','reasoning_effort':'medium',
+            'codex_cli_version':((ver.stdout or '')+(ver.stderr or '')).strip(),
+            'provider_api_keys_used':False,'scored_candidate_calls':0,
+            'adapter_regression':'PASS','grader_calibration':'PASS'
+          }
+          (d/'freeze-evidence.json').write_text(json.dumps(freeze,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          print(json.dumps(freeze,sort_keys=True))
+          '@ | python -
+      - name: Upload r4 v2 freeze evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-codex-r4-freeze-v2-evidence
+          path: |
+            ${{ runner.temp }}/ca-v04-codex-r4-freeze-v2/sealed-manifest.json
+            ${{ runner.temp }}/ca-v04-codex-r4-freeze-v2/freeze-evidence.json
+          retention-days: 30
