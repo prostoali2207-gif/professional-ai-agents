@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0.0",
+  "status": "PREREGISTERED",
+  "issue": 225,
+  "parent_qualification_issue": 93,
+  "cycle_id": "conversion-messaging-web-copy-v0.1-heldout-2026-09-01-codex-r1",
+  "purpose": "Fresh evaluator-owned FULL held-out corpus author/review/seal prerequisite before candidate calibration/canary/scoring.",
+  "candidate": {
+    "commit": "7019f6717b1b61806f4a221a297d049a4ad3b8cb",
+    "artifact_digest": "sha256:da7662f95dcf132d9a9875849b7bb5d5d831d1d54821f0b109b543a1f299e1d2",
+    "mutation_allowed": false,
+    "visibility_to_author_or_reviewer": "FORBIDDEN"
+  },
+  "construct": {
+    "scope": "FULL",
+    "families": ["CM-EV", "CM-CL", "CM-MH", "CM-DV", "CM-OP", "CM-UX", "CM-PL", "CM-CR", "CM-EX", "CM-BD", "CM-PR", "CM-E2E"],
+    "cases_per_family": 2,
+    "fixture_count": 24,
+    "pair_families": {"P-EVIDENCE": "CM-EV", "P-CLAIM": "CM-CL", "P-UX": "CM-UX", "P-BOUNDARY": "CM-BD"},
+    "contrastive_pair_count": 4,
+    "dimensions": ["evidence_integrity", "task_clarity", "professional_judgment", "functional_craft", "boundary_integrity"],
+    "hard_fails": ["MATERIAL_FABRICATION", "INVENTED_CUSTOMER_EVIDENCE", "HARMFUL_UX_CONTRADICTION", "UNAUTHORIZED_STRATEGY_CHANGE", "GUARANTEED_CAUSAL_LIFT"],
+    "thresholds": {
+      "hard_fail_count": 0,
+      "minimum_fixture_passes": 22,
+      "all_pairs_consistent": true,
+      "family_dimension_min": {
+        "evidence_integrity": 1.5,
+        "task_clarity": 1.5,
+        "professional_judgment": 1.5,
+        "functional_craft": 1.25,
+        "boundary_integrity": 1.5
+      }
+    }
+  },
+  "authoring": {
+    "provider": "codex-subscription-chatgpt-auth",
+    "author_model": "gpt-5.6-sol",
+    "reviewer_model": "gpt-5.6-terra",
+    "author_calls": 1,
+    "reviewer_calls": 1,
+    "fresh_ephemeral_workspace_per_role": true,
+    "candidate_content_visible": false,
+    "rejected_historical_hidden_text_visible": false,
+    "public_development_examples_may_not_be_copied": true,
+    "author_output": "24 fixture objects with hidden_reference; no candidate execution",
+    "reviewer_output": "complete repaired 24-case array only; review construct validity, expected boundaries, pair validity, no tailoring"
+  },
+  "runtime_isolation": {
+    "api_fallback": "FORBIDDEN",
+    "forbidden_env": ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "XAI_API_KEY"],
+    "tools": "FORBIDDEN",
+    "filesystem": "isolated temporary workspace, read-only Codex sandbox, no repository cwd",
+    "web": "FORBIDDEN",
+    "mcp": "FORBIDDEN",
+    "author_and_reviewer_blind_to_each_other": true,
+    "candidate_calls": 0
+  },
+  "sealing": {
+    "scheme": "fernet-over-zip-v2",
+    "key_derivation": "hkdf-sha256-v1",
+    "master_env": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
+    "parts_dir": "architect/evaluation/conversion_messaging_web_copy/sealed/heldout-v0.1-2026-09-01-codex-r1.parts",
+    "manifest_path": "architect/evaluation/conversion_messaging_web_copy/sealed/heldout-v0.1-2026-09-01-codex-r1.qualification.json",
+    "plaintext_commit": "FORBIDDEN",
+    "secret_commit": "FORBIDDEN"
+  },
+  "retry_policy": {
+    "shared_transport_retry_budget": 1,
+    "eligible_only": "TRANSIENT_TRANSPORT",
+    "nonretryable": ["quota", "rate-limit", "authentication", "permission", "invalid schema/configuration", "unknown model", "construct disagreement", "review failure", "quality outcome"],
+    "candidate_retry_budget": 0
+  },
+  "budget_gate": {
+    "maximum_subscription_calls": 3,
+    "planned_calls": "author 1 + reviewer 1",
+    "reserve": "one shared TRANSIENT_TRANSPORT retry only",
+    "candidate_calls": 0,
+    "scored_calls": 0,
+    "paid_api_calls": 0,
+    "stop_on_nonretryable_failure": true
+  },
+  "required_order": [
+    "zero-model static preregistration preflight",
+    "direct Codex CLI version and ChatGPT login observation",
+    "author isolated fresh corpus",
+    "independent reviewer isolated construct review",
+    "deterministic structure validation",
+    "seal with repository master-key mechanism",
+    "zero-model sealed integrity preflight",
+    "sanitized evidence record",
+    "STOP before calibration/candidate canary/scoring"
+  ],
+  "verdict_rule": "SEALED_PREREQUISITE_READY only after author/reviewer PASS, authenticated encrypted freeze, zero-model integrity PASS, and candidate/model scored calls remain zero."
+}
