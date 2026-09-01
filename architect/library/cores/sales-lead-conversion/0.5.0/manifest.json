@@ -223,9 +223,6 @@
     "UAE automotive specialization and concrete CRM/tool bindings require compatibility/regression evidence before a composed applied Sales agent is production-ready."
   ],
   "qualification_refs": [
-    "architect/library/qualifications/sales-lead-conversion/0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9/sales-lead-conversion-0-5-0-20260901.json",
-    "github-actions:33308300691 public targeted regression 13/13 PASS",
-    "github-actions:33369732014 fresh FULL runner PASS: 35/36 base tasks, 41/42 trials, 0 critical hard fails",
-    "github-actions:33476297002 zero-model exact-evidence revalidation PASS"
+    "architect/library/qualifications/sales-lead-conversion/0e7b46f186269968df12d09f64d48c88e173196a8b59f69a4e1ba1a049f4f1d9/sales-lead-conversion-0-5-0-20260901.json"
   ]
 }
