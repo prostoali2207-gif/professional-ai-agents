@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import json, os, shlex, subprocess, time, urllib.error, urllib.request
+import json, os, subprocess, time, urllib.error, urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 EXECUTOR = ROOT / "executor_v0_1_gemini.py"
-GROQ_ENDPOINT = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1").rstrip("/") + "/chat/completions"
-GROQ_MODEL = os.environ.get("AUTOMOTIVE_CAPTURE_GROQ_JUDGE_MODEL", "qwen/qwen3.6-27b")
+GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
+JUDGE_MODEL = os.environ.get("AUTOMOTIVE_CAPTURE_GEMINI_JUDGE_MODEL", "gemini-3.5-flash")
 SELECTED = [
     "F01_CLOSE_ULTRAWIDE_HERO",
     "F02_BLACK_CAR_BUILDING_REFLECTION",
@@ -19,7 +19,7 @@ SELECTED = [
     "F16_GOOD_STATIC_PROOF_SHOT",
 ]
 CANDIDATE_PACE = float(os.environ.get("AUTOMOTIVE_CAPTURE_CANDIDATE_PACE", "5"))
-JUDGE_PACE = float(os.environ.get("AUTOMOTIVE_CAPTURE_JUDGE_PACE", "22"))
+JUDGE_PACE = float(os.environ.get("AUTOMOTIVE_CAPTURE_JUDGE_PACE", "5"))
 
 
 def load_cases() -> dict[str, dict]:
@@ -41,6 +41,21 @@ def extract_json(text: str) -> dict:
     return json.loads(text)
 
 
+def extract_gemini(raw: dict) -> str:
+    if isinstance(raw.get("output_text"), str):
+        return raw["output_text"]
+    for step in reversed(raw.get("steps") or []):
+        if not isinstance(step, dict) or step.get("type") != "model_output":
+            continue
+        content = step.get("content")
+        if isinstance(content, str):
+            return content
+        for item in content or []:
+            if isinstance(item, dict) and item.get("type") == "text" and isinstance(item.get("text"), str):
+                return item["text"]
+    raise RuntimeError("Gemini judge returned no observable text")
+
+
 def run_candidate(task: str) -> dict:
     proc = subprocess.run(
         ["python3", str(EXECUTOR)],
@@ -59,13 +74,15 @@ def run_candidate(task: str) -> dict:
 
 
 def judge(case: dict, answer: str) -> dict:
-    key = os.environ.get("GROQ_API_KEY", "").strip()
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not key:
-        raise RuntimeError("GROQ_API_KEY missing")
+        raise RuntimeError("GEMINI_API_KEY missing for development judge")
     system = (
-        "You are an independent evaluator of automotive commercial photography/cinematography capture direction. "
-        "Evaluate the candidate answer against the supplied public development criteria. Do not reward keyword overlap: judge causal professional behavior and whether instructions are physically executable. "
-        "Safe blocking/escalation is correct when equipment, truth, permission or safety evidence is missing. Return JSON only with keys pass:boolean, missed_must_observe:[string], violated_must_not_observe:[string], professional_quality:0|1|2, operator_executability:0|1|2, reason:string."
+        "You are a development-only evaluator of automotive commercial photography/cinematography capture direction. "
+        "This is NOT an independent release judge because the candidate and judge share a provider. "
+        "Evaluate against the supplied public criteria. Do not reward keyword overlap: judge causal professional behavior and whether instructions are physically executable. "
+        "Safe blocking/escalation is correct when equipment, truth, permission or safety evidence is missing. "
+        "Return JSON only with keys pass:boolean, missed_must_observe:[string], violated_must_not_observe:[string], professional_quality:0|1|2, operator_executability:0|1|2, reason:string."
     )
     user = {
         "case_id": case["id"],
@@ -76,30 +93,26 @@ def judge(case: dict, answer: str) -> dict:
         "candidate_answer": answer,
     }
     body = {
-        "model": GROQ_MODEL,
-        "messages": [{"role": "system", "content": system}, {"role": "user", "content": json.dumps(user, ensure_ascii=False)}],
-        "temperature": 0,
-        "max_completion_tokens": 1200,
-        "reasoning_effort": "none",
-        "reasoning_format": "hidden",
+        "model": JUDGE_MODEL,
+        "system_instruction": system,
+        "input": json.dumps(user, ensure_ascii=False),
+        "store": False,
+        "generation_config": {"thinking_level": "medium"},
     }
     req = urllib.request.Request(
-        GROQ_ENDPOINT,
+        GEMINI_ENDPOINT,
         data=json.dumps(body, ensure_ascii=False).encode(),
-        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "Accept": "application/json", "User-Agent": "automotive-capture-dev-smoke/1.0"},
+        headers={"Content-Type": "application/json", "x-goog-api-key": key},
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=120) as r:
+        with urllib.request.urlopen(req, timeout=180) as r:
             raw = json.loads(r.read().decode())
     except urllib.error.HTTPError as exc:
-        raise RuntimeError(f"Groq judge HTTP {exc.code}: {exc.read().decode(errors='replace')[:1200]}") from exc
-    text = raw.get("choices", [{}])[0].get("message", {}).get("content", "")
-    if not text:
-        raise RuntimeError(f"Groq judge empty content: usage={raw.get('usage')}")
-    out = extract_json(text)
+        raise RuntimeError(f"Gemini dev judge HTTP {exc.code}: {exc.read().decode(errors='replace')[:1200]}") from exc
+    out = extract_json(extract_gemini(raw))
     if not isinstance(out.get("pass"), bool):
-        raise RuntimeError("judge result invalid")
+        raise RuntimeError("development judge result invalid")
     return out
 
 
@@ -133,10 +146,11 @@ def main() -> int:
     report = {
         "suite": "automotive-capture-direction-public-dev-smoke-v0.1",
         "release_evidence": False,
+        "judge_independence": "SAME_PROVIDER_DIFFERENT_MODEL_DEVELOPMENT_ONLY",
         "candidate_commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
         "candidate_blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
         "candidate_model": os.environ.get("AUTOMOTIVE_CAPTURE_MODEL", "gemini-3.5-flash-lite"),
-        "judge_model": GROQ_MODEL,
+        "judge_model": JUDGE_MODEL,
         "selected": len(results),
         "passed": pass_count,
         "p0_failure": p0_fail,
