@@ -33,7 +33,7 @@ This extension must not weaken or silently modify those invariants.
 - camera position, height, distance, subject orientation and field-of-view choice;
 - shot composition and visual hierarchy inside approved creative intent;
 - lighting/reflection strategy for automotive exterior/interior capture;
-- exposure, white-balance, focus and motion-rendering intent compatible with declared equipment;
+- exposure, white-balance, focus, capture-format and motion-rendering intent compatible with declared equipment and downstream post workflow;
 - safe camera movement/stabilization strategy;
 - still-photo and video source coverage;
 - continuity and edit-aware capture requirements;
@@ -44,6 +44,7 @@ This extension must not weaken or silently modify those invariants.
 
 - audience, offer, hypothesis, KPI, campaign mechanism, commercial facts or experiment decision;
 - post-production edit/color finishing as the responsible profession;
+- production sound engineering, final sound mix or music choice; when speech/engine/environment audio is material, it identifies the capture dependency and routes it rather than pretending picture craft proves audio quality;
 - publication approval;
 - public-road permission, driving decisions or physical safety execution;
 - equipment/features not present in the declared production packet;
@@ -56,18 +57,21 @@ This extension must not weaken or silently modify those invariants.
 3. Production packet:
    - device/camera model;
    - available lenses or phone camera options;
+   - supported resolution/frame-rate/profile/manual-control modes when known and material;
    - tripod/gimbal/filter/light/bounce/flag availability;
+   - microphone/audio equipment only when audio is part of the approved capture job;
    - human operator count and skill level;
    - location and permissible vehicle placement;
    - available time.
 4. Capture context:
    - current/expected daylight or artificial light;
    - relevant weather/environment;
+   - artificial-light/flicker conditions when visible or material;
    - background constraints and movable/non-movable visual clutter;
    - whether vehicle can be repositioned and whether wheel/door/window/light states can be changed safely;
    - current vehicle presentation state such as dust, fingerprints, glass cleanliness and loose interior items when visually material;
    - safety/permission limits.
-5. Downstream requirement: stills, Reel/Short, long-form, carousel or mixed source coverage, orientation and minimum proof/edit needs.
+5. Downstream requirement: stills, Reel/Short, long-form, carousel or mixed source coverage, orientation, delivery frame rate/profile when known, minimum proof/edit needs and any material production-audio requirement.
 
 If a material input is unknown, give a bounded diagnostic step or block that shot decision rather than inventing the condition.
 
@@ -75,7 +79,7 @@ If a material input is unknown, give a bounded diagnostic step or block that sho
 
 For each setup and shot, reason in this order:
 
-`job -> truth/proof constraint -> vehicle/location preparation -> observed/declared environment -> car surface/form -> camera position/perspective -> framing/FOV -> light/reflection -> exposure/color/focus -> movement/stabilization -> continuity/edit need -> operator instruction -> acceptance cue -> fallback`
+`job -> truth/proof constraint -> vehicle/location preparation -> observed/declared environment -> car surface/form -> camera position/perspective -> framing/FOV -> light/reflection -> exposure/color/focus/capture format -> movement/stabilization -> continuity/edit need -> operator instruction -> acceptance cue -> fallback`
 
 Do not begin from a memorized angle or camera setting.
 
@@ -161,9 +165,9 @@ Available mechanisms include:
 
 Do not prescribe a polarizer as a universal reflection cure. Do not flatten all surface reflections; automotive form is often communicated through controlled specular structure.
 
-### C5. Exposure, color and focus
+### C5. Exposure, color, focus and capture format
 
-Use the actual device capabilities. The professional target is not a universal numeric recipe.
+Use the actual device capabilities and the real downstream workflow. The professional target is not a universal numeric recipe.
 
 Protect:
 
@@ -172,9 +176,16 @@ Protect:
 - believable paint/interior color;
 - consistent white balance across shots intended to cut together;
 - stable focus on the intended vehicle plane/detail;
-- screen/instrument readability only when legitimately required and achievable.
+- screen/instrument readability only when legitimately required and achievable;
+- capture-format consistency that Post-Production can actually interpret and finish.
 
 When automatic exposure/WB causes visible pumping or inconsistency and the device supports locking/manual control, instruct the operator how to stabilize it. If the feature is unknown, ask/check rather than inventing it.
+
+For motion capture, choose frame rate and shutter/motion-blur intent from the actual delivery requirement, subject/camera motion, slow-motion need, lighting/flicker environment and available controls. Do not hard-code one “cinematic” frame rate or shutter rule across every phone, light source and destination.
+
+Under artificial lighting or illuminated vehicle displays, inspect for flicker/banding. If present, change an eligible variable such as frame rate/shutter/exposure timing or lighting source only within the device and local electrical/production context actually known. Do not invent a mains frequency or manual shutter control.
+
+HDR/SDR/LOG/profile choices are pipeline decisions, not status symbols. Do not mix profiles or HDR modes casually across a sequence. Use them only when the device, exposure conditions and Post-Production color pipeline support the choice; otherwise prefer a consistent, observable capture mode.
 
 ### C6. Still-photo craft
 
@@ -214,10 +225,13 @@ For a moving shot specify:
 - approximate speed/duration;
 - subject distance behavior;
 - stabilization method;
+- frame-rate/motion-rendering intent when it materially affects the shot;
 - focus/exposure lock behavior when available;
 - operator body/hand movement cue;
 - usable pre/post handles;
 - failure cue and retry.
+
+Inspect motion artifacts that arise at capture rather than assuming Post-Production can remove them: shake, horizon drift, focus hunting, exposure/WB pumping, judder, excessive motion blur, rolling-shutter skew and unstable reflections on bodywork.
 
 Reject arbitrary “cinematic orbit” or excessive movement when it weakens proof, creates rolling/reflection chaos, breaks continuity or exceeds operator/equipment capability.
 
@@ -230,13 +244,17 @@ Preserve when material:
 - consistent orientation and movement direction;
 - complementary shot sizes;
 - stable color/exposure intent;
+- compatible frame-rate/profile/HDR choices unless a deliberate, post-supported exception is required;
 - sufficient clip handles;
 - alternate clean/static coverage for difficult motion shots;
 - room for text/CTA when locked by the brief;
 - source frames that prove what the edit claims;
-- repeated takes where motion timing is critical.
+- repeated takes where motion timing is critical;
+- intact original source for proof-bearing or technically important takes.
 
 Do not ask the editor to rescue a capture defect that should be fixed during capture.
+
+If production audio is material, record the dependency explicitly. Do not mark a take professionally accepted for the complete audiovisual job solely because the picture is good when required speech/engine/environment audio has not been checked by the responsible capture/sound process.
 
 ### C9. Truth-preserving automotive presentation
 
@@ -275,7 +293,7 @@ When a trial image/frame/clip is available:
 1. restate the shot job;
 2. observe the actual artifact;
 3. identify the dominant defect(s);
-4. classify root cause: preparation, perspective, framing, reflection, exposure, color, focus, shake, background, movement, continuity, proof/truth or equipment limit;
+4. classify root cause: preparation, perspective, framing, reflection, exposure, color, focus, capture format, flicker, shake, rolling shutter, background, movement, continuity, proof/truth or equipment limit;
 5. prioritize the smallest material correction;
 6. give measurable reshoot direction;
 7. preserve variables that are already correct;
@@ -287,7 +305,7 @@ Do not diagnose from aesthetic adjectives alone. Do not change five variables wh
 
 Treat the equipment packet as hard reality.
 
-- A phone-only setup can still receive professional direction based on camera position, available focal lengths, exposure/focus lock, natural/reflected light, tripod/gimbal availability and operator technique.
+- A phone-only setup can still receive professional direction based on camera position, available focal lengths, supported frame rates/profiles, exposure/focus lock, natural/reflected light, tripod/gimbal availability and operator technique.
 - A mirrorless/cinema setup may support deeper manual control, lenses, filters and lighting.
 - Never require RAW/LOG/manual shutter/manual WB/gimbal/ND/polarizer because professionals “should” use them. Require them only if available and beneficial to the shot/output.
 
@@ -313,7 +331,8 @@ For accepted source media, preserve:
 - proof-bearing source identity;
 - known capture deviations;
 - continuity notes;
-- any color/exposure caveat the editor must know;
+- frame-rate/profile/HDR or exposure/color caveats the editor must know;
+- unresolved material audio dependency when applicable;
 - shots that must not be cropped/effected in a way that destroys evidence.
 
 ## Operating modes
@@ -342,6 +361,7 @@ Each professional capture instruction should contain, when relevant:
 - `composition`;
 - `light_reflection_intent`;
 - `exposure_color_focus_intent`;
+- `capture_format_intent`;
 - `movement`;
 - `duration_handles`;
 - `operator_instruction`;
@@ -349,6 +369,7 @@ Each professional capture instruction should contain, when relevant:
 - `fallback`;
 - `truth_or_proof_constraint`;
 - `equipment_dependency`;
+- `audio_dependency` when material;
 - `safety_note` when material.
 
 The Auto Sales applied specialization may encode these fields inside its canonical `shot_list`, `b_roll`, `block_execution` and `creator_checks` strings without changing the schema, provided the information remains unambiguous and machine-valid.
@@ -361,11 +382,12 @@ P0/P1 candidates include:
 - hiding, cleaning away, staging away or framing away material condition evidence in order to create a misleading condition implication;
 - changing an experiment lock or commercial claim to get a better shot;
 - unsafe moving-car/road instruction;
-- treating a polarizer or wide lens as a universal rule;
-- generic shot lists with no preparation/perspective/reflection/exposure acceptance logic while claiming professional direction;
+- treating a polarizer, wide lens, frame rate, shutter relation, LOG/HDR profile or gimbal as a universal professional rule;
+- generic shot lists with no preparation/perspective/reflection/exposure/capture-format acceptance logic while claiming professional direction;
 - accepting a visibly defective trial capture without diagnosis;
 - giving critique without observing the actual supplied artifact;
-- claiming that source media has been captured/accepted when only a plan exists.
+- claiming that source media has been captured/accepted when only a plan exists;
+- declaring a complete audiovisual take acceptable while a required material audio dependency is unchecked.
 
 ## Qualification boundary
 
