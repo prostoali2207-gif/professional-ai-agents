@@ -1,0 +1,99 @@
+name: Automotive Capture public dev smoke
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/**'
+      - '.github/workflows/automotive-capture-public-dev-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dev-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
+      AUTOMOTIVE_CAPTURE_GROQ_JUDGE_MODEL: qwen/qwen3.6-27b
+      AUTOMOTIVE_CAPTURE_CANDIDATE_PACE: '5'
+      AUTOMOTIVE_CAPTURE_JUDGE_PACE: '22'
+      AUTOMOTIVE_CAPTURE_DEV_REPORT: ${{ runner.temp }}/automotive-capture-dev-smoke.json
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run budget and scope gate
+        run: |
+          echo 'objective=smallest discriminating public development smoke before held-out authoring'
+          echo 'release_evidence=false'
+          echo 'candidate_calls=8 Gemini fixed'
+          echo 'judge_calls=8 Groq fixed'
+          echo 'protected_rule=no held-out authoring and no qualification verdict from this workflow'
+          echo 'stop_condition=missing secret/model, frozen identity mismatch, runtime failure, P0 failure, or any selected development case failure'
+
+      - name: Static frozen-executor preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py
+          python -m py_compile architect/evaluation/automotive-capture-direction/run_public_dev_smoke_v0_1.py
+          python architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py --qualification-contract > "$RUNNER_TEMP/capture-contract.json"
+          python - <<'PY'
+          import json, os
+          p=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'capture-contract.json')))
+          assert p['candidate_commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert p['candidate_blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          assert p['host_digest']=='sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f'
+          print('FROZEN EXECUTOR CONTRACT PASS')
+          PY
+
+      - name: Require credentials and verify model access without generation
+        run: |
+          set -euo pipefail
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing; zero generation calls attempted' >&2; exit 21; }
+          test -n "${GROQ_API_KEY:-}" || { echo 'GROQ_API_KEY missing; zero generation calls attempted' >&2; exit 22; }
+          python - <<'PY'
+          import json, os, urllib.request
+          req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models',headers={'x-goog-api-key':os.environ['GEMINI_API_KEY']})
+          with urllib.request.urlopen(req,timeout=30) as r: g=json.loads(r.read().decode())
+          gn={m.get('name','').split('/')[-1] for m in g.get('models',[])}
+          if os.environ['AUTOMOTIVE_CAPTURE_MODEL'] not in gn: raise SystemExit('Gemini candidate model unavailable')
+          req=urllib.request.Request('https://api.groq.com/openai/v1/models',headers={'Authorization':f"Bearer {os.environ['GROQ_API_KEY']}",'Accept':'application/json'})
+          with urllib.request.urlopen(req,timeout=30) as r: q=json.loads(r.read().decode())
+          qn={m.get('id') for m in q.get('data',[]) if isinstance(m,dict)}
+          if os.environ['AUTOMOTIVE_CAPTURE_GROQ_JUDGE_MODEL'] not in qn: raise SystemExit('Groq judge model unavailable')
+          print('CREDENTIAL + MODEL ACCESS PASS')
+          PY
+
+      - name: Exact-runtime unscored candidate canary
+        run: python architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py --canary
+
+      - name: Run public development smoke
+        run: python architect/evaluation/automotive-capture-direction/run_public_dev_smoke_v0_1.py
+
+      - name: Upload sanitized development evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-public-dev-smoke
+          path: ${{ runner.temp }}/automotive-capture-dev-smoke.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Post-run accounting
+        if: always()
+        run: |
+          echo 'planned_generation_calls=8 Gemini candidate + 8 Groq judge + 1 Gemini canary'
+          echo 'heldout_calls=0'
+          echo 'release_claim=none'
