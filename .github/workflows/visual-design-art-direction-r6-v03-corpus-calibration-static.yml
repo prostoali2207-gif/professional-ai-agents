@@ -56,7 +56,7 @@ jobs:
           assert 'combined expected-winner rate >= `0.90`' in pre
           assert 'pair disagreement <= `0.25`' in pre
           assert 'completed `CALIBRATION_FAIL` is terminal' in pre
-          assert 'No final `QUALIFIED` claim without rendered P1–P4 PASS.' in pre
+          assert 'no final `QUALIFIED` claim without rendered P1–P4 PASS.' in pre
           print('R6_V03_CORPUS_CALIBRATION_STATIC_PASS provider_calls=0 candidate_calls=0')
           PY
       - name: Verify frozen candidate blobs at repository head
