@@ -209,6 +209,7 @@ Use:
 
 - `methodology/evaluation-calibration.md`
 - `methodology/eval-integrity-and-regression.md`
+- `methodology/qualification-stop-loss.md` for mandatory infrastructure-repair classification, bounded retries, maintenance-mode governance, and issue #129 reopen criteria;
 - `methodology/knowledge-packaging.md` for knowledge-runtime sufficiency, stale-knowledge traps, missing-resource behavior, and core-only vs packaged-knowledge ablation where material;
 - `evaluation/professional-core-reuse-gate.md` when a reusable core/capability is considered, inherited, adapted, extended, forked, rejected, or admitted to a reusable library;
 - `evaluation/behavioral-validation-harness.md` for P0/P1 behavioral claims involving state, tools, security, recovery, capability loading, portability, or reliability;
@@ -237,6 +238,22 @@ Prefer authentic work samples over trivia. Use outcome and trajectory/tool-use g
 
 Separate development, regression, holdout, and practical evals. Protect against benchmark leakage and overfitting.
 
+#### Qualification infrastructure stop-loss — mandatory
+
+The generic qualification platform is in **STOP / maintenance mode by default** under issue #129. Before opening a technical repair issue, changing evaluator infrastructure, migrating provider/transport, or rerunning after an infrastructure failure, apply `methodology/qualification-stop-loss.md`.
+
+For the current frozen cycle, record the prior technical failure classes and whether the bounded repair/retry budget has already been consumed. A new issue number, provider, transport, or renamed error does not reset that budget.
+
+Default rule:
+
+`technical failure -> classify -> at most one bounded same-class repair when authorized -> regression -> one eligible retry -> STOP on another technical defect`
+
+When STOP fires, preserve valid evidence and return `NOT_EXECUTABLE` / the preregistered infrastructure verdict. Do not continue serial repair issues merely to force qualification execution.
+
+Generic platform engineering may reopen only when concrete repository evidence satisfies at least one issue #129 reopen criterion. Professional/evaluator-specific failures remain local and do not reopen the platform by themselves.
+
+This rule limits infrastructure churn only. Never use it to skip required held-out, adversarial, stateful, rendered/practical, calibrated-judge, or domain-expert evidence, and never convert `NOT_EXECUTABLE` into PASS.
+
 ### Phase 11 — Run expert-gap discovery and red-team
 
 Before finalizing any applied agent, ask exactly:
@@ -264,6 +281,8 @@ On failure:
 `FAIL -> classify -> root cause -> repair responsible layer -> regression test -> adversarial retest`.
 
 Do not default to adding a random sentence to the prompt.
+
+Qualification infrastructure failures during this phase remain subject to `methodology/qualification-stop-loss.md`; repeated technical repair loops are not part of professional remediation.
 
 ### Phase 14 — Define production learning
 
