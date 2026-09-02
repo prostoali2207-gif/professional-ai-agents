@@ -1,0 +1,97 @@
+{
+  "gate_id": "content-architecture-v0.4-practical-handoff-2026-09-02-r1",
+  "fixture_id": "CA-PRACTICAL-001",
+  "purpose": "Evaluation-only synthetic strategy -> Content Analyst -> qualified Content Creator handoff. No live business facts.",
+  "strategy": {
+    "experiment_id": "eval-ca-v04-practical-001",
+    "experiment_version": "1.0",
+    "variant_id": "DISCLOSURE_EARLY",
+    "status": "APPROVED",
+    "priority": "P0",
+    "decision_question": "Does placing the same verified repair disclosure in the opening improve qualified-inquiry quality versus later disclosure?",
+    "hypothesis": "Opening disclosure may filter poor-fit curiosity while preserving trust and qualified inquiry intent.",
+    "audience": {
+      "buying_stage": "Actively evaluating a used sedan and willing to inspect a repaired vehicle when material facts are disclosed clearly.",
+      "need_or_job": "Decide whether this exact synthetic evaluation vehicle is worth an inspection/test-drive conversation.",
+      "trust_or_risk_concern": "Known repair scope and seller transparency."
+    },
+    "primary_funnel_role": "LEAD",
+    "platform": ["INSTAGRAM"],
+    "mechanism_to_test": "For this arm, disclose the exact verified known repair scope in the opening, then support it with direct proof before the approved CTA.",
+    "commercial_path": "Instagram Reel -> DM keyword TESTCAR -> qualified conversation -> human-owned appointment/test drive.",
+    "primary_kpi": "Qualified inquiries per delivered reach",
+    "secondary_kpis": ["Appointment proposal rate", "Retention diagnostics"],
+    "baseline": "Synthetic evaluation baseline; not Content Analyst authority.",
+    "success_threshold": "Synthetic upstream lock; not Content Analyst authority.",
+    "failure_threshold": "Synthetic upstream lock; not Content Analyst authority.",
+    "minimum_sample": "Synthetic upstream lock; not Content Analyst authority.",
+    "test_window": "Synthetic upstream lock; not Content Analyst authority.",
+    "variable_being_tested": "DISCLOSURE_TIMING",
+    "controlled_variables": [
+      "LOCK_VEHICLE",
+      "LOCK_FACT_PACKET",
+      "LOCK_OFFER",
+      "LOCK_CTA_DESTINATION",
+      "LOCK_PROOF_SCOPE",
+      "LOCK_APPROX_DURATION"
+    ],
+    "execution_constraints": [
+      "One phone, one presenter/operator, vehicle available on a lot, no drone, no actors, 20-minute capture window.",
+      "Exact final wording belongs to Content Creator.",
+      "No frame-level edit prescription belongs to Content Analyst."
+    ],
+    "decision_rule": {
+      "continue": "Upstream-only synthetic lock.",
+      "iterate": "Upstream-only synthetic lock.",
+      "scale": "Upstream-only synthetic lock.",
+      "kill": "Upstream-only synthetic lock."
+    },
+    "cta_objective": "Start one attributable qualified-buyer DM conversation.",
+    "cta_destination": "Instagram DM keyword TESTCAR",
+    "approved_offer_constraints": [
+      "Cash purchase only in this synthetic case.",
+      "No finance, discount, warranty, scarcity or market-value claim."
+    ]
+  },
+  "facts": [
+    {"fact_id": "SYN-UNIT-001", "claim": "Synthetic evaluation vehicle is a 2019 sedan.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-MILEAGE-001", "claim": "Verified mileage is 88400 km for this synthetic fixture.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-PRICE-001", "claim": "Approved synthetic asking price is AED 31500.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-REPAIR-001", "claim": "A front-left fender repair is directly verified; no broader accident-history completeness claim is supported.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-PROOF-REPAIR-001", "claim": "A close visual proof asset of the repaired front-left fender is available.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-PROOF-ODO-001", "claim": "A readable odometer proof asset showing 88400 km is available.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-AVAIL-001", "claim": "Vehicle availability is confirmed for this synthetic evaluation only.", "status": "CONFIRMED"},
+    {"fact_id": "SYN-CTA-001", "claim": "Approved CTA destination and token are Instagram DM keyword TESTCAR.", "status": "CONFIRMED"}
+  ],
+  "unsupported_claims": [
+    "accident free",
+    "no accident",
+    "original paint",
+    "one owner",
+    "full service history",
+    "warranty",
+    "guaranteed",
+    "lowest price",
+    "best price",
+    "finance available",
+    "installment",
+    "discount",
+    "limited time"
+  ],
+  "production_constraints": {
+    "camera": "phone",
+    "people": "one presenter/operator",
+    "location": "vehicle lot",
+    "capture_window_minutes": 20,
+    "unavailable": ["drone", "extra actors", "studio rig"]
+  },
+  "required_lock_ids": [
+    "LOCK_VEHICLE",
+    "LOCK_FACT_PACKET",
+    "LOCK_OFFER",
+    "LOCK_CTA_DESTINATION",
+    "LOCK_PROOF_SCOPE",
+    "LOCK_APPROX_DURATION"
+  ],
+  "required_creator_variant_id": "DISCLOSURE_EARLY"
+}
