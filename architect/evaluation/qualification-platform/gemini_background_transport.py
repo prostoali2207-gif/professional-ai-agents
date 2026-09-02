@@ -109,7 +109,7 @@ def run_background_interaction(
       failure is never retried automatically because that could duplicate a
       paid/model call;
     - only idempotent GET polling may retry transient transport failures;
-    - a bounded overall deadline applies to the whole operation;
+    - a bounded overall deadline applies to the whole operation, including create;
     - every non-completed terminal/unknown state fails closed.
     """
     if not isinstance(body, dict):
@@ -146,10 +146,20 @@ def run_background_interaction(
         headers=headers,
     )
 
+    remaining_for_create = deadline - monotonic()
+    if remaining_for_create <= 0:
+        raise GeminiBackgroundTransportError(
+            "BACKGROUND_DEADLINE_EXCEEDED", "overall background deadline exceeded before create"
+        )
+
     # Intentionally single-submit. A timeout here is ambiguous: the server may
     # have accepted the model call even though the client did not receive its ID.
     try:
-        payload = _request_json(create_req, timeout=create_timeout_seconds, opener=opener)
+        payload = _request_json(
+            create_req,
+            timeout=min(create_timeout_seconds, max(0.001, remaining_for_create)),
+            opener=opener,
+        )
     except _TransportFailure as exc:
         raise GeminiBackgroundTransportError("CREATE_TRANSPORT_UNCERTAIN", str(exc)) from None
 
