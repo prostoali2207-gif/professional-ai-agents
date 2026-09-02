@@ -67,9 +67,10 @@ Before repairing or rerunning any failed qualification, follow `architect/method
 Mandatory rules:
 - classify the failure before repair;
 - do not reopen generic platform engineering without an explicit #129 reopen criterion and repository evidence;
-- do not create serial infrastructure-repair issues to chase executability;
-- after one bounded same-class technical repair and one eligible retry in a frozen cycle, another technical defect stops the repair chain and yields `NOT_EXECUTABLE` / the preregistered infrastructure verdict;
-- a new issue, provider, transport, or renamed error does not reset the repair budget;
+- do not create serial infrastructure-repair issues to chase executability of the same qualification stage;
+- after one bounded technical repair and one eligible retry in the same execution chain, another technical defect stops that chain and yields `NOT_EXECUTABLE` / the preregistered infrastructure verdict;
+- a new issue, provider, transport, or renamed error does not reset the repair budget for the same failed stage;
+- genuinely later qualification stages may form new execution chains because they test different evidence/runtime surfaces, but repeated cross-stage infrastructure churn must trigger explicit stop-loss review;
 - never weaken professional scope, thresholds, hard-fails, held-out secrecy, independence, or practical evidence to obtain PASS.
 
 This stop-loss limits infrastructure churn, not professional rigor.
