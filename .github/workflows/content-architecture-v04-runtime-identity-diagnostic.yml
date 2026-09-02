@@ -1,0 +1,36 @@
+name: Content Architecture practical runtime identity diagnostic
+on:
+  push:
+    branches: [eval/content-architecture-v04-practical-handoff-r2]
+    paths: ['architect/evaluation/content-architecture-v04-practical-handoff-r2/RUN-RUNTIME-DIAGNOSTIC']
+permissions:
+  contents: read
+jobs:
+  runtime-identity:
+    runs-on: [self-hosted, Windows, X64]
+    steps:
+      - name: Resolve Codex CLI and record identity
+        shell: powershell
+        run: |
+          $resolved=$null
+          $cmd=Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved=$cmd.Source }
+          if (-not $resolved) {
+            $candidates=@((Join-Path $env:APPDATA 'npm\codex.cmd'),(Join-Path $env:APPDATA 'npm\codex.exe'),(Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),(Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),(Join-Path $env:USERPROFILE '.local\bin\codex.exe'),(Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),(Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe'))
+            foreach($candidate in $candidates){if(Test-Path $candidate){$resolved=$candidate;break}}
+          }
+          if(-not $resolved){
+            $roots=@((Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),(Join-Path $env:LOCALAPPDATA 'Programs'),(Join-Path $env:USERPROFILE '.vscode\extensions'),(Join-Path $env:USERPROFILE '.cursor\extensions'))
+            foreach($root in $roots){if(-not(Test-Path $root)){continue};$found=Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue|Where-Object{$_.Name -in @('codex.exe','codex.cmd')}|Select-Object -First 1;if($found){$resolved=$found.FullName;break}}
+          }
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\ca-runtime-diagnostic" | Out-Null
+          if(-not $resolved){Set-Content "$env:RUNNER_TEMP\ca-runtime-diagnostic\identity.txt" 'NOT_FOUND';exit 40}
+          $version=(& $resolved --version 2>&1 | Out-String).Trim()
+          $auth=(& $resolved login status 2>&1 | Out-String).Trim()
+          @("path=$resolved","version=$version","auth=$auth") | Set-Content "$env:RUNNER_TEMP\ca-runtime-diagnostic\identity.txt"
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-runtime-identity
+          path: ${{ runner.temp }}/ca-runtime-diagnostic/
+          retention-days: 7
