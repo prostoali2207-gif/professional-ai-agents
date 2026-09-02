@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "gate_id": "content-architecture-v0.4-practical-handoff-2026-09-02-r1",
+  "status": "FROZEN_BEFORE_EXECUTION",
+  "purpose": "Final practical end-to-end Strategist -> Content Architecture -> qualified Content Creator handoff gate required by the frozen Content Architecture qualification contract.",
+  "content_architecture_core_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "uae_specialization_blob_sha": "7f41c2d1ba40c3b4c59e3eba2fb264c04162c320",
+  "content_creator_core_model_blob_sha": "d8eee4c6f9141f362d91a340c37dcae6ad6bfa71",
+  "content_creator_evidence_blob_sha": "643f58b0bd3bc2e0081cffe49d307a0c5c14be15",
+  "content_creator_uae_specialization_blob_sha": "01fa57c40d01a79752af1a7f7f5290859521615b",
+  "content_creator_qualified_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "candidate_mutation_allowed": false,
+  "case_count": 1,
+  "case_type": "synthetic_authoritative_business_fixture",
+  "required_flow": ["STRATEGIST_BRIEF", "CONTENT_ARCHITECTURE_V2", "CONTENT_CREATOR_DELIVERABLE"],
+  "pass_conditions": [
+    "Content Architecture output is READY_FOR_CREATOR and structurally contains the complete v2 handoff contract.",
+    "The tested variable and all strategy/experiment locks are preserved.",
+    "No unsupported commercial fact is introduced by Content Architecture.",
+    "Qualified Content Creator can consume the v2 handoff and return a shoot-ready creator deliverable without requesting a strategic redesign.",
+    "Creator preserves the tested variable, vehicle/fact constraints, CTA destination and single-action constraint.",
+    "No material claim lacks a fixture-authoritative fact reference.",
+    "No publishing, analytics interpretation, spend or experiment-decision authority is assumed.",
+    "All mechanical checks pass and hard failures equal zero."
+  ],
+  "failure_policy": "One scored execution only. A professional failure means REVISE/FAIL. Infrastructure failure may be repaired only if it occurs before usable candidate output; no evaluator patching around observed professional output.",
+  "release_rule": "PASS closes PRACTICAL_HANDOFF. Together with the already-passed universal and UAE composition gates, Content Architecture / Content Analyst v0.4 becomes QUALIFIED."
+}
