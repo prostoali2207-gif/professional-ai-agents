@@ -1,0 +1,131 @@
+name: Visual Design Art Direction R6 v0.3 semantic static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r6-semantic-release-preregistration-v0.3.md'
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r6-v0.3.json'
+      - 'architect/evaluation/visual-design-art-direction/semantic/executor_r6_v0_3_gemini.py'
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r6_semantic_qualification_v0_3.py'
+      - '.github/workflows/visual-design-art-direction-r6-v03-semantic-static.yml'
+      - '.github/workflows/visual-design-art-direction-r6-v03-semantic-qualification.yml'
+  push:
+    branches:
+      - 'eval/visual-158-v03-r6-semantic-release'
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r6-semantic-release-preregistration-v0.3.md'
+      - 'architect/evaluation/visual-design-art-direction/release-configuration-r6-v0.3.json'
+      - 'architect/evaluation/visual-design-art-direction/semantic/executor_r6_v0_3_gemini.py'
+      - 'architect/evaluation/visual-design-art-direction/semantic/run_r6_semantic_qualification_v0_3.py'
+      - '.github/workflows/visual-design-art-direction-r6-v03-semantic-static.yml'
+      - '.github/workflows/visual-design-art-direction-r6-v03-semantic-qualification.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify frozen R6 v0.3 release configuration
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          p='architect/evaluation/visual-design-art-direction/release-configuration-r6-v0.3.json'
+          x=json.load(open(p))
+          assert x['issue']==158
+          assert x['cycle_id']=='visual-design-art-direction-0.3.0-independent-2026-09-01-r6-semantic'
+          assert x['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and x['candidate_calls_at_freeze']==0
+          c=x['candidate']
+          assert c['commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          assert c['freeze_integrity_commit']=='347491bbedeaee6fbda038db9639f16040a41301'
+          assert c['candidate_freeze_blob']=='84db2da24f784591c7cc1feb5f1f9a9c22220e40'
+          assert c['skill_blob']=='bee4ee67a8aff43016e158f37a6f421cd079581a'
+          assert c['professional_model_base_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert c['professional_model_repair_v02_blob']=='bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'
+          assert c['professional_model_repair_v03_blob']=='dd42d50f07b804c1ddd3c93b96704e0c6256440c'
+          assert c['mutation_allowed'] is False
+          h=x['heldout']
+          assert h['source_run']==33500210303 and h['source_head']=='7e506c6afb85489758bbf8c2ad08ede75264fd1d'
+          assert h['artifact_id']==9797673448
+          assert h['artifact_digest']=='sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142'
+          assert h['sealed_ciphertext_sha256']=='ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb'
+          assert h['case_count']==20 and h['family_count']==10 and h['contrastive_pair_count']==5 and h['pair_contract_count']==5
+          assert h['pair_contract_exposed_to_candidate'] is False and h['pair_contract_used_as_new_grading_signal'] is False
+          assert h['regeneration_or_substitution_allowed'] is False
+          assert len(x['families'])==10 and len(x['p0_hard_fails'])==7
+          cal=x['calibration']['exact_r6']
+          assert cal['run']==33580704653 and cal['run_head']=='43609a8e76d7f2d4284d659430b9e7c04a8eeda6'
+          assert cal['status']=='CALIBRATION_PASS' and cal['candidate_calls']==0 and cal['hidden_content_printed'] is False
+          assert cal['sanitized_report_artifact_id']==9829104778
+          assert cal['sanitized_report_artifact_digest']=='sha256:b3d1a066465ae5bcd95363424e8c62f64e383b6e134388b8475c774773eedfe1'
+          assert cal['sanitized_report_payload_sha256']=='623697cb127501b3ef57f60716f980ae7d252037d5843aa1f90a0de030325239'
+          assert cal['gemini_correct']=='20/20' and cal['groq_correct']=='20/20'
+          assert cal['combined_expected_winner_rate']==1.0 and cal['pair_disagreement_rate']==0.0
+          assert cal['duplicate_run_eligible'] is False
+          t=x['semantic_release_thresholds']
+          assert t['per_judge_candidate_preference_rate_min']==0.8
+          assert t['combined_candidate_preference_rate_min']==0.9
+          assert t['max_pair_disagreement_rate']==0.25 and t['p0_tolerance']==0 and t['all_dimension_groups_must_pass'] is True
+          r=x['retry_resume_stop']
+          assert r['professional_failure_retry_count']==0 and r['completed_calls_repeated'] is False and r['same_pack_professional_rerun_after_real_failure'] is False
+          assert x['rendered_release_gate']['required_after_semantic_pass'] is True
+          component_paths={
+            'skill_blob':'architect/evaluation/visual-design-art-direction/candidate/SKILL.md',
+            'professional_model_base_blob':'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md',
+            'professional_model_repair_v02_blob':'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md',
+            'professional_model_repair_v03_blob':'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md',
+          }
+          for key,path in component_paths.items():
+            actual=subprocess.check_output(['git','rev-parse',f"{c['commit']}:{path}"],text=True).strip()
+            assert actual==c[key], (key,actual)
+          runtime=x['candidate_runtime']; runner=x['semantic_runner']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+runtime['executor_path']],text=True).strip()==runtime['executor_blob']
+          assert subprocess.check_output(['git','rev-parse','HEAD:'+runner['path']],text=True).strip()==runner['blob']
+          pre=open('architect/evaluation/visual-design-art-direction/r6-semantic-release-preregistration-v0.3.md').read()
+          assert 'FROZEN PRE-CANDIDATE-OUTCOME' in pre and '33580704653' in pre and 'candidate_calls=0' in pre
+          print('VISUAL_R6_V03_RELEASE_FREEZE_STATIC_PASS candidate_calls=0')
+          PY
+      - name: Compile evaluator-only runtime
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/executor_r6_v0_3_gemini.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/semantic/run_r6_semantic_qualification_v0_3.py
+      - name: Verify candidate runtime contract without provider call
+        run: |
+          python architect/evaluation/visual-design-art-direction/semantic/executor_r6_v0_3_gemini.py --qualification-contract > candidate-contract.json
+          python - <<'PY'
+          import json
+          x=json.load(open('candidate-contract.json'))
+          assert x['candidate_commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          assert x['skill_blob']=='bee4ee67a8aff43016e158f37a6f421cd079581a'
+          assert x['professional_model_base_blob']=='bbea595e299445cf79f798ed1e86eecd0b53cd50'
+          assert x['professional_model_repair_v02_blob']=='bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'
+          assert x['professional_model_repair_v03_blob']=='dd42d50f07b804c1ddd3c93b96704e0c6256440c'
+          assert x['provider']=='gemini-interactions-api' and x['model']=='gemini-3.5-flash-lite'
+          assert x['tool_protocol']=='none-v1' and x['state_protocol']=='stateless-v1' and x['observable_protocol']=='final-output-only-v1'
+          print('VISUAL_R6_V03_CANDIDATE_CONTRACT_STATIC_PASS provider_calls=0')
+          PY
+      - name: Guard paid boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/visual-design-art-direction-r6-v03-semantic-qualification.yml')
+          if not p.exists():
+              raise SystemExit('paid workflow missing')
+          text=p.read_text()
+          assert 'issue_comment:' in text
+          assert 'pull_request:' not in text
+          assert '\n  push:' not in text
+          assert "github.event.issue.number == 158" in text
+          assert "github.actor == 'prostoali2207-gif'" in text
+          assert '/run-visual-r6-v03-semantic' in text
+          assert '/resume-visual-r6-v03-semantic ' in text
+          print('VISUAL_R6_V03_PAID_BOUNDARY_STATIC_PASS')
+          PY
