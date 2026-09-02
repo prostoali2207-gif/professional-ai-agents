@@ -43,9 +43,11 @@ On quota exhaustion or rate-limit failure:
 - do not hammer Gemini, Groq, or any other provider whose quota state has not changed;
 - use a fallback only if it preserves the frozen protocol and evidence validity.
 
-Before any technical repair, fallback, migration, or retry after a qualification failure, apply `qualification-stop-loss.md` and record the failure class plus remaining repair budget for the frozen cycle.
+Before any technical repair, fallback, migration, or retry after a qualification failure, apply `qualification-stop-loss.md` and record the failure class plus remaining repair budget for the current execution chain.
 
-A provider change is not a fresh qualification attempt for stop-loss purposes. If the cycle has already consumed its bounded technical repair and eligible retry, another technical defect must stop with `NOT_EXECUTABLE` / the preregistered infrastructure verdict unless repository evidence independently satisfies an issue #129 generic-platform reopen criterion.
+A provider change is not a fresh qualification attempt for stop-loss purposes when it still serves the same failed qualification stage. If that execution chain has already consumed its bounded technical repair and eligible retry, another technical defect must stop with `NOT_EXECUTABLE` / the preregistered infrastructure verdict unless repository evidence independently satisfies an issue #129 generic-platform reopen criterion.
+
+A genuinely later qualification stage may form a new execution chain because it exercises a different evidence/runtime surface. Repeated infrastructure failures across different stages still require the cross-stage churn review defined in `qualification-stop-loss.md`.
 
 ## Migration rule for existing workflows
 
@@ -61,7 +63,7 @@ Classify each workflow as:
 - `PROVIDER_AGNOSTIC` — adapter contract can safely choose among eligible routes;
 - `NOT_EXECUTABLE` — no currently available route preserves required evidence.
 
-A migration proposal must also pass the stop-loss gate. Do not migrate solely because the current route failed if doing so would continue an already-exhausted technical repair chain.
+A migration proposal must also pass the stop-loss gate. Do not migrate solely because the current route failed if doing so would continue an already-exhausted technical repair chain for the same stage.
 
 ## User/account context
 
