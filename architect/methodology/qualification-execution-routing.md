@@ -32,6 +32,28 @@ A workflow may remain provider-pinned when provider/model identity is itself par
 
 Codex or Claude Code cannot replace an independent judge merely because their usage is included in a subscription. Before substitution, verify that the new route preserves the required separation between candidate generation, evaluator/grader, hidden fixtures, and release decision. If independence cannot be established, use another eligible independent route or mark the gate not executable.
 
+## Long-running Gemini Interactions transport
+
+For Gemini Interactions calls whose reasoning/runtime can approach or exceed a normal synchronous HTTP connection lifetime, do not treat a larger outer subprocess/workflow timeout as evidence that the provider call itself is reliable. Google documents background execution for long-running and long-reasoning Interactions because ordinary HTTP requests can be interrupted by connection timeouts.
+
+When provider-side storage/retention is explicitly compatible with the evaluation data, use the reusable `architect/evaluation/qualification-platform/gemini_background_transport.py` primitive or an equivalently reviewed implementation:
+
+- caller must explicitly authorize `store=true`; the transport must never silently change storage semantics;
+- create the background interaction once and retain its interaction ID;
+- never blindly retry an ambiguous create POST, because the server may already have accepted a paid/model call;
+- poll the interaction with bounded idempotent GET requests until `completed` or a terminal failure;
+- bound polling retries and total wall-clock deadline;
+- fail closed on malformed, `failed`, `cancelled`, `incomplete`, `requires_action`, unknown, or deadline-exceeded states.
+
+Background routing is **not automatically eligible for hidden/sealed evaluation material**. If storage/retention is incompatible with the secrecy/privacy contract, select another eligible transport that preserves that contract or mark the stage `NOT_EXECUTABLE`. Do not weaken hidden-data handling merely to avoid timeouts.
+
+Evidence basis (checked 2026-09-02):
+- Google Gemini API Background execution: https://ai.google.dev/gemini-api/docs/background-execution
+- Google Gemini Interactions API reference: https://ai.google.dev/api/interactions-api-v1
+- Google Gemini Interactions overview / storage behavior: https://ai.google.dev/gemini-api/docs/interactions-overview
+
+This policy does not authorize rerunning an execution chain already stopped under `qualification-stop-loss.md`; a transport improvement applies only to a separately authorized future chain.
+
 ## Quota and failure behavior
 
 On quota exhaustion or rate-limit failure:
