@@ -1,0 +1,174 @@
+name: Visual Design Art Direction exact R6 v0.3 corpus calibration
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  calibrate:
+    if: github.event.issue.number == 158 && github.actor == 'prostoali2207-gif' && (github.event.comment.body == '/calibrate-visual-heldout-r6-v03' || startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r6-v03 '))
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-r6-v03-corpus-calibration-groq-pace
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: '33500210303'
+      SOURCE_HEAD_SHA: 7e506c6afb85489758bbf8c2ad08ede75264fd1d
+      SOURCE_ARTIFACT_ID: '9797673448'
+      SOURCE_ARTIFACT_NAME: visual-design-art-direction-v0-3-encrypted-heldout-pack-r6
+      SOURCE_ARTIFACT_DIGEST: sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142
+      SOURCE_CIPHERTEXT_SHA256: ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Static preflight before provider use
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py').read_text()
+          pre=Path('architect/evaluation/visual-design-art-direction/r6-corpus-calibration-preregistration-v0.3.md').read_text()
+          assert "base.SOURCE_RUN_ID = '33500210303'" in p
+          assert "base.SOURCE_HEAD_SHA = '7e506c6afb85489758bbf8c2ad08ede75264fd1d'" in p
+          assert "base.SOURCE_ARTIFACT_ID = '9797673448'" in p
+          assert "base.SOURCE_ARTIFACT_DIGEST = 'sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142'" in p
+          assert "EXPECTED_CIPHERTEXT_SHA256 = 'ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb'" in p
+          assert 'CANDIDATE_EXECUTOR' not in p and 'candidate_response' not in p and 'run_candidate' not in p
+          assert 'completed `CALIBRATION_FAIL` is terminal' in pre
+          assert 'Candidate scoring remains forbidden until true `CALIBRATION_PASS`' in pre
+          expected={
+            'architect/evaluation/visual-design-art-direction/candidate/SKILL.md':'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md':'dd42d50f07b804c1ddd3c93b96704e0c6256440c',
+            'architect/evaluation/visual-design-art-direction/candidate-freeze-v0.3.json':'84db2da24f784591c7cc1feb5f1f9a9c22220e40',
+          }
+          for path,blob in expected.items():
+            actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+            assert actual==blob,(path,actual,blob)
+          print('R6_V03_CORPUS_CALIBRATION_PRE_CREDENTIAL_STATIC_PASS')
+          PY
+      - name: Verify exact source artifact metadata
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${SOURCE_ARTIFACT_ID}" > r6-artifact-meta.json
+          python - <<'PY'
+          import json,os
+          m=json.load(open('r6-artifact-meta.json'))
+          assert str(m['id'])==os.environ['SOURCE_ARTIFACT_ID']
+          assert m['name']==os.environ['SOURCE_ARTIFACT_NAME']
+          assert m['digest']==os.environ['SOURCE_ARTIFACT_DIGEST']
+          assert str(m['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert m['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert m['expired'] is False
+          print('EXACT_R6_V03_ARTIFACT_METADATA_PASS')
+          PY
+      - name: Require evaluator credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 23
+      - name: Install sealing dependency
+        run: python -m pip install --disable-pip-version-check cryptography
+      - name: Download exact R6 sealed pack
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-3-encrypted-heldout-pack-r6
+          path: r6-source
+          github-token: ${{ github.token }}
+          repository: prostoali2207-gif/professional-ai-agents
+          run-id: 33500210303
+      - name: Verify internal sealed ciphertext binding without printing hidden content
+        run: |
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          d=Path('r6-source')
+          m=json.load(open(d/'heldout-r6.manifest.json'))
+          ciphertext=''.join(p.read_text() for p in sorted((d/'heldout-r6.parts').iterdir())).encode()
+          assert m['ciphertext_sha256']==os.environ['SOURCE_CIPHERTEXT_SHA256']
+          assert hashlib.sha256(ciphertext).hexdigest()==os.environ['SOURCE_CIPHERTEXT_SHA256']
+          assert m['candidate_calls']==0 and m['hidden_content_printed'] is False
+          assert m['pair_contract_count']==5 and m['pair_contract_schema_version']=='0.1'
+          assert m['historical_r3_reused'] is False and m['historical_r4_reused'] is False and m['historical_r5_reused'] is False
+          print('EXACT_R6_V03_CIPHERTEXT_PASS candidate_calls=0 hidden_content_printed=false')
+          PY
+      - name: Restore encrypted checkpoint for bounded resume
+        if: startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r6-v03 ')
+        shell: bash
+        run: |
+          set -euo pipefail
+          checkpoint_run="${{ github.event.comment.body }}"
+          checkpoint_run="${checkpoint_run#'/resume-calibrate-visual-heldout-r6-v03 '}"
+          [[ "$checkpoint_run" =~ ^[0-9]+$ ]]
+          mkdir -p checkpoint-source
+          gh run download "$checkpoint_run" -n visual-design-art-direction-v0-3-r6-corpus-calibration-checkpoint --dir checkpoint-source
+          cp checkpoint-source/visual-r6-v03-corpus-calibration-checkpoint.enc ./visual-r6-v03-corpus-calibration-checkpoint.enc
+      - name: Run blind exact-R6 v0.3 corpus calibration
+        id: calibration
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload encrypted resumable checkpoint
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-3-r6-corpus-calibration-checkpoint
+          path: visual-r6-v03-corpus-calibration-checkpoint.enc
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-3-r6-corpus-calibration-progress
+          path: visual-r6-v03-corpus-calibration-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload sanitized calibration report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v0-3-r6-corpus-calibration-report
+          path: visual-r6-v03-corpus-calibration-sanitized-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Enforce pre-score calibration gate
+        if: always()
+        run: |
+          test "${{ steps.calibration.outputs.exit_code }}" = 0
+          test -f visual-r6-v03-corpus-calibration-sanitized-report.json
+          python - <<'PY'
+          import json
+          r=json.load(open('visual-r6-v03-corpus-calibration-sanitized-report.json'))
+          assert r['status']=='CALIBRATION_PASS'
+          assert r['candidate_calls']==0
+          assert r['source']['run_id']=='33500210303'
+          assert r['source']['head_sha']=='7e506c6afb85489758bbf8c2ad08ede75264fd1d'
+          assert r['source']['artifact_id']=='9797673448'
+          assert r['source']['artifact_name']=='visual-design-art-direction-v0-3-encrypted-heldout-pack-r6'
+          assert r['source']['artifact_digest']=='sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142'
+          assert r['source']['sealed_ciphertext_sha256']=='ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb'
+          assert r['judge_models']=={'gemini':'gemini-3.5-flash-lite','groq':'openai/gpt-oss-120b'}
+          assert r['policy']=={
+            'per_judge_expected_winner_rate_min':0.8,
+            'combined_expected_winner_rate_min':0.9,
+            'max_pair_disagreement_rate':0.25,
+          }
+          assert r['item_count']==20 and r['family_count']==10
+          assert r['hidden_content_printed'] is False
+          print('EXACT_R6_V03_CORPUS_CALIBRATION_PASS_ENFORCED candidate_calls=0')
+          PY
