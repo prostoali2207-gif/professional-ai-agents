@@ -35,11 +35,15 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-resume-preregistration.md').read_text()
+          t=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-timeout-repair-preregistration.md').read_text()
           r=Path('architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py').read_text()
           assert '33598852893' in p and '9834506275' in p
           assert '6646e460ca76cade85985f9eaec6bb5664d0c4c670d6815fd72c496a35c1dee8' in p
+          assert '33603188376' in t and '9836056465' in t
+          assert 'd00dd3052d91a2f26334843b025e73024bad3cd156a7fa22b8b2d4b5228b0968' in t
+          assert 'call_with_one_transport_retry' in r and 'timeout_without_output' in r
           assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in r and 'heldout-r6' not in r
-          print('VISUAL_V04_RUNTIME_RESUME_PREFLIGHT_PASS provider_calls=0')
+          print('VISUAL_V04_RUNTIME_RESUME_PREFLIGHT_PASS provider_calls=0 timeout_repair=bounded')
           PY
       - name: Require continuation credentials
         run: |
