@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "status": "DISPATCHABLE_FROZEN",
+  "gate_id": "content-architecture-v0.4-practical-handoff-2026-09-02-r2",
+  "purpose": "Fresh final practical handoff identity after r1 was construct-invalid because its required cash-only public constraint lacked an authoritative fixture fact_id.",
+  "r1_disposition": "CONSTRUCT_INVALID_DIAGNOSTIC_ONLY",
+  "construct_repair": "Add SYN-CASH-001 only; candidate, specialization, downstream qualified Creator, compatibility bridge, schemas, runtime and acceptance logic remain unchanged.",
+  "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_mutation_allowed": false,
+  "uae_specialization_blob_sha": "7f41c2d1ba40c3b4c59e3eba2fb264c04162c320",
+  "fixture_blob_sha": "bee85c8be6b7cfea25d9bfd3c3dff70ba9969701",
+  "r1_acceptance_runner_blob_sha": "1f321aea16edfe5fd1535d73b6dc91bd1706d473",
+  "r2_wrapper_blob_sha": "bfc843fff2df57aea908dfb638a300783303b849",
+  "workflow_blob_sha": "ed925d73aefa3880dadf295cd3fa886bb55e2066",
+  "auto_sales_practical_commit": "f7705db595b55dc237a44538c8b5f03c0a6aa4fe",
+  "content_analyst_binding_blob_sha": "82694481f857e9c318317adc0cf81b6e50d877e2",
+  "content_spec_v2_blob_sha": "35bddc15f19ce4af666247cd2dd229c7a7eabe34",
+  "qualified_creator": {
+    "core_id": "social-content-creative",
+    "version": "0.1.0",
+    "content_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "manifest_blob_sha": "0fcc7bed521aa575a126ee1eea2b28a29a38ad77",
+    "professional_model_blob_sha": "d8eee4c6f9141f362d91a340c37dcae6ad6bfa71",
+    "project_binding_blob_sha": "8b2b5ef822387f4e1f006dc036a08f2e42113d1f",
+    "uae_specialization_blob_sha": "01fa57c40d01a79752af1a7f7f5290859521615b",
+    "compatibility_bridge_blob_sha": "845959e914b2db531f7507b2a1f14b6987767bfa",
+    "creator_schema_blob_sha": "7fea2f60b87198ec2f7ee15cd34c84260914ff2f"
+  },
+  "runtime": {
+    "transport": "codex_frozen_artifact_adapter_v2",
+    "model": "gpt-5.6-sol",
+    "reasoning": "medium",
+    "timeout_seconds": 300,
+    "required_codex_cli_version": "codex-cli 0.151.0-alpha.7.2",
+    "required_auth": "Logged in using ChatGPT"
+  },
+  "protocol": {
+    "practical_cases": 1,
+    "analyst_calls": 1,
+    "qualified_creator_calls": 1,
+    "scored_retries_allowed": 0,
+    "best_of_n_forbidden": true,
+    "fixture_mutation_after_scored_output_forbidden": true,
+    "runner_mutation_after_scored_output_forbidden": true,
+    "threshold_mutation_after_scored_output_forbidden": true
+  },
+  "acceptance": "Exactly the frozen r1 deterministic acceptance logic, with only gate identity and fixture identity replaced.",
+  "release_rule": "PASS only if both Analyst and qualified Creator acceptance layers pass in the single r2 scored run. A genuine professional failure stops qualification; no r3 practical evaluator repair.",
+  "prior_required_gate": {
+    "gate_id": "content-architecture-v0.4-uae-composition-2026-09-02-r3",
+    "verdict": "PASS",
+    "workflow_run_id": 33617987020,
+    "scored_artifact_digest": "sha256:f062e16b7c852f5cc6b371cf644658503d3df2b0dd774c1b2dc6339a92a17a6c"
+  }
+}
