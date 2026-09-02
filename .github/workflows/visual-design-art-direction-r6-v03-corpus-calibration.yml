@@ -7,7 +7,7 @@ permissions:
   actions: read
 jobs:
   calibrate:
-    if: github.event.issue.number == 158 && github.actor == 'prostoali2207-gif' && (github.event.comment.body == '/calibrate-visual-heldout-r6-v03' || startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r6-v03 '))
+    if: github.event.issue.number == 158 && github.event.comment.body == '/calibrate-visual-heldout-r6-v03' && github.actor == 'prostoali2207-gif'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -102,17 +102,6 @@ jobs:
           assert m['historical_r3_reused'] is False and m['historical_r4_reused'] is False and m['historical_r5_reused'] is False
           print('EXACT_R6_V03_CIPHERTEXT_PASS candidate_calls=0 hidden_content_printed=false')
           PY
-      - name: Restore encrypted checkpoint for bounded resume
-        if: startsWith(github.event.comment.body, '/resume-calibrate-visual-heldout-r6-v03 ')
-        shell: bash
-        run: |
-          set -euo pipefail
-          checkpoint_run="${{ github.event.comment.body }}"
-          checkpoint_run="${checkpoint_run#'/resume-calibrate-visual-heldout-r6-v03 '}"
-          [[ "$checkpoint_run" =~ ^[0-9]+$ ]]
-          mkdir -p checkpoint-source
-          gh run download "$checkpoint_run" -n visual-design-art-direction-v0-3-r6-corpus-calibration-checkpoint --dir checkpoint-source
-          cp checkpoint-source/visual-r6-v03-corpus-calibration-checkpoint.enc ./visual-r6-v03-corpus-calibration-checkpoint.enc
       - name: Run blind exact-R6 v0.3 corpus calibration
         id: calibration
         shell: bash
