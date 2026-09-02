@@ -99,6 +99,23 @@ class GeminiBackgroundTransportTests(unittest.TestCase):
         self.assertEqual(len(opener.calls), 1)
         self.assertEqual(opener.calls[0][0], "POST")
 
+    def test_create_http_timeout_is_clamped_by_overall_deadline(self):
+        opener = FakeOpener([{"id": "v1_fast", "status": "completed", "output_text": "done"}])
+        clock = FakeClock()
+        result = g.run_background_interaction(
+            {"model": "gemini-3.7-flash", "input": "public", "store": True},
+            api_key="test-key",
+            opener=opener,
+            sleep=clock.sleep,
+            monotonic=clock.monotonic,
+            create_timeout_seconds=30,
+            overall_timeout_seconds=5,
+        )
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(len(opener.calls), 1)
+        self.assertEqual(opener.calls[0][0], "POST")
+        self.assertEqual(opener.calls[0][2], 5)
+
     def test_terminal_non_completed_status_fails_closed(self):
         for status in ("failed", "cancelled", "incomplete", "requires_action"):
             with self.subTest(status=status):
