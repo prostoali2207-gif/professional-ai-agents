@@ -1,0 +1,119 @@
+name: Visual Design v0.4 public runtime discrimination
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: >-
+      github.event.issue.number == 158 &&
+      github.event.comment.body == '/probe-visual-v04-runtime-model' &&
+      github.event.comment.user.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-v04-runtime-probe-groq-pace
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Static preflight before provider use
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py
+          python architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py --probe-contract > probe-contract.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.load(open('probe-contract.json'))
+          assert x['candidate_commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          assert x['model']=='gemini-3.7-flash' and x['thinking_level']=='medium'
+          assert x['development_only'] is True and x['hidden_release_material_used'] is False
+          f=json.load(open('architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json'))
+          assert f['source_boundary']['release_use']=='DEVELOPMENT_ONLY'
+          assert f['source_boundary']['r4_hidden_content_used'] is False
+          runner=Path('architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py').read_text()
+          assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in runner and 'heldout-r6' not in runner
+          print('VISUAL_V04_PUBLIC_PROBE_PREFLIGHT_PASS provider_calls=0 hidden_release_material=false')
+          PY
+      - name: Require development probe credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+      - name: Run preregistered public runtime discrimination
+        id: run_probe
+        shell: bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload public progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-progress
+          path: visual-v04-runtime-discrimination-public-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload public report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-report
+          path: visual-v04-runtime-discrimination-public-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload public development details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-details
+          path: visual-v04-runtime-discrimination-public-details.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce preregistered development discrimination gate
+        env:
+          PROBE_EXIT_CODE: ${{ steps.run_probe.outputs.exit_code }}
+        run: |
+          test -f visual-v04-runtime-discrimination-public-progress.json || exit 31
+          python - <<'PY'
+          import json, os
+          p=json.load(open('visual-v04-runtime-discrimination-public-progress.json'))
+          assert p['development_only'] is True and p['hidden_release_material_used'] is False
+          if p['status']=='INFRASTRUCTURE_FAILURE':
+              print('VISUAL_V04_PUBLIC_PROBE_INFRASTRUCTURE_FAILURE')
+              raise SystemExit(30)
+          if not __import__('pathlib').Path('visual-v04-runtime-discrimination-public-report.json').exists():
+              raise SystemExit(31)
+          r=json.load(open('visual-v04-runtime-discrimination-public-report.json'))
+          assert r['development_only'] is True and r['release_evidence'] is False
+          assert r['hidden_release_material_used'] is False
+          assert r['candidate']['professional_components']=='exact frozen v0.3'
+          assert r['candidate']['runtime_model']=='gemini-3.7-flash'
+          assert r['candidate']['thinking_level']=='medium'
+          assert r['candidate_calls']==6
+          assert r['judge_calls']=={'gemini':6,'groq':6}
+          assert len(r['fixture_ids'])==6
+          code=os.environ.get('PROBE_EXIT_CODE','')
+          if r['status']=='PUBLIC_RUNTIME_PROBE_PASS':
+              assert code=='0' and r['all_fixtures_pass_both_judges'] is True
+              print('VISUAL_V04_PUBLIC_RUNTIME_PROBE_PASS')
+              raise SystemExit(0)
+          if r['status']=='PUBLIC_RUNTIME_PROBE_FAIL':
+              assert code=='20' and r['all_fixtures_pass_both_judges'] is False
+              print('VISUAL_V04_PUBLIC_RUNTIME_PROBE_FAIL')
+              raise SystemExit(20)
+          raise SystemExit(32)
+          PY
