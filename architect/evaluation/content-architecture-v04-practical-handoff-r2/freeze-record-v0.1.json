@@ -12,18 +12,18 @@
   "r2_construct_delta": "SYN-CASH-001 authoritative synthetic fact added because cash-only was already a required upstream offer constraint; no behavioral requirement changed.",
   "pre_score_infrastructure_repairs": [
     "33622387158: Codex CLI discovery failure before preflight/candidate calls.",
-    "33622543673: combined immutable-input step failure before preflight/candidate calls.",
-    "33622708900: combined immutable-input step failure before preflight/candidate calls.",
-    "33622854156 zero-call diagnostic: every frozen fetch, commit and blob identity passed; redundant second runtime/auth check was removed from the immutable-input step while the dedicated frozen-runtime gate remains."
+    "33622543673 and 33622708900: combined pre-score infrastructure failures before preflight/candidate calls.",
+    "33622854156: zero-call diagnostic proved every frozen fetch, commit and blob identity passes.",
+    "33623287129: zero-call runtime capture proved exact frozen runtime/auth identity and exit codes 0; PowerShell stderr classification was the sole runtime-gate defect. Stderr handling corrected without changing runtime identity."
   ],
   "repository_blob_hashes": {
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/practical-fixture-v0.1.json": "bee85c8be6b7cfea25d9bfd3c3dff70ba9969701",
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/run_practical_handoff_v01.py": "bfc843fff2df57aea908dfb638a300783303b849",
-    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "73bb331cb02fa939023844703bbb9ce638a7bd5f",
-    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "70d0acddae9d0a667ca71c51e5ca3f32a913bce5",
+    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "cbde606d9e2bae2e755760ea2caeff95c25d2a35",
+    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "c5ad19dc52bc8ef556d54bd865c6d2c539cd4e07",
     "architect/evaluation/content-architecture-v04-practical-handoff/run_practical_handoff_v01.py": "1f321aea16edfe5fd1535d73b6dc91bd1706d473"
   },
   "runtime": "codex_artifact:codex-cli 0.151.0-alpha.7.2:gpt-5.6-sol:medium",
   "scored_retries_allowed": 0,
-  "stop_loss": "No further pre-score infrastructure redesign. The first scored r2 execution is final for PRACTICAL_HANDOFF: PASS closes qualification; genuine professional/compatibility failure terminates as REVISE/FAIL."
+  "stop_loss": "No further pre-score infrastructure redesign. The next execution that reaches the scored r2 step is final for PRACTICAL_HANDOFF: PASS closes qualification; genuine professional/compatibility failure terminates as REVISE/FAIL."
 }
