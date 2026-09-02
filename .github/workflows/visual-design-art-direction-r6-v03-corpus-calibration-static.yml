@@ -1,0 +1,77 @@
+name: Visual Design Art Direction exact R6 v0.3 corpus calibration static
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r6-corpus-calibration-preregistration-v0.3.md'
+      - 'architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py'
+      - '.github/workflows/visual-design-art-direction-r6-v03-corpus-calibration-static.yml'
+      - '.github/workflows/visual-design-art-direction-r6-v03-corpus-calibration.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/r6-corpus-calibration-preregistration-v0.3.md'
+      - 'architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py'
+      - '.github/workflows/visual-design-art-direction-r6-v03-corpus-calibration-static.yml'
+      - '.github/workflows/visual-design-art-direction-r6-v03-corpus-calibration.yml'
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Validate exact R6 calibration contract without provider credentials
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/calibration/run_r6_corpus_calibration_v0_3.py').read_text()
+          pre=Path('architect/evaluation/visual-design-art-direction/r6-corpus-calibration-preregistration-v0.3.md').read_text()
+          assert "base.SOURCE_RUN_ID = '33500210303'" in p
+          assert "base.SOURCE_HEAD_SHA = '7e506c6afb85489758bbf8c2ad08ede75264fd1d'" in p
+          assert "base.SOURCE_ARTIFACT_ID = '9797673448'" in p
+          assert "base.SOURCE_ARTIFACT_DIGEST = 'sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142'" in p
+          assert "EXPECTED_CIPHERTEXT_SHA256 = 'ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb'" in p
+          assert "base.CANDIDATE_COMMIT = 'b4793a66172d4de7fe0ade1b0001bc2621829db2'" in p
+          assert "FREEZE_INTEGRITY_COMMIT = '347491bbedeaee6fbda038db9639f16040a41301'" in p
+          assert "FREEZE_BLOB = '84db2da24f784591c7cc1feb5f1f9a9c22220e40'" in p
+          assert "base.SKILL_BLOB = 'bee4ee67a8aff43016e158f37a6f421cd079581a'" in p
+          assert "BASE_MODEL_BLOB = 'bbea595e299445cf79f798ed1e86eecd0b53cd50'" in p
+          assert "REPAIR_V02_MODEL_BLOB = 'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50'" in p
+          assert "REPAIR_V03_MODEL_BLOB = 'dd42d50f07b804c1ddd3c93b96704e0c6256440c'" in p
+          assert "'pair_contract_count'] == 5" in p
+          assert "'pair_contract_schema_version'] == '0.1'" in p
+          assert "historical_r5_reused'] is False" in p
+          assert 'base.main()' in p
+          assert 'CANDIDATE_EXECUTOR' not in p and 'candidate_response' not in p and 'run_candidate' not in p
+          assert 'candidate execution is forbidden' in pre.lower()
+          assert 'each judge expected-winner rate >= `0.80`' in pre
+          assert 'combined expected-winner rate >= `0.90`' in pre
+          assert 'pair disagreement <= `0.25`' in pre
+          assert 'completed `CALIBRATION_FAIL` is terminal' in pre
+          assert 'No final `QUALIFIED` claim without rendered P1–P4 PASS.' in pre
+          print('R6_V03_CORPUS_CALIBRATION_STATIC_PASS provider_calls=0 candidate_calls=0')
+          PY
+      - name: Verify frozen candidate blobs at repository head
+        run: |
+          python - <<'PY'
+          import subprocess
+          expected={
+            'architect/evaluation/visual-design-art-direction/candidate/SKILL.md':'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'architect/evaluation/visual-design-art-direction/professional-model-candidate-v0.1.md':'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.2.md':'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'architect/evaluation/visual-design-art-direction/professional-model-p0-repair-v0.3.md':'dd42d50f07b804c1ddd3c93b96704e0c6256440c',
+            'architect/evaluation/visual-design-art-direction/candidate-freeze-v0.3.json':'84db2da24f784591c7cc1feb5f1f9a9c22220e40',
+          }
+          for path,blob in expected.items():
+            actual=subprocess.check_output(['git','rev-parse',f'HEAD:{path}'],text=True).strip()
+            assert actual==blob,(path,actual,blob)
+          print('R6_V03_FROZEN_CANDIDATE_STATIC_PASS')
+          PY
