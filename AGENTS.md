@@ -58,6 +58,22 @@ FAIL -> classify failure -> root cause -> repair the correct layer -> regression
 
 Do not patch every failure by adding arbitrary prompt text.
 
+## Qualification stop-loss
+
+The generic qualification platform is in **STOP / maintenance mode by default** under the evidence-based decision in issue #129.
+
+Before repairing or rerunning any failed qualification, follow `architect/methodology/qualification-stop-loss.md`.
+
+Mandatory rules:
+- classify the failure before repair;
+- do not reopen generic platform engineering without an explicit #129 reopen criterion and repository evidence;
+- do not create serial infrastructure-repair issues to chase executability;
+- after one bounded same-class technical repair and one eligible retry in a frozen cycle, another technical defect stops the repair chain and yields `NOT_EXECUTABLE` / the preregistered infrastructure verdict;
+- a new issue, provider, transport, or renamed error does not reset the repair budget;
+- never weaken professional scope, thresholds, hard-fails, held-out secrecy, independence, or practical evidence to obtain PASS.
+
+This stop-loss limits infrastructure churn, not professional rigor.
+
 ## Architecture discipline
 
 Use the simplest architecture that can meet the professional task. Do not default to multi-agent systems. Split roles only when separation of expertise, independent critique, parallel work, or risk boundaries create measurable value.
