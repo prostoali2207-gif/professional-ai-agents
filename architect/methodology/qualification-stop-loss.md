@@ -20,6 +20,20 @@ After any failed or interrupted qualification step, classify the primary cause b
 
 Do not label every technical failure as a generic platform defect.
 
+## Execution-chain identity
+
+Stop-loss is tracked per **execution chain**, not per agent lifetime.
+
+An execution chain is the same frozen candidate/cycle plus the same qualification stage and materially the same evaluator/transport path, for example:
+
+- held-out author/review/seal;
+- judge calibration;
+- semantic scored qualification;
+- exact runtime canary/probe;
+- rendered/practical gate.
+
+A genuinely later stage gets its own chain because it exercises different evidence and runtime surfaces. Splitting one broken stage into new issues, renaming the error, or switching transport/provider does **not** create a new chain when the purpose is still to complete the same failed stage.
+
 ## Default decision after classification
 
 ### Professional failure
@@ -36,9 +50,9 @@ Preserve valid completed evidence. Apply the frozen retry policy. If the permitt
 
 ### Local execution failure
 
-If deterministic/local repair is already authorized by the frozen cycle and is bounded, one repair may be made with a regression reproducing the exact defect. After that bounded repair, the next eligible execution is the final technical retry for that failure class in the current cycle.
+If deterministic/local repair is already authorized by the frozen execution chain and is bounded, one repair may be made with a regression reproducing the exact defect. After that bounded repair, the next eligible execution is the final technical retry for that chain.
 
-If the same cycle then encounters another non-professional technical defect, STOP the repair chain. Record `NOT_EXECUTABLE` / infrastructure blocker and route the incident to stop-loss review rather than opening serial repair issues by default.
+If that same execution chain then encounters another non-professional technical defect, STOP the repair chain. Record `NOT_EXECUTABLE` / infrastructure blocker and route the incident to stop-loss review rather than opening serial repair issues by default.
 
 ### Generic platform blind spot
 
@@ -57,13 +71,13 @@ Provider outages/rate limits, one-off profession-specific evaluator defects, can
 
 ## Repair-chain stop rule
 
-For one frozen qualification cycle:
+For one frozen execution chain:
 
-`technical failure -> classify -> at most one bounded same-class repair when authorized -> regression -> one eligible retry -> STOP on another technical defect`
+`technical failure -> classify -> at most one bounded repair when authorized -> regression -> one eligible retry -> STOP on another technical defect in that chain`
 
-A new issue number does not reset this budget. Renaming the failure, changing transport, or moving to another provider does not reset it unless the frozen qualification contract explicitly permits that route and evidence validity is preserved.
+A new issue number does not reset this budget. Renaming the failure, changing transport, or moving to another provider does not reset it when the work still serves the same failed qualification stage. A genuinely later qualification stage may start a new execution chain because it tests a different evidence surface.
 
-Do not create `#N -> #N+1 -> #N+2` infrastructure chains to chase executability.
+Do not create `#N -> #N+1 -> #N+2` infrastructure chains to chase executability of the same stage.
 
 When the stop rule fires:
 
@@ -72,16 +86,27 @@ When the stop rule fires:
 - return `NOT_EXECUTABLE` / the preregistered infrastructure verdict;
 - do not infer professional failure or PASS;
 - do not weaken thresholds, scope, secrecy, independence, or practical gates;
-- do not keep repairing infrastructure inside the same qualification cycle.
+- do not keep repairing infrastructure inside the same execution chain.
+
+## Cross-stage churn review
+
+Different qualification stages can fail for genuinely different reasons, so one earlier repair does not automatically poison every later stage.
+
+However, repeated infrastructure interruptions across multiple stages are evidence that execution reliability may be dominating professional evaluation. When this pattern appears, Agent Architect must stop before another repair and explicitly compare:
+
+`expected professional information gain -> evidence already obtained -> remaining release-critical evidence -> repair cost/risk -> NOT_EXECUTABLE alternative`
+
+Continue only when the next repair is bounded, stage-specific, preserves the frozen contract, and has clear release-critical information value. Otherwise stop the qualification as not executable rather than continuing infrastructure work for its own sake.
 
 ## Pre-run enforcement
 
 Before any model-assisted qualification execution, record:
 
 - current frozen candidate/cycle identity;
-- whether the cycle has already consumed a technical repair;
-- prior technical failure classes in the cycle;
-- whether the proposed run is an allowed first execution, bounded retry, or prohibited serial repair;
+- current qualification stage and execution-chain identity;
+- whether that execution chain has already consumed a technical repair;
+- prior technical failure classes in that chain and relevant cycle-wide infrastructure history;
+- whether the proposed run is an allowed first execution, bounded retry, later independent stage, or prohibited serial repair;
 - if generic platform work is proposed, which issue #129 reopen criterion is satisfied and the concrete repository evidence.
 
 If this record cannot authorize the run, do not execute it.
