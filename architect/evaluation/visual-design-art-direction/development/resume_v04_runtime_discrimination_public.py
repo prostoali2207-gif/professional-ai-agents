@@ -37,6 +37,7 @@ REMAINING = (
 REPORT = Path('visual-v04-runtime-discrimination-resume-report.json')
 DETAILS = Path('visual-v04-runtime-discrimination-resume-details.json')
 PROGRESS = Path('visual-v04-runtime-discrimination-resume-progress.json')
+TIMEOUT_RETRY_DELAY_SECONDS = 5.0
 
 
 def sha256(path: Path) -> str:
@@ -106,18 +107,31 @@ def retry_delay_from_error(text: str) -> float:
     return 35.0
 
 
-def call_with_one_429_retry(fn: Callable[[], Any], label: str) -> Any:
+def timeout_without_output(text: str) -> bool:
+    value = text.lower()
+    return 'read operation timed out' in value or 'timed out' in value or 'timeout' in value
+
+
+def call_with_one_transport_retry(fn: Callable[[], Any], label: str) -> Any:
     for attempt in range(2):
         try:
             return fn()
         except RuntimeError as exc:
             message = str(exc)
-            if '429' not in message or attempt == 1:
+            if attempt == 1:
                 raise
-            # Provider returned no usable model output. Preregistered transport-only
-            # continuation permits one exact-call retry after honoring quota guidance.
-            time.sleep(retry_delay_from_error(message))
-    raise RuntimeError(f'{label} 429 retry budget exhausted')
+            if '429' in message:
+                # Provider returned no usable model output. Existing preregistration
+                # permits one exact-call retry after honoring quota guidance.
+                time.sleep(retry_delay_from_error(message))
+                continue
+            if timeout_without_output(message):
+                # 2026-09-02 timeout-repair preregistration permits one exact-call
+                # retry only when the failed transport produced no usable output.
+                time.sleep(TIMEOUT_RETRY_DELAY_SECONDS)
+                continue
+            raise
+    raise RuntimeError(f'{label} transport retry budget exhausted')
 
 
 def write_progress(status: str, continuation_candidate_calls: int, continuation_judge_calls: dict[str, int], *, failure: str | None = None) -> None:
@@ -148,17 +162,17 @@ def main() -> int:
     try:
         for fixture_id in REMAINING:
             fixture = fixtures[fixture_id]
-            candidate = call_with_one_429_retry(lambda: base.candidate_call(fixture), f'{fixture_id}:candidate')
+            candidate = call_with_one_transport_retry(lambda: base.candidate_call(fixture), f'{fixture_id}:candidate')
             candidate_calls += 1
             write_progress('IN_PROGRESS', candidate_calls, judge_calls)
 
-            gj = call_with_one_429_retry(lambda: base.judge_gemini(fixture, candidate['text']), f'{fixture_id}:gemini-judge')
+            gj = call_with_one_transport_retry(lambda: base.judge_gemini(fixture, candidate['text']), f'{fixture_id}:gemini-judge')
             judge_calls['gemini'] += 1
             if not base.valid_judgment(gj):
                 raise RuntimeError(f'Gemini invalid judgment contract on {fixture_id}')
             write_progress('IN_PROGRESS', candidate_calls, judge_calls)
 
-            qj = call_with_one_429_retry(lambda: base.judge_groq(fixture, candidate['text']), f'{fixture_id}:groq-judge')
+            qj = call_with_one_transport_retry(lambda: base.judge_groq(fixture, candidate['text']), f'{fixture_id}:groq-judge')
             judge_calls['groq'] += 1
             if not base.valid_judgment(qj):
                 raise RuntimeError(f'Groq invalid judgment contract on {fixture_id}')

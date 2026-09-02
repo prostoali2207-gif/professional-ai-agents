@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-resume-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-timeout-repair-preregistration.md'
       - 'architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py'
       - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination-resume.yml'
       - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination-resume-static.yml'
@@ -11,6 +12,7 @@ on:
     branches: [main]
     paths:
       - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-resume-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-timeout-repair-preregistration.md'
       - 'architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py'
       - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination-resume.yml'
       - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination-resume-static.yml'
@@ -36,10 +38,14 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           prereg=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-resume-preregistration.md').read_text()
+          timeout_prereg=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-timeout-repair-preregistration.md').read_text()
           runner=Path('architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py').read_text()
           assert '33598852893' in prereg and '9834506275' in prereg
           assert 'bd5f54a87b61f27db5cc6b1c80c23a678ebf67ff760b57fb3d5acbf391dc72bd' in prereg
           assert '6646e460ca76cade85985f9eaec6bb5664d0c4c670d6815fd72c496a35c1dee8' in prereg
+          assert '33603188376' in timeout_prereg and '9836056465' in timeout_prereg
+          assert 'd00dd3052d91a2f26334843b025e73024bad3cd156a7fa22b8b2d4b5228b0968' in timeout_prereg
+          assert 'continuation candidate calls with completed output: `0`' in timeout_prereg
           assert "'R30_MOBILE_PRECOMMIT_CONTROL'" in runner
           assert "'R31_TRUTH_PROOF_OUTPUT_CONTROL'" in runner
           assert "'R32_REFERENCE_INDEPENDENCE_CONTROL'" in runner
@@ -48,6 +54,8 @@ jobs:
           assert "'R39_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION'" in runner
           assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in runner
           assert 'heldout-r6' not in runner
-          assert 'call_with_one_429_retry' in runner
-          print('VISUAL_V04_RUNTIME_RESUME_STATIC_PASS provider_calls=0 hidden_release_material=false')
+          assert 'call_with_one_transport_retry' in runner
+          assert 'timeout_without_output' in runner
+          assert 'TIMEOUT_RETRY_DELAY_SECONDS = 5.0' in runner
+          print('VISUAL_V04_RUNTIME_RESUME_STATIC_PASS provider_calls=0 hidden_release_material=false timeout_repair=bounded')
           PY
