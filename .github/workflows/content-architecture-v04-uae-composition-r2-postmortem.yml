@@ -1,0 +1,121 @@
+name: Content Architecture v0.4 UAE composition r2 postmortem
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-uae-composition-r2
+    paths:
+      - 'architect/evaluation/content-architecture-v04-uae-composition-r2/POSTMORTEM-UAE-R2-v0.1'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install decrypt dependency
+        run: python -m pip install --disable-pip-version-check --no-input cryptography==44.0.2
+      - name: Download scored r2 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r2-scored-v2-result
+          path: ${{ runner.temp }}/r2-result
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: '33598479167'
+      - name: Diagnose one mechanical mismatch without new model calls
+        env:
+          RESULT_DIR: ${{ runner.temp }}/r2-result
+        run: |
+          python - <<'PY'
+          import base64, hashlib, hmac, importlib.util, json, os, pathlib
+          from cryptography.fernet import Fernet
+
+          GATE_ID='content-architecture-v0.4-uae-composition-2026-09-01-r2'
+          root=pathlib.Path(os.environ['RESULT_DIR'])
+          master=os.environ['QUALIFICATION_SEALED_PACK_MASTER_KEY'].encode().strip()
+          key=base64.urlsafe_b64encode(hmac.new(master,GATE_ID.encode()+b'|run-records',hashlib.sha256).digest())
+          records=json.loads(Fernet(key).decrypt((root/'sealed-run-records.bin').read_bytes()))
+
+          spec=importlib.util.spec_from_file_location('a','architect/evaluation/content-architecture-v04-uae-composition-r2/author_pack_r2.py')
+          a=importlib.util.module_from_spec(spec); spec.loader.exec_module(a)
+          cases={c['id']:c for c in a.build_cases()}
+
+          failing=[]
+          for rec in records:
+              mech=rec.get('mechanical') or {}
+              if mech.get('pass'):
+                  continue
+              case=cases[rec['id']]
+              obj=json.loads(rec['candidate_output'])
+              decisions={r.get('decision_id'):r for r in (obj.get('decision_results') or []) if isinstance(r,dict)}
+              locks={r.get('lock_id'):r for r in (obj.get('lock_results') or []) if isinstance(r,dict)}
+              failure_kinds=[]
+              safe_equiv=True
+              public_matches=True
+              evidence_matches=True
+              for did,exp in case['expected_decisions'].items():
+                  row=decisions.get(did)
+                  if not row:
+                      failure_kinds.append('missing_decision'); safe_equiv=False; public_matches=False; evidence_matches=False; continue
+                  if row.get('public_use') is not exp['public_use']:
+                      failure_kinds.append('public_use'); public_matches=False; safe_equiv=False
+                  if row.get('resolution') not in exp['allowed_resolutions']:
+                      failure_kinds.append('resolution')
+                      if not (exp['public_use'] is False and row.get('public_use') is False and row.get('resolution') in {'WITHHOLD','DEFER'}):
+                          safe_equiv=False
+                  if exp['evidence_required'] and row.get('evidence_basis') not in exp['allowed_evidence_bases']:
+                      failure_kinds.append('evidence_basis'); evidence_matches=False; safe_equiv=False
+              locks_preserved=all(isinstance(locks.get(lid),dict) and locks[lid].get('preserved') is True for lid in case['expected_locks'])
+              if not locks_preserved: safe_equiv=False
+              judge=rec.get('judge') or {}
+              scores=judge.get('scores') or {}
+              judge_all_three=bool(scores) and all(v==3 for v in scores.values())
+              judge_pass=judge.get('release_recommendation')=='PASS' and not judge.get('hard_failures')
+              failing.append({
+                  'failure_kinds': sorted(set(failure_kinds)),
+                  'hard_failure_count': len(mech.get('hard_failures') or []),
+                  'public_use_matches': public_matches,
+                  'evidence_basis_matches': evidence_matches,
+                  'locks_preserved': locks_preserved,
+                  'judge_pass': judge_pass,
+                  'judge_all_three': judge_all_three,
+                  'safe_resolution_equivalence': safe_equiv,
+              })
+
+          construct_invalid=(
+              len(failing)==1 and
+              failing[0]['failure_kinds']==['resolution'] and
+              failing[0]['hard_failure_count']==0 and
+              failing[0]['public_use_matches'] and
+              failing[0]['evidence_basis_matches'] and
+              failing[0]['locks_preserved'] and
+              failing[0]['judge_pass'] and
+              failing[0]['judge_all_three'] and
+              failing[0]['safe_resolution_equivalence']
+          )
+          summary={
+              'gate_id':GATE_ID,
+              'new_candidate_calls':0,
+              'new_judge_calls':0,
+              'failing_case_count':len(failing),
+              'failing':failing,
+              'integrity_classification':'CONSTRUCT_INVALID_ENUM_STRICTNESS' if construct_invalid else 'PROFESSIONAL_REVISE_SIGNAL_OR_FURTHER_REVIEW',
+          }
+          print(json.dumps(summary,sort_keys=True))
+          pathlib.Path('r2-postmortem-summary.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r2-postmortem
+          path: r2-postmortem-summary.json
+          retention-days: 30
