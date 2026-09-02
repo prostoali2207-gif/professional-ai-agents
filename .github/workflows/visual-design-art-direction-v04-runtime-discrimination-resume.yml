@@ -1,0 +1,150 @@
+name: Visual Design v0.4 public runtime discrimination resume
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  resume:
+    if: >-
+      github.event.issue.number == 158 &&
+      github.event.comment.body == '/resume-visual-v04-runtime-probe 33598852893' &&
+      github.event.comment.user.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-v04-runtime-probe-resume-groq-pace
+      V04_CHECKPOINT_DETAILS: source-checkpoint/visual-v04-runtime-discrimination-public-details.json
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Static preflight before provider use
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-resume-preregistration.md').read_text()
+          r=Path('architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py').read_text()
+          assert '33598852893' in p and '9834506275' in p
+          assert '6646e460ca76cade85985f9eaec6bb5664d0c4c670d6815fd72c496a35c1dee8' in p
+          assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in r and 'heldout-r6' not in r
+          print('VISUAL_V04_RUNTIME_RESUME_PREFLIGHT_PASS provider_calls=0')
+          PY
+      - name: Require continuation credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+      - name: Download exact canonical public checkpoint
+        uses: actions/download-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-details
+          path: source-checkpoint
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 33598852893
+      - name: Verify exact checkpoint binding
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          p=Path('source-checkpoint/visual-v04-runtime-discrimination-public-details.json')
+          assert p.exists()
+          assert hashlib.sha256(p.read_bytes()).hexdigest()=='6646e460ca76cade85985f9eaec6bb5664d0c4c670d6815fd72c496a35c1dee8'
+          d=json.loads(p.read_text())
+          assert d['development_only'] is True and d['hidden_release_material_used'] is False
+          assert [x['fixture_id'] for x in d['cases']]==[
+            'R30_MOBILE_PRECOMMIT_CONTROL',
+            'R31_TRUTH_PROOF_OUTPUT_CONTROL',
+            'R32_REFERENCE_INDEPENDENCE_CONTROL',
+            'R33_AUTHORITY_PRECOMMIT_CONTROL',
+          ]
+          assert all(x['judgments']['gemini']['pass'] and x['judgments']['groq']['pass'] for x in d['cases'])
+          print('VISUAL_V04_CANONICAL_CHECKPOINT_PASS completed=4 remaining=2')
+          PY
+      - name: Run exact two-fixture continuation
+        id: run_resume
+        shell: bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/development/resume_v04_runtime_discrimination_public.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload continuation progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-resume-progress
+          path: visual-v04-runtime-discrimination-resume-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload continuation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-resume-report
+          path: visual-v04-runtime-discrimination-resume-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload continuation public details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-art-direction-v04-runtime-probe-resume-details
+          path: visual-v04-runtime-discrimination-resume-details.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce exact continuation gate
+        env:
+          RESUME_EXIT_CODE: ${{ steps.run_resume.outputs.exit_code }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=json.load(open('visual-v04-runtime-discrimination-resume-progress.json'))
+          assert p['development_only'] is True and p['hidden_release_material_used'] is False
+          assert p['source_run']==33598852893
+          assert p['checkpoint_candidate_calls']==4
+          assert p['checkpoint_judge_calls']=={'gemini':4,'groq':4}
+          if p['status']=='INFRASTRUCTURE_FAILURE':
+              print('VISUAL_V04_RUNTIME_RESUME_INFRASTRUCTURE_FAILURE')
+              raise SystemExit(30)
+          report=Path('visual-v04-runtime-discrimination-resume-report.json')
+          if not report.exists():
+              raise SystemExit(31)
+          r=json.load(open(report))
+          assert r['development_only'] is True and r['release_evidence'] is False
+          assert r['hidden_release_material_used'] is False
+          assert r['continuation_of_run']==33598852893
+          assert r['candidate']['professional_components']=='exact frozen v0.3'
+          assert r['candidate']['runtime_model']=='gemini-3.7-flash'
+          assert r['candidate']['thinking_level']=='medium'
+          assert r['candidate_calls']==6
+          assert r['candidate_calls_reused_from_checkpoint']==4
+          assert r['candidate_calls_new_in_continuation']==2
+          assert r['judge_calls']=={'gemini':6,'groq':6}
+          assert r['judge_calls_reused_from_checkpoint']=={'gemini':4,'groq':4}
+          assert r['judge_calls_new_in_continuation']=={'gemini':2,'groq':2}
+          assert len(r['fixture_ids'])==6
+          code=os.environ.get('RESUME_EXIT_CODE','')
+          if r['status']=='PUBLIC_RUNTIME_PROBE_PASS':
+              assert code=='0' and r['all_fixtures_pass_both_judges'] is True
+              print('VISUAL_V04_PUBLIC_RUNTIME_PROBE_PASS_FROM_EXACT_RESUME')
+              raise SystemExit(0)
+          if r['status']=='PUBLIC_RUNTIME_PROBE_FAIL':
+              assert code=='20' and r['all_fixtures_pass_both_judges'] is False
+              print('VISUAL_V04_PUBLIC_RUNTIME_PROBE_FAIL_FROM_EXACT_RESUME')
+              raise SystemExit(20)
+          raise SystemExit(32)
+          PY
