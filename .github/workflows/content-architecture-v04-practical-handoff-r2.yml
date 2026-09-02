@@ -29,6 +29,8 @@ jobs:
       - name: Resolve frozen Codex runtime
         shell: powershell
         run: |
+          $ErrorActionPreference = 'Continue'
+          $PSNativeCommandUseErrorActionPreference = $false
           $resolved = $null
           $cmd = Get-Command codex -ErrorAction SilentlyContinue
           if ($cmd) { $resolved = $cmd.Source }
@@ -46,11 +48,13 @@ jobs:
           }
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
-          & $resolved --version
           $version = (& $resolved --version 2>&1 | Out-String).Trim()
-          if ($version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "runtime drift: $version"; exit 42 }
+          $versionCode = $LASTEXITCODE
+          if ($versionCode -ne 0 -or $version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "runtime drift: code=$versionCode output=$version"; exit 42 }
           $auth = (& $resolved login status 2>&1 | Out-String)
-          if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Error 'Codex ChatGPT login unavailable'; exit 41 }
+          $authCode = $LASTEXITCODE
+          if ($authCode -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Error "Codex ChatGPT login unavailable: code=$authCode output=$auth"; exit 41 }
+          exit 0
       - name: Fetch immutable cross-repo inputs
         shell: powershell
         run: |
