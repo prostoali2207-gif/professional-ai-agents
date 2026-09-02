@@ -1,0 +1,97 @@
+name: Visual Design v0.4 runtime discrimination static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py'
+      - 'architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py'
+      - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination*.yml'
+  push:
+    branches:
+      - agent/visual-design-art-direction-core-0.4-runtime-discrimination
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py'
+      - 'architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py'
+      - '.github/workflows/visual-design-art-direction-v04-runtime-discrimination*.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile public probe code
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py
+      - name: Verify preregistered public-only boundary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          prereg=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.4-runtime-discrimination-preregistration.md').read_text()
+          executor=Path('architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py').read_text()
+          runner=Path('architect/evaluation/visual-design-art-direction/development/run_v04_runtime_discrimination_public.py').read_text()
+          fixtures=json.load(open('architect/evaluation/visual-design-art-direction/fixtures-v0.3-targeted-regression.json'))
+
+          assert '33585269478' in prereg and 'SEMANTIC_FAIL_P0' in prereg
+          assert 'ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE' in prereg
+          assert 'REFERENCE_IMITATION_AS_SOLUTION' in prereg
+          assert 'UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE' in prereg
+          assert 'gemini-3.7-flash' in prereg and 'thinking level `medium`' in prereg
+
+          exact_blobs=[
+            'bee4ee67a8aff43016e158f37a6f421cd079581a',
+            'bbea595e299445cf79f798ed1e86eecd0b53cd50',
+            'bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50',
+            'dd42d50f07b804c1ddd3c93b96704e0c6256440c',
+          ]
+          for blob in exact_blobs:
+              assert blob in executor
+          assert "MODEL='gemini-3.7-flash'" in executor
+          assert "'thinking_level':'medium'" in executor
+          assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in executor
+          assert 'QUALIFICATION_SEALED_PACK_MASTER_KEY' not in runner
+          assert 'heldout-r6' not in executor and 'heldout-r6' not in runner
+
+          selected={
+            'R30_MOBILE_PRECOMMIT_CONTROL',
+            'R31_TRUTH_PROOF_OUTPUT_CONTROL',
+            'R32_REFERENCE_INDEPENDENCE_CONTROL',
+            'R33_AUTHORITY_PRECOMMIT_CONTROL',
+            'R34_WARNING_ONLY_COMPLIANCE_TRAP',
+            'R39_BOLD_REFERENCE_ADVANCED_MEDIA_NONREGRESSION',
+          }
+          fixture_ids={x['id'] for x in fixtures['families']}
+          assert selected <= fixture_ids
+          b=fixtures['source_boundary']
+          assert b['r4_hidden_content_used'] is False
+          assert b['sanitized_failure_classes_only'] is True
+          assert b['release_use']=='DEVELOPMENT_ONLY'
+          assert 'PUBLIC_RUNTIME_PROBE_PASS' in runner and 'PUBLIC_RUNTIME_PROBE_FAIL' in runner
+          assert "GROQ_MIN_INTERVAL_SECONDS','60'" in runner
+          print('VISUAL_V04_RUNTIME_DISCRIMINATION_STATIC_PASS provider_calls=0 hidden_release_material=false')
+          PY
+      - name: Verify probe contract without provider call
+        run: |
+          python architect/evaluation/visual-design-art-direction/development/executor_v03_gemini37_public_probe.py --probe-contract > probe-contract.json
+          python - <<'PY'
+          import json
+          x=json.load(open('probe-contract.json'))
+          assert x['candidate_commit']=='b4793a66172d4de7fe0ade1b0001bc2621829db2'
+          assert x['model']=='gemini-3.7-flash'
+          assert x['thinking_level']=='medium'
+          assert x['development_only'] is True
+          assert x['hidden_release_material_used'] is False
+          print('VISUAL_V04_PUBLIC_PROBE_CONTRACT_PASS provider_calls=0')
+          PY
