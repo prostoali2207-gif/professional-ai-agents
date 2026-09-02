@@ -10,15 +10,18 @@
   "uae_specialization_blob_sha": "7f41c2d1ba40c3b4c59e3eba2fb264c04162c320",
   "r1_construct_disposition": "CONSTRUCT_INVALID_DIAGNOSTIC_ONLY",
   "r2_construct_delta": "SYN-CASH-001 authoritative synthetic fact added because cash-only was already a required upstream offer constraint; no behavioral requirement changed.",
-  "pre_score_infrastructure_repair": "Workflow attempt 33622387158 stopped at Codex CLI discovery before preflight, candidate calls or Creator calls. Resolver was aligned with the previously proven r1 recursive discovery; no scored evidence existed.",
+  "pre_score_infrastructure_repairs": [
+    "33622387158: Codex CLI discovery failure before preflight/candidate calls.",
+    "33622543673: mutable cross-repo branch-head equality failure before preflight/candidate calls."
+  ],
   "repository_blob_hashes": {
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/practical-fixture-v0.1.json": "bee85c8be6b7cfea25d9bfd3c3dff70ba9969701",
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/run_practical_handoff_v01.py": "bfc843fff2df57aea908dfb638a300783303b849",
-    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "b50e52c8590aa57eaf41a48ac5eebd4b6a236c3c",
-    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "6d6052ebe8a313bc0accbb656125c388fa85de2f",
+    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "f4a26d2c368f3d554db04ffc8326de801841f0c0",
+    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "35c42769fc1ecf0e47e92adc8d933d022ebe47bc",
     "architect/evaluation/content-architecture-v04-practical-handoff/run_practical_handoff_v01.py": "1f321aea16edfe5fd1535d73b6dc91bd1706d473"
   },
   "runtime": "codex_artifact:codex-cli 0.151.0-alpha.7.2:gpt-5.6-sol:medium",
   "scored_retries_allowed": 0,
-  "stop_loss": "This is the sole fresh practical rerun permitted for the r1 construct defect. A genuine professional/compatibility failure in the first scored r2 execution terminates qualification as REVISE/FAIL; no further evaluator repair chain."
+  "stop_loss": "No further pre-score infrastructure redesign. The first scored r2 execution is final for PRACTICAL_HANDOFF: PASS closes qualification; genuine professional/compatibility failure terminates as REVISE/FAIL."
 }
