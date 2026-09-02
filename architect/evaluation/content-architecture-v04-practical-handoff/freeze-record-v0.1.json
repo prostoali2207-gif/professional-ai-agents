@@ -1,0 +1,17 @@
+{
+  "gate_id": "content-architecture-v0.4-practical-handoff-2026-09-02-r1",
+  "status": "FROZEN_PRE_SCORE",
+  "candidate_calls": 0,
+  "creator_calls": 0,
+  "frozen_at": "2026-09-02",
+  "repository_blob_hashes": {
+    "architect/evaluation/content-architecture-v04-practical-handoff/practical-fixture-v0.1.json": "9a9cbc3ecec8acaa1f3f6fa76d7311e584202f43",
+    "architect/evaluation/content-architecture-v04-practical-handoff/run_practical_handoff_v01.py": "1f321aea16edfe5fd1535d73b6dc91bd1706d473",
+    "architect/evaluation/content-architecture-v04-practical-handoff/preregistration-v0.1.json": "ca98071e26ff32a63cfec817008191584e81bba4",
+    ".github/workflows/content-architecture-v04-practical-handoff.yml": "b2b9f458ecf2ca9c7d64ccc75c5aff9f8a82115a",
+    "architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d"
+  },
+  "cross_repo_frozen_commit": "f7705db595b55dc237a44538c8b5f03c0a6aa4fe",
+  "scored_retries_allowed": 0,
+  "note": "All evaluator/interface/runtime identities were frozen before the RUN sentinel and before any practical candidate or downstream Creator call."
+}
