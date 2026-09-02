@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "gate_id": "content-architecture-v0.4-uae-composition-2026-09-02-r3",
+  "status": "PREREGISTERED_NOT_SCORED",
+  "purpose": "One bounded profession-specific evaluator repair after UAE composition r2 was retired for construct invalidity.",
+  "methodology_basis": [
+    "architect/SKILL.md from main",
+    "architect/methodology/qualification-stop-loss.md from main",
+    "architect/methodology/eval-integrity-and-regression.md from main",
+    "architect/methodology/evaluation-calibration.md from main"
+  ],
+  "prior_evidence": {
+    "universal_release_run_id": 33501449175,
+    "universal_release_verdict": "PASS",
+    "uae_r1": "CONSTRUCT_INVALID_DIAGNOSTIC_ONLY",
+    "uae_r2_scored_run_id": 33598479167,
+    "uae_r2_postmortem_run_id": 33601016054,
+    "uae_r2": "CONSTRUCT_INVALID_DIAGNOSTIC_ONLY",
+    "uae_r2_construct_decision": "architect/evaluation/content-architecture-v04-uae-composition-r2/r2-construct-decision.md"
+  },
+  "frozen_candidate": {
+    "universal_core_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+    "uae_specialization_blob_sha": "7f41c2d1ba40c3b4c59e3eba2fb264c04162c320",
+    "candidate_mutation_allowed_after_preregistration": false
+  },
+  "construct": {
+    "public_propositions": {
+      "decision_classes": ["COMMERCIAL_CLAIM", "UNIT_FACT", "PROOF_SCOPE"],
+      "mechanical_fields": ["public_use", "resolution", "evidence_basis"],
+      "meaning": "Whether a material proposition may enter public-facing content given source, scope and evidence."
+    },
+    "strategy_cta_experiment_locks": {
+      "mechanical_fields": ["lock_id", "preserved"],
+      "meaning": "Whether upstream strategy, CTA and experiment constraints are preserved in architecture and handoff.",
+      "public_use_field_forbidden": true
+    },
+    "free_form_professional_assessment": "Frozen calibrated judge assesses commercial truth, proof architecture, funnel/CTA integrity, experiment integrity, execution feasibility and authority boundaries."
+  },
+  "construct_repairs_from_r2": [
+    "Removed STRATEGY_LOCK and EXPERIMENT_LOCK from proposition decision classes.",
+    "Removed proposition-style public_use expectations from internal strategy/CTA/experiment decisions.",
+    "Lock-only fixtures carry no expected public proposition decisions and are graded mechanically through explicit lock preservation.",
+    "Regression tests reject internal lock classes inside decision_results and assert that lock-only cases pass without public_use rows."
+  ],
+  "corpus": {
+    "case_count": 8,
+    "calibration_pair_count": 3,
+    "fresh_identity_required": true,
+    "source_rule": "Fresh synthetic scenarios authored from frozen universal/UAE obligations, not candidate output text.",
+    "coverage": [
+      "unsupported exact-unit price vs market context",
+      "partial repair/history scope",
+      "model-level optional equipment vs exact-unit verification",
+      "fresh authoritative mileage vs superseded stock record",
+      "unsupported finance/warranty terms",
+      "visual implication stronger than known condition evidence",
+      "approved appointment/test-drive conversion path lock",
+      "single-variable experiment lock preservation"
+    ]
+  },
+  "evaluation_model": {
+    "deterministic": "Safe public proposition use/evidence scope plus explicit lock preservation.",
+    "professional_judge": "Frozen calibrated Content Architecture UAE composition assessor.",
+    "calibration_before_candidate_calls": true,
+    "candidate_calls_during_calibration": 0
+  },
+  "release_policy": {
+    "mechanical_case_pass_rate": 1.0,
+    "mechanical_hard_failures_allowed": 0,
+    "judge_hard_failures_allowed": 0,
+    "per_case_judge_min_dimension": 2,
+    "judge_aggregate_mean_min": 2.4,
+    "all_cases_judge_release_pass": true,
+    "calibration_expected_winner_rate_min": 1.0
+  },
+  "runtime": {
+    "provider": "codex-cli-chatgpt-subscription",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "timeout_seconds": 300,
+    "codex_cli_version": "0.151.0-alpha.7.2",
+    "pin_mode": "EXACT",
+    "runtime_mutation_after_preregistration": false
+  },
+  "frozen_evaluator": {
+    "judge_blob_sha": "669cdfcd0195d0507637d377b48f2650b4a870dd",
+    "adapter_blob_sha": "d1ef178b739a638a883c5a1d0efe5e431bd3b34d",
+    "mcp_adapter_blob_sha": "73e9349391d4aa83dd459ed23e4069a3cf9a2072",
+    "author_blob_sha": "a007948db9233c6c2febe61f476c52a841f66ac0",
+    "runner_blob_sha": "c28c56ad409a993d87050fe533353bc2e2c1b79b",
+    "test_blob_sha": "f0c04414837988e2816e12b66484ce52f0cda058",
+    "threshold_mutation_after_scoring": false,
+    "judge_mutation_after_scoring": false
+  },
+  "integrity_and_stop_loss": {
+    "r3_is_final_bounded_profession_specific_evaluator_repair_in_current_chain": true,
+    "no_blind_retry": true,
+    "no_post_score_patch": true,
+    "if_material_evaluator_or_infrastructure_defect_recurs": "STOP_AND_REVIEW_METHOD_NOT_SERIAL_R4_BY_DEFAULT",
+    "if_real_professional_failure_occurs": "REVISE_CANDIDATE_ONLY_THROUGH_A_NEW_EXPLICIT_REVISION_CYCLE"
+  },
+  "post_gate": {
+    "on_valid_pass": "PRACTICAL_HANDOFF",
+    "full_qualification_requires_practical_handoff_pass": true
+  }
+}
