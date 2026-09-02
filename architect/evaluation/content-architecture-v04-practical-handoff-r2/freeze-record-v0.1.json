@@ -12,13 +12,15 @@
   "r2_construct_delta": "SYN-CASH-001 authoritative synthetic fact added because cash-only was already a required upstream offer constraint; no behavioral requirement changed.",
   "pre_score_infrastructure_repairs": [
     "33622387158: Codex CLI discovery failure before preflight/candidate calls.",
-    "33622543673: mutable cross-repo branch-head equality failure before preflight/candidate calls."
+    "33622543673: combined immutable-input step failure before preflight/candidate calls.",
+    "33622708900: combined immutable-input step failure before preflight/candidate calls.",
+    "33622854156 zero-call diagnostic: every frozen fetch, commit and blob identity passed; redundant second runtime/auth check was removed from the immutable-input step while the dedicated frozen-runtime gate remains."
   ],
   "repository_blob_hashes": {
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/practical-fixture-v0.1.json": "bee85c8be6b7cfea25d9bfd3c3dff70ba9969701",
     "architect/evaluation/content-architecture-v04-practical-handoff-r2/run_practical_handoff_v01.py": "bfc843fff2df57aea908dfb638a300783303b849",
-    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "f4a26d2c368f3d554db04ffc8326de801841f0c0",
-    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "35c42769fc1ecf0e47e92adc8d933d022ebe47bc",
+    "architect/evaluation/content-architecture-v04-practical-handoff-r2/preregistration-v0.1.json": "73bb331cb02fa939023844703bbb9ce638a7bd5f",
+    ".github/workflows/content-architecture-v04-practical-handoff-r2.yml": "70d0acddae9d0a667ca71c51e5ca3f32a913bce5",
     "architect/evaluation/content-architecture-v04-practical-handoff/run_practical_handoff_v01.py": "1f321aea16edfe5fd1535d73b6dc91bd1706d473"
   },
   "runtime": "codex_artifact:codex-cli 0.151.0-alpha.7.2:gpt-5.6-sol:medium",
