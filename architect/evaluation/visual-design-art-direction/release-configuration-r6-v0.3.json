@@ -1,0 +1,159 @@
+{
+  "schema_version": "0.3",
+  "issue": 158,
+  "cycle_id": "visual-design-art-direction-0.3.0-independent-2026-09-01-r6-semantic",
+  "freeze_state": "FROZEN_PRE_CANDIDATE_OUTCOME",
+  "candidate_calls_at_freeze": 0,
+  "candidate": {
+    "commit": "b4793a66172d4de7fe0ade1b0001bc2621829db2",
+    "freeze_integrity_commit": "347491bbedeaee6fbda038db9639f16040a41301",
+    "candidate_freeze_blob": "84db2da24f784591c7cc1feb5f1f9a9c22220e40",
+    "skill_blob": "bee4ee67a8aff43016e158f37a6f421cd079581a",
+    "professional_model_base_blob": "bbea595e299445cf79f798ed1e86eecd0b53cd50",
+    "professional_model_repair_v02_blob": "bad4e815a3898dd19c7dfc0a07dd4c1aeeab3d50",
+    "professional_model_repair_v03_blob": "dd42d50f07b804c1ddd3c93b96704e0c6256440c",
+    "mutation_allowed": false
+  },
+  "scope": "FULL",
+  "heldout": {
+    "source_run": 33500210303,
+    "source_head": "7e506c6afb85489758bbf8c2ad08ede75264fd1d",
+    "artifact_id": 9797673448,
+    "artifact_name": "visual-design-art-direction-v0-3-encrypted-heldout-pack-r6",
+    "artifact_digest": "sha256:9e6286ec436031aa121e631f0613216236322598ed71d8ae8c22938050886142",
+    "sealed_ciphertext_sha256": "ffecad8a5087bda276a95825a1e0071ca18640392a12dbb26f0f8ec5ba78cdeb",
+    "case_count": 20,
+    "family_count": 10,
+    "contrastive_pair_count": 5,
+    "pair_contract_count": 5,
+    "pair_contract_schema_version": "0.1",
+    "pair_contract_exposed_to_candidate": false,
+    "pair_contract_used_as_new_grading_signal": false,
+    "regeneration_or_substitution_allowed": false,
+    "historical_r3_r4_r5_release_reuse_allowed": false
+  },
+  "families": [
+    "FRAMING",
+    "REFERENCE",
+    "DIVERGENCE",
+    "CRAFT_JUDGMENT",
+    "MOBILE",
+    "TRUTH",
+    "CONTRACT",
+    "CRITIQUE_REPAIR",
+    "ADVANCED_MEDIA_ROUTING",
+    "AUTHORITY_BOUNDARY"
+  ],
+  "p0_hard_fails": [
+    "FABRICATED_FACTUAL_PROOF",
+    "UNOBSERVED_RENDER_SUCCESS_CLAIM",
+    "REFERENCE_IMITATION_AS_SOLUTION",
+    "KEYWORD_ONLY_ADVANCED_MEDIA_ROUTING",
+    "SPECTACLE_BREAKS_HARD_FUNCTION_CONSTRAINT",
+    "UNAUTHORIZED_UX_PRODUCT_CONVERSION_CHANGE",
+    "ACCEPTS_UNUSABLE_COLLAPSED_DESKTOP_MOBILE"
+  ],
+  "calibration": {
+    "authoritative_general": {
+      "run": 33262394565,
+      "status": "CALIBRATION_PASS"
+    },
+    "exact_r6": {
+      "run": 33580704653,
+      "run_head": "43609a8e76d7f2d4284d659430b9e7c04a8eeda6",
+      "status": "CALIBRATION_PASS",
+      "sanitized_report_artifact_id": 9829104778,
+      "sanitized_report_artifact_name": "visual-design-art-direction-v0-3-r6-corpus-calibration-report",
+      "sanitized_report_artifact_digest": "sha256:b3d1a066465ae5bcd95363424e8c62f64e383b6e134388b8475c774773eedfe1",
+      "sanitized_report_payload_sha256": "623697cb127501b3ef57f60716f980ae7d252037d5843aa1f90a0de030325239",
+      "gemini_correct": "20/20",
+      "groq_correct": "20/20",
+      "combined_expected_winner_rate": 1.0,
+      "pair_disagreement_rate": 0.0,
+      "candidate_calls": 0,
+      "hidden_content_printed": false,
+      "duplicate_run_eligible": false
+    }
+  },
+  "judges": {
+    "gemini": {
+      "model": "gemini-3.5-flash-lite",
+      "api": "interactions",
+      "thinking_level": "medium",
+      "structured_output": "frozen JUDGE_SCHEMA"
+    },
+    "groq": {
+      "model": "openai/gpt-oss-120b",
+      "api": "chat_completions",
+      "reasoning_effort": "medium",
+      "temperature": 0,
+      "minimum_interval_seconds": 60
+    },
+    "protocol": "blind deterministic A/B candidate-versus-sealed-competent-generic-baseline",
+    "single_uncalibrated_scalar_forbidden": true
+  },
+  "semantic_release_thresholds": {
+    "numeric_policy_source": "unchanged calibrated comparative thresholds validated by authoritative general calibration and exact R6 calibration 33580704653",
+    "per_judge_candidate_preference_rate_min": 0.8,
+    "combined_candidate_preference_rate_min": 0.9,
+    "max_pair_disagreement_rate": 0.25,
+    "apply_to_overall": true,
+    "apply_to_each_preregistered_dimension_group": true,
+    "p0_tolerance": 0,
+    "all_dimension_groups_must_pass": true
+  },
+  "dimension_grouping": {
+    "method": "case-level calibrated A/B winner grouped by public construct family; no new scalar grader",
+    "FRAMING": ["brief_appropriateness", "function_clarity", "authority_boundary_discipline"],
+    "REFERENCE": ["brief_appropriateness", "reference_independence"],
+    "DIVERGENCE": ["brief_appropriateness", "concept_distinctiveness", "divergence_quality"],
+    "CRAFT_JUDGMENT": ["visual_craft_reasoning", "function_clarity"],
+    "MOBILE": ["mobile_art_direction", "function_clarity"],
+    "TRUTH": ["truth_evidence_integrity"],
+    "CONTRACT": ["brief_appropriateness", "implementation_contract_usefulness", "authority_boundary_discipline"],
+    "CRITIQUE_REPAIR": ["visual_craft_reasoning", "critique_root_cause_quality", "function_clarity"],
+    "ADVANCED_MEDIA_ROUTING": ["advanced_media_routing", "mobile_art_direction", "function_clarity"],
+    "AUTHORITY_BOUNDARY": ["brief_appropriateness", "authority_boundary_discipline"]
+  },
+  "candidate_runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "thinking_level": "medium",
+    "trial_count_per_case": 1,
+    "state": "stateless-v1",
+    "tools": "none-v1",
+    "observable": "final-output-only-v1",
+    "executor_path": "architect/evaluation/visual-design-art-direction/semantic/executor_r6_v0_3_gemini.py",
+    "executor_protocol": "visual-design-art-direction-r6-v03-candidate-v1",
+    "executor_blob": "bf1536b430071d5322f2a813615764bacdae7df7"
+  },
+  "semantic_runner": {
+    "path": "architect/evaluation/visual-design-art-direction/semantic/run_r6_semantic_qualification_v0_3.py",
+    "candidate_visible_fields": ["brief", "context", "constraints"],
+    "hidden_fields_withheld_from_candidate": ["competent_generic_baseline", "professional_criteria", "p0_guardrail", "pair_contracts"],
+    "constraints_adapter": "lossless canonical JSON array[string] -> executor string; judges retain original array",
+    "checkpoint": "encrypted after every completed candidate or judge call",
+    "public_report": "sanitized aggregate/family-dimension only",
+    "blob": "dfb2c0722ce5138750474c9cac7c38986f594234"
+  },
+  "p0_adjudication": {
+    "two_judges_same_category": "confirmed P0 -> professional release failure",
+    "single_or_discordant_flag": "SEMANTIC_ADJUDICATION_REQUIRED -> no PASS and no professional-failure inference until criterion resolution",
+    "no_posthoc_threshold_relaxation": true
+  },
+  "retry_resume_stop": {
+    "transient_5xx_retries_per_provider_request": 1,
+    "professional_failure_retry_count": 0,
+    "infrastructure_resume": "only missing calls from encrypted checkpoint on exact R6 artifact and frozen implementation",
+    "completed_calls_repeated": false,
+    "same_pack_professional_rerun_after_real_failure": false,
+    "provider_quota_or_transport_failure": "infrastructure failure, not professional failure"
+  },
+  "rendered_release_gate": {
+    "required_after_semantic_pass": true,
+    "tasks": ["P1_DISCOVER", "P2_DIRECT", "P3_REFINE", "P4_ADVANCED_MEDIA_PAIR"],
+    "narrow_and_wide_render_observation_required": true,
+    "separate_frontend_executor_or_controlled_adapter_required": true,
+    "semantic_pass_is_not_final_pass": true
+  }
+}
