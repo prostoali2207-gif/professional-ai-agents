@@ -62,9 +62,9 @@ jobs:
           }
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
-          $version = ((& $resolved --version) | Out-String).Trim()
+          $version = ((& $resolved --version 2>&1) | Out-String).Trim()
           if ($version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "Unexpected Codex version: $version"; exit 41 }
-          $login = ((& $resolved login status) | Out-String).Trim()
+          $login = ((& $resolved login status 2>&1) | Out-String).Trim()
           if ($login -notmatch 'Logged in using ChatGPT') { Write-Error 'Codex is not logged in using ChatGPT'; exit 42 }
 
       - name: Fetch and verify frozen cross-repo composition inputs
