@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Resolve frozen Codex runtime
+      - name: Resolve Codex CLI from interactive user installation
         shell: powershell
         run: |
           $resolved = $null
@@ -62,12 +62,10 @@ jobs:
           }
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
-          $version = ((& $resolved --version 2>&1) | Out-String).Trim()
-          if ($version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "Unexpected Codex version: $version"; exit 41 }
-          $login = ((& $resolved login status 2>&1) | Out-String).Trim()
-          if ($login -notmatch 'Logged in using ChatGPT') { Write-Error 'Codex is not logged in using ChatGPT'; exit 42 }
+          & $resolved --version
+          & $resolved login status
 
-      - name: Fetch and verify frozen cross-repo composition inputs
+      - name: Fetch and verify frozen cross-repo composition inputs and runtime
         shell: powershell
         run: |
           git fetch origin agent/content-architecture-core-2026-08
@@ -90,6 +88,15 @@ jobs:
           foreach ($sha in $required) {
             if ((git cat-file -t $sha) -ne 'blob') { Write-Error "Missing frozen blob: $sha"; exit 44 }
           }
+          @'
+          import subprocess
+          auth=subprocess.run(['codex','login','status'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in ((auth.stdout or '')+(auth.stderr or '')): raise SystemExit(41)
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          version=((ver.stdout or '')+(ver.stderr or '')).strip()
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2': raise SystemExit(42)
+          print('frozen Codex runtime: PASS')
+          '@ | python -
 
       - name: Verify preregistered evaluator identities
         shell: powershell
