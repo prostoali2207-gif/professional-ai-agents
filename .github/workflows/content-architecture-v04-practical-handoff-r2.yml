@@ -47,7 +47,10 @@ jobs:
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
           & $resolved --version
-          & $resolved login status
+          $version = (& $resolved --version 2>&1 | Out-String).Trim()
+          if ($version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "runtime drift: $version"; exit 42 }
+          $auth = (& $resolved login status 2>&1 | Out-String)
+          if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Error 'Codex ChatGPT login unavailable'; exit 41 }
       - name: Fetch immutable cross-repo inputs
         shell: powershell
         run: |
@@ -57,10 +60,6 @@ jobs:
           git fetch https://github.com/prostoali2207-gif/auto-sales-growth-system.git main
           $required=@('5d440e1bf3e20fbd35c6ab276310a904e36cc06d','7f41c2d1ba40c3b4c59e3eba2fb264c04162c320','82694481f857e9c318317adc0cf81b6e50d877e2','35bddc15f19ce4af666247cd2dd229c7a7eabe34','0fcc7bed521aa575a126ee1eea2b28a29a38ad77','d8eee4c6f9141f362d91a340c37dcae6ad6bfa71','8b2b5ef822387f4e1f006dc036a08f2e42113d1f','01fa57c40d01a79752af1a7f7f5290859521615b','845959e914b2db531f7507b2a1f14b6987767bfa','7fea2f60b87198ec2f7ee15cd34c84260914ff2f')
           foreach ($sha in $required) { if ((git cat-file -t $sha) -ne 'blob') { Write-Error "Missing frozen blob: $sha"; exit 44 } }
-          $auth=(& codex login status 2>&1 | Out-String)
-          if ($LASTEXITCODE -ne 0 -or $auth -notmatch 'Logged in using ChatGPT') { Write-Error 'Codex ChatGPT login unavailable'; exit 41 }
-          $version=(& codex --version 2>&1 | Out-String).Trim()
-          if ($version -ne 'codex-cli 0.151.0-alpha.7.2') { Write-Error "runtime drift: $version"; exit 42 }
       - name: Verify r2 freeze and zero-call state
         shell: powershell
         run: |
