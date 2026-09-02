@@ -242,11 +242,13 @@ Separate development, regression, holdout, and practical evals. Protect against 
 
 The generic qualification platform is in **STOP / maintenance mode by default** under issue #129. Before opening a technical repair issue, changing evaluator infrastructure, migrating provider/transport, or rerunning after an infrastructure failure, apply `methodology/qualification-stop-loss.md`.
 
-For the current frozen cycle, record the prior technical failure classes and whether the bounded repair/retry budget has already been consumed. A new issue number, provider, transport, or renamed error does not reset that budget.
+Track the stop-loss against the current **execution chain**: frozen candidate/cycle + qualification stage + materially the same evaluator/transport path. Record prior technical failure classes and whether the bounded repair/retry budget for that chain has already been consumed. A new issue number, provider, transport, or renamed error does not reset the budget when it still serves the same failed stage.
 
 Default rule:
 
-`technical failure -> classify -> at most one bounded same-class repair when authorized -> regression -> one eligible retry -> STOP on another technical defect`
+`technical failure -> classify -> at most one bounded repair when authorized -> regression -> one eligible retry -> STOP on another technical defect in that execution chain`
+
+A genuinely later qualification stage may form a new execution chain because it tests a different evidence/runtime surface. Repeated infrastructure interruptions across different stages must trigger the cross-stage churn review in `methodology/qualification-stop-loss.md`; do not assume each new stage justifies another repair automatically.
 
 When STOP fires, preserve valid evidence and return `NOT_EXECUTABLE` / the preregistered infrastructure verdict. Do not continue serial repair issues merely to force qualification execution.
 
