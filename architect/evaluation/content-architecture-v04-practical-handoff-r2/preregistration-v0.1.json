@@ -7,7 +7,9 @@
   "construct_repair": "Add SYN-CASH-001 only; candidate, specialization, downstream qualified Creator, compatibility bridge, schemas, runtime and acceptance logic remain unchanged.",
   "pre_score_infrastructure_repairs": [
     "Attempt 33622387158 stopped at Codex CLI discovery before preflight/candidate calls; resolver aligned to proven r1 discovery.",
-    "Attempt 33622543673 stopped at mutable auto-sales branch-head equality before preflight/candidate calls; frozen commit availability is now checked directly while exact blob identities remain pinned."
+    "Attempt 33622543673 stopped inside the combined immutable-input step before preflight/candidate calls.",
+    "Attempt 33622708900 also stopped inside that combined step before preflight/candidate calls.",
+    "Zero-call diagnostic 33622854156 proved every frozen fetch, commit and blob check passes. Therefore the only remaining failure surface was the redundant second runtime/auth check inside the immutable-input step; that duplicate check was removed while the dedicated frozen-runtime step remains mandatory."
   ],
   "candidate_blob_sha": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
   "candidate_mutation_allowed": false,
@@ -15,7 +17,7 @@
   "fixture_blob_sha": "bee85c8be6b7cfea25d9bfd3c3dff70ba9969701",
   "r1_acceptance_runner_blob_sha": "1f321aea16edfe5fd1535d73b6dc91bd1706d473",
   "r2_wrapper_blob_sha": "bfc843fff2df57aea908dfb638a300783303b849",
-  "workflow_blob_sha": "35c42769fc1ecf0e47e92adc8d933d022ebe47bc",
+  "workflow_blob_sha": "70d0acddae9d0a667ca71c51e5ca3f32a913bce5",
   "auto_sales_practical_commit": "f7705db595b55dc237a44538c8b5f03c0a6aa4fe",
   "content_analyst_binding_blob_sha": "82694481f857e9c318317adc0cf81b6e50d877e2",
   "content_spec_v2_blob_sha": "35bddc15f19ce4af666247cd2dd229c7a7eabe34",
