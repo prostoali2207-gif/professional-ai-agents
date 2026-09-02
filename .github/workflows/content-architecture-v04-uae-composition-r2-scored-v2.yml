@@ -1,0 +1,202 @@
+name: Content Architecture v0.4 UAE composition r2 scored v2
+
+on:
+  push:
+    branches:
+      - eval/content-architecture-v04-uae-composition-r2
+    paths:
+      - 'architect/evaluation/content-architecture-v04-uae-composition-r2/RUN-UAE-R2-SCORED-v0.2'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare-wheelhouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download pinned Windows evaluator dependency
+        shell: bash
+        run: |
+          mkdir -p wheelhouse
+          python -m pip download --disable-pip-version-check --no-input --only-binary=:all: --platform win_amd64 --python-version 312 --implementation cp --abi cp312 --dest wheelhouse cryptography==44.0.2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-r2-scored-v2-wheelhouse
+          path: wheelhouse/
+          retention-days: 1
+
+  score:
+    needs: prepare-wheelhouse
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 75
+    env:
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      FROZEN_ARTIFACT_CODEX_MODEL: gpt-5.6-sol
+      FROZEN_ARTIFACT_CODEX_REASONING: medium
+      FROZEN_ARTIFACT_CODEX_TIMEOUT: '300'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-uae-r2-scored-v2-wheelhouse
+          path: ${{ runner.temp }}/ca-v04-uae-r2-scored-v2-wheelhouse
+      - name: Download frozen pre-score evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r2-freeze-evidence
+          path: ${{ runner.temp }}/ca-v04-uae-r2-freeze-evidence
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: '33536020218'
+      - name: Install evaluator dependency offline
+        shell: powershell
+        run: python -m pip install --disable-pip-version-check --no-input --no-index --find-links "$env:RUNNER_TEMP\ca-v04-uae-r2-scored-v2-wheelhouse" cryptography==44.0.2
+      - name: Resolve Codex CLI from interactive user installation
+        shell: powershell
+        run: |
+          $resolved = $null
+          $cmd = Get-Command codex -ErrorAction SilentlyContinue
+          if ($cmd) { $resolved = $cmd.Source }
+          if (-not $resolved) {
+            $candidates = @(
+              (Join-Path $env:APPDATA 'npm\codex.cmd'),
+              (Join-Path $env:APPDATA 'npm\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),
+              (Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),
+              (Join-Path $env:USERPROFILE '.local\bin\codex.exe'),
+              (Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),
+              (Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe')
+            )
+            foreach ($candidate in $candidates) { if (Test-Path $candidate) { $resolved = $candidate; break } }
+          }
+          if (-not $resolved) {
+            $roots = @(
+              (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),
+              (Join-Path $env:LOCALAPPDATA 'Programs'),
+              (Join-Path $env:USERPROFILE '.vscode\extensions'),
+              (Join-Path $env:USERPROFILE '.cursor\extensions')
+            )
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -in @('codex.exe','codex.cmd') } |
+                Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
+          if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
+          Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
+          & $resolved --version
+          & $resolved login status
+      - name: Verify frozen identities, runtime and pre-score evidence
+        shell: powershell
+        run: |
+          if (-not $env:QUALIFICATION_SEALED_PACK_MASTER_KEY) { exit 31 }
+          git fetch origin agent/content-architecture-core-2026-08
+          git fetch https://github.com/prostoali2207-gif/auto-sales-growth-system.git agent/content-analyst-rebuild-2026-08
+          if ((git cat-file -t 5d440e1bf3e20fbd35c6ab276310a904e36cc06d) -ne 'blob') { exit 32 }
+          if ((git cat-file -t 7f41c2d1ba40c3b4c59e3eba2fb264c04162c320) -ne 'blob') { exit 33 }
+          $checks = @(
+            @('architect/evaluation/content-architecture-v04-uae-composition-r2/author_pack_r2.py','aebfe824585e1d3988511fa80037b41fcc288302'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r2/run_uae_r2.py','7e7cffa63856a44e4450f8d14ce05b9a497b83e8'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r2/test_uae_r2.py','a04acb46542ef1db54e644f0fb949617f962af04'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r2/preregistration-r2.json','94778a9bc65fc46a6d62b24e7f9756129a1d2634'),
+            @('architect/evaluation/content-architecture-v04-uae-composition-r1/judge-uae-composition.md','669cdfcd0195d0507637d377b48f2650b4a870dd'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_adapter.py','d1ef178b739a638a883c5a1d0efe5e431bd3b34d'),
+            @('architect/evaluation/harness/adapters/codex_frozen_artifact_mcp.py','73e9349391d4aa83dd459ed23e4069a3cf9a2072')
+          )
+          foreach ($item in $checks) {
+            $actual = (git hash-object $item[0]).Trim()
+            if ($actual -ne $item[1]) { Write-Error "Frozen blob mismatch: $($item[0]) actual=$actual"; exit 34 }
+          }
+          $env:FREEZE_ROOT = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r2-freeze-evidence'
+          @'
+          import json, os, pathlib, subprocess
+          auth=subprocess.run(['codex','login','status'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          if auth.returncode != 0 or 'Logged in using ChatGPT' not in ((auth.stdout or '')+(auth.stderr or '')): raise SystemExit(41)
+          ver=subprocess.run(['codex','--version'],capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=15)
+          version=((ver.stdout or '')+(ver.stderr or '')).strip()
+          if ver.returncode != 0 or version != 'codex-cli 0.151.0-alpha.7.2': raise SystemExit(42)
+          root=pathlib.Path(os.environ['FREEZE_ROOT'])
+          pack=root/'ca-v04-uae-r2-freeze-pack'
+          caldir=root/'ca-v04-uae-r2-freeze-calibration'
+          ev=json.loads((pack/'freeze-evidence.json').read_text(encoding='utf-8'))
+          cal=json.loads((caldir/'calibration-report.json').read_text(encoding='utf-8'))
+          assert ev['gate_id']=='content-architecture-v0.4-uae-composition-2026-09-01-r2'
+          assert ev['status']=='FROZEN_PRE_SCORE' and ev['candidate_calls']==0
+          assert ev['case_count']==8 and ev['calibration_pair_count']==3
+          assert ev['corpus_identity_sha256']=='e4f381e839cd785879971d5842c83f872b95f45af50a271bd0efc9706a4a5e22'
+          assert ev['composed_blob_sha']=='1daa9b961c17c277bb093c41235cbae4eff50587'
+          assert ev['composed_identity_sha256']=='0db2dd098b1ae0df6f4e21bc150de286006168295c45d795449975c64cdc218a'
+          assert cal['status']=='CALIBRATION_PASS' and cal['candidate_calls']==0 and cal['expected_winner_rate']==1.0
+          print('frozen pre-score evidence/runtime: PASS')
+          '@ | python -
+      - name: Run construct regression tests
+        shell: powershell
+        run: python architect/evaluation/content-architecture-v04-uae-composition-r2/test_uae_r2.py
+      - name: Rebuild and verify exact frozen r2 corpus and composition
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r2-scored-v2-pack'
+          New-Item -ItemType Directory -Force -Path $pack | Out-Null
+          python architect/evaluation/content-architecture-v04-uae-composition-r2/author_pack_r2.py --out $pack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $env:PACK_DIR = $pack
+          @'
+          import importlib.util, json, os, pathlib
+          p=pathlib.Path(os.environ['PACK_DIR'])
+          m=json.loads((p/'sealed-manifest.json').read_text(encoding='utf-8'))
+          assert m['plain_identity_sha256']=='e4f381e839cd785879971d5842c83f872b95f45af50a271bd0efc9706a4a5e22'
+          assert m['case_count']==8 and m['calibration_pair_count']==3
+          spec=importlib.util.spec_from_file_location('r','architect/evaluation/content-architecture-v04-uae-composition-r2/run_uae_r2.py')
+          r=importlib.util.module_from_spec(spec); spec.loader.exec_module(r)
+          sha, ident=r.assemble_composed_blob()
+          assert sha=='1daa9b961c17c277bb093c41235cbae4eff50587'
+          assert ident=='0db2dd098b1ae0df6f4e21bc150de286006168295c45d795449975c64cdc218a'
+          print('exact frozen corpus/composition: PASS')
+          '@ | python -
+      - name: Run scored UAE composition r2 qualification
+        id: scored
+        continue-on-error: true
+        shell: powershell
+        run: |
+          $pack = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r2-scored-v2-pack\sealed-pack.bin'
+          $out = Join-Path $env:RUNNER_TEMP 'ca-v04-uae-r2-scored-v2-result'
+          python architect/evaluation/content-architecture-v04-uae-composition-r2/run_uae_r2.py --mode score --pack $pack --out $out --timeout 300
+          $code=$LASTEXITCODE
+          Set-Content -Path (Join-Path $out 'workflow-exit-code.txt') -Value $code
+          exit $code
+      - name: Upload UAE composition r2 scored evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v04-uae-composition-r2-scored-v2-result
+          path: ${{ runner.temp }}/ca-v04-uae-r2-scored-v2-result/
+          retention-days: 30
+      - name: Apply frozen r2 outcome
+        if: always()
+        shell: powershell
+        env:
+          OUT_DIR: ${{ runner.temp }}/ca-v04-uae-r2-scored-v2-result
+        run: |
+          @'
+          import json, os, pathlib
+          out=pathlib.Path(os.environ['OUT_DIR'])
+          q=out/'qualification-report.json'; r=out/'runtime-failure.json'
+          if r.exists():
+              print(r.read_text(encoding='utf-8')); raise SystemExit(30)
+          if not q.exists(): raise SystemExit(31)
+          report=json.loads(q.read_text(encoding='utf-8'))
+          print(json.dumps({k:report[k] for k in ['gate_id','verdict','case_count','candidate_calls','judge_calls','mechanical_case_pass_rate','mechanical_hard_failure_count','judge_hard_failure_count','all_cases_judge_release_pass','judge_aggregate_mean']},sort_keys=True))
+          raise SystemExit(0 if report['verdict']=='PASS' else 20)
+          '@ | python -
