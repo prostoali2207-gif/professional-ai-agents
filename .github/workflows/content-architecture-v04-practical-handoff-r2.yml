@@ -36,6 +36,14 @@ jobs:
             $candidates = @((Join-Path $env:APPDATA 'npm\codex.cmd'),(Join-Path $env:APPDATA 'npm\codex.exe'),(Join-Path $env:LOCALAPPDATA 'npm\codex.cmd'),(Join-Path $env:LOCALAPPDATA 'npm\codex.exe'),(Join-Path $env:USERPROFILE '.local\bin\codex.exe'),(Join-Path $env:USERPROFILE 'scoop\shims\codex.exe'),(Join-Path $env:LOCALAPPDATA 'Microsoft\WindowsApps\codex.exe'))
             foreach ($candidate in $candidates) { if (Test-Path $candidate) { $resolved=$candidate; break } }
           }
+          if (-not $resolved) {
+            $roots = @((Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\bin'),(Join-Path $env:LOCALAPPDATA 'Programs'),(Join-Path $env:USERPROFILE '.vscode\extensions'),(Join-Path $env:USERPROFILE '.cursor\extensions'))
+            foreach ($root in $roots) {
+              if (-not (Test-Path $root)) { continue }
+              $found = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.Name -in @('codex.exe','codex.cmd') } | Select-Object -First 1
+              if ($found) { $resolved = $found.FullName; break }
+            }
+          }
           if (-not $resolved) { Write-Error 'Codex CLI not found'; exit 40 }
           Add-Content -Path $env:GITHUB_PATH -Value (Split-Path -Parent $resolved)
           & $resolved --version
