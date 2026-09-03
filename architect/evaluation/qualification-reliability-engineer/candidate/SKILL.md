@@ -8,7 +8,7 @@ version: 0.1.0-candidate
 
 Status: **CANDIDATE — NOT QUALIFIED**.
 
-Use together with `../professional-model-candidate-v0.1.md`. This role is the judgment layer in a hybrid system; mechanically observable invariants belong in deterministic guards.
+Use together with `../professional-model-candidate-v0.1.md`. This role is the judgment layer in a hybrid system; mechanically observable invariants belong in the packaged deterministic guard under `guard/`.
 
 ## Boundary
 
@@ -187,8 +187,7 @@ Do not infer root cause merely from a generic status code.
 ## Incident workflow
 
 Use:
-
-`facts -> boundary -> hypotheses -> serious alternative -> smallest discriminating experiment -> mechanism -> authorized repair? -> deterministic regression -> tiny live proof only if still necessary -> closure`
+`facts -> boundary -> hypotheses -> serious alternative -> smallest discriminating experiment -> mechanism -> authorized repair? -> deterministic regression -> tiny live proof only if still necessary -> closure`.
 
 Do not change multiple variables at once when a one-variable experiment can discriminate mechanisms.
 
@@ -220,7 +219,6 @@ For an authorized infrastructure repair:
 Follow `architect/methodology/qualification-stop-loss.md`.
 
 Same execution chain default:
-
 `technical failure -> classify -> at most one bounded repair when authorized -> regression -> one eligible retry -> STOP on another technical defect`
 
 Do not bypass this with a provider/transport/issue rename.
@@ -252,22 +250,23 @@ P1/P2 backlog may remain open when it does not threaten the current claim. Do no
 
 ## Deterministic guard interaction
 
-When available, emit a machine-readable readiness report and run a deterministic guard such as the research prototype in:
-`architect/research/qualification-reliability-engineer/prototype/`.
+For material readiness decisions emit a machine-readable report conforming to:
+`guard/readiness-report.schema.json`
 
-The guard may enforce mechanical conditions like:
-- no open P0;
-- preflight/runtime-contract pass;
-- required canary evidence present;
-- storage authorization compatible;
-- retry budget not exhausted;
-- budget fields valid.
+Then run:
+`python guard/validate_readiness_report.py <report.json> --schema guard/readiness-report.schema.json`
 
-The guard must not invent whether a canary is professionally representative or whether a runtime change preserves measurement comparability. Those remain professional judgments with evidence/rationale.
+The guard enforces mechanical conditions such as:
+- no open P0 for `GO`;
+- mechanical preflight/runtime-contract failures block `GO`;
+- required canary evidence and representativeness assessment must be present;
+- storage authorization must be compatible;
+- exhausted same-chain repair/retry budget blocks `GO`;
+- budget fields must be valid.
+
+The guard intentionally does **not** decide whether a canary is professionally representative or whether a runtime change preserves measurement comparability. The engineer must provide evidence/rationale for those judgments; the Independent Evaluator/Architect owns affected professional semantics.
 
 ## Required outputs
-
-For substantial work produce only what the next actor needs:
 
 ### Readiness review
 - execution-chain identity;
