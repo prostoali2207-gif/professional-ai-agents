@@ -1,0 +1,48 @@
+name: QRE v0.1 Stage B calibration static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/qualification-reliability-engineer/stage-b/**'
+      - '.github/workflows/qre-v01-stage-b-calibration-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  stage-b-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic schema dependency
+        run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Compile Stage B validator and regressions
+        run: |
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/stage-b/validate_calibration_manifest.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/stage-b/test_validate_calibration_manifest.py
+      - name: Run Stage B manifest discrimination regressions
+        run: python architect/evaluation/qualification-reliability-engineer/stage-b/test_validate_calibration_manifest.py
+      - name: Prove Stage B deterministic gate has no provider credential path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          paths = [
+              Path('architect/evaluation/qualification-reliability-engineer/stage-b/validate_calibration_manifest.py'),
+              Path('architect/evaluation/qualification-reliability-engineer/stage-b/test_validate_calibration_manifest.py'),
+          ]
+          forbidden = ('OPENAI_API_KEY','GEMINI_API_KEY','GROQ_API_KEY','ANTHROPIC_API_KEY','urllib.request','requests.','socket.')
+          for path in paths:
+              text = path.read_text()
+              for token in forbidden:
+                  assert token not in text, f'{path}: {token}'
+          print('QRE_STAGE_B_STATIC_ZERO_PROVIDER_PASS')
+          PY
