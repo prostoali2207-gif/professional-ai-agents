@@ -6,6 +6,7 @@ import importlib.util
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +29,7 @@ _spec = importlib.util.spec_from_file_location('gemini_background_transport', TR
 if _spec is None or _spec.loader is None:
     raise RuntimeError('cannot load Gemini background transport')
 _transport = importlib.util.module_from_spec(_spec)
+sys.modules[_spec.name] = _transport
 _spec.loader.exec_module(_transport)
 run_background_interaction = _transport.run_background_interaction
 
