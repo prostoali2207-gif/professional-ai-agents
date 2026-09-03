@@ -1,0 +1,72 @@
+name: QRE v0.1 Stage A zero-provider qualification
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/qualification-reliability-engineer/stage-a/**'
+      - '.github/workflows/qre-v01-stage-a-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stage-a-zero-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic schema dependency
+        run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Compile frozen guard and evaluator-owned Stage A harness
+        run: |
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/candidate/guard/validate_readiness_report.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/candidate/guard/test_validate_readiness_report.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/stage-a/evaluator_harness.py
+      - name: Run packaged frozen-candidate guard regression
+        run: python architect/evaluation/qualification-reliability-engineer/candidate/guard/test_validate_readiness_report.py
+      - name: Run independent Stage A identity, fault-injection, network-block and mutation proof
+        run: |
+          python architect/evaluation/qualification-reliability-engineer/stage-a/evaluator_harness.py --output qre-stage-a-result.json
+          python - <<'PY'
+          import json
+          r=json.load(open('qre-stage-a-result.json'))
+          assert r['status']=='PASS', r
+          assert r['provider_calls']==0 and r['model_calls']==0 and r['judge_calls']==0, r
+          assert r['frozen_components_verified']==6, r
+          assert r['next_stage_authorized'] is False, r
+          assert all(v=='PASS' for v in r['guard_fault_paths'].values()), r
+          assert all(v=='PASS' for v in r['stale_identity_paths'].values()), r
+          assert all(v=='PASS' for v in r['mutation_discrimination'].values()), r
+          print('QRE_STAGE_A_PASS provider_calls=0 model_calls=0 judge_calls=0')
+          PY
+      - name: Enforce evaluator code has no provider SDK/credential path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/qualification-reliability-engineer/stage-a/evaluator_harness.py').read_text()
+          forbidden=(
+            'openai.', 'anthropic.', 'google.genai', 'groq.',
+            'OPENAI_API_KEY', 'GEMINI_API_KEY', 'GROQ_API_KEY', 'ANTHROPIC_API_KEY',
+          )
+          for token in forbidden:
+              assert token not in p, token
+          print('QRE_STAGE_A_NO_PROVIDER_CODE_PATH_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qre-v01-stage-a-result
+          path: qre-stage-a-result.json
+          if-no-files-found: error
+          retention-days: 14
