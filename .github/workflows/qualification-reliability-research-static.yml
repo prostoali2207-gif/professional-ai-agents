@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'architect/research/qualification-reliability-engineer/**'
+      - 'architect/evaluation/qualification-reliability-engineer/**'
       - '.github/workflows/qualification-reliability-research-static.yml'
 
 permissions:
@@ -20,12 +21,16 @@ jobs:
           python-version: '3.11'
       - name: Install deterministic schema dependency
         run: python -m pip install --disable-pip-version-check jsonschema
-      - name: Compile readiness prototype
+      - name: Compile research and packaged readiness guards
         run: |
           python -m py_compile architect/research/qualification-reliability-engineer/prototype/validate_readiness_report.py
           python -m py_compile architect/research/qualification-reliability-engineer/prototype/test_validate_readiness_report.py
-      - name: Run readiness guard regressions
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/candidate/guard/validate_readiness_report.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/candidate/guard/test_validate_readiness_report.py
+      - name: Run research prototype regressions
         run: python architect/research/qualification-reliability-engineer/prototype/test_validate_readiness_report.py
+      - name: Run packaged candidate guard regressions
+        run: python architect/evaluation/qualification-reliability-engineer/candidate/guard/test_validate_readiness_report.py
       - name: Prove no provider credential is required
         env:
           OPENAI_API_KEY: ''
@@ -34,9 +39,14 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          source = Path('architect/research/qualification-reliability-engineer/prototype/validate_readiness_report.py').read_text()
+          sources = [
+              Path('architect/research/qualification-reliability-engineer/prototype/validate_readiness_report.py'),
+              Path('architect/evaluation/qualification-reliability-engineer/candidate/guard/validate_readiness_report.py'),
+          ]
           forbidden = ('urllib.request', 'requests.', 'socket.', 'OPENAI_API_KEY', 'GEMINI_API_KEY', 'GROQ_API_KEY')
-          for token in forbidden:
-              assert token not in source, token
-          print('QRE_RESEARCH_ZERO_PROVIDER_PASS')
+          for path in sources:
+              source = path.read_text()
+              for token in forbidden:
+                  assert token not in source, (path, token)
+          print('QRE_ZERO_PROVIDER_GUARDS_PASS')
           PY
