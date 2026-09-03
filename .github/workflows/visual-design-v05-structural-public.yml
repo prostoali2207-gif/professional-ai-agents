@@ -1,0 +1,117 @@
+name: Visual Design v0.5 structural public development
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  run-public-structural:
+    if: >-
+      github.event.issue.number == 256 &&
+      github.event.comment.user.login == github.repository_owner &&
+      github.event.comment.body == '/run-visual-v05-structural-public'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MIN_INTERVAL_SECONDS: '60'
+      GROQ_PACE_FILE: /tmp/visual-v05-structural-groq-pace
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Zero-provider preflight
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py
+          python architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py --probe-contract > /tmp/visual-v05-contract.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md').read_text()
+          assert 'Date: 2026-09-03' in p
+          assert '24' in p and 'Maximum planned provider calls' in p
+          d=json.load(open('/tmp/visual-v05-contract.json'))
+          assert d['controller_version']=='v0.5-structural-invariant-controller-v1'
+          assert d['provider_storage_scope']=='PUBLIC_DEVELOPMENT_ONLY'
+          assert d['hidden_release_material_used'] is False
+          print('VISUAL_V05_PAID_PREFLIGHT_PASS provider_calls=0')
+          PY
+      - name: Require development credentials
+        run: |
+          test -n "$GEMINI_API_KEY" || exit 22
+          test -n "$GROQ_API_KEY" || exit 24
+      - name: Run preregistered public structural discrimination
+        id: structural
+        shell: bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          set +e
+          python architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload progress
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-v05-structural-public-progress
+          path: visual-v05-structural-public-progress.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload public report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-v05-structural-public-report
+          path: visual-v05-structural-public-report.json
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Upload public details
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-design-v05-structural-public-details
+          path: visual-v05-structural-public-details.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Enforce preregistered public gate
+        env:
+          STRUCTURAL_EXIT_CODE: ${{ steps.structural.outputs.exit_code }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          progress=json.load(open('visual-v05-structural-public-progress.json'))
+          assert progress['development_only'] is True
+          assert progress['hidden_release_material_used'] is False
+          code=os.environ.get('STRUCTURAL_EXIT_CODE','')
+          if progress['status']=='INFRASTRUCTURE_FAILURE':
+              print('VISUAL_V05_STRUCTURAL_INFRASTRUCTURE_FAILURE')
+              raise SystemExit(30)
+          report_path=Path('visual-v05-structural-public-report.json')
+          if not report_path.exists():
+              raise SystemExit(31)
+          report=json.load(open(report_path))
+          assert report['release_evidence'] is False
+          assert report['candidate_model_passes']==12
+          assert report['judge_calls']=={'gemini':6,'groq':6}
+          if report['status']=='PUBLIC_STRUCTURAL_CONTROLLER_PASS':
+              assert code=='0'
+              assert report['all_fixtures_pass_both_judges'] is True
+              print('VISUAL_V05_STRUCTURAL_PUBLIC_PASS')
+              raise SystemExit(0)
+          if report['status']=='PUBLIC_STRUCTURAL_CONTROLLER_FAIL':
+              assert code=='20'
+              assert report['all_fixtures_pass_both_judges'] is False
+              print('VISUAL_V05_STRUCTURAL_PUBLIC_PROFESSIONAL_FAIL')
+              raise SystemExit(20)
+          raise SystemExit(32)
+          PY

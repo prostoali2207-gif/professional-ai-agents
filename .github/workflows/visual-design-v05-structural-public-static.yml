@@ -1,0 +1,90 @@
+name: Visual Design v0.5 structural public static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py'
+      - 'architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py'
+      - '.github/workflows/visual-design-v05-structural-public-static.yml'
+      - '.github/workflows/visual-design-v05-structural-public.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py'
+      - 'architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py'
+      - '.github/workflows/visual-design-v05-structural-public-static.yml'
+      - '.github/workflows/visual-design-v05-structural-public.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile structural candidate development code
+        run: |
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py
+      - name: Verify preregistration and exact candidate identity
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md').read_text()
+          assert 'proposal -> separate structured invariant-controller pass -> deterministic allowed-output gate -> emitted final professional output' in p
+          assert 'bee4ee67a8aff43016e158f37a6f421cd079581a' in p
+          assert 'dd42d50f07b804c1ddd3c93b96704e0c6256440c' in p
+          assert 'PUBLIC_DEVELOPMENT_ONLY' not in p or 'public development material' in p.lower()
+          print('VISUAL_V05_PREREG_STATIC_PASS provider_calls=0')
+          PY
+          python architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py --probe-contract > /tmp/visual-v05-contract.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/visual-v05-contract.json'))
+          assert d['controller_version']=='v0.5-structural-invariant-controller-v1'
+          assert d['candidate_model_passes_per_case']==2
+          assert d['background_transport'] is True
+          assert d['provider_storage_scope']=='PUBLIC_DEVELOPMENT_ONLY'
+          assert d['development_only'] is True and d['hidden_release_material_used'] is False
+          print('VISUAL_V05_CONTRACT_STATIC_PASS provider_calls=0')
+          PY
+      - name: Deterministic allowed-output gate regression
+        run: |
+          python - <<'PY'
+          import importlib.util, sys
+          from pathlib import Path
+          path=Path('architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py')
+          spec=importlib.util.spec_from_file_location('v05exec', path)
+          mod=importlib.util.module_from_spec(spec); sys.modules[spec.name]=mod; spec.loader.exec_module(mod)
+          def row(app=True,res='PRESERVE',ok=True,dep=''):
+              return {'applicable':app,'resolution':res,'resolved':ok,'dependency':dep}
+          controls={name:row(False,'NOT_APPLICABLE',True,'') for name in mod.INVARIANTS}
+          controls['MOBILE']=row(True,'TRANSFORM',True,'')
+          good={'controls':controls,'release_state':'READY','blocked_proposal_elements':[],'final_output':'Compliant output'}
+          mod.validate_controller(good)
+          bad=json_bad={**good,'controls':dict(controls)}
+          bad['controls']['MOBILE']=row(True,'TRANSFORM',False,'')
+          try:
+              mod.validate_controller(bad)
+          except RuntimeError:
+              pass
+          else:
+              raise AssertionError('READY unresolved invariant must fail closed')
+          esc={**good,'controls':dict(controls)}
+          esc['controls']['AUTHORITY']=row(True,'ESCALATE',True,'owner approval')
+          try:
+              mod.validate_controller(esc)
+          except RuntimeError:
+              pass
+          else:
+              raise AssertionError('READY unresolved owner dependency must fail closed')
+          print('VISUAL_V05_ALLOWED_OUTPUT_GATE_PASS provider_calls=0')
+          PY
