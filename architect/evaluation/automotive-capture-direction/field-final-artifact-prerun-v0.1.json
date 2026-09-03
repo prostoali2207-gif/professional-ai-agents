@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "status": "FROZEN_READY",
+  "cycle_id": "automotive-capture-direction-human-field-final-review-v0.1",
+  "tracker_issue": 271,
+  "candidate": {
+    "commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+    "blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+    "host_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "mutation_allowed": false
+  },
+  "stage": "applied human field final-artifact review",
+  "execution_chain": {
+    "identity": "frozen-v0.1 + human-field-final-review + gemini-interactions-inline-media",
+    "prior_technical_repairs_in_chain": 0,
+    "prior_technical_failures_in_chain": [],
+    "authorization": "first execution",
+    "generic_platform_reopen": false
+  },
+  "runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "candidate_calls_max": 1,
+    "judge_calls": 0,
+    "scored_retries": 0,
+    "tools": "none"
+  },
+  "purpose": "Have the exact frozen capability directly inspect the three real final AM-001 field-test artifacts. This review captures practical evidence only and must not by itself override the separately recorded human trajectory or preregistration constraints.",
+  "vehicle": {
+    "id": "AM-001",
+    "make": "Toyota",
+    "model": "Yaris",
+    "model_year": 2026,
+    "color": "White"
+  },
+  "media": [
+    {
+      "id": "F1_HERO_STILL_FINAL",
+      "drive_file_id": "1KXYxWMpQlVJGOQuxNVUi84wmVggbSETr",
+      "local_name": "f1_hero.jpg",
+      "mime_type": "image/jpeg",
+      "media_type": "image",
+      "sha256": "sha256:48a718443dfbf8a176da177222a57bcc994d393ef86b9ffe536193458e866d9a",
+      "function": "Exterior primary-listing hero still. Evaluate whether this final source is acceptable as a clean identity/hero source and identify only visible material capture defects."
+    },
+    {
+      "id": "F2_PROOF_STILL_FINAL",
+      "drive_file_id": "10E-JBxkY3-E87TtRLIqObgsXfdDt57AC",
+      "local_name": "f2_proof.jpg",
+      "mime_type": "image/jpeg",
+      "media_type": "image",
+      "sha256": "sha256:4ef7cb301835252ede06233e5236a43e3f3bcd6860ea2c25f1ebc03bd4271637",
+      "function": "Exterior truth/proof still. Evaluate whether the visible side-body presentation is legible enough for proof use without hiding condition evidence."
+    },
+    {
+      "id": "F3_BROLL_VIDEO_FINAL",
+      "drive_file_id": "1n6T6CdJiz4URf-9FDgaWMedYxF3bq2vS",
+      "local_name": "f3_broll.mp4",
+      "mime_type": "video/mp4",
+      "media_type": "video",
+      "sha256": "sha256:f52fa3d6a9d52c5be28da93506703a670edfa84ddaa86d379f0b09bb0a34fe3e",
+      "function": "Short exterior B-roll clip of stationary vehicle with operator movement. Evaluate temporal usability, framing continuity, motion stability and capture defects visible in the clip."
+    }
+  ],
+  "output_contract": {
+    "artifact_ids_exact": [
+      "F1_HERO_STILL_FINAL",
+      "F2_PROOF_STILL_FINAL",
+      "F3_BROLL_VIDEO_FINAL"
+    ],
+    "decision_enum": ["ACCEPT", "RESHOOT", "BLOCK"],
+    "required_per_artifact": [
+      "decision",
+      "visible_observation",
+      "dominant_issue",
+      "prioritized_correction",
+      "preserve",
+      "acceptance_cue"
+    ],
+    "required_overall": ["handoff_notes", "truth_safety_constraints"]
+  },
+  "release_boundary": "No release verdict is authorized from this media review alone. Human trajectory and original field-gate preregistration remain authoritative for the practical gate decision."
+}
