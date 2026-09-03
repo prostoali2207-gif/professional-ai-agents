@@ -1,0 +1,17 @@
+{
+  "artifact": {
+    "paths": [
+      "agents/conversion-messaging-web-copy/0.2.0/SKILL.md"
+    ],
+    "content_digest": "sha256:627b7ee68bd4bb77e70abc8018856dc91f36f29a0eb187185992341a103d2173"
+  },
+  "candidate": {
+    "version": "0.2.0-candidate",
+    "origin_v0_1_commit": "7019f6717b1b61806f4a221a297d049a4ad3b8cb",
+    "origin_v0_1_digest": "sha256:da7662f95dcf132d9a9875849b7bb5d5d831d1d54821f0b109b543a1f299e1d2",
+    "assembly_merge_commit": "8eccb6fa161c0be33eb18ee0eb9397906a3533c6",
+    "professional_delta": "architect/evaluation/conversion_messaging_web_copy/professional-delta-v0.2.md",
+    "evaluation_plan": "architect/evaluation/conversion_messaging_web_copy/evaluation-plan-v0.2.md",
+    "qualification_status": "UNQUALIFIED_CANDIDATE"
+  }
+}
