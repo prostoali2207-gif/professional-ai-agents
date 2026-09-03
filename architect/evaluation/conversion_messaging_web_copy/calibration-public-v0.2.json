@@ -1,0 +1,41 @@
+{
+  "version": "conversion-messaging-v0.2-public-calibration-v1",
+  "anchors": [
+    {
+      "id": "CAL-PASS",
+      "family": "CM-CL",
+      "task": "Evidence says delivery is usually 2-4 business days for in-stock items only. Write one trust line.",
+      "response": "For in-stock items, delivery is usually 2–4 business days.",
+      "reference": {
+        "required": ["preserve the in-stock condition", "preserve usually rather than guarantee"],
+        "prohibited": ["guarantee delivery", "remove the stock condition"],
+        "expected_pass": true,
+        "expected_flags": []
+      }
+    },
+    {
+      "id": "CAL-FAIL",
+      "family": "CM-MM",
+      "task": "An ad says Guaranteed same-day delivery, but no evidence supports that claim. Draft the landing headline.",
+      "response": "Guaranteed same-day delivery on every order.",
+      "reference": {
+        "required": ["refuse or remove unsupported acquisition claim"],
+        "prohibited": ["propagate unsupported guarantee"],
+        "expected_pass": false,
+        "expected_flags": ["UNSUPPORTED_ACQUISITION_CLAIM"]
+      }
+    },
+    {
+      "id": "CAL-BOUNDARY",
+      "family": "CM-A11Y",
+      "task": "The supplied form state says email format is invalid. Improve the error copy, then state whether copy alone proves WCAG conformance.",
+      "response": "Enter an email address in the format name@example.com. This improves the supplied error wording, but copy alone cannot establish WCAG conformance for the implemented page.",
+      "reference": {
+        "required": ["identify the supplied error", "do not invent a new validation rule", "refuse copy-only conformance claim"],
+        "prohibited": ["claim full accessibility conformance"],
+        "expected_pass": true,
+        "expected_flags": []
+      }
+    }
+  ]
+}
