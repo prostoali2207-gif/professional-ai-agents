@@ -1,0 +1,71 @@
+{
+  "status": "PREREGISTERED_ZERO_MODEL_ONLY",
+  "issue": 262,
+  "cycle_id": "conversion-messaging-web-copy-v0.2-heldout-2026-09-03-r1",
+  "candidate": {
+    "freeze_commit": "22ee4c3e8b9d3d850d037d95bd83f2b3669a7896",
+    "path": "agents/conversion-messaging-web-copy/0.2.0/SKILL.md",
+    "manifest": "agents/conversion-messaging-web-copy/0.2.0/artifact-manifest.json",
+    "artifact_digest": "sha256:627b7ee68bd4bb77e70abc8018856dc91f36f29a0eb187185992341a103d2173",
+    "bytes": 15859
+  },
+  "scope": "FULL",
+  "construct": {
+    "families": ["CM-EV","CM-CL","CM-MH","CM-DV","CM-OP","CM-UX","CM-PL","CM-CR","CM-EX","CM-BD","CM-PR","CM-E2E","CM-MM","CM-A11Y","CM-L10N"],
+    "fixture_count": 30,
+    "per_family": 2,
+    "contrastive_pairs": {"P-EVIDENCE":"CM-EV","P-CLAIM":"CM-CL","P-UX":"CM-UX","P-BOUNDARY":"CM-BD","P-MESSAGE-MATCH":"CM-MM","P-A11Y":"CM-A11Y","P-L10N":"CM-L10N"},
+    "dimensions": ["evidence_integrity","task_clarity","professional_judgment","functional_craft","boundary_integrity"],
+    "hard_fails": ["MATERIAL_FABRICATION","INVENTED_CUSTOMER_EVIDENCE","HARMFUL_UX_CONTRADICTION","UNAUTHORIZED_STRATEGY_CHANGE","GUARANTEED_CAUSAL_LIFT","UNSUPPORTED_ACQUISITION_CLAIM","FALSE_ACCESSIBILITY_CONFORMANCE","LOCALIZATION_EVIDENCE_STRENGTHENING","UNVERIFIED_LOCAL_AUTHORITY_CLAIM"],
+    "thresholds": {
+      "zero_hard_fails": true,
+      "fixture_passes_min": 28,
+      "fixture_count": 30,
+      "all_pairs_consistent_both_judges": true,
+      "family_means_min": {"evidence_integrity":1.5,"task_clarity":1.5,"professional_judgment":1.5,"functional_craft":1.25,"boundary_integrity":1.5}
+    }
+  },
+  "evaluation_design": {
+    "author_model": "gpt-5.6-sol",
+    "reviewer_model": "gpt-5.6-terra",
+    "candidate_model": "gpt-5.6-terra",
+    "judges": ["gpt-5.6-sol","gpt-5.6-terra"],
+    "judge_calibration": "public-dev-anchors-only-before-hidden-grading",
+    "hidden_transport": "ephemeral-evaluator-memory-v1",
+    "sealed_pack_required": false,
+    "candidate_visible_fields": ["task","context","constraints"],
+    "candidate_hidden_access": "forbidden",
+    "candidate_execution_order": "all candidate responses complete before hidden grader/reference is provided to judges",
+    "tools_web_mcp": "forbidden-for-author-reviewer-candidate-judges"
+  },
+  "routing": {
+    "provider": "codex-subscription-chatgpt-auth",
+    "paid_api_fallback": "FORBIDDEN",
+    "forbidden_env": ["OPENAI_API_KEY","ANTHROPIC_API_KEY","GEMINI_API_KEY","GROQ_API_KEY","XAI_API_KEY"]
+  },
+  "stop_loss": {
+    "stage_chains": ["heldout-author-review","judge-calibration","candidate-canary","semantic-scored"],
+    "author_review_prior_technical_repairs": 0,
+    "calibration_prior_technical_repairs": 0,
+    "canary_prior_technical_repairs": 0,
+    "scored_prior_technical_repairs": 0,
+    "automatic_professional_retries": 0,
+    "technical_policy": "classify -> at most one bounded repair when authorized -> one eligible retry -> STOP on another technical defect in that stage"
+  },
+  "budget": {
+    "clean_subscription_calls": 37,
+    "author": 1,
+    "reviewer": 1,
+    "judge_calibration": 2,
+    "candidate_canary": 1,
+    "scored_candidate": 30,
+    "hidden_judge_batches": 2,
+    "paid_api_calls": 0,
+    "professional_retries": 0
+  },
+  "release": {
+    "semantic_verdicts": ["PASS","REVISE","FAIL","NOT_EXECUTABLE"],
+    "practical_gate_required_after_semantic_pass": true,
+    "library_admission_before_practical_pass": false
+  }
+}
