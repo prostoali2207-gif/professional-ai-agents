@@ -5,10 +5,15 @@ import argparse
 import importlib.util
 import json
 import os
+import socket
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 CANDIDATE_COMMIT = 'b4793a66172d4de7fe0ade1b0001bc2621829db2'
 SKILL_PATH = 'architect/evaluation/visual-design-art-direction/candidate/SKILL.md'
@@ -23,6 +28,10 @@ MODEL = 'gemini-3.7-flash'
 PROVIDER = 'gemini-interactions-api-background'
 PROTOCOL = 'visual-design-art-direction-v05-structural-controller-public-v1'
 CONTROLLER_VERSION = 'v0.5-structural-invariant-controller-v1'
+TRANSPORT_REPAIR = 'poll-generic-invalid-request-recovery-v1'
+GENERIC_INVALID_REQUEST_MESSAGE = 'Request contains an invalid argument.'
+POLL_400_RECOVERY_GRACE_SECONDS = 60.0
+POLL_400_RECOVERY_INTERVAL_SECONDS = 10.0
 
 TRANSPORT_PATH = Path('architect/evaluation/qualification-platform/gemini_background_transport.py')
 _spec = importlib.util.spec_from_file_location('gemini_background_transport', TRANSPORT_PATH)
@@ -32,6 +41,9 @@ _transport = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = _transport
 _spec.loader.exec_module(_transport)
 run_background_interaction = _transport.run_background_interaction
+GeminiBackgroundTransportError = _transport.GeminiBackgroundTransportError
+DEFAULT_ENDPOINT = _transport.DEFAULT_ENDPOINT
+DEFAULT_API_REVISION = _transport.DEFAULT_API_REVISION
 
 INVARIANTS = (
     'FUNCTION',
@@ -144,19 +156,158 @@ def professional_system(skill: str, base: str, v02: str, v03: str) -> str:
     )
 
 
+def _generic_invalid_request_payload(payload: Any) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    error = payload.get('error')
+    return (
+        isinstance(error, dict)
+        and error.get('code') == 'invalid_request'
+        and error.get('message') == GENERIC_INVALID_REQUEST_MESSAGE
+    )
+
+
+def _eligible_generic_poll_400(exc: BaseException) -> bool:
+    return (
+        isinstance(exc, GeminiBackgroundTransportError)
+        and exc.code == 'POLL_TRANSPORT_FAILED'
+        and isinstance(exc.interaction_id, str)
+        and bool(exc.interaction_id.strip())
+        and 'HTTP 400:' in exc.message
+        and '"code":"invalid_request"' in exc.message.replace(' ', '')
+        and GENERIC_INVALID_REQUEST_MESSAGE in exc.message
+    )
+
+
+def _decode_json_response(response: Any) -> dict[str, Any]:
+    try:
+        payload = json.loads(response.read().decode('utf-8'))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f'poll recovery invalid JSON response: {exc}') from None
+    if not isinstance(payload, dict):
+        raise RuntimeError('poll recovery response must be an object')
+    return payload
+
+
+def recover_existing_interaction(
+    interaction_id: str,
+    *,
+    api_key: str,
+    grace_seconds: float,
+    endpoint: str = DEFAULT_ENDPOINT,
+    api_revision: str = DEFAULT_API_REVISION,
+    poll_interval_seconds: float = POLL_400_RECOVERY_INTERVAL_SECONDS,
+    request_timeout_seconds: float = 30.0,
+    opener: Callable[..., Any] = urllib.request.urlopen,
+    sleep: Callable[[float], None] = time.sleep,
+    monotonic: Callable[[], float] = time.monotonic,
+) -> dict[str, Any]:
+    """GET-only recovery for an already-created background interaction.
+
+    This path never submits or retries a creation POST. It is intentionally eligible
+    only after the caller has observed the exact generic post-create 400 covered by
+    the v0.5 transport-repair preregistration.
+    """
+    if not interaction_id or not interaction_id.strip():
+        raise RuntimeError('poll recovery requires interaction id')
+    if not api_key or not api_key.strip():
+        raise RuntimeError('poll recovery requires API key')
+    if grace_seconds <= 0 or poll_interval_seconds < 0 or request_timeout_seconds <= 0:
+        raise RuntimeError('poll recovery timing contract invalid')
+
+    deadline = monotonic() + grace_seconds
+    poll_url = endpoint.rstrip('/') + '/' + urllib.parse.quote(interaction_id.strip(), safe='')
+    last_generic_400: str | None = None
+    transient_failures = 0
+
+    while True:
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            raise RuntimeError(
+                'POLL_GENERIC_INVALID_REQUEST_GRACE_EXHAUSTED: '
+                + (last_generic_400 or 'recovery deadline reached')
+            )
+        if poll_interval_seconds:
+            sleep(min(poll_interval_seconds, remaining))
+        remaining = deadline - monotonic()
+        if remaining <= 0:
+            raise RuntimeError(
+                'POLL_GENERIC_INVALID_REQUEST_GRACE_EXHAUSTED: '
+                + (last_generic_400 or 'recovery deadline reached')
+            )
+
+        req = urllib.request.Request(
+            poll_url,
+            method='GET',
+            headers={
+                'x-goog-api-key': api_key.strip(),
+                'Api-Revision': api_revision,
+                'Accept': 'application/json',
+                'User-Agent': 'visual-design-v05-public-transport-recovery/1.0',
+            },
+        )
+        try:
+            with opener(req, timeout=min(request_timeout_seconds, max(0.001, remaining))) as response:
+                payload = _decode_json_response(response)
+            transient_failures = 0
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode('utf-8', 'replace')[-1000:]
+            try:
+                error_payload = json.loads(detail)
+            except json.JSONDecodeError:
+                error_payload = None
+            if exc.code == 400 and _generic_invalid_request_payload(error_payload):
+                last_generic_400 = detail
+                continue
+            if exc.code in (408, 429) or 500 <= exc.code < 600:
+                transient_failures += 1
+                if transient_failures <= 3:
+                    continue
+            raise RuntimeError(f'poll recovery HTTP {exc.code}: {detail or exc.reason}') from None
+        except (TimeoutError, socket.timeout, urllib.error.URLError, OSError) as exc:
+            transient_failures += 1
+            if transient_failures <= 3:
+                continue
+            raise RuntimeError(f'poll recovery transport failure: {exc}') from None
+
+        status = payload.get('status')
+        if not isinstance(status, str) or not status.strip():
+            raise RuntimeError('poll recovery interaction status missing')
+        status = status.strip().lower()
+        if status == 'completed':
+            return payload
+        if status == 'in_progress':
+            continue
+        raise RuntimeError(f'poll recovery terminal non-completed status: {status}')
+
+
 def background_call(body: dict[str, Any], *, overall_timeout_seconds: float) -> dict[str, Any]:
     key = os.environ.get('GEMINI_API_KEY', '').strip()
     if not key:
         raise RuntimeError('GEMINI_API_KEY missing')
-    return run_background_interaction(
-        body,
-        api_key=key,
-        create_timeout_seconds=30,
-        poll_timeout_seconds=30,
-        poll_interval_seconds=5,
-        overall_timeout_seconds=overall_timeout_seconds,
-        max_consecutive_poll_transport_failures=3,
-    )
+    started = time.monotonic()
+    try:
+        return run_background_interaction(
+            body,
+            api_key=key,
+            create_timeout_seconds=30,
+            poll_timeout_seconds=30,
+            poll_interval_seconds=5,
+            overall_timeout_seconds=overall_timeout_seconds,
+            max_consecutive_poll_transport_failures=3,
+        )
+    except GeminiBackgroundTransportError as exc:
+        if not _eligible_generic_poll_400(exc):
+            raise
+        remaining = overall_timeout_seconds - (time.monotonic() - started)
+        grace = min(POLL_400_RECOVERY_GRACE_SECONDS, remaining)
+        if grace <= 0:
+            raise RuntimeError('poll generic invalid_request occurred after overall deadline') from exc
+        return recover_existing_interaction(
+            exc.interaction_id,
+            api_key=key,
+            grace_seconds=grace,
+        )
 
 
 def validate_controller(payload: dict[str, Any]) -> None:
@@ -215,6 +366,7 @@ def contract() -> dict[str, Any]:
         'controller_version': CONTROLLER_VERSION,
         'candidate_model_passes_per_case': 2,
         'background_transport': True,
+        'transport_repair': TRANSPORT_REPAIR,
         'provider_storage_scope': 'PUBLIC_DEVELOPMENT_ONLY',
         'development_only': True,
         'hidden_release_material_used': False,
