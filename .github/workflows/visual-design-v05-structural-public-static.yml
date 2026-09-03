@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-public-transport-400-repair-preregistration.md'
       - 'architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py'
+      - 'architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py'
       - 'architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py'
       - '.github/workflows/visual-design-v05-structural-public-static.yml'
       - '.github/workflows/visual-design-v05-structural-public.yml'
@@ -12,7 +14,9 @@ on:
     branches: [main]
     paths:
       - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md'
+      - 'architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-public-transport-400-repair-preregistration.md'
       - 'architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py'
+      - 'architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py'
       - 'architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py'
       - '.github/workflows/visual-design-v05-structural-public-static.yml'
       - '.github/workflows/visual-design-v05-structural-public.yml'
@@ -33,16 +37,20 @@ jobs:
       - name: Compile structural candidate development code
         run: |
           python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py
           python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py
       - name: Verify preregistration and exact candidate identity
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md').read_text()
+          r=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-public-transport-400-repair-preregistration.md').read_text()
           assert 'proposal -> separate structured invariant-controller pass -> deterministic allowed-output gate -> emitted final professional output' in p
           assert 'bee4ee67a8aff43016e158f37a6f421cd079581a' in p
           assert 'dd42d50f07b804c1ddd3c93b96704e0c6256440c' in p
-          assert 'PUBLIC_DEVELOPMENT_ONLY' not in p or 'public development material' in p.lower()
+          assert '33728944822' in r and '9883077747' in r
+          assert 'candidate completed case calls: `0`' in r
+          assert 'exactly one eligible retry' in r
           print('VISUAL_V05_PREREG_STATIC_PASS provider_calls=0')
           PY
           python architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py --probe-contract > /tmp/visual-v05-contract.json
@@ -52,10 +60,14 @@ jobs:
           assert d['controller_version']=='v0.5-structural-invariant-controller-v1'
           assert d['candidate_model_passes_per_case']==2
           assert d['background_transport'] is True
+          assert d['transport_repair']=='poll-generic-invalid-request-recovery-v1'
           assert d['provider_storage_scope']=='PUBLIC_DEVELOPMENT_ONLY'
           assert d['development_only'] is True and d['hidden_release_material_used'] is False
           print('VISUAL_V05_CONTRACT_STATIC_PASS provider_calls=0')
           PY
+      - name: Deterministic transport recovery regression
+        run: |
+          python architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py
       - name: Deterministic allowed-output gate regression
         run: |
           python - <<'PY'
@@ -70,7 +82,7 @@ jobs:
           controls['MOBILE']=row(True,'TRANSFORM',True,'')
           good={'controls':controls,'release_state':'READY','blocked_proposal_elements':[],'final_output':'Compliant output'}
           mod.validate_controller(good)
-          bad=json_bad={**good,'controls':dict(controls)}
+          bad={**good,'controls':dict(controls)}
           bad['controls']['MOBILE']=row(True,'TRANSFORM',False,'')
           try:
               mod.validate_controller(bad)
