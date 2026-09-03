@@ -1,0 +1,44 @@
+name: Conversion Messaging v0.2 execution harness static gate
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/conversion_messaging_web_copy/qualification_runner_v0_2.py'
+      - 'architect/evaluation/conversion_messaging_web_copy/calibration-public-v0.2.json'
+      - 'architect/evaluation/conversion_messaging_web_copy/qualification-preregistration-v0.2.json'
+      - 'architect/evaluation/conversion_messaging_web_copy/codex_candidate_adapter_v0_2.py'
+      - 'architect/evaluation/conversion_messaging_web_copy/codex_judge_adapter_v0_2.py'
+      - '.github/workflows/conversion-messaging-v0-2-execution-harness-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Assert no paid model API credentials
+        shell: bash
+        run: |
+          for name in OPENAI_API_KEY ANTHROPIC_API_KEY GEMINI_API_KEY GROQ_API_KEY XAI_API_KEY; do
+            if [ -n "${!name:-}" ]; then echo "forbidden credential present: $name"; exit 1; fi
+          done
+      - name: Compile runner and adapters
+        run: |
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/qualification_runner_v0_2.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/codex_candidate_adapter_v0_2.py
+          python -m py_compile architect/evaluation/conversion_messaging_web_copy/codex_judge_adapter_v0_2.py
+      - name: Run zero-model runner self-test
+        run: python architect/evaluation/conversion_messaging_web_copy/qualification_runner_v0_2.py --static-preflight
+      - name: Run prereg static preflight
+        run: python architect/evaluation/conversion_messaging_web_copy/qualification_static_preflight_v0_2.py
+      - name: Diff hygiene
+        run: git diff --check
