@@ -1,0 +1,42 @@
+name: Qualification Reliability research static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/research/qualification-reliability-engineer/**'
+      - '.github/workflows/qualification-reliability-research-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  research-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic schema dependency
+        run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Compile readiness prototype
+        run: |
+          python -m py_compile architect/research/qualification-reliability-engineer/prototype/validate_readiness_report.py
+          python -m py_compile architect/research/qualification-reliability-engineer/prototype/test_validate_readiness_report.py
+      - name: Run readiness guard regressions
+        run: python architect/research/qualification-reliability-engineer/prototype/test_validate_readiness_report.py
+      - name: Prove no provider credential is required
+        env:
+          OPENAI_API_KEY: ''
+          GEMINI_API_KEY: ''
+          GROQ_API_KEY: ''
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path('architect/research/qualification-reliability-engineer/prototype/validate_readiness_report.py').read_text()
+          forbidden = ('urllib.request', 'requests.', 'socket.', 'OPENAI_API_KEY', 'GEMINI_API_KEY', 'GROQ_API_KEY')
+          for token in forbidden:
+              assert token not in source, token
+          print('QRE_RESEARCH_ZERO_PROVIDER_PASS')
+          PY
