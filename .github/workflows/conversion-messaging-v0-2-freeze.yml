@@ -1,0 +1,26 @@
+name: Conversion Messaging v0.2 candidate freeze
+
+on:
+  pull_request:
+    paths:
+      - 'agents/conversion-messaging-web-copy/0.2.0/**'
+      - 'architect/evaluation/conversion_messaging_web_copy/freeze_candidate_v0_2.py'
+      - '.github/workflows/conversion-messaging-v0-2-freeze.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compute frozen candidate digest
+        run: python architect/evaluation/conversion_messaging_web_copy/freeze_candidate_v0_2.py
+      - name: Diff hygiene
+        run: git diff --check
