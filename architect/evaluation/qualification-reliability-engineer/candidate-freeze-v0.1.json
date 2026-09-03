@@ -1,0 +1,27 @@
+{
+  "candidate_name": "qualification-reliability-engineer-core",
+  "candidate_version": "0.1.0-candidate",
+  "status": "FROZEN_NOT_QUALIFIED",
+  "freeze_date": "2026-09-03",
+  "candidate_merge_commit": "faafd25b554bcff2c22c30f8edbf76a895f05298",
+  "source_pr": 267,
+  "parent_issue": 265,
+  "qualification_scope": "FULL",
+  "components": {
+    "architect/evaluation/qualification-reliability-engineer/candidate/SKILL.md": "d6749ce8c77f43a8282920c806a9fe41b951baba",
+    "architect/evaluation/qualification-reliability-engineer/professional-model-candidate-v0.1.md": "afe6b1c1f060a00fae1fde3ae8d724b88b0f7973",
+    "architect/evaluation/qualification-reliability-engineer/candidate/guard/readiness-report.schema.json": "c729fac23d7a9a1c7cc290125c801c213dc3afde",
+    "architect/evaluation/qualification-reliability-engineer/candidate/guard/validate_readiness_report.py": "8ee7fc594ae901d15354571e113339f3312dd0fc"
+  },
+  "supporting_regression": {
+    "architect/evaluation/qualification-reliability-engineer/candidate/guard/test_validate_readiness_report.py": "f8c2f7718fee093bd67aecba4893a3645e88ad56"
+  },
+  "qualification_plan": {
+    "path": "architect/evaluation/qualification-reliability-engineer/qualification-plan-v0.1.md",
+    "blob": "11c84691d588848869ac96335ba4233528e4bfcc"
+  },
+  "architecture": "HYBRID_PROFESSIONAL_CORE_PLUS_DETERMINISTIC_GUARD",
+  "release_state": "NOT_QUALIFIED",
+  "immutability_rule": "Any change to a behavior-bearing frozen component invalidates this qualification cycle and requires a new candidate revision/freeze.",
+  "library_admission": "PROHIBITED_UNTIL_INDEPENDENT_PASS"
+}
