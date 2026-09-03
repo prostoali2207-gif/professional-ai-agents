@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/qualification-reliability-readiness-report-v0.1.schema.json",
+  "title": "Qualification Reliability Readiness Report v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "execution_chain",
+    "identities",
+    "mechanical_evidence",
+    "canary",
+    "budget",
+    "privacy",
+    "risks",
+    "decision"
+  ],
+  "properties": {
+    "version": {"const": "0.1"},
+    "execution_chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cycle", "stage", "evaluator_transport_path", "technical_repair_consumed", "eligible_retry_remaining"],
+      "properties": {
+        "cycle": {"type": "string", "minLength": 1},
+        "stage": {"type": "string", "minLength": 1},
+        "evaluator_transport_path": {"type": "string", "minLength": 1},
+        "technical_repair_consumed": {"type": "boolean"},
+        "eligible_retry_remaining": {"type": "boolean"}
+      }
+    },
+    "identities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate", "evaluator", "runtime"],
+      "properties": {
+        "candidate": {"type": "string", "minLength": 1},
+        "evaluator": {"type": "string", "minLength": 1},
+        "runtime": {"type": "string", "minLength": 1}
+      }
+    },
+    "mechanical_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["static_preflight", "runtime_contract", "fault_injection", "artifact_identity"],
+      "properties": {
+        "static_preflight": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+        "runtime_contract": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+        "fault_injection": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]},
+        "artifact_identity": {"enum": ["PASS", "FAIL", "NOT_APPLICABLE"]}
+      }
+    },
+    "canary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "representativeness_assessed", "evidence_status", "rationale"],
+      "properties": {
+        "required": {"type": "boolean"},
+        "representativeness_assessed": {"type": "boolean"},
+        "evidence_status": {"enum": ["PASS", "FAIL", "NOT_RUN", "NOT_APPLICABLE"]},
+        "rationale": {"type": "string"}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_candidate_calls", "max_judge_calls", "max_retries", "max_wall_clock_seconds", "stop_condition"],
+      "properties": {
+        "max_candidate_calls": {"type": "integer", "minimum": 0},
+        "max_judge_calls": {"type": "integer", "minimum": 0},
+        "max_retries": {"type": "integer", "minimum": 0},
+        "max_wall_clock_seconds": {"type": "integer", "minimum": 1},
+        "stop_condition": {"type": "string", "minLength": 1}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["heldout_material", "provider_storage_required", "provider_storage_authorized"],
+      "properties": {
+        "heldout_material": {"type": "boolean"},
+        "provider_storage_required": {"type": "boolean"},
+        "provider_storage_authorized": {"type": "boolean"}
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "status", "deterministically_detectable", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["P0", "P1", "P2"]},
+          "status": {"enum": ["OPEN", "CLOSED", "ACCEPTED_BACKLOG"]},
+          "deterministically_detectable": {"type": "boolean"},
+          "evidence": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "reason"],
+      "properties": {
+        "verdict": {"enum": ["GO", "NOT_READY", "NOT_EXECUTABLE"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
