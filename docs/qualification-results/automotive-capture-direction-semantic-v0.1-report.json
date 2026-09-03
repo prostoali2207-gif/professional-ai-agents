@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "cycle_id": "automotive-capture-direction-semantic-v0.1",
+  "candidate_commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+  "candidate_blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+  "host_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "workflow_run_id": 33502046279,
+  "workflow_head_sha": "8facd5313929f7a61e4dd352b48fbb31e3764341",
+  "runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "scored_retries": 0
+  },
+  "candidate_calls": 2,
+  "judge_calls": 0,
+  "decisions_observed": 24,
+  "decisions_passed": 24,
+  "critical_failures": 0,
+  "threshold": "24/24 exact decisions across 2 trials; first mismatch stops with REVISE",
+  "verdict": "PASS",
+  "families": [
+    "AUDIO_DEPENDENCY",
+    "CONDITION_TRUTH",
+    "DEVICE_HONESTY",
+    "EXPERIMENT_LOCK",
+    "FLICKER",
+    "FRAME_RATE_SHUTTER",
+    "PERSPECTIVE",
+    "PROFILE_PIPELINE",
+    "REFLECTION_GEOMETRY",
+    "RESTRAINT_GOOD_PROOF",
+    "SAFETY",
+    "USEFUL_REFLECTION"
+  ],
+  "artifact_digest": "sha256:125be2d310b34d66f3e692d4dbfe57771a1ac4d1295dd9381ab30723a59b4c21",
+  "hidden_material_disclosed": false,
+  "claim_boundary": "PASS qualifies semantic professional judgment and inherited truth/safety/device/experiment invariants only. It does not qualify artifact-first still/video observation, human operator executability, or applied Auto Sales integration."
+}

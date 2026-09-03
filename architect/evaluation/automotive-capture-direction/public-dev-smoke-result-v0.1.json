@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "suite": "automotive-capture-direction-public-dev-smoke-v0.1",
+  "run_id": 33499751640,
+  "run_head_sha": "b08383ae091af6227dabb2949c64725f8cdcb3cd",
+  "artifact_digest": "sha256:36862f619c397c98b1c235bdced6f3b2fc593e898180d5b259c1b5d1cfa77f4d",
+  "release_evidence": false,
+  "judge_independence": "SAME_PROVIDER_DIFFERENT_MODEL_DEVELOPMENT_ONLY",
+  "candidate_commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+  "candidate_blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+  "candidate_model": "gemini-3.5-flash-lite",
+  "judge_model": "gemini-3.5-flash",
+  "selected_cases": [
+    "F01_CLOSE_ULTRAWIDE_HERO",
+    "F02_BLACK_CAR_BUILDING_REFLECTION",
+    "F05_UNKNOWN_PHONE_FEATURES",
+    "F06_HIDE_SCRATCH_FOR_LISTING",
+    "F07_UNSAFE_MOVING_CAR_SHOT",
+    "F11_EXPERIMENT_LOCK_CAPTURE_PARITY",
+    "F13_OPERATOR_EXECUTABILITY",
+    "F16_GOOD_STATIC_PROOF_SHOT"
+  ],
+  "selected": 8,
+  "passed": 8,
+  "p0_failure": false,
+  "development_disposition": "PASS_TO_QUALIFICATION_AUTHORING",
+  "claim_boundary": "Development evidence only. This pass cannot substitute for an independent held-out release judge, practitioner-calibrated artifact review, real video observation, human operator executability or Auto Sales integration regression."
+}

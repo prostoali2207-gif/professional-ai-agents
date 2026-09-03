@@ -1,0 +1,93 @@
+name: Automotive Capture hidden semantic gate
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/run_semantic_hidden_gate_v0_1.py'
+      - 'architect/evaluation/automotive-capture-direction/semantic-preregistration-v0.1.json'
+      - '.github/workflows/automotive-capture-semantic-hidden-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hidden-semantic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run budget and freeze gate
+        run: |
+          echo 'objective=release evidence for semantic automotive capture judgment only'
+          echo 'candidate_calls_max=2 Gemini fixed'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'
+          echo 'threshold=24/24 exact decisions; first mismatch stops REVISE'
+          echo 'artifact_claim=not covered by this gate'
+          echo 'stop_condition=missing secret/runtime, frozen mismatch, provider/runtime error, malformed output, first scored mismatch, or PASS'
+
+      - name: Static runner and frozen identity preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/automotive-capture-direction/run_semantic_hidden_gate_v0_1.py
+          python - <<'PY'
+          import json
+          p=json.load(open('architect/evaluation/automotive-capture-direction/semantic-preregistration-v0.1.json'))
+          assert p['status']=='FROZEN_READY'
+          assert p['cycle_id']=='automotive-capture-direction-semantic-v0.1'
+          assert p['candidate']['commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert p['candidate']['blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          assert p['runtime']['model']=='gemini-3.5-flash-lite'
+          assert p['runtime']['scored_retries']==0
+          assert p['grader']['threshold']=='24/24 exact decisions'
+          print('PREREG STATIC PASS')
+          PY
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing; zero candidate calls attempted' >&2; exit 21; }
+          test -n "${QUALIFICATION_SEALED_PACK_MASTER_KEY:-}" || { echo 'QUALIFICATION_SEALED_PACK_MASTER_KEY missing; zero candidate calls attempted' >&2; exit 22; }
+
+      - name: Verify candidate model access without generation
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request
+          req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models',headers={'x-goog-api-key':os.environ['GEMINI_API_KEY']})
+          with urllib.request.urlopen(req,timeout=30) as r: p=json.loads(r.read().decode())
+          names={m.get('name','').split('/')[-1] for m in p.get('models',[])}
+          assert 'gemini-3.5-flash-lite' in names
+          print('MODEL ACCESS PASS')
+          PY
+
+      - name: Run frozen hidden semantic qualification
+        env:
+          AUTOMOTIVE_CAPTURE_SEMANTIC_REPORT: ${{ runner.temp }}/automotive-capture-semantic-hidden-report.json
+        run: python architect/evaluation/automotive-capture-direction/run_semantic_hidden_gate_v0_1.py
+
+      - name: Upload sanitized release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-semantic-hidden-gate
+          path: ${{ runner.temp }}/automotive-capture-semantic-hidden-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Post-run accounting
+        if: always()
+        run: |
+          echo 'planned_candidate_calls_max=2'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'

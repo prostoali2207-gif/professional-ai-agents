@@ -1,0 +1,123 @@
+name: Automotive Capture AM-001 field final review
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/field-final-artifact-prerun-v0.1.json'
+      - 'architect/evaluation/automotive-capture-direction/run_field_final_artifact_review_v0_1.py'
+      - '.github/workflows/automotive-capture-field-final-review.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  field-final-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run identity and stop-loss gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'stage=applied human field final-artifact review'
+          echo 'execution_chain=frozen-v0.1 + human-field-final-review + gemini-interactions-inline-media'
+          echo 'authorization=first execution'
+          echo 'candidate_calls_max=1'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'
+          echo 'release_verdict_from_this_review=false'
+          python -m py_compile architect/evaluation/automotive-capture-direction/run_field_final_artifact_review_v0_1.py
+          python - <<'PY'
+          import json
+          p=json.load(open('architect/evaluation/automotive-capture-direction/field-final-artifact-prerun-v0.1.json'))
+          assert p['status']=='FROZEN_READY'
+          assert p['cycle_id']=='automotive-capture-direction-human-field-final-review-v0.1'
+          assert p['candidate']['commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert p['candidate']['blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          assert p['candidate']['mutation_allowed'] is False
+          assert p['runtime']['model']=='gemini-3.5-flash-lite'
+          assert p['runtime']['candidate_calls_max']==1
+          assert p['runtime']['judge_calls']==0
+          assert p['runtime']['scored_retries']==0
+          assert p['execution_chain']['prior_technical_repairs_in_chain']==0
+          assert p['execution_chain']['authorization']=='first execution'
+          print('PRERUN CONTRACT PASS')
+          PY
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing; zero candidate calls attempted' >&2; exit 21; }
+
+      - name: Verify model access without generation
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request
+          req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models',headers={'x-goog-api-key':os.environ['GEMINI_API_KEY']})
+          with urllib.request.urlopen(req,timeout=30) as r: p=json.loads(r.read().decode())
+          names={m.get('name','').split('/')[-1] for m in p.get('models',[])}
+          assert 'gemini-3.5-flash-lite' in names
+          print('MODEL ACCESS PASS')
+          PY
+
+      - name: Download exact real field artifacts and verify digests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="$RUNNER_TEMP/am001-field-media"
+          mkdir -p "$ROOT"
+          UA='professional-ai-agents-field-evaluator/1.0'
+          curl -fL --retry 2 --retry-delay 2 -A "$UA" \
+            'https://drive.usercontent.google.com/download?id=1KXYxWMpQlVJGOQuxNVUi84wmVggbSETr&export=download&confirm=t' \
+            -o "$ROOT/f1_hero.jpg"
+          curl -fL --retry 2 --retry-delay 2 -A "$UA" \
+            'https://drive.usercontent.google.com/download?id=10E-JBxkY3-E87TtRLIqObgsXfdDt57AC&export=download&confirm=t' \
+            -o "$ROOT/f2_proof.jpg"
+          curl -fL --retry 2 --retry-delay 2 -A "$UA" \
+            'https://drive.usercontent.google.com/download?id=1n6T6CdJiz4URf-9FDgaWMedYxF3bq2vS&export=download&confirm=t' \
+            -o "$ROOT/f3_broll.mp4"
+          python - <<'PY'
+          import hashlib,json,os,pathlib
+          p=json.load(open('architect/evaluation/automotive-capture-direction/field-final-artifact-prerun-v0.1.json'))
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'am001-field-media'
+          for spec in p['media']:
+              path=root/spec['local_name']
+              actual='sha256:'+hashlib.sha256(path.read_bytes()).hexdigest()
+              assert actual==spec['sha256'],(spec['id'],actual,spec['sha256'],path.stat().st_size)
+              print(spec['id'],path.stat().st_size,actual)
+          print('REAL MEDIA DIGEST PASS')
+          PY
+
+      - name: Run frozen capability direct artifact review
+        env:
+          AUTOMOTIVE_CAPTURE_FIELD_MEDIA_ROOT: ${{ runner.temp }}/am001-field-media
+          AUTOMOTIVE_CAPTURE_FIELD_REVIEW_REPORT: ${{ runner.temp }}/automotive-capture-field-final-review.json
+        run: python architect/evaluation/automotive-capture-direction/run_field_final_artifact_review_v0_1.py
+
+      - name: Upload review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-am001-field-final-review
+          path: ${{ runner.temp }}/automotive-capture-field-final-review.json
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'planned_candidate_calls_max=1'
+          echo 'judge_calls=0'
+          echo 'scored_retries=0'
+          echo 'release_verdict_authorized=false'

@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1.0",
+  "candidate_id": "automotive-commercial-capture-direction",
+  "candidate_version": "0.1.0",
+  "status": "FROZEN_FOR_QUALIFICATION_AUTHORING_NOT_QUALIFIED",
+  "frozen_at": "2026-09-01",
+  "issue": 229,
+  "source_path": "architect/evaluation/automotive-capture-direction/professional-model-candidate-v0.1.md",
+  "candidate_commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+  "candidate_git_blob_sha": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+  "host_core": {
+    "id": "social-content-creative",
+    "version": "0.1.0",
+    "lifecycle": "qualified",
+    "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f"
+  },
+  "reuse_decision": "EXTEND",
+  "inherited_evidence_scope": [
+    "brief fidelity",
+    "commercial claim grounding and persuasive truthfulness",
+    "experiment tested/locked-variable integrity",
+    "platform and CTA boundaries",
+    "production-resource honesty",
+    "human approval/publish authority"
+  ],
+  "new_behavior_requiring_qualification": [
+    "vehicle and location preparation",
+    "automotive form and reflective-surface judgment",
+    "perspective and camera-placement judgment",
+    "lighting and reflection control",
+    "exposure color focus and capture-format judgment",
+    "still-photo craft",
+    "cinematography and movement",
+    "continuity and editor-aware source coverage",
+    "non-professional operator direction",
+    "artifact-first critique and measurable reshoot direction",
+    "equipment adaptation",
+    "capture safety and permissions boundary",
+    "capture-to-post handoff"
+  ],
+  "freeze_scope": "candidate professional model only",
+  "not_frozen_by_this_record": [
+    "held-out fixtures",
+    "grader/reference judgments",
+    "thresholds",
+    "provider/model routing",
+    "practical artifact pack",
+    "Auto Sales specialization binding"
+  ],
+  "mutation_rule": "Any behavior-relevant candidate edit after this freeze creates a new candidate version/blob and requires a new freeze record. Do not silently update this freeze.",
+  "release_claim": "NONE"
+}

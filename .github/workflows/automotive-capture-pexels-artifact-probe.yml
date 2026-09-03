@@ -1,0 +1,91 @@
+name: Automotive Capture Pexels artifact probe
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - '.github/workflows/automotive-capture-pexels-artifact-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Acquire pinned public automotive artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/capture-pexels
+          UA='professional-ai-agents-evaluator/1.0'
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" 'https://images.pexels.com/photos/2498076/pexels-photo-2498076.jpeg?auto=compress&cs=tinysrgb&w=1600' -o /tmp/capture-pexels/still.jpg
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" 'https://www.pexels.com/download/video/7624584/' -o /tmp/capture-pexels/motion.mp4
+          test -s /tmp/capture-pexels/still.jpg
+          test -s /tmp/capture-pexels/motion.mp4
+          file /tmp/capture-pexels/still.jpg
+          file /tmp/capture-pexels/motion.mp4
+          ffprobe -v error -show_entries stream=codec_type,width,height,r_frame_rate -show_entries format=duration,size -of json /tmp/capture-pexels/motion.mp4 > /tmp/capture-pexels/video-probe.json
+          ffmpeg -loglevel error -y -i /tmp/capture-pexels/still.jpg -vf 'scale=960:-2' /tmp/capture-pexels/still-preview.jpg
+          dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 /tmp/capture-pexels/motion.mp4)
+          python - "$dur" <<'PY'
+          import subprocess,sys
+          d=float(sys.argv[1])
+          for i,f in enumerate((0.12,0.35,0.58,0.82),1):
+              subprocess.check_call(['ffmpeg','-loglevel','error','-y','-ss',str(max(0,d*f)),'-i','/tmp/capture-pexels/motion.mp4','-frames:v','1','-vf','scale=640:-2',f'/tmp/capture-pexels/vf{i}.jpg'])
+          PY
+          ffmpeg -loglevel error -y \
+            -i /tmp/capture-pexels/vf1.jpg -i /tmp/capture-pexels/vf2.jpg -i /tmp/capture-pexels/vf3.jpg -i /tmp/capture-pexels/vf4.jpg \
+            -filter_complex '[0:v][1:v]hstack=inputs=2[top];[2:v][3:v]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2[out]' \
+            -map '[out]' /tmp/capture-pexels/video-contact.jpg
+          python - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path('/tmp/capture-pexels')
+          def sha(name): return 'sha256:'+hashlib.sha256((p/name).read_bytes()).hexdigest()
+          vp=json.loads((p/'video-probe.json').read_text())
+          report={
+            'schema_version':'0.1.0',
+            'candidate_calls':0,
+            'judge_calls':0,
+            'artifacts':[
+              {
+                'id':'PEXELS_STILL_REFLECTION_2498076','kind':'image',
+                'source_page':'https://www.pexels.com/photo/reflection-photography-of-black-car-2498076/',
+                'license_assertion':'Pexels page labels asset Free to use',
+                'download_sha256':sha('still.jpg'),'preview_sha256':sha('still-preview.jpg'),
+                'bytes':(p/'still.jpg').stat().st_size
+              },
+              {
+                'id':'PEXELS_VIDEO_MOVING_RED_CAR_7624584','kind':'video',
+                'source_page':'https://www.pexels.com/video/low-angle-shot-of-a-moving-red-car-7624584/',
+                'license_assertion':'Pexels page labels asset Free to use',
+                'download_sha256':sha('motion.mp4'),'contact_sheet_sha256':sha('video-contact.jpg'),
+                'bytes':(p/'motion.mp4').stat().st_size,'probe':vp
+              }
+            ]
+          }
+          (p/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps({'status':'PASS','artifact_count':2}))
+          PY
+
+      - name: Upload evaluator-only artifact evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-pexels-artifact-probe
+          path: /tmp/capture-pexels/
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Accounting
+        run: |
+          echo 'candidate_calls=0'
+          echo 'judge_calls=0'
+          echo 'purpose=freeze and visually inspect licensed real automotive media before candidate artifact scoring'

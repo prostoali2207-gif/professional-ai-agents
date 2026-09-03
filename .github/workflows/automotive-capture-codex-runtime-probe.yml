@@ -1,0 +1,49 @@
+name: Automotive Capture Codex runtime probe
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - '.github/workflows/automotive-capture-codex-runtime-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      XAI_API_KEY: ''
+    steps:
+      - name: Probe Codex CLI and ChatGPT subscription login without model call
+        shell: bash
+        run: |
+          set +e
+          if ! command -v codex >/dev/null 2>&1; then
+            echo '{"codex_cli_present":false,"chatgpt_subscription_authenticated":false,"generation_calls":0}'
+            exit 12
+          fi
+          version=$(codex --version 2>&1)
+          login=$(codex login status 2>&1)
+          code=$?
+          python - "$version" "$login" "$code" <<'PY'
+          import json,sys
+          version,login,code=sys.argv[1],sys.argv[2],int(sys.argv[3])
+          ok=code==0 and 'Logged in using ChatGPT' in login
+          print(json.dumps({'codex_cli_present':True,'version':version,'login_status_exit':code,'chatgpt_subscription_authenticated':ok,'generation_calls':0}))
+          raise SystemExit(0 if ok else 13)
+          PY
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'generation_calls=0'
+          echo 'api_keys_bound=none'
+          echo 'purpose=subscription runtime eligibility only'
