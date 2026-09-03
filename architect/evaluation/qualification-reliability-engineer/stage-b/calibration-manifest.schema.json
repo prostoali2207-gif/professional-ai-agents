@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/qre-stage-b-calibration-manifest-v0.1.schema.json",
+  "title": "QRE v0.1 Stage B calibration manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "evaluator_cycle", "candidate", "independence", "pack", "mechanisms", "reference_levels", "rubric_dimensions", "resources", "status"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "evaluator_cycle": {"const": "qre-v01-independent-stage-b-calibration-r1"},
+    "candidate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["merge_commit", "freeze_record"],
+      "properties": {
+        "merge_commit": {"const": "faafd25b554bcff2c22c30f8edbf76a895f05298"},
+        "freeze_record": {"const": "ed2e69405209813005ef08b1b4f086e011c3b2c8"}
+      }
+    },
+    "independence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fresh_context", "candidate_outputs_seen", "candidate_skill_used_as_authoring_source", "authored_after_preregistration"],
+      "properties": {
+        "fresh_context": {"const": true},
+        "candidate_outputs_seen": {"const": false},
+        "candidate_skill_used_as_authoring_source": {"const": false},
+        "authored_after_preregistration": {"const": true}
+      }
+    },
+    "pack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["case_count", "sha256", "hidden_content_committed", "exact_answer_prose_frozen"],
+      "properties": {
+        "case_count": {"type": "integer", "minimum": 12},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "hidden_content_committed": {"const": false},
+        "exact_answer_prose_frozen": {"const": false}
+      }
+    },
+    "mechanisms": {
+      "type": "array", "uniqueItems": true, "minItems": 12,
+      "items": {"enum": [
+        "DETERMINISTIC_BLOCKER_PAID_CANARY_PRESSURE",
+        "AMBIGUOUS_NON_IDEMPOTENT_CREATE_TIMEOUT",
+        "SAFE_RETRIEVAL_RETRY_CONTRAST",
+        "NON_REPRESENTATIVE_CANARY",
+        "HIDDEN_STORAGE_RETENTION_CONFLICT",
+        "STALE_CROSS_RUN_EVIDENCE",
+        "STOP_LOSS_RESET_ATTEMPT",
+        "TRUE_GENERIC_129_REOPEN",
+        "ONE_OFF_NO_GENERIC_REOPEN",
+        "OVERENGINEERING_TRAP",
+        "CORRECT_GO_CONTROL",
+        "AMBIGUOUS_PROVIDER_ERROR"
+      ]}
+    },
+    "reference_levels": {
+      "type": "array", "uniqueItems": true, "minItems": 5,
+      "items": {"enum": ["UNSAFE_NAIVE", "MECHANICAL_SHALLOW", "STAFF_STRONG", "OVERENGINEERED", "CORRECT_GO_CONTROL"]}
+    },
+    "rubric_dimensions": {
+      "type": "array", "uniqueItems": true, "minItems": 14,
+      "items": {"enum": [
+        "EVIDENCE_RUNTIME_TRACE",
+        "FAILURE_CLASSIFICATION",
+        "DETERMINISTIC_FIRST_ROUTING",
+        "RETRY_IDEMPOTENCY",
+        "CANARY_REPRESENTATIVENESS",
+        "COMPARABILITY_VALIDITY",
+        "EVIDENCE_PRESERVATION",
+        "PRIVACY_RETENTION",
+        "RESOURCE_BUDGET",
+        "STOP_LOSS_129",
+        "DISCRIMINATING_EXPERIMENT",
+        "SUFFICIENCY_VS_OVERENGINEERING",
+        "READINESS_VERDICT",
+        "UNCERTAINTY_DISCIPLINE"
+      ]}
+    },
+    "resources": {
+      "type": "object", "additionalProperties": false,
+      "required": ["candidate_calls", "judge_calls", "live_provider_calls", "metered_api_calls", "author_sessions", "parallel_model_runs"],
+      "properties": {
+        "candidate_calls": {"const": 0},
+        "judge_calls": {"const": 0},
+        "live_provider_calls": {"const": 0},
+        "metered_api_calls": {"const": 0},
+        "author_sessions": {"type": "integer", "minimum": 1, "maximum": 1},
+        "parallel_model_runs": {"const": 0}
+      }
+    },
+    "status": {"enum": ["B1_AUTHORED_NOT_CALIBRATED", "B1_NOT_EXECUTABLE"]}
+  }
+}
