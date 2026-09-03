@@ -31,19 +31,25 @@ jobs:
       - name: Zero-provider preflight
         run: |
           python -m py_compile architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py
+          python -m py_compile architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py
           python -m py_compile architect/evaluation/visual-design-art-direction/development/run_v05_structural_controller_public.py
+          python architect/evaluation/visual-design-art-direction/development/test_executor_v05_transport_recovery.py
           python architect/evaluation/visual-design-art-direction/development/executor_v05_structural_controller_public.py --probe-contract > /tmp/visual-v05-contract.json
           python - <<'PY'
           import json
           from pathlib import Path
           p=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-structural-controller-preregistration.md').read_text()
+          r=Path('architect/evaluation/visual-design-art-direction/revision-r6-p0-v0.5-public-transport-400-repair-preregistration.md').read_text()
           assert 'Date: 2026-09-03' in p
           assert '24' in p and 'Maximum planned provider calls' in p
+          assert '33728944822' in r
+          assert 'exactly one eligible retry' in r
           d=json.load(open('/tmp/visual-v05-contract.json'))
           assert d['controller_version']=='v0.5-structural-invariant-controller-v1'
+          assert d['transport_repair']=='poll-generic-invalid-request-recovery-v1'
           assert d['provider_storage_scope']=='PUBLIC_DEVELOPMENT_ONLY'
           assert d['hidden_release_material_used'] is False
-          print('VISUAL_V05_PAID_PREFLIGHT_PASS provider_calls=0')
+          print('VISUAL_V05_PAID_PREFLIGHT_PASS provider_calls=0 repair_budget=consumed retry=final')
           PY
       - name: Require development credentials
         run: |
@@ -94,7 +100,7 @@ jobs:
           assert progress['hidden_release_material_used'] is False
           code=os.environ.get('STRUCTURAL_EXIT_CODE','')
           if progress['status']=='INFRASTRUCTURE_FAILURE':
-              print('VISUAL_V05_STRUCTURAL_INFRASTRUCTURE_FAILURE')
+              print('VISUAL_V05_STRUCTURAL_INFRASTRUCTURE_FAILURE_FINAL_TECHNICAL_RETRY')
               raise SystemExit(30)
           report_path=Path('visual-v05-structural-public-report.json')
           if not report_path.exists():
