@@ -1,0 +1,38 @@
+name: Conversion Messaging v0.2 candidate static gate
+
+on:
+  pull_request:
+    paths:
+      - 'agents/conversion-messaging-web-copy/0.2.0/**'
+      - 'architect/evaluation/conversion_messaging_web_copy/professional-delta-v0.2.md'
+      - 'architect/evaluation/conversion_messaging_web_copy/source-register-v0.2.md'
+      - 'architect/evaluation/conversion_messaging_web_copy/evaluation-plan-v0.2.md'
+      - 'architect/evaluation/conversion_messaging_web_copy/candidate_static_v0_2.py'
+      - '.github/workflows/conversion-messaging-v0-2-candidate-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      XAI_API_KEY: ''
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile candidate gate
+        run: python -m py_compile architect/evaluation/conversion_messaging_web_copy/candidate_static_v0_2.py
+      - name: Run zero-model candidate gate
+        run: python architect/evaluation/conversion_messaging_web_copy/candidate_static_v0_2.py
+      - name: Diff hygiene
+        run: git diff --check
