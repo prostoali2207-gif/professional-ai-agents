@@ -98,7 +98,7 @@ for marker in required_skill_markers:
 
 require("No qualification PASS claimed." in plan, "qualification plan must explicitly deny PASS claim")
 require("P0: 0 tolerated." in plan, "qualification plan must preserve zero-tolerance P0 gate")
-require("final qualification cannot be self-review" in plan, "qualification plan must preserve evaluator independence")
+require("final qualification judgment cannot be produced by the same self-review" in plan, "qualification plan must preserve evaluator independence")
 require("NOT_EXECUTABLE" in plan, "qualification plan must preserve infrastructure verdict")
 
 require(isinstance(cases, list) and len(cases) >= 8, "development suite must contain at least 8 cases")
