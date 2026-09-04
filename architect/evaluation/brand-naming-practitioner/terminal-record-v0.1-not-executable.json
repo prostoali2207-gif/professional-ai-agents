@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1",
+  "capability_id": "brand-naming-practitioner",
+  "candidate_version": "0.1.0-candidate",
+  "cycle_id": "brand-naming-practitioner-v0.1-independent-2026-09-04",
+  "terminal_status": "NOT_EXECUTABLE",
+  "professional_verdict": null,
+  "candidate_release_state": "FROZEN_NOT_QUALIFIED",
+  "library_admission": "PROHIBITED",
+  "candidate": {
+    "freeze_blob": "b846c19cef18080cd10db28b43d2794817b2669c",
+    "professional_model_blob": "73f8a3d45a39554e225a8d789e351dcbc881860e",
+    "skill_blob": "bba77ea430276744fd5fc6fc3bb491ae63eb7715"
+  },
+  "stage_a": {
+    "status": "PASS",
+    "checks": "59/59"
+  },
+  "initial_scored_run": {
+    "run_id": 33894509842,
+    "head_sha": "541bbc28dd863ba256829d23a64140ee6c833312",
+    "status": "INFRASTRUCTURE_FAILURE",
+    "classification": "PROVIDER_RUNTIME_FAIL",
+    "candidate_attempts": 2,
+    "baseline_calls": 0,
+    "semantic_judge_calls": 0,
+    "creative_judge_calls": 0,
+    "failure": "Gemini HTTP 500 high demand on candidate-BN-H02",
+    "heldout_artifact_id": 9945278122,
+    "heldout_artifact_digest": "sha256:38e4c4c86f1c543f04bb24ea96b69214a54659a9e463ec47a64eaa5eb883a8d5",
+    "heldout_ciphertext_sha256": "f89683b8d63d107f007482355e239f72158c4533e1e4f240ae510c93cd9a81a1",
+    "progress_artifact_id": 9945278650,
+    "progress_artifact_digest": "sha256:c763f5c33f57040f11f5f85ea30dbfecd19d25f64e8a29a3676f9292a5e871c6",
+    "sanitized_professional_report_created": false
+  },
+  "bounded_repair": {
+    "status": "CONSUMED",
+    "pr": 278,
+    "merge_commit": "efb4ff7be38448d705f8dccc71cbdbc77d61432d",
+    "retry_authorization_blob": "0a670d6abaaa057d97ca8b34a05e864eae9c891c",
+    "final_retry_runner_blob": "387fc0812501c15b260cf34322a3d55fb1716e49",
+    "workflow_blob": "54645ce8d6ccefbc810a75246e6e727f49fc498e",
+    "changes": "Exact source corpus replay and one final manual retry only; candidate, models, judge, thresholds, hard-fails and corpus preserved."
+  },
+  "final_retry": {
+    "run_id": 33896805953,
+    "head_sha": "efb4ff7be38448d705f8dccc71cbdbc77d61432d",
+    "status": "INFRASTRUCTURE_FAILURE",
+    "classification": "LOCAL_EXECUTION_FAIL",
+    "candidate_calls": 12,
+    "baseline_calls": 4,
+    "semantic_judge_calls": 1,
+    "creative_judge_calls": 0,
+    "failure": "RuntimeError: semantic judge shape",
+    "progress_artifact_id": 9946572382,
+    "progress_artifact_digest": "sha256:6917b457d0a607982ba368c1b772e3aea0417959ddbc509d7cc643e6353d028f",
+    "sanitized_professional_report_created": false
+  },
+  "stop_loss": {
+    "same_execution_chain": true,
+    "technical_repair_budget_consumed": true,
+    "final_eligible_retry_consumed": true,
+    "second_non_professional_technical_defect": true,
+    "decision": "STOP",
+    "prohibited_next_actions": [
+      "serial evaluator repair in this chain",
+      "another retry of this chain",
+      "provider switch to reset retry budget",
+      "corpus regeneration to reset retry budget",
+      "threshold or hard-fail weakening",
+      "candidate mutation presented as same cycle"
+    ],
+    "reopen_condition": "Explicit Agent Architect stop-loss review supported by genuinely new execution-reliability evidence. A new issue number or provider switch alone does not qualify."
+  },
+  "professional_evidence_interpretation": {
+    "candidate_professional_fail_observed": false,
+    "candidate_professional_pass_observed": false,
+    "valid_release_judgment_completed": false,
+    "note": "Twelve candidate outputs were produced in the final retry, but the first semantic judge output failed the evaluator shape contract. Without valid scored judgments, candidate quality cannot be inferred from this cycle."
+  },
+  "operational_use": {
+    "candidate_use_allowed_under_repository_candidate_policy": true,
+    "must_not_be_presented_as_qualified": true,
+    "risk_rule": "Use frozen candidate contract and require additional evidence/checks for irreversible, risky or costly actions."
+  },
+  "date": "2026-09-04"
+}
