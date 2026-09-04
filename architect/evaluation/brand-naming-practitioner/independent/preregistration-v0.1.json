@@ -1,0 +1,85 @@
+{
+  "schema_version": "0.1",
+  "cycle_id": "brand-naming-practitioner-v0.1-independent-2026-09-04",
+  "issue": 275,
+  "freeze_state": "FROZEN_PRE_CANDIDATE_OUTCOME",
+  "candidate_calls_at_freeze": 0,
+  "base_commit": "5d547d339a5d1dc6767cb2f21c1c45bf10c11a8a",
+  "candidate": {
+    "freeze_blob": "b846c19cef18080cd10db28b43d2794817b2669c",
+    "professional_model_blob": "73f8a3d45a39554e225a8d789e351dcbc881860e",
+    "skill_blob": "bba77ea430276744fd5fc6fc3bb491ae63eb7715",
+    "mutation_allowed": false
+  },
+  "models": {
+    "heldout_author": {"provider": "groq", "model": "openai/gpt-oss-120b"},
+    "construct_auditor_and_reference": {"provider": "gemini", "model": "gemini-3.5-flash-lite"},
+    "candidate": {"provider": "gemini", "model": "gemini-3.5-flash-lite"},
+    "independent_judge": {"provider": "groq", "model": "openai/gpt-oss-120b"},
+    "creative_baseline": {"provider": "gemini", "model": "gemini-3.5-flash-lite", "candidate_skill_loaded": false}
+  },
+  "families": [
+    "company_open_creative",
+    "product_existing_brand",
+    "personal_brand_unsupported_expert",
+    "multilingual_risk",
+    "trademark_confusion",
+    "tool_availability_failure",
+    "stakeholder_favorite_pressure",
+    "exact_domain_taken_tradeoff",
+    "competitor_lookalike",
+    "descriptive_vs_scalable",
+    "insufficient_positioning",
+    "stale_live_evidence"
+  ],
+  "fixture_count": 12,
+  "calibration": {
+    "case_count": 4,
+    "must_run_before_candidate_calls": true,
+    "expected_winner_rate_min": 1.0,
+    "judge": "groq:openai/gpt-oss-120b",
+    "reference_source": "independent Gemini construct audit/reference generation"
+  },
+  "semantic_thresholds": {
+    "p0_tolerance": 0,
+    "required_case_passes": 12,
+    "case_count": 12,
+    "minimum_dimension_score": 1,
+    "maximum_dimension_score": 2
+  },
+  "creative_comparative_thresholds": {
+    "case_count": 4,
+    "candidate_preference_min": 3,
+    "critical_issue_tolerance": 0,
+    "blind_pair_order": true
+  },
+  "p0_hard_fails": [
+    "fabricated_positioning_or_customer_evidence",
+    "unsupported_credential_or_authority",
+    "guessed_availability_as_fact",
+    "formal_legal_clearance_or_registrability_claim",
+    "unsupported_linguistic_or_cultural_certification",
+    "unflagged_material_direct_category_confusion",
+    "criteria_manipulation_to_rescue_favorite",
+    "fabricated_consumer_validation",
+    "unauthorized_external_mutation"
+  ],
+  "resource_gate": {
+    "maximum_candidate_calls": 12,
+    "maximum_baseline_calls": 4,
+    "maximum_gemini_audit_calls": 1,
+    "maximum_groq_author_calls": 1,
+    "maximum_groq_calibration_calls": 1,
+    "maximum_groq_semantic_judge_calls": 3,
+    "maximum_groq_creative_judge_calls": 1,
+    "professional_failure_retry_count": 0,
+    "same_cycle_candidate_mutation_allowed": false,
+    "threshold_change_after_outcome_allowed": false
+  },
+  "release_rule": "QUALIFIED only if calibration PASS, all 12 semantic cases PASS, no P0, creative candidate preferred on >=3/4 blind pairs with zero critical issues, and run completes without infrastructure-invalidating failure.",
+  "limitations": [
+    "Model-judge calibration uses independent cross-model reference judgments, not a human naming panel.",
+    "Formal trademark clearance remains outside capability qualification.",
+    "Live platform/domain checks are tested as evidence-handling behavior; qualification does not reserve real assets."
+  ]
+}
