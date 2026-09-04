@@ -10,11 +10,8 @@ permissions:
 
 jobs:
   final-retry:
-    if: >-
-      github.event_name == 'issue_comment' &&
-      github.event.issue.number == 275 &&
-      github.actor == 'prostoali2207-gif' &&
-      github.event.comment.body == '/retry-brand-naming-v01-independent-33894509842-final'
+    # Retired after terminal stop-loss record. Historical workflow retained for provenance.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
