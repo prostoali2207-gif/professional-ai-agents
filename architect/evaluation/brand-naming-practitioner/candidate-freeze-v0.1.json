@@ -1,0 +1,21 @@
+{
+  "candidate_name": "brand-naming-practitioner-capability",
+  "candidate_version": "0.1.0-candidate",
+  "status": "FROZEN_NOT_QUALIFIED",
+  "freeze_date": "2026-09-04",
+  "candidate_source_commit": "d8c56add682c03bc39b3ba746c62627f097e7af9",
+  "parent_issue": 275,
+  "qualification_scope": "REUSABLE_CAPABILITY",
+  "components": {
+    "architect/evaluation/brand-naming-practitioner/professional-model-candidate-v0.1.md": "73f8a3d45a39554e225a8d789e351dcbc881860e",
+    "architect/evaluation/brand-naming-practitioner/candidate/SKILL.md": "bba77ea430276744fd5fc6fc3bb491ae63eb7715"
+  },
+  "qualification_plan": {
+    "path": "architect/evaluation/brand-naming-practitioner/qualification-plan-v0.1.md",
+    "blob": "4ec229a487e539ebe62d978f557d27de452862f4"
+  },
+  "architecture": "REUSABLE_MODULAR_CAPABILITY_WITH_LIVE_SCREENING_AND_SPECIALIST_HANDOFFS",
+  "release_state": "NOT_QUALIFIED",
+  "immutability_rule": "Any change to a behavior-bearing frozen component invalidates this qualification cycle and requires a new candidate revision/freeze.",
+  "library_admission": "PROHIBITED_UNTIL_INDEPENDENT_PASS"
+}
