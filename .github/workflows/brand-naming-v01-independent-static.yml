@@ -1,0 +1,51 @@
+name: Brand Naming v0.1 independent static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/brand-naming-practitioner/independent/**'
+      - '.github/workflows/brand-naming-v01-independent.yml'
+      - '.github/workflows/brand-naming-v01-independent-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check cryptography
+      - name: Compile and verify preregistration
+        run: |
+          python -m py_compile architect/evaluation/brand-naming-practitioner/independent/run_qualification_v0_1.py
+          python - <<'PY'
+          import json, subprocess
+          p='architect/evaluation/brand-naming-practitioner/independent/preregistration-v0.1.json'
+          x=json.load(open(p))
+          assert x['issue']==275
+          assert x['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME'
+          assert x['candidate_calls_at_freeze']==0
+          assert x['candidate']['mutation_allowed'] is False
+          assert x['calibration']['expected_winner_rate_min']==1.0
+          assert x['semantic_thresholds']['p0_tolerance']==0
+          assert x['semantic_thresholds']['required_case_passes']==12
+          assert x['creative_comparative_thresholds']['candidate_preference_min']==3
+          assert x['resource_gate']['professional_failure_retry_count']==0
+          base=x['base_commit']; c=x['candidate']
+          paths={
+            'freeze_blob':'architect/evaluation/brand-naming-practitioner/candidate-freeze-v0.1.json',
+            'professional_model_blob':'architect/evaluation/brand-naming-practitioner/professional-model-candidate-v0.1.md',
+            'skill_blob':'architect/evaluation/brand-naming-practitioner/candidate/SKILL.md',
+          }
+          for key,path in paths.items():
+              actual=subprocess.check_output(['git','rev-parse',f'{base}:{path}'],text=True).strip()
+              assert actual==c[key],(key,actual,c[key])
+          print('BRAND_NAMING_V01_INDEPENDENT_STATIC_PASS candidate_calls=0')
+          PY
