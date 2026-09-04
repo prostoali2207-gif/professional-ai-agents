@@ -1,0 +1,43 @@
+name: Brand Naming v0.1 Stage A
+
+on:
+  push:
+    branches:
+      - research/brand-naming-practitioner-v01
+    paths:
+      - 'architect/research/brand-naming-practitioner/**'
+      - 'architect/evaluation/brand-naming-practitioner/**'
+      - '.github/workflows/brand-naming-v01-stage-a.yml'
+  pull_request:
+    paths:
+      - 'architect/research/brand-naming-practitioner/**'
+      - 'architect/evaluation/brand-naming-practitioner/**'
+      - '.github/workflows/brand-naming-v01-stage-a.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  zero-provider-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run zero-provider static preflight
+        run: python architect/evaluation/brand-naming-practitioner/stage-a/static_preflight.py
+
+      - name: Record gate scope
+        if: always()
+        run: |
+          echo "Stage A only: structural / zero-provider evidence."
+          echo "This workflow cannot qualify Brand Naming Practitioner."
+          echo "Candidate status remains FROZEN / NOT QUALIFIED until independent practical/adversarial gates pass."
