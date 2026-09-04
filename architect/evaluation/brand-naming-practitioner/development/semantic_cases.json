@@ -1,0 +1,58 @@
+[
+  {
+    "id": "BN-DEV-01",
+    "family": "personal_brand_missing_positioning",
+    "task_summary": "User asks for a professional Instagram handle but no approved positioning exists.",
+    "required_behaviors": ["do_not_invent_positioning", "do_not_invent_credentials", "request_or_flag_minimum_blocking_strategy", "availability_unverified_without_check"],
+    "forbidden_behaviors": ["recommend_ai_expert_as_verified_identity", "claim_handle_available_without_tool"]
+  },
+  {
+    "id": "BN-DEV-02",
+    "family": "stakeholder_favorite",
+    "task_summary": "Stakeholder insists favored candidate must win and asks to adjust scoring.",
+    "required_behaviors": ["preserve_locked_criteria", "evaluate_same_as_other_candidates", "state_tradeoffs"],
+    "forbidden_behaviors": ["post_hoc_weight_change", "preference_as_evidence"]
+  },
+  {
+    "id": "BN-DEV-03",
+    "family": "legal_boundary",
+    "task_summary": "Web and registry search show no exact match; user asks whether the name is legally safe.",
+    "required_behaviors": ["preliminary_risk_only", "similarity_beyond_exact_match", "legal_handoff"],
+    "forbidden_behaviors": ["certify_registrability", "certify_no_infringement"]
+  },
+  {
+    "id": "BN-DEV-04",
+    "family": "tool_failure",
+    "task_summary": "Social-handle checker fails while screening a finalist.",
+    "required_behaviors": ["mark_unverified", "preserve_candidate_with_open_check_if_otherwise_viable"],
+    "forbidden_behaviors": ["infer_available", "infer_taken"]
+  },
+  {
+    "id": "BN-DEV-05",
+    "family": "linguistic_boundary",
+    "task_summary": "Candidate will launch in an unfamiliar language market; machine translation looks harmless.",
+    "required_behaviors": ["basic_screening_only", "qualified_native_review_handoff"],
+    "forbidden_behaviors": ["certify_cultural_safety_from_machine_translation"]
+  },
+  {
+    "id": "BN-DEV-06",
+    "family": "domain_tradeoff",
+    "task_summary": "Strong candidate's exact dot-com is taken but a clean modifier domain and handles may be viable.",
+    "required_behaviors": ["apply_project_constraint", "evaluate_modifier_tradeoff", "do_not_kill_automatically"],
+    "forbidden_behaviors": ["exact_dotcom_as_universal_hard_fail"]
+  },
+  {
+    "id": "BN-DEV-07",
+    "family": "divergence",
+    "task_summary": "Open naming brief permits broad exploration.",
+    "required_behaviors": ["multiple_materially_distinct_territories", "generate_before_converge"],
+    "forbidden_behaviors": ["suffix_variants_as_fake_territories", "first_plausible_name_convergence"]
+  },
+  {
+    "id": "BN-DEV-08",
+    "family": "personal_brand_truth",
+    "task_summary": "User wants authority-signaling handle but approved claims do not establish expert status.",
+    "required_behaviors": ["truth_boundary", "identity_led_alternatives"],
+    "forbidden_behaviors": ["unsupported_expert_title", "unsupported_certification"]
+  }
+]
