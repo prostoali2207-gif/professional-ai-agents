@@ -25,6 +25,7 @@ jobs:
       - name: Compile and verify preregistration
         run: |
           python -m py_compile architect/evaluation/brand-naming-practitioner/independent/run_qualification_v0_1.py
+          python -m py_compile architect/evaluation/brand-naming-practitioner/independent/run_final_retry_v0_1.py
           python - <<'PY'
           import json, subprocess
           p='architect/evaluation/brand-naming-practitioner/independent/preregistration-v0.1.json'
@@ -47,5 +48,16 @@ jobs:
           for key,path in paths.items():
               actual=subprocess.check_output(['git','rev-parse',f'{base}:{path}'],text=True).strip()
               assert actual==c[key],(key,actual,c[key])
-          print('BRAND_NAMING_V01_INDEPENDENT_STATIC_PASS candidate_calls=0')
+          a=json.load(open('architect/evaluation/brand-naming-practitioner/independent/final-retry-authorization-v0.1.json'))
+          assert a['cycle_id']==x['cycle_id']
+          assert a['decision']=='ONE_FINAL_INFRASTRUCTURE_RETRY_AUTHORIZED'
+          assert a['failure_class']=='PROVIDER_RUNTIME_FAIL'
+          assert a['source_run']['run_id']==33894509842
+          assert a['source_run']['candidate_attempts_consumed']==2
+          assert a['retry_budget']['final_retry_run_count']==1
+          assert a['retry_budget']['internal_provider_retry_loop'] is False
+          assert a['retry_budget']['maximum_cycle_candidate_attempts_after_final_retry']==14
+          assert a['retry_budget']['professional_failure_retry_count']==0
+          assert a['generic_platform_reopen'] is False
+          print('BRAND_NAMING_V01_INDEPENDENT_STATIC_PASS candidate_calls=0 final_retry_authorized=1')
           PY

@@ -1,4 +1,4 @@
-name: Brand Naming v0.1 independent qualification
+name: Brand Naming v0.1 final infrastructure retry
 
 on:
   issue_comment:
@@ -9,12 +9,12 @@ permissions:
   actions: read
 
 jobs:
-  qualify:
+  final-retry:
     if: >-
       github.event_name == 'issue_comment' &&
       github.event.issue.number == 275 &&
       github.actor == 'prostoali2207-gif' &&
-      github.event.comment.body == '/run-brand-naming-v01-independent'
+      github.event.comment.body == '/retry-brand-naming-v01-independent-33894509842-final'
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
@@ -22,80 +22,142 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
       GROQ_MIN_INTERVAL_SECONDS: '60'
+      GH_TOKEN: ${{ github.token }}
+      SOURCE_RUN_ID: '33894509842'
+      SOURCE_HEAD_SHA: '541bbc28dd863ba256829d23a64140ee6c833312'
+      SOURCE_HELDOUT_ARTIFACT_ID: '9945278122'
+      SOURCE_HELDOUT_ARTIFACT_NAME: 'brand-naming-v01-encrypted-heldout'
+      SOURCE_HELDOUT_ARTIFACT_DIGEST: 'sha256:38e4c4c86f1c543f04bb24ea96b69214a54659a9e463ec47a64eaa5eb883a8d5'
+      SOURCE_PROGRESS_ARTIFACT_ID: '9945278650'
+      SOURCE_PROGRESS_ARTIFACT_NAME: 'brand-naming-v01-progress'
+      SOURCE_PROGRESS_ARTIFACT_DIGEST: 'sha256:c763f5c33f57040f11f5f85ea30dbfecd19d25f64e8a29a3676f9292a5e871c6'
+      BRAND_NAMING_SOURCE_PACK_DIR: 'source-heldout'
+      BRAND_NAMING_SOURCE_PROGRESS_DIR: 'source-progress'
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - run: python -m pip install --disable-pip-version-check cryptography
-      - name: Verify exact independent contract before credentials
+
+      - name: Verify final retry authorization before credentials
         run: |
           python -m py_compile architect/evaluation/brand-naming-practitioner/independent/run_qualification_v0_1.py
+          python -m py_compile architect/evaluation/brand-naming-practitioner/independent/run_final_retry_v0_1.py
           python - <<'PY'
-          import json, subprocess
-          x=json.load(open('architect/evaluation/brand-naming-practitioner/independent/preregistration-v0.1.json'))
-          assert x['cycle_id']=='brand-naming-practitioner-v0.1-independent-2026-09-04'
-          assert x['freeze_state']=='FROZEN_PRE_CANDIDATE_OUTCOME' and x['candidate_calls_at_freeze']==0
-          assert len(x['families'])==12 and len(x['p0_hard_fails'])==9
-          assert x['calibration']['must_run_before_candidate_calls'] is True
-          assert x['calibration']['expected_winner_rate_min']==1.0
-          assert x['semantic_thresholds']=={'p0_tolerance':0,'required_case_passes':12,'case_count':12,'minimum_dimension_score':1,'maximum_dimension_score':2}
-          assert x['creative_comparative_thresholds']['candidate_preference_min']==3
-          assert x['resource_gate']['professional_failure_retry_count']==0
-          base=x['base_commit']; c=x['candidate']
-          paths={
-            'freeze_blob':'architect/evaluation/brand-naming-practitioner/candidate-freeze-v0.1.json',
-            'professional_model_blob':'architect/evaluation/brand-naming-practitioner/professional-model-candidate-v0.1.md',
-            'skill_blob':'architect/evaluation/brand-naming-practitioner/candidate/SKILL.md',
-          }
-          for key,path in paths.items():
-              assert subprocess.check_output(['git','rev-parse',f'{base}:{path}'],text=True).strip()==c[key]
-          print('BRAND_NAMING_V01_FROZEN_CONTRACT_PASS candidate_calls=0')
+          import json
+          a=json.load(open('architect/evaluation/brand-naming-practitioner/independent/final-retry-authorization-v0.1.json'))
+          p=json.load(open('architect/evaluation/brand-naming-practitioner/independent/preregistration-v0.1.json'))
+          assert a['cycle_id']==p['cycle_id']=='brand-naming-practitioner-v0.1-independent-2026-09-04'
+          assert a['decision']=='ONE_FINAL_INFRASTRUCTURE_RETRY_AUTHORIZED'
+          assert a['failure_class']=='PROVIDER_RUNTIME_FAIL'
+          assert a['source_run']['run_id']==33894509842
+          assert a['source_run']['head_sha']=='541bbc28dd863ba256829d23a64140ee6c833312'
+          assert a['source_run']['runner_blob']=='ec2503225e40807490c564e39fc455fd4f4f5325'
+          assert a['source_run']['workflow_blob']=='0b1fade57efede7afacbb2a4d075c1c76e2ddd53'
+          assert a['retry_budget']['final_retry_run_count']==1
+          assert a['retry_budget']['internal_provider_retry_loop'] is False
+          assert a['retry_budget']['fresh_candidate_calls_required']==12
+          assert a['retry_budget']['prior_candidate_attempts_sunk']==2
+          assert a['retry_budget']['maximum_cycle_candidate_attempts_after_final_retry']==14
+          assert a['retry_budget']['professional_failure_retry_count']==0
+          assert a['generic_platform_reopen'] is False
+          assert p['candidate']['mutation_allowed'] is False
+          assert p['resource_gate']['professional_failure_retry_count']==0
+          print('BRAND_NAMING_V01_FINAL_RETRY_AUTH_PASS provider_calls=0')
           PY
+
       - name: Require qualification credentials
         run: |
           test -n "$GEMINI_API_KEY" || exit 22
           test -n "$GROQ_API_KEY" || exit 23
           test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || exit 24
-      - name: Run frozen independent qualification
+
+      - name: Verify immutable source run and artifact metadata
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN_ID" > source-run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$SOURCE_HELDOUT_ARTIFACT_ID" > source-heldout-meta.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$SOURCE_PROGRESS_ARTIFACT_ID" > source-progress-meta.json
+          python - <<'PY'
+          import json, os
+          run=json.load(open('source-run.json'))
+          h=json.load(open('source-heldout-meta.json'))
+          p=json.load(open('source-progress-meta.json'))
+          assert str(run['id'])==os.environ['SOURCE_RUN_ID']
+          assert run['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert run['status']=='completed' and run['conclusion']=='failure'
+          assert str(h['id'])==os.environ['SOURCE_HELDOUT_ARTIFACT_ID']
+          assert h['name']==os.environ['SOURCE_HELDOUT_ARTIFACT_NAME']
+          assert h['digest']==os.environ['SOURCE_HELDOUT_ARTIFACT_DIGEST'] and not h['expired']
+          assert str(h['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert h['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          assert str(p['id'])==os.environ['SOURCE_PROGRESS_ARTIFACT_ID']
+          assert p['name']==os.environ['SOURCE_PROGRESS_ARTIFACT_NAME']
+          assert p['digest']==os.environ['SOURCE_PROGRESS_ARTIFACT_DIGEST'] and not p['expired']
+          assert str(p['workflow_run']['id'])==os.environ['SOURCE_RUN_ID']
+          assert p['workflow_run']['head_sha']==os.environ['SOURCE_HEAD_SHA']
+          print('BRAND_NAMING_V01_SOURCE_METADATA_PASS provider_calls=0')
+          PY
+
+      - name: Download exact source artifacts
+        run: |
+          mkdir -p "$BRAND_NAMING_SOURCE_PACK_DIR" "$BRAND_NAMING_SOURCE_PROGRESS_DIR"
+          gh run download "$SOURCE_RUN_ID" -n "$SOURCE_HELDOUT_ARTIFACT_NAME" --dir "$BRAND_NAMING_SOURCE_PACK_DIR"
+          gh run download "$SOURCE_RUN_ID" -n "$SOURCE_PROGRESS_ARTIFACT_NAME" --dir "$BRAND_NAMING_SOURCE_PROGRESS_DIR"
+
+      - name: Verify exact source corpus and failure before model calls
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          a=json.load(open('architect/evaluation/brand-naming-practitioner/independent/final-retry-authorization-v0.1.json'))
+          m=json.load(open(os.path.join(os.environ['BRAND_NAMING_SOURCE_PACK_DIR'],'brand-naming-v01-heldout-manifest.json')))
+          p=json.load(open(os.path.join(os.environ['BRAND_NAMING_SOURCE_PROGRESS_DIR'],'brand-naming-v01-progress.json')))
+          token=open(os.path.join(os.environ['BRAND_NAMING_SOURCE_PACK_DIR'],'brand-naming-v01-heldout.enc'),'rb').read()
+          assert hashlib.sha256(token).hexdigest()==a['source_artifacts']['heldout']['ciphertext_sha256']==m['ciphertext_sha256']
+          assert m['cleartext_sha256']==a['source_artifacts']['heldout']['cleartext_sha256']
+          assert m['candidate_calls_at_seal']==0 and m['case_count']==12 and m['family_count']==12 and m['control_count']==4
+          assert p['status']=='INFRASTRUCTURE_FAILURE' and p['candidate_calls']==2
+          assert p['provider_calls']['baseline_calls']==0
+          assert p['provider_calls']['groq_semantic_judge_calls']==0
+          assert p['provider_calls']['groq_creative_judge_calls']==0
+          assert 'HTTP 500' in p['detail'] and 'high demand' in p['detail']
+          print('BRAND_NAMING_V01_EXACT_SOURCE_REPLAY_PASS source_candidate_attempts=2 new_provider_calls=0')
+          PY
+
+      - name: Run one final frozen retry
         id: qualification
         shell: bash
         run: |
           set +e
-          python architect/evaluation/brand-naming-practitioner/independent/run_qualification_v0_1.py
+          python architect/evaluation/brand-naming-practitioner/independent/run_final_retry_v0_1.py
           code=$?
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           exit 0
-      - name: Upload encrypted held-out pack
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: brand-naming-v01-encrypted-heldout
-          path: |
-            brand-naming-v01-heldout.enc
-            brand-naming-v01-heldout-manifest.json
-          if-no-files-found: ignore
-          retention-days: 14
+
       - name: Upload sanitized progress
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brand-naming-v01-progress
+          name: brand-naming-v01-final-retry-progress
           path: brand-naming-v01-progress.json
           if-no-files-found: error
           retention-days: 14
+
       - name: Upload sanitized report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: brand-naming-v01-sanitized-report
+          name: brand-naming-v01-final-retry-report
           path: brand-naming-v01-sanitized-report.json
           if-no-files-found: ignore
           retention-days: 14
-      - name: Enforce preregistered release gate
+
+      - name: Enforce final stop-loss release gate
         if: always()
         env:
           RUN_EXIT_CODE: ${{ steps.qualification.outputs.exit_code }}
@@ -105,26 +167,38 @@ jobs:
           import json, os
           p=json.load(open('brand-naming-v01-progress.json'))
           assert p['hidden_content_printed'] is False
-          status=p['status']
           code=os.environ.get('RUN_EXIT_CODE','')
-          if status=='INFRASTRUCTURE_FAILURE':
-              print('BRAND_NAMING_V01_NOT_EXECUTABLE_OR_REPAIR_GATE')
+          if p['status']=='INFRASTRUCTURE_FAILURE':
+              print('BRAND_NAMING_V01_FINAL_RETRY_NOT_EXECUTABLE_STOP')
               raise SystemExit(30)
           if not os.path.exists('brand-naming-v01-sanitized-report.json'):
               raise SystemExit(31)
           r=json.load(open('brand-naming-v01-sanitized-report.json'))
           assert r['hidden_content_printed'] is False
-          assert r.get('library_admission_performed') is False
+          assert r['library_admission_performed'] is False
+          q=r['retry']
+          assert q['authorized_final_retry'] is True
+          assert q['source_run']==33894509842
+          assert q['corpus_regenerated'] is False
+          assert q['calibration_rerun'] is False
+          assert q['candidate_mutated'] is False
+          assert q['thresholds_changed'] is False
+          assert q['judge_changed'] is False
+          assert q['provider_changed'] is False
+          assert r['cycle_candidate_attempts']==14
           if r['status']=='QUALIFICATION_PASS':
               assert code=='0'
-              assert r['calibration']['pass'] is True and r['calibration']['candidate_calls_at_calibration']==0
+              assert r['calibration']['pass'] is True and r['calibration']['reused_canonical_source_gate'] is True
               assert r['semantic']['case_passes']==12 and r['semantic']['p0_count']==0
               assert r['creative_comparative']['candidate_preferred']>=3
               assert r['creative_comparative']['critical_issues']==0
-              print('BRAND_NAMING_V01_QUALIFICATION_PASS')
+              print('BRAND_NAMING_V01_FINAL_RETRY_QUALIFICATION_PASS')
               raise SystemExit(0)
-          if r['status']=='CALIBRATION_FAIL': raise SystemExit(22)
-          if r['status']=='QUALIFICATION_REVISE': raise SystemExit(20)
-          if r['status']=='QUALIFICATION_FAIL_P0': raise SystemExit(21)
+          if r['status']=='QUALIFICATION_REVISE':
+              print('BRAND_NAMING_V01_FINAL_RETRY_PROFESSIONAL_REVISE')
+              raise SystemExit(20)
+          if r['status']=='QUALIFICATION_FAIL_P0':
+              print('BRAND_NAMING_V01_FINAL_RETRY_PROFESSIONAL_FAIL_P0')
+              raise SystemExit(21)
           raise SystemExit(32)
           PY

@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1",
+  "cycle_id": "brand-naming-practitioner-v0.1-independent-2026-09-04",
+  "execution_chain": "semantic-scored-qualification",
+  "decision": "ONE_FINAL_INFRASTRUCTURE_RETRY_AUTHORIZED",
+  "failure_class": "PROVIDER_RUNTIME_FAIL",
+  "source_run": {
+    "run_id": 33894509842,
+    "head_sha": "541bbc28dd863ba256829d23a64140ee6c833312",
+    "runner_blob": "ec2503225e40807490c564e39fc455fd4f4f5325",
+    "workflow_blob": "0b1fade57efede7afacbb2a4d075c1c76e2ddd53",
+    "failure_stage": "candidate_execution",
+    "failure_case": "BN-H02",
+    "failure_detail_required_substring": "HTTP 500",
+    "provider_message_required_substring": "high demand",
+    "candidate_attempts_consumed": 2,
+    "professional_judgments_completed": 0
+  },
+  "source_artifacts": {
+    "heldout": {
+      "artifact_id": 9945278122,
+      "artifact_name": "brand-naming-v01-encrypted-heldout",
+      "artifact_zip_digest": "sha256:38e4c4c86f1c543f04bb24ea96b69214a54659a9e463ec47a64eaa5eb883a8d5",
+      "ciphertext_sha256": "f89683b8d63d107f007482355e239f72158c4533e1e4f240ae510c93cd9a81a1",
+      "cleartext_sha256": "512c6ff98570a7b7fee8a8375deca84bb4ab9099e3ad8412c9136b38ed19d7a5"
+    },
+    "progress": {
+      "artifact_id": 9945278650,
+      "artifact_name": "brand-naming-v01-progress",
+      "artifact_zip_digest": "sha256:c763f5c33f57040f11f5f85ea30dbfecd19d25f64e8a29a3676f9292a5e871c6"
+    }
+  },
+  "preserve": {
+    "candidate": true,
+    "models": true,
+    "judge": true,
+    "thresholds": true,
+    "hard_fails": true,
+    "hidden_corpus": true,
+    "hidden_controls": true,
+    "calibration_gate": true
+  },
+  "calibration_evidence": {
+    "source_run_pass_inference": "The source runner can enter candidate_execution only after calibration expected_winner_rate >= 1.0. Source progress records two candidate calls, therefore the preregistered 4/4 calibration gate passed before candidate execution.",
+    "rerun_calibration": false
+  },
+  "retry_budget": {
+    "final_retry_run_count": 1,
+    "internal_provider_retry_loop": false,
+    "fresh_candidate_calls_required": 12,
+    "prior_candidate_attempts_sunk": 2,
+    "maximum_cycle_candidate_attempts_after_final_retry": 14,
+    "professional_failure_retry_count": 0
+  },
+  "stop_rule": "Any further non-professional technical defect in this execution chain => NOT_EXECUTABLE and STOP. No provider switch, corpus regeneration, serial repair, threshold change, or candidate mutation.",
+  "generic_platform_reopen": false
+}
