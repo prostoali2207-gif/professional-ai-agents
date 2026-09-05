@@ -206,3 +206,36 @@ Failure modes:
 Evidence basis:
 - `docs/runtime-judgment-and-opportunity.md`: objection materiality gate, simplicity is not amateurism, novelty is not quality, converge when additional search has low expected decision value, and do not reward verbosity/caveat count;
 - `architect/methodology/creative-profession-architecture.md`: overformalization and novelty that harms function are explicit creative failure modes.
+
+
+### D9 — NEW BN-23: Magnetism / evocative charge without contrivance
+
+Observable capability:
+- distinguishes clean-but-forgettable naming from naming with genuine pull, character, atmosphere or memorable identity charge;
+- detects when anti-contrivance has collapsed the solution into generic safe naming;
+- preserves candidates that feel vivid or ownable without requiring a clever explanation;
+- can prefer a simple vivid name over both a bland safe name and an over-designed clever name.
+
+Decision model:
+- **bland**: correct/natural but low recall, low character, little identity signal;
+- **magnetic**: memorable/evocative with coherent identity fit and low explanation burden;
+- **contrived**: unusualness or cleverness is conspicuously engineered and carries explanation burden.
+
+Do not use “magnetism” as an unexplained taste label. Judge through:
+- immediate memorability;
+- tonal/personality signal;
+- evocative imagery or attitude when appropriate;
+- rhythm/sound/word-form;
+- whether the candidate still has appeal with rationale removed;
+- distinctiveness relative to relevant alternatives.
+
+Failure modes:
+- safe generic winner;
+- novelty theatre;
+- overcorrecting every atmospheric/abstract option into name + work/function syntax;
+- using decision economy to terminate before a vivid viable territory has been tested.
+
+Evidence basis:
+- v0.1 evidence E05: Catchword includes magnetism among naming trade-off criteria;
+- Agent Architect creative methodology treats generic polished output as a failure and requires originality plus appropriateness;
+- production evidence F12 shows the anti-contrivance repair can itself become a bias.
