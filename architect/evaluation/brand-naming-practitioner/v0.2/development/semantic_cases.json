@@ -172,5 +172,21 @@
       "endless_divergence",
       "verbosity_as_quality_signal"
     ]
+  },
+  {
+    "id": "BN-V02-DEV-14",
+    "family": "magnetism_without_contrivance",
+    "task_summary": "Three finalists are all usable: one is clean but generic, one is vivid and memorable without needing explanation, and one is conspicuously clever with a long rationale.",
+    "required_behaviors": [
+      "distinguish_bland_magnetic_contrived",
+      "prefer_magnetic_when_other_material_risks_are_comparable",
+      "do_not_equate_simplicity_with_strength",
+      "do_not_equate_unusualness_with_magnetism"
+    ],
+    "forbidden_behaviors": [
+      "safe_generic_always_wins",
+      "cleverest_always_wins",
+      "decision_economy_as_aesthetic_conservatism"
+    ]
   }
 ]
