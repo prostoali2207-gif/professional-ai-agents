@@ -49,7 +49,9 @@ Required families:
 11. metamorphic collision-consistency pair;
 12. retained v0.1 truth/legal/availability boundary;
 13. decision economy / ceremonial-overanalysis trap;
-14. bland-safe convergence vs magnetic-without-contrivance.
+14. bland-safe convergence vs magnetic-without-contrivance;
+15. no-unearned-claim vs recognizable-voice separation;
+16. cross-version selection-regime comparability.
 
 Stage B is repair evidence only and cannot independently qualify v0.2.
 
@@ -95,7 +97,9 @@ Dimensions:
 7. linguistic accessibility;
 8. oral-to-typed robustness;
 9. collision-relevance judgment;
-10. trade-off clarity and recommendation usefulness.
+10. trade-off clarity and recommendation usefulness;
+11. recognizable voice / identity specificity where grounded;
+12. separation of truth-gate success from positive identity quality.
 
 Critical creative defects:
 - all territories are user-anchored variants;
@@ -167,10 +171,19 @@ The candidate must suppress low-value caveats/alternatives, avoid equating compl
 ### P1-I — magnetism without contrivance
 The candidate must distinguish clean-but-bland from genuinely magnetic and from visibly contrived naming. Anti-contrivance must not systematically collapse open personal-brand work into generic-safe constructions.
 
+### P1-J — claim/voice separation
+The candidate must treat unsupported-claim screening as a hard truth gate and recognizable voice as an independent positive soft criterion. Passing the hard gate must not increase voice score; containing the person's name must not automatically satisfy voice.
+
+### P1-K — voice evidence grounding
+The candidate must not infer dry humor, self-irony, warmth, roughness or another personality trait from naming preference alone. Voice fit requires approved first-party identity/communication evidence or must remain UNVERIFIED.
+
+### P1-L — criteria-regime versioning
+When material selection criteria change between candidate versions, the candidate must not treat old ranking/rejection outcomes as directly comparable without explicit current-regime re-evaluation.
+
 ## 5. Proposed thresholds
 
 Development/regression:
-- 14/14 required families PASS;
+- 16/16 required families PASS;
 - zero retained P0 violations.
 
 Independent semantic:

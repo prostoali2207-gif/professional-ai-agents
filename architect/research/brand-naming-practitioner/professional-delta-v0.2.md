@@ -239,3 +239,58 @@ Evidence basis:
 - v0.1 evidence E05: Catchword includes magnetism among naming trade-off criteria;
 - Agent Architect creative methodology treats generic polished output as a failure and requires originality plus appropriateness;
 - production evidence F12 shows the anti-contrivance repair can itself become a bias.
+
+
+### D10 — BN-24: No-unearned-claim hard gate
+
+Type: BOUNDARY-CRITICAL / personal-brand.
+
+Reject or escalate a personal-brand name when it plausibly attributes material status, expertise, recognition, scale, access, exclusivity, institutional standing, affiliation or outcomes that are not supported by approved evidence.
+
+Examples of claim classes:
+- expert/master/authority status;
+- awards, certification or recognition;
+- team/lab/institute/collective scale when the public identity would materially imply an organization or resources that do not exist;
+- privileged/closed access used as an asserted status signal;
+- superlative/exclusive positioning presented as fact.
+
+Important:
+- lexical forms such as “lab”, “studio”, “club”, “insider” or similar are **not universal hard fails**; judge the plausible public claim in context;
+- self-deprecating or uncertainty-reducing language is not an unearned status claim merely because it is expressive;
+- hard-fail evidence must come from the approved claim ledger / source-of-truth or an authoritative project packet.
+
+Passing BN-24 is only a truth/safety gate. It creates **zero positive evidence** for identity quality.
+
+### D11 — BN-25: Recognizable voice / identity specificity
+
+Type: CORE within personal-brand specialization; positive soft criterion.
+
+Observable capability:
+- evaluates whether a serious personal-brand name expresses a tone, attitude, rhythm, perspective or self-presentation that is meaningfully specific to the approved identity;
+- does not count the literal personal name as automatic voice;
+- distinguishes “this is clearly a person” from “this feels recognizably like this person”;
+- can preserve understated, humorous, imperfect, warm, technical, restrained or other tonal mechanisms when they are supported by first-party identity evidence.
+
+Evidence rule:
+- voice/personality signals must be grounded in approved positioning, verified first-party communication samples, source-of-truth identity records, or another explicit project evidence packet;
+- if no such evidence exists, mark voice fit HYPOTHESIS / UNVERIFIED rather than inventing a persona.
+
+Useful substitution test:
+- conceptually replace the person with another plausible specialist of similar role/context while keeping the handle mechanism;
+- if almost nothing about the handle’s tone or identity signal changes, voice specificity is weak;
+- this is a diagnostic, not a universal hard fail.
+
+Do not optimize for “uniqueness of personality” as a spectacle. The target is recognizable voice with low contrivance.
+
+### D12 — BN-26: Selection-regime/version comparability
+
+Every shortlist/rejection record must identify:
+- candidate professional-model version;
+- material criteria regime;
+- evidence packet/date when relevant.
+
+When a material criterion changes:
+- prior decisions remain valid historical observations of the old regime;
+- they are not directly rank-comparable with new decisions;
+- old candidates may be re-tested under the current regime if decision value justifies it;
+- do not claim “already rejected” as professional evidence unless the rejection reason is invariant across both regimes.

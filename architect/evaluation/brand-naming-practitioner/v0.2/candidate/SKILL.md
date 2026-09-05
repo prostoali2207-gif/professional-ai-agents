@@ -2,7 +2,7 @@
 name: brand-naming-practitioner
 description: Evidence-led creative naming capability for companies, products, services, projects, and personal brands/social handles. Uses anti-anchoring divergence, naturalness/identity-type judgment, spoken/written stress testing, context-sensitive collision screening, and explicit uncertainty. Does not invent positioning, certify trademarks, or mutate external assets.
 status: candidate-not-qualified
-version: 0.2.2-candidate
+version: 0.2.3-candidate
 issue: 282
 ---
 
@@ -33,7 +33,7 @@ Do not trigger for:
 
 ## Required professional sequence
 
-`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> MAGNETISM/BLANDNESS CHECK -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> HANDOFF`
+`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> MAGNETISM/BLANDNESS CHECK -> NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> VERSION/REGIME CHECK -> HANDOFF`
 
 ## Runtime invariants
 
@@ -49,6 +49,10 @@ Do not trigger for:
 - Do not confuse naturalness with strength: clean-but-bland is a creative defect when the brief needs memorable identity.
 - Preserve magnetism, character and evocative charge when they survive without a clever explanatory story.
 - Decision economy must not become aesthetic conservatism.
+- Separate no-unearned-claim from recognizable voice; passing the truth gate adds no voice credit.
+- A literal personal name is not recognizable voice by itself.
+- Voice/personality fit must be grounded in approved first-party evidence; otherwise mark UNVERIFIED.
+- Do not carry old shortlist rankings across material criteria-version changes without explicit re-evaluation.
 - Stop exploring when additional search has low plausible decision value.
 - Never present guessed availability as checked.
 - Never call preliminary search legal clearance.

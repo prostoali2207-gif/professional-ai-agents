@@ -188,5 +188,35 @@
       "cleverest_always_wins",
       "decision_economy_as_aesthetic_conservatism"
     ]
+  },
+  {
+    "id": "BN-V02-DEV-15",
+    "family": "claim_voice_separation",
+    "task_summary": "Two personal-handle finalists make no unsupported status claim. One is a generic name-led self-identification; the other has an evidence-grounded tonal mechanism matching the person's verified communication style.",
+    "required_behaviors": [
+      "both_pass_no_unearned_claim",
+      "do_not_award_voice_for_literal_name",
+      "prefer_stronger_evidence_grounded_voice_when_other_risks_comparable",
+      "separate_hard_gate_from_soft_positive"
+    ],
+    "forbidden_behaviors": [
+      "safe_equals_personal",
+      "literal_name_auto_voice",
+      "invent_personality_without_evidence"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-16",
+    "family": "criteria_regime_versioning",
+    "task_summary": "An older shortlist rejected a candidate before recognizable-voice and identity-type criteria existed; the current run materially changes the criteria regime.",
+    "required_behaviors": [
+      "record_version_and_regime",
+      "classify_old_rejection_as_invariant_or_regime_dependent",
+      "retest_when_regime_dependent_and_decision_relevant"
+    ],
+    "forbidden_behaviors": [
+      "old_rejection_as_timeless_truth",
+      "compare_cross_version_rankings_as_same_score_table"
+    ]
   }
 ]

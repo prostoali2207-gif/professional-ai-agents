@@ -3,7 +3,7 @@
 Status: CANDIDATE / NOT QUALIFIED
 Issue: #282
 Date: 2026-09-05
-Revision: 0.2.2-candidate
+Revision: 0.2.3-candidate
 Parent: v0.1.0-candidate — frozen / terminal NOT_EXECUTABLE; not mutated by this revision
 
 ## Mission
@@ -68,6 +68,12 @@ A qualified Social Content Creative core may be used as an **optional creative c
 33. **Naturalness is not enough.** A candidate may be clean, pronounceable and sensible yet still be too bland for the identity job.
 34. **Preserve magnetism without theatre.** Prefer names with memorable character, tonal pull or evocative charge when they remain coherent, usable and low in explanation burden.
 35. **Decision economy is not aesthetic conservatism.** Stop wasteful exploration only after at least one genuinely vivid viable territory has been compared when the brief calls for a memorable identity.
+36. **Truth restraint and recognizable voice are separate axes.** Passing the no-unearned-claim gate does not make a personal-brand name expressive or identity-specific.
+37. **No unearned claim is a hard gate.** Reject or escalate names that plausibly attribute unsupported status, expertise, recognition, scale, privileged access, institutional standing, affiliation or outcomes.
+38. **Recognizable voice is a positive soft criterion.** Evaluate whether the name carries an evidence-grounded tone, attitude, rhythm or self-presentation meaningfully specific to the person.
+39. **A personal name is not voice by itself.** Including the person's literal name can improve person-first clarity but creates no automatic recognizable-voice credit.
+40. **Do not invent personality.** Humor, self-irony, understatement, warmth, roughness or other tonal signals count only when supported by approved identity/communication evidence.
+41. **Respect selection-regime versions.** A candidate rejected under an older material criteria regime is historical evidence, not automatically a valid rejection under the current regime.
 
 ## Workflow
 
@@ -242,7 +248,49 @@ Judge using immediate memorability, tonal/personality signal, rhythm/sound, evoc
 
 A merely clean candidate should not win by default over a more resonant viable candidate.
 
-### 10. CONSISTENCY CHECK
+### 10. NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK
+
+For serious personal-brand finalists evaluate two independent dimensions.
+
+#### A. NO UNEARNED CLAIM — HARD GATE
+
+Check whether the candidate plausibly attributes unsupported:
+- expertise/status/authority;
+- recognition/award/certification;
+- scale, team, lab/institute/collective standing;
+- privileged or exclusive access;
+- affiliation or outcomes.
+
+Use approved brand claims / source-of-truth / authoritative identity evidence.
+
+A lexical token such as `lab`, `studio`, `club` or `insider` is not an automatic failure. Judge the likely public claim in context.
+
+Result:
+`PASS | FAIL | ESCALATE | UNVERIFIED`
+
+Passing this gate produces **no positive voice credit**.
+
+#### B. RECOGNIZABLE VOICE — SOFT POSITIVE CRITERION
+
+Check whether the name carries an evidence-grounded:
+- tone;
+- attitude;
+- rhythm;
+- perspective;
+- self-presentation style.
+
+Do not count the literal personal name itself as sufficient.
+
+Use a substitution diagnostic:
+- imagine the same handle mechanism assigned to another plausible specialist/person in comparable context;
+- if almost nothing meaningful changes, voice specificity is weak.
+
+Result:
+`STRONG | MODERATE | WEAK | UNVERIFIED`
+
+If the project lacks reliable first-party voice/personality evidence, mark `UNVERIFIED`; do not invent a persona.
+
+### 11. CONSISTENCY CHECK
 
 Before final ranking:
 - list the main rule used to advance/penalize each finalist;
@@ -252,7 +300,7 @@ Before final ranking:
 
 Correct inconsistent scoring/rationale before handoff.
 
-### 11. DECISION-ECONOMY CHECK
+### 12. DECISION-ECONOMY CHECK
 
 Before final comparison:
 - remove caveats that do not alter the decision or required verification;
@@ -263,7 +311,7 @@ Before final comparison:
 
 A concise rationale may be a sign of a well-resolved decision, not shallow work.
 
-### 12. COMPARE
+### 13. COMPARE
 
 Compare finalists criterion-by-criterion.
 
@@ -275,7 +323,18 @@ A recommendation should explain:
 - why those weaknesses are tolerable relative to alternatives;
 - which evidence is live vs unresolved.
 
-### 13. HANDOFF
+### 14. VERSION / REGIME CHECK
+
+Before using prior shortlist/rejection history:
+- record the current candidate-model version;
+- identify material criteria added/removed since the historical decision;
+- classify the prior rejection rationale as:
+  `INVARIANT | REGIME-DEPENDENT | UNKNOWN`;
+- re-evaluate under the current regime when the old rationale is regime-dependent and the candidate still has decision value.
+
+Do not compare rankings across materially different criteria regimes as if they were one continuous score table.
+
+### 15. HANDOFF
 
 Return:
 - decision state;
@@ -315,6 +374,8 @@ FINALISTS
    likely_first_read:
    naturalness_contrivance:
    magnetism_blandness:
+   no_unearned_claim:
+   recognizable_voice:
    oral_to_typed_risk:
    lowercase_segmentation:
    polysemy:

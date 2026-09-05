@@ -274,3 +274,47 @@ Repair hypothesis:
 - a candidate that is merely clean, correct and easy must not beat a more resonant candidate unless the latter introduces material defects;
 - decision economy controls process waste, not aesthetic ambition;
 - “simple” and “vivid” are compatible.
+
+
+### F13 — Claim restraint conflated with identity voice
+
+Observed:
+- after strengthening anti-contrivance and unearned-authority guards, personal-brand naming could converge on low-content personal-name constructions;
+- “does not make an unsupported claim” was functioning as if it were also evidence of personal fit;
+- name-led clarity could be rewarded even when the handle carried little recognizable personal tone beyond the literal first name.
+
+Impacted:
+- BN-14 personal-brand mode;
+- BN-19 naturalness/contrivance;
+- BN-23 magnetism;
+- truth/claim boundary.
+
+Root-cause layer:
+- two distinct judgment dimensions were not explicit enough:
+  1. claim legitimacy;
+  2. identity-specific voice.
+
+Repair hypothesis:
+- separate a hard **NO UNEARNED CLAIM** gate from a soft positive **RECOGNIZABLE VOICE** criterion;
+- passing the truth gate must never add points for voice;
+- containing the personal name must never automatically satisfy voice;
+- self-irony, understatement, dry humor, roughness, warmth or other tonal devices may contribute to voice only when supported by real identity/communication evidence, not because the naming agent finds them attractive.
+
+### F14 — Cross-version comparison invalidity
+
+Observed:
+- naming decisions from v0.1 and later v0.2.x runs were discussed as if all candidates had been judged under one stable rubric;
+- material criteria were added over time: identity-type first read, anti-contrivance, decision economy, magnetism, and now recognizable voice.
+
+Impacted:
+- BN-12 comparison;
+- BN-16 evidence discipline;
+- decision history interpretation.
+
+Root-cause layer:
+- missing selection-regime/version provenance.
+
+Repair hypothesis:
+- every shortlist must record the candidate-model version and material criteria regime;
+- an old rejection remains historical evidence of that run, not proof that the candidate fails a later regime;
+- when a material criterion changes, cross-version ranking requires explicit re-evaluation under the current regime.
