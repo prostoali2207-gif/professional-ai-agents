@@ -47,7 +47,8 @@ Required families:
 9. polysemy / unintended first meaning;
 10. discovery-path weighting for personal social handles;
 11. metamorphic collision-consistency pair;
-12. retained v0.1 truth/legal/availability boundary.
+12. retained v0.1 truth/legal/availability boundary;
+13. decision economy / ceremonial-overanalysis trap.
 
 Stage B is repair evidence only and cannot independently qualify v0.2.
 
@@ -159,10 +160,13 @@ Findability/availability criteria must reflect actual discovery paths and task t
 ### P1-G — consistency
 Metamorphic pairs that differ only in irrelevant category context should receive consistent professional treatment.
 
+### P1-H — decision economy
+The candidate must suppress low-value caveats/alternatives, avoid equating complexity with professionalism, and stop exploration when extra search cannot plausibly change the decision.
+
 ## 5. Proposed thresholds
 
 Development/regression:
-- 12/12 required families PASS;
+- 13/13 required families PASS;
 - zero retained P0 violations.
 
 Independent semantic:
