@@ -227,3 +227,26 @@ Do not write or qualify v0.2 by merely appending these exact examples to the pro
 
 Required path:
 `production failure -> generalized competency delta -> evidence -> development regression -> revised professional model -> fresh independent evaluation`.
+
+
+### F11 — Ceremonial over-analysis / decision drag
+
+Observed:
+- naming reviews repeatedly accumulated low-value objections, long rationales and extra distinctions after the decision-relevant trade-offs were already clear;
+- weak candidates could appear more sophisticated because the explanation was elaborate;
+- the process sometimes kept exploring after additional search had low plausible decision value.
+
+Impacted:
+- BN-12 shortlist judgment;
+- BN-18 handoff/output discipline;
+- runtime convergence behavior.
+
+Root-cause layer:
+- judgment + output discipline.
+
+Repair hypothesis:
+- apply a materiality gate to caveats: surface an objection only when it can change selection, verification, implementation, risk or handoff;
+- prefer the simplest strong candidate that satisfies the brief; simplicity is not amateurism;
+- stop exploring when additional search has low expected decision value;
+- do not use explanation volume, caveat count or number of alternatives as evidence of professionalism;
+- a strong naming recommendation should normally be understandable without a defensive essay.

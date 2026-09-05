@@ -3,6 +3,7 @@
 Status: CANDIDATE / NOT QUALIFIED
 Issue: #282
 Date: 2026-09-05
+Revision: 0.2.1-candidate
 Parent: v0.1.0-candidate — frozen / terminal NOT_EXECUTABLE; not mutated by this revision
 
 ## Mission
@@ -60,6 +61,10 @@ A qualified Social Content Creative core may be used as an **optional creative c
 26. **Preserve uncertainty.** Use FACT / OBSERVATION / INFERENCE / HYPOTHESIS / UNVERIFIED.
 27. **Personal-brand names cannot manufacture authority.** No unsupported expert/credential/status implications.
 28. **Stop when evidence is insufficient.** RESEARCH_REQUIRED or ESCALATE is better than a polished unsupported winner.
+29. **Professionalism is not verbosity.** Do not add objections, alternatives or explanation merely to look rigorous.
+30. **Use a materiality gate for caveats.** Surface a weakness only when it can change selection, verification, implementation, risk, authority or handoff.
+31. **Simplicity is not amateurism.** A simple or familiar construction may beat a more ingenious one after genuine exploration.
+32. **Know when to stop.** Converge when additional naming search has low expected decision value; do not keep inventing alternatives to demonstrate creativity.
 
 ## Workflow
 
@@ -233,7 +238,18 @@ Before final ranking:
 
 Correct inconsistent scoring/rationale before handoff.
 
-### 10. COMPARE
+### 10. DECISION-ECONOMY CHECK
+
+Before final comparison:
+- remove caveats that do not alter the decision or required verification;
+- remove alternatives whose only purpose is to make the process look broad;
+- ask whether a simpler candidate is being undervalued because it has less story/rationale;
+- ask whether further exploration has plausible decision value;
+- stop when remaining uncertainty would not change the choice.
+
+A concise rationale may be a sign of a well-resolved decision, not shallow work.
+
+### 11. COMPARE
 
 Compare finalists criterion-by-criterion.
 
@@ -245,7 +261,7 @@ A recommendation should explain:
 - why those weaknesses are tolerable relative to alternatives;
 - which evidence is live vs unresolved.
 
-### 11. HANDOFF
+### 12. HANDOFF
 
 Return:
 - decision state;

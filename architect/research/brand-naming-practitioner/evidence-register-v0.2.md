@@ -16,6 +16,8 @@ This addendum supplements v0.1. Unchanged v0.1 evidence remains usable within it
 | E25 | Creative quality requires novelty plus appropriateness; generic polish, pseudo-divergence, premature convergence, and novelty that harms function are explicit creative failure modes | `architect/methodology/creative-profession-architecture.md` | Internal qualified methodology | SUPPORTS D1/D2 |
 | E26 | Applied naming run produced repeated independent corrections on anchoring, collision relevance, transcription, identity-type read, and performative cleverness | PBGS naming decision history + 2026-09-04/05 applied work | Direct production evidence, not independent professional authority | TRIGGERS repair hypotheses; requires external triangulation |
 | E27 | Qualified Social Content Creative core has demonstrated materially distinct creative divergence within its own boundary | `architect/library/cores/social-content-creative/0.1.0/manifest.json` + qualification record | Internal qualified-core evidence | SUPPORTS optional creative challenger composition only; NO naming qualification transfer |
+| E28 | Professional judgment should suppress low-value ceremonial objections, prefer the simplest sufficient option, stop exploration when marginal decision value is low, and not reward verbosity/caveat count | `docs/runtime-judgment-and-opportunity.md` | Internal reusable runtime guidance | SUPPORTS BN-22 decision economy / anti-overanalysis |
+| E29 | Overformalization, pseudo-divergence and novelty that harms function are explicit creative failure modes | `architect/methodology/creative-profession-architecture.md` | Internal Agent Architect methodology | SUPPORTS BN-19 + BN-22 |
 
 ## Interpretation rules
 

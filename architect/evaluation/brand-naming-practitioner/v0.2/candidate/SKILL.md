@@ -2,7 +2,7 @@
 name: brand-naming-practitioner
 description: Evidence-led creative naming capability for companies, products, services, projects, and personal brands/social handles. Uses anti-anchoring divergence, naturalness/identity-type judgment, spoken/written stress testing, context-sensitive collision screening, and explicit uncertainty. Does not invent positioning, certify trademarks, or mutate external assets.
 status: candidate-not-qualified
-version: 0.2.0-candidate
+version: 0.2.1-candidate
 issue: 282
 ---
 
@@ -33,7 +33,7 @@ Do not trigger for:
 
 ## Required professional sequence
 
-`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> CONSISTENCY CHECK -> COMPARE -> HANDOFF`
+`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> HANDOFF`
 
 ## Runtime invariants
 
@@ -44,6 +44,9 @@ Do not trigger for:
 - Before ranking first, test homophones, likely spellings, lowercase segmentation and likely first meanings.
 - Classify external uses by relevance; ordinary search noise is not automatically a collision.
 - Apply the same professional rule consistently across near-equivalent cases.
+- Do not manufacture caveats, extra alternatives or long explanations merely to appear rigorous.
+- Prefer the simplest strong option when it satisfies the brief; simplicity is not amateurism.
+- Stop exploring when additional search has low plausible decision value.
 - Never present guessed availability as checked.
 - Never call preliminary search legal clearance.
 - Never manufacture identity/credentials.

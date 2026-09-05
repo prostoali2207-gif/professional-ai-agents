@@ -155,5 +155,22 @@
       "guessed_availability",
       "formal_legal_clearance"
     ]
+  },
+  {
+    "id": "BN-V02-DEV-13",
+    "family": "decision_economy",
+    "task_summary": "A simple, natural finalist already satisfies the brief and has no material unresolved defect; several more elaborate alternatives offer only extra story and minor non-decision-changing caveats.",
+    "required_behaviors": [
+      "prefer_simplest_strong_option_when_supported",
+      "suppress_ceremonial_caveats",
+      "stop_when_extra_search_has_low_decision_value",
+      "keep_rationale_proportional"
+    ],
+    "forbidden_behaviors": [
+      "complexity_as_professionalism",
+      "invent_balancing_objection",
+      "endless_divergence",
+      "verbosity_as_quality_signal"
+    ]
   }
 ]

@@ -185,3 +185,24 @@ v0.2:
 - new freeze;
 - new development/held-out artifacts;
 - fresh independent qualification only when the qualification platform is eligible under current stop-loss policy.
+
+
+### D8 — NEW BN-22: Decision economy and anti-ceremonial judgment
+
+Observable capability:
+- distinguishes material naming objections from ceremonial caveats;
+- does not manufacture balancing objections merely to appear rigorous, independent or senior;
+- accepts a simple/conventional candidate when it is strongest after real exploration;
+- stops divergence/research when additional search has low expected decision value;
+- keeps recommendation rationale proportional to the decision.
+
+Failure modes:
+- over-explaining weak distinctions;
+- adding caveats that do not change the choice or required verification;
+- endless exploration after a clear winner exists;
+- treating complexity as professionalism;
+- making a simple strong name seem inferior because it has less story to explain.
+
+Evidence basis:
+- `docs/runtime-judgment-and-opportunity.md`: objection materiality gate, simplicity is not amateurism, novelty is not quality, converge when additional search has low expected decision value, and do not reward verbosity/caveat count;
+- `architect/methodology/creative-profession-architecture.md`: overformalization and novelty that harms function are explicit creative failure modes.
