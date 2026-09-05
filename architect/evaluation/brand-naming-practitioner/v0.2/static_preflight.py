@@ -30,6 +30,7 @@ EXPECTED_FAMILIES = {
     "metamorphic_consistency",
     "retained_boundaries",
     "decision_economy",
+    "magnetism_without_contrivance",
 }
 
 CHAT_EXACT_NAMES = {
@@ -59,7 +60,7 @@ terminal = json.loads(V01_TERMINAL.read_text(encoding="utf-8"))
 
 require("Status: CANDIDATE / NOT QUALIFIED" in model, "v0.2 model status must remain candidate")
 require("status: candidate-not-qualified" in skill, "v0.2 SKILL status must remain candidate")
-require("version: 0.2.1-candidate" in skill, "v0.2.1 SKILL version missing")
+require("version: 0.2.2-candidate" in skill, "v0.2.2 SKILL version missing")
 require("QUALIFIED" not in skill.split("---", 2)[1], "front matter must not claim qualification")
 
 for phrase in [
@@ -73,7 +74,7 @@ for phrase in [
 ]:
     require(phrase in model, f"missing v0.2 invariant: {phrase}")
 
-require(isinstance(cases, list) and len(cases) == 13, "development suite must contain 13 cases")
+require(isinstance(cases, list) and len(cases) == 14, "development suite must contain 14 cases")
 families = {c.get("family") for c in cases}
 require(families == EXPECTED_FAMILIES, f"unexpected development families: {families ^ EXPECTED_FAMILIES}")
 
@@ -87,4 +88,4 @@ require(terminal.get("professional_verdict") is None, "v0.1 professional verdict
 
 print("PASS: Brand Naming Practitioner v0.2 structural preflight")
 print("PASS: v0.1 terminal state preserved")
-print("PASS: 13/13 targeted development families structurally present")
+print("PASS: 14/14 targeted development families structurally present")

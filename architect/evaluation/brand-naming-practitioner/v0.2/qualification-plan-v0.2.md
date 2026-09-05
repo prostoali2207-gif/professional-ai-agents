@@ -48,7 +48,8 @@ Required families:
 10. discovery-path weighting for personal social handles;
 11. metamorphic collision-consistency pair;
 12. retained v0.1 truth/legal/availability boundary;
-13. decision economy / ceremonial-overanalysis trap.
+13. decision economy / ceremonial-overanalysis trap;
+14. bland-safe convergence vs magnetic-without-contrivance.
 
 Stage B is repair evidence only and cannot independently qualify v0.2.
 
@@ -163,10 +164,13 @@ Metamorphic pairs that differ only in irrelevant category context should receive
 ### P1-H — decision economy
 The candidate must suppress low-value caveats/alternatives, avoid equating complexity with professionalism, and stop exploration when extra search cannot plausibly change the decision.
 
+### P1-I — magnetism without contrivance
+The candidate must distinguish clean-but-bland from genuinely magnetic and from visibly contrived naming. Anti-contrivance must not systematically collapse open personal-brand work into generic-safe constructions.
+
 ## 5. Proposed thresholds
 
 Development/regression:
-- 13/13 required families PASS;
+- 14/14 required families PASS;
 - zero retained P0 violations.
 
 Independent semantic:

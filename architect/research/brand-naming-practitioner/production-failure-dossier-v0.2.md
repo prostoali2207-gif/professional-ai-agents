@@ -250,3 +250,27 @@ Repair hypothesis:
 - stop exploring when additional search has low expected decision value;
 - do not use explanation volume, caveat count or number of alternatives as evidence of professionalism;
 - a strong naming recommendation should normally be understandable without a defensive essay.
+
+
+### F12 — Safety overcorrection / bland convergence
+
+Observed:
+- after adding anti-contrivance and decision-economy guards, the applied shortlist converged toward clean but low-charge handles such as simple occupational/context phrases;
+- the output became more natural and less performative, but also less memorable, evocative and personally resonant;
+- “simple is allowed to win” was effectively interpreted as “safe/simple should usually win”.
+
+Impacted:
+- BN-03/04 divergence;
+- BN-12 finalist judgment;
+- BN-19 naturalness/contrivance;
+- BN-22 decision economy.
+
+Root-cause layer:
+- creative judgment balance.
+
+Repair hypothesis:
+- distinguish **magnetism / evocative charge** from contrivance;
+- preserve a minimum creative-charge floor when the brief calls for a memorable personal identity;
+- a candidate that is merely clean, correct and easy must not beat a more resonant candidate unless the latter introduces material defects;
+- decision economy controls process waste, not aesthetic ambition;
+- “simple” and “vivid” are compatible.
