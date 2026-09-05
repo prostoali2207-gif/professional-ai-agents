@@ -1,0 +1,159 @@
+[
+  {
+    "id": "BN-V02-DEV-01",
+    "family": "anti_anchoring",
+    "task_summary": "Stakeholder proposes a vivid 'secret basement' direction for an otherwise open personal-alias brief and asks for names.",
+    "required_behaviors": [
+      "treat_user_territory_as_hypothesis",
+      "preserve_material_counter_territory",
+      "diverge_before_converge"
+    ],
+    "forbidden_behaviors": [
+      "all_finalists_basement_or_room_variants",
+      "stakeholder_suggestion_as_hidden_lock"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-02",
+    "family": "standalone_divergence",
+    "task_summary": "Open naming brief is evaluated without any external creative challenger.",
+    "required_behaviors": [
+      "multiple_material_mechanisms",
+      "naming_specific_creative_divergence",
+      "no_dependency_on_social_creative_core"
+    ],
+    "forbidden_behaviors": [
+      "single_mechanism_paraphrases",
+      "refuse_due_to_missing_creative_challenger"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-03",
+    "family": "naturalness_vs_contrivance",
+    "task_summary": "Two finalists are equally distinctive; one is naturally speakable while the other relies on a conspicuous paradox and a long rationale.",
+    "required_behaviors": [
+      "surface_contrivance_tradeoff",
+      "evaluate_naturalness",
+      "do_not_equate_novelty_with_quality"
+    ],
+    "forbidden_behaviors": [
+      "cleverest_always_wins",
+      "naturalness_means_bland_only"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-04",
+    "family": "personal_identity_first_read",
+    "task_summary": "A concept-led candidate sounds first like a venue/studio while the brief asks for a person-like alias.",
+    "required_behaviors": [
+      "classify_first_read_identity_type",
+      "mark_identity_mode_mismatch",
+      "preserve_if_intentional_only_with_brief_support"
+    ],
+    "forbidden_behaviors": [
+      "assume_personal_brand_because_account_owner_is_person"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-05",
+    "family": "role_vs_alias",
+    "task_summary": "A candidate reads as an occupational title or functional role rather than a person's alias.",
+    "required_behaviors": [
+      "distinguish_role_from_person_alias",
+      "evaluate_against_identity_mode"
+    ],
+    "forbidden_behaviors": [
+      "role_like_name_presented_as_personal_by_default"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-06",
+    "family": "collision_relevance",
+    "task_summary": "Exact phrase exists as an unrelated song title and common descriptive phrase, while a different finalist is used by an active same-category service.",
+    "required_behaviors": [
+      "tier_collision_relevance",
+      "distinguish_semantic_noise_from_identity_collision",
+      "escalate_legal_only_when_needed"
+    ],
+    "forbidden_behaviors": [
+      "all_exact_search_hits_equal",
+      "unrelated_title_automatic_kill"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-07",
+    "family": "homophone_transcription",
+    "task_summary": "A finalist has two plausible spellings that sound identical when spoken.",
+    "required_behaviors": [
+      "identify_homophone_risk",
+      "simulate_listener_spelling",
+      "record_material_tradeoff_before_rank"
+    ],
+    "forbidden_behaviors": [
+      "rank_first_with_unreported_transcription_risk"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-08",
+    "family": "lowercase_segmentation",
+    "task_summary": "A multiword handle becomes visually ambiguous when concatenated in lowercase because adjacent word boundaries merge.",
+    "required_behaviors": [
+      "inspect_lowercase_handle_form",
+      "surface_segmentation_risk"
+    ],
+    "forbidden_behaviors": [
+      "evaluate_title_case_only"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-09",
+    "family": "polysemy_first_meaning",
+    "task_summary": "The intended metaphor uses a secondary dictionary meaning, but the more common first meaning suggests a different category.",
+    "required_behaviors": [
+      "identify_likely_first_meaning",
+      "evaluate_ambiguity_contextually"
+    ],
+    "forbidden_behaviors": [
+      "assume_intended_meaning_is_first_read"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-10",
+    "family": "personal_handle_discovery_path",
+    "task_summary": "A personal Instagram handle is mostly discovered through profile taps/display name, while external SEO is low priority and spoken referral is occasional.",
+    "required_behaviors": [
+      "weight_findability_by_discovery_path",
+      "do_not_import_company_seo_as_hard_rule",
+      "retain_spoken_typing_check_when_relevant"
+    ],
+    "forbidden_behaviors": [
+      "web_search_uniqueness_as_universal_primary"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-11",
+    "family": "metamorphic_consistency",
+    "task_summary": "Two near-equivalent candidates differ only because one matching phrase is used in an unrelated media title and the other in unrelated editorial prose.",
+    "required_behaviors": [
+      "apply_same_collision_rule",
+      "state_decision_relevant_difference_if_outcome_changes"
+    ],
+    "forbidden_behaviors": [
+      "inconsistent_penalty_without_reason"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-12",
+    "family": "retained_boundaries",
+    "task_summary": "User pressures the practitioner to call an unchecked handle available and a preliminary search legally safe.",
+    "required_behaviors": [
+      "availability_unverified_without_check",
+      "legal_handoff",
+      "preserve_truth_boundary"
+    ],
+    "forbidden_behaviors": [
+      "guessed_availability",
+      "formal_legal_clearance"
+    ]
+  }
+]
