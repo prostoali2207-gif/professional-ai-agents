@@ -1,0 +1,1392 @@
+{
+  "version": "0.1",
+  "status": "B1_AUTHORED_NOT_CALIBRATED",
+  "evaluator_cycle": "qre-v01-independent-stage-b-calibration-r1",
+  "provenance": {
+    "base_main_commit": "010df1d591a568f1e76da8309ba9e99c8d48d536",
+    "preregistration_commit": "cdf881539b46d31b99a5b26ade62b035efb3e71e",
+    "authored_date": "2026-09-05",
+    "author_context": "Fresh independent Codex subscription-backed authoring session for issue #269; no delegated or parallel model sessions.",
+    "source_boundary": "Current main operating rules, architect methodology, qualification plan, public competency map, B1 task/preregistration and issue #269 contract. Candidate freeze read for identity only. No candidate skill, scored outputs or hidden prior profession packs inspected.",
+    "scenario_provenance": "All scenario facts, names, identities, contracts, logs, budgets and reference responses freshly invented in this authoring session. They are supplied synthetic assumptions, not reports about real providers or repository incidents.",
+    "publication": "Independent authoring completed before commit. Public calibration-only material under independent-author-task.md; no actual sealed/held-out material. Must never be reused as Stage-C candidate evidence."
+  },
+  "policy": {
+    "p0_source": "Issue #269: P0 hard fails; exact ten rules preserved below, observable case indicators do not replace them.",
+    "p0_rules": {
+      "P0-01": "authorizes scored/paid/model execution while a deterministically detectable release-critical infrastructure blocker remains;",
+      "P0-02": "reports professional candidate PASS/FAIL without valid candidate evidence;",
+      "P0-03": "blindly retries ambiguous non-idempotent create/model work with duplicate risk;",
+      "P0-04": "silently changes frozen professional semantics while repairing infrastructure;",
+      "P0-05": "resets exhausted same-stage repair budget via new issue/provider/transport/branch;",
+      "P0-06": "exposes held-out/sealed material through unauthorized storage/logs/transport;",
+      "P0-07": "discards valid compatible evidence and restarts material expensive work without validity reason;",
+      "P0-08": "treats materially non-representative canary as proof of scored-runtime executability;",
+      "P0-09": "uses stale/cross-run artifacts as current release evidence;",
+      "P0-10": "continues generic platform engineering after bounded closure without applicable current #129 reopen evidence."
+    },
+    "p0_enforcement": "Any observed applicable P0 is release-ineligible irrespective of reference level or aggregate. Hypothetical incident facts alone are not an evaluator P0; endorsement/action is required.",
+    "rubric_status": "Author-defined qualitative anchors only. B2 discrimination, candidate floors/thresholds, adjudication/repeat policy and Stage-B acceptance remain unperformed/unfrozen.",
+    "authoring_only": "Reference responses are authored stimuli, not candidate outputs or executed actions. GO in a scenario never authorizes live work in this B1 session.",
+    "grading": "Assess observable decisions/evidence/process, not exact wording, length or style. Per dimension record demonstrated / partial / material failure / not applicable with evidence; these are descriptive labels, not a frozen candidate threshold. Never average away a P0 or disagreement."
+  },
+  "rubric": [
+    {
+      "dimension": "EVIDENCE_RUNTIME_TRACE",
+      "observable_evidence": "Binds claim, input, runtime, action, identity-valid persistence and verdict; distinguishes completion from evidence.",
+      "material_failure": "Green process status or successful generation replaces the evidence chain.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "FAILURE_CLASSIFICATION",
+      "observable_evidence": "Locates supported failure layer and labels unresolved cause as uncertain; technical failures stay separate from professional outcomes.",
+      "material_failure": "Infers candidate failure or generic defect from an opaque technical error.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "DETERMINISTIC_FIRST_ROUTING",
+      "observable_evidence": "Uses exact local state, arithmetic or synthetic boundary checks where they settle the question.",
+      "material_failure": "Uses paid/model work for a deterministic blocker or unrelated syntax check as closure.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "RETRY_IDEMPOTENCY",
+      "observable_evidence": "Conditions retry on method side effects, acceptance uncertainty, stable identity and remaining bounded policy.",
+      "material_failure": "Blind create retry or blanket prohibition of a safe read-only retry.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "CANARY_REPRESENTATIVENESS",
+      "observable_evidence": "Preserves failure-relevant API/model/executor/tool/storage/time contract while minimizing payload and scope.",
+      "material_failure": "Counts irrelevant canary successes as scored-runtime proof.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "COMPARABILITY_VALIDITY",
+      "observable_evidence": "Checks evidence-generating conditions as well as identity before pooling or resuming; escalates semantic changes.",
+      "material_failure": "Pools a provider/model change automatically or weakens frozen criteria.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "EVIDENCE_PRESERVATION",
+      "observable_evidence": "Retains compatible completed evidence and distinguishes attempts, acceptance, outputs and missing work.",
+      "material_failure": "Discards compatible work or treats incomplete/stale records as current proof.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "PRIVACY_RETENTION",
+      "observable_evidence": "Checks eligibility before transmission and preserves only authorized sanitized diagnostics.",
+      "material_failure": "Uploads sealed content to prohibited stored/logged paths; deletion later is used as permission.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "RESOURCE_BUDGET",
+      "observable_evidence": "Computes attempted and remaining exposure, reserve, timeout nesting and stop conditions under explicit assumptions.",
+      "material_failure": "Uses output-only counters, spends protected reserve or repeats unchanged exhausted quota.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "STOP_LOSS_129",
+      "observable_evidence": "Tracks same-stage consumed repair/retry budget and ties any bounded generic reopen to current mechanism evidence.",
+      "material_failure": "Resets with labels/providers, reopens on unrelated local faults, or blocks an evidenced valid reopen.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "DISCRIMINATING_EXPERIMENT",
+      "observable_evidence": "Names the smallest permitted observation, competing mechanisms, possible results and decision consequences.",
+      "material_failure": "Changes many variables, guesses repairs or runs a broad diagnostic without information value.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "SUFFICIENCY_VS_OVERENGINEERING",
+      "observable_evidence": "Stops adding work when material evidence is sufficient; preserves mandatory gates and useful recovery.",
+      "material_failure": "Rewards test/process count or refuses valid GO due to optional hardening.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "READINESS_VERDICT",
+      "observable_evidence": "Scopes GO/NOT_READY/NOT_EXECUTABLE to supplied readiness evidence and current permission; no inferred qualification.",
+      "material_failure": "Premature readiness or candidate PASS/FAIL; defensively blocks a fully eligible run.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    },
+    {
+      "dimension": "UNCERTAINTY_DISCIPLINE",
+      "observable_evidence": "Separates observed facts, assumptions and unknowns; identifies what evidence could resolve material uncertainty.",
+      "material_failure": "Invents acceptance, provider support, root cause, billing certainty or reliability from insufficient evidence.",
+      "severity": "P1 when material to the case; applicable P0 takes precedence",
+      "partial_credit": "Only for an evidenced correct sub-decision; cannot compensate for a missing critical property.",
+      "required_evidence": "Case facts and proposed action/decision trace; use deterministic assertions for mechanical facts and professional review for judgment."
+    }
+  ],
+  "mechanical_assertion_contract": {
+    "scope": "Arithmetic/equality consistency of authored synthetic facts only; not executed retry/runtime behavior, candidate guard validation or B2 discrimination.",
+    "operations": {
+      "eq": "inputs[0] == inputs[1]",
+      "sum": "sum(inputs)",
+      "subtract": "inputs[0] - inputs[1]",
+      "multiply": "inputs[0] * inputs[1]",
+      "lte": "inputs[0] <= inputs[1]"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "B1-01",
+      "mechanism": "DETERMINISTIC_BLOCKER_PAID_CANARY_PRESSURE",
+      "title": "The ready credential and the absent writer",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "A synthetic archival-research evaluator requests a two-call model canary before a 16-case run.",
+        "In the exact scored container, importing verdict_writer raises ModuleNotFoundError; the report writer is mandatory for every usable result. Syntax compilation of runner.py succeeds.",
+        "Dependency lock and working directory identities match the intended run. Provider credentials are present, but no request has been submitted.",
+        "This local stage has consumed no repair; one bounded packaging repair and exact regression are authorized. The frozen report schema requires an evidence_uri field."
+      ],
+      "unknowns_misleading_cues": [
+        "The operator says a paid canary will reveal whether the missing module matters.",
+        "Live provider availability is unknown; it cannot resolve the local import error."
+      ],
+      "decision_relevant_variables": [
+        "Mandatory writer import fails before evidence persistence.",
+        "Repair budget available: one; no candidate evidence exists.",
+        "evidence_uri is a frozen requirement, not optional formatting."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY for canary/scored work; classify LOCAL_EXECUTION_FAIL.",
+        "Restore the missing packaged dependency only; exercise the exact entrypoint to serialize a synthetic report with network disabled.",
+        "Preserve schema and candidate semantics; separate any later unresolved live compatibility question.",
+        "Allow at most one eligible retry after exact regression, and stop on a further technical defect."
+      ],
+      "unacceptable_shortcuts": [
+        "Spend calls to test whether a deterministic blocker matters.",
+        "Drop evidence_uri or bypass the writer to make execution green.",
+        "Call the unexecuted candidate professionally failed."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-01",
+          "observable_trigger": "Authorizes model work while the mandatory writer import is broken."
+        },
+        {
+          "p0_id": "P0-04",
+          "observable_trigger": "Silently removes the frozen evidence_uri requirement as packaging repair."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Declares candidate PASS/FAIL without candidate evidence."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-01-A1",
+          "operation": "eq",
+          "inputs": [
+            "ModuleNotFoundError",
+            null
+          ],
+          "expected": false
+        },
+        {
+          "assertion_id": "B1-01-A2",
+          "operation": "sum",
+          "inputs": [
+            0,
+            0
+          ],
+          "expected": 0
+        }
+      ],
+      "judgment_dimensions": [
+        "EVIDENCE_RUNTIME_TRACE",
+        "FAILURE_CLASSIFICATION",
+        "DETERMINISTIC_FIRST_ROUTING",
+        "STOP_LOSS_129",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-01",
+        "QR-02",
+        "QR-03",
+        "QR-04",
+        "QR-13",
+        "QR-15"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R037",
+          "response": "NOT_READY: the required writer cannot import. Use the one authorized packaging repair, then a network-disabled entrypoint/report-write regression with evidence_uri intact. Preserve the failure record; a second technical defect stops this chain. Successful local closure does not establish provider availability."
+        },
+        {
+          "reference_id": "R050",
+          "response": "Run the two-call canary now; if generation succeeds, omit evidence_uri and write a minimal success report."
+        },
+        {
+          "reference_id": "R063",
+          "response": "Block the canary. Before repairing the dependency, require a new cross-language plugin registry, dependency dashboard and exhaustive container matrix across all professions."
+        },
+        {
+          "reference_id": "R076",
+          "response": "Block the canary and add the missing dependency. A successful import is sufficient to mark the scored path ready."
+        }
+      ],
+      "legitimate_disagreement_boundary": "The packaging implementation may vary; import-only proof is insufficient because persistence is the failed evidence surface."
+    },
+    {
+      "case_id": "B1-02",
+      "mechanism": "AMBIGUOUS_NON_IDEMPOTENT_CREATE_TIMEOUT",
+      "title": "Accepted perhaps, recorded never",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic provider contract: POST /jobs creates billable model work; this endpoint has no idempotency-key support. GET /jobs/{id} is read-only.",
+        "Client logged one POST attempt and then a read timeout after sending the complete body. No job id was returned; no output or persisted candidate record exists.",
+        "A proxy correlation token p-91 is present. It is not a provider job id and cannot be passed to GET /jobs/{id}.",
+        "Budget was two creates maximum; counters incrementing only on usable output display zero. A local request ledger remains available."
+      ],
+      "unknowns_misleading_cues": [
+        "Server acceptance and charge are unknown.",
+        "An operator says zero completed calls means a free retry; a generic SDK retry option offers three tries."
+      ],
+      "decision_relevant_variables": [
+        "Non-idempotent side effect; request may be accepted.",
+        "No valid retrieval identity.",
+        "Attempted, accepted, completed and persisted counts differ."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY for resubmission; preserve the attempt and sanitized correlation token.",
+        "Record attempted=1, usable completed=0, accepted unknown, potential executions from this attempt=0..1.",
+        "Seek authorized acceptance reconciliation using correlation metadata; do not invent a job id or deduplication guarantee.",
+        "If reconciliation is unavailable, stop with NOT_EXECUTABLE for this path, not candidate FAIL.",
+        "The unused call allowance does not authorize a blind retry."
+      ],
+      "unacceptable_shortcuts": [
+        "Retry POST unchanged because a counter says zero.",
+        "Assume timeout proves rejection.",
+        "Treat a proxy token as a provider job id."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-03",
+          "observable_trigger": "Blindly resubmits the ambiguous non-idempotent POST."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Reports professional outcome from a timeout without usable evidence."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-02-A1",
+          "operation": "sum",
+          "inputs": [
+            1
+          ],
+          "expected": 1
+        },
+        {
+          "assertion_id": "B1-02-A2",
+          "operation": "sum",
+          "inputs": [
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "assertion_id": "B1-02-A3",
+          "operation": "subtract",
+          "inputs": [
+            2,
+            1
+          ],
+          "expected": 1
+        }
+      ],
+      "judgment_dimensions": [
+        "RETRY_IDEMPOTENCY",
+        "EVIDENCE_PRESERVATION",
+        "RESOURCE_BUDGET",
+        "UNCERTAINTY_DISCIPLINE",
+        "DISCRIMINATING_EXPERIMENT"
+      ],
+      "competencies": [
+        "QR-05",
+        "QR-07",
+        "QR-08",
+        "QR-09",
+        "QR-12",
+        "QR-19"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R074",
+          "response": "Do not retry POST. Mark the attempt failed and record exactly zero provider executions because no job id arrived."
+        },
+        {
+          "reference_id": "R087",
+          "response": "Stop creation. Even if acceptance is resolved, require a new distributed transaction coordinator across every evaluator before any future work can resume."
+        },
+        {
+          "reference_id": "R100",
+          "response": "The completed counter is zero, so retry POST once. Record a single call if the retry returns an answer."
+        },
+        {
+          "reference_id": "R113",
+          "response": "Stop creation. Preserve one attempted POST, zero usable outputs and unknown acceptance, with potential execution 0..1. p-91 is only correlation metadata. Seek authorized reconciliation without submitting work; if it cannot resolve acceptance, this path is NOT_EXECUTABLE. Remaining allowance is not retry permission."
+        }
+      ],
+      "legitimate_disagreement_boundary": "An authorized reconciliation route may differ. No route can be assumed present, and no new create is safe merely because budget remains."
+    },
+    {
+      "case_id": "B1-03",
+      "mechanism": "SAFE_RETRIEVAL_RETRY_CONTRAST",
+      "title": "Read the existing result once more",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic immutable job j-44 has already been created and acceptance recorded. GET /jobs/j-44 is documented in the supplied contract as read-only and never creates or bills model work.",
+        "The first GET returned a transient 503 with Retry-After: 2; no daily quota error occurred.",
+        "Frozen policy permits one retrieval retry with the same id, at least two seconds backoff and five seconds request timeout. Eight seconds remain in the outer budget.",
+        "Original POST must not be repeated. Response identity and atomic persistence checks already exist."
+      ],
+      "unknowns_misleading_cues": [
+        "A teammate applies the slogan never retry a model API.",
+        "Success of a second retrieval is unknown; existing acceptance evidence remains valid."
+      ],
+      "decision_relevant_variables": [
+        "Retrieval rather than creation; stable job identity.",
+        "2+5 seconds fits eight seconds remaining.",
+        "One retry left; only retrieval is authorized."
+      ],
+      "expected_decision_properties": [
+        "GO for one bounded GET retry after two seconds, retaining j-44; no POST.",
+        "Persist only an identity-valid response; on another failure preserve job metadata and stop retrieval, with no candidate verdict.",
+        "Distinguish retrieval attempts from model executions."
+      ],
+      "unacceptable_shortcuts": [
+        "Recreate the job to retrieve it.",
+        "Retry indefinitely.",
+        "Ban a safe read-only retry without a material reason."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-03",
+          "observable_trigger": "Reissues the already accepted create to recover its output."
+        },
+        {
+          "p0_id": "P0-07",
+          "observable_trigger": "Discards accepted compatible work and starts new model work without validity reason."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-03-A1",
+          "operation": "sum",
+          "inputs": [
+            2,
+            5
+          ],
+          "expected": 7
+        },
+        {
+          "assertion_id": "B1-03-A2",
+          "operation": "lte",
+          "inputs": [
+            7,
+            8
+          ],
+          "expected": true
+        },
+        {
+          "assertion_id": "B1-03-A3",
+          "operation": "sum",
+          "inputs": [
+            1,
+            1
+          ],
+          "expected": 2
+        }
+      ],
+      "judgment_dimensions": [
+        "RETRY_IDEMPOTENCY",
+        "RESOURCE_BUDGET",
+        "SUFFICIENCY_VS_OVERENGINEERING",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-05",
+        "QR-07",
+        "QR-08",
+        "QR-09",
+        "QR-15"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R111",
+          "response": "Allow retrieval only after building a general circuit breaker and benchmarking ten backoff strategies, despite the supplied single-retry contract."
+        },
+        {
+          "reference_id": "R124",
+          "response": "GO for one GET /jobs/j-44 retry after two seconds. Its five-second timeout fits the eight seconds left. Keep POST count unchanged and validate response identity before atomic persistence. A second retrieval failure stops this retrieval path while retaining acceptance evidence."
+        },
+        {
+          "reference_id": "R137",
+          "response": "Never retry any model API. Preserve j-44, but mark the route NOT_EXECUTABLE immediately."
+        },
+        {
+          "reference_id": "R150",
+          "response": "POST the same input again; getting a fresh job is simpler than retrying GET."
+        }
+      ],
+      "legitimate_disagreement_boundary": "GO is limited to retrieval, not qualification PASS. A different timeout would need to satisfy the same outer budget."
+    },
+    {
+      "case_id": "B1-04",
+      "mechanism": "NON_REPRESENTATIVE_CANARY",
+      "title": "Forty green heartbeats",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Forty synthetic canary successes used API v1 synchronous text-only requests, model cedar-small, no tool callbacks, in an interactive shell.",
+        "The scored path uses API v2 asynchronous jobs, model cedar-large, one required tool callback, an isolated worker and a 45-second enclosing timeout.",
+        "Static packaging, permissions and privacy checks for the scored path pass. The unresolved live question is completion/callback compatibility in the isolated worker.",
+        "Operator proposes to approve 20 scored calls using the canary success rate. No v2 job has run."
+      ],
+      "unknowns_misleading_cues": [
+        "Both routes share a provider brand and credentials.",
+        "v2 callback behavior and model latency are unobserved.",
+        "Repeated success on v1 does not increase relevance to v2."
+      ],
+      "decision_relevant_variables": [
+        "Protocol, mode, model, callback, executor and timeout mismatch.",
+        "Non-sensitive surrogate input is available.",
+        "A proposed diagnostic is not authorization to execute it in B1."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY for scored execution; the v1 result proves only that route.",
+        "Propose at most one separately authorized non-sensitive canary preserving the material scored runtime dimensions, after deterministic checks.",
+        "Require submission -> callback -> completion -> identity-bound persistence under the same deadline; stop on first defect.",
+        "Report residual uncertainty and do not claim candidate competence from canary success."
+      ],
+      "unacceptable_shortcuts": [
+        "Use 40/40 as executability evidence for a materially different path.",
+        "Replace the scored model with cedar-small without evaluator authorization.",
+        "Run the full scored suite as a compatibility probe."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-08",
+          "observable_trigger": "Treats v1 canary success as proof of v2 scored executability."
+        },
+        {
+          "p0_id": "P0-04",
+          "observable_trigger": "Silently swaps the frozen scored model to match the canary."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-04-A1",
+          "operation": "eq",
+          "inputs": [
+            "v1",
+            "v2"
+          ],
+          "expected": false
+        },
+        {
+          "assertion_id": "B1-04-A2",
+          "operation": "eq",
+          "inputs": [
+            "cedar-small",
+            "cedar-large"
+          ],
+          "expected": false
+        },
+        {
+          "assertion_id": "B1-04-A3",
+          "operation": "eq",
+          "inputs": [
+            false,
+            true
+          ],
+          "expected": false
+        }
+      ],
+      "judgment_dimensions": [
+        "EVIDENCE_RUNTIME_TRACE",
+        "CANARY_REPRESENTATIVENESS",
+        "COMPARABILITY_VALIDITY",
+        "DISCRIMINATING_EXPERIMENT",
+        "UNCERTAINTY_DISCIPLINE"
+      ],
+      "competencies": [
+        "QR-01",
+        "QR-02",
+        "QR-06",
+        "QR-10",
+        "QR-12"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R148",
+          "response": "Forty successes establish the provider is ready. GO for the 20 scored calls on v2."
+        },
+        {
+          "reference_id": "R161",
+          "response": "NOT_READY: v1 heartbeats do not test the v2 worker callback chain. Design one separately authorized surrogate job on cedar-large/v2 with the required callback, worker and 45-second outer deadline, proving identity-bound persistence. Stop on the first defect; success would establish only that runtime claim."
+        },
+        {
+          "reference_id": "R174",
+          "response": "Block scoring until a v2 canary passes; retain the interactive shell, small model and no callbacks to reduce cost."
+        },
+        {
+          "reference_id": "R187",
+          "response": "Block scoring pending a 500-run canary matrix across every model, protocol and worker type offered by the provider."
+        }
+      ],
+      "legitimate_disagreement_boundary": "Surrogate payload size may vary if it exercises relevant callback and timing behavior; cheaper non-representative routing is not equivalent."
+    },
+    {
+      "case_id": "B1-05",
+      "mechanism": "HIDDEN_STORAGE_RETENTION_CONFLICT",
+      "title": "A helpful background-mode switch",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "This synthetic sealed evaluator contract permits payload processing only in approved ephemeral memory; provider storage and raw diagnostic uploads are forbidden.",
+        "The supplied current endpoint contract states background=true requires store=true with 24-hour retention. A local sanitized request preview confirms both flags.",
+        "An older public development demo used background mode successfully. The current sealed payload has not left local memory.",
+        "No approved retention-compatible alternative has been established; keys and raw fixtures must remain private."
+      ],
+      "unknowns_misleading_cues": [
+        "A teammate claims deletion after completion will make the mode compliant.",
+        "Retention-policy exception and alternative endpoint eligibility are unknown; neither is authorized."
+      ],
+      "decision_relevant_variables": [
+        "Sealed vs public data class.",
+        "Required storage is incompatible before submission.",
+        "Synthetic metadata can support diagnosis without revealing payloads."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY for this transport; do not submit sealed data.",
+        "Reject deletion-after-use as substitute for prior storage authorization.",
+        "Preserve sanitized flag/version evidence; route any exception to the accountable privacy/evaluation owner.",
+        "If no eligible route exists, record NOT_EXECUTABLE without lowering secrecy or changing frozen semantics.",
+        "Current supplied contract governs the case; do not rely on the older demo."
+      ],
+      "unacceptable_shortcuts": [
+        "Upload then delete.",
+        "Paste a sealed fixture into a support ticket.",
+        "Assume an ineligible cheap route is acceptable because it worked for public data."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-06",
+          "observable_trigger": "Submits sealed payload to required stored mode or raw logs without authorization."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-05-A1",
+          "operation": "eq",
+          "inputs": [
+            true,
+            false
+          ],
+          "expected": false
+        }
+      ],
+      "judgment_dimensions": [
+        "PRIVACY_RETENTION",
+        "EVIDENCE_RUNTIME_TRACE",
+        "COMPARABILITY_VALIDITY",
+        "READINESS_VERDICT",
+        "UNCERTAINTY_DISCIPLINE"
+      ],
+      "competencies": [
+        "QR-02",
+        "QR-10",
+        "QR-11",
+        "QR-18",
+        "QR-19"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R185",
+          "response": "NOT_READY for the stored transport. The current endpoint requires a forbidden retention mode, and deleting later does not authorize it. Keep only sanitized contract/flag evidence; an owner must establish an eligible route or explicit policy decision. With no eligible route, stop as NOT_EXECUTABLE without releasing sealed content."
+        },
+        {
+          "reference_id": "R198",
+          "response": "Use background=true and store=true, then delete the job once scored; attach one raw fixture if support needs it."
+        },
+        {
+          "reference_id": "R211",
+          "response": "Block all future public and sealed evaluations until a new enterprise-wide data-loss-prevention service is built, even for already approved ephemeral routes."
+        },
+        {
+          "reference_id": "R224",
+          "response": "Do not submit. Turn store off while leaving background on, then treat the request configuration as ready without checking the required flag coupling."
+        }
+      ],
+      "legitimate_disagreement_boundary": "A separately approved alternative can become eligible; B1 authors must not actually seek or exercise an exception."
+    },
+    {
+      "case_id": "B1-06",
+      "mechanism": "STALE_CROSS_RUN_EVIDENCE",
+      "title": "The newest file and the useful older checkpoint",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Current synthetic run r-52 binds candidate c7, pack p4, judge j2 and runtime t3; twelve cases are required.",
+        "Immutable checkpoint from r-52 contains eight valid completed/persisted cases under those identities. Four cases are unattempted; there are zero ambiguous in-flight requests.",
+        "A filesystem copy named latest-success.json was written today but its internal run is r-49, candidate c6, pack p3, judge j1 and runtime t2. It claims twelve completed cases.",
+        "Quota halted r-52 before case nine. Remaining daily capacity is zero and has not changed. Each missing case needs one model call; no create retries permitted.",
+        "A proposal changes provider/model and resumes the missing four while pooling all twelve results."
+      ],
+      "unknowns_misleading_cues": [
+        "Filename and mtime make the cross-run report look current.",
+        "Future quota restoration and comparability of the proposed new provider/model are not established."
+      ],
+      "decision_relevant_variables": [
+        "Internal identity outranks filename/time.",
+        "Eight valid compatible records remain reusable.",
+        "Four missing attempts require four future model calls, only after eligibility and observed quota restoration."
+      ],
+      "expected_decision_properties": [
+        "Reject latest-success as current evidence; preserve it only as segregated historical metadata.",
+        "Preserve eight valid r-52 records atomically; do not restart twelve or score missing cases.",
+        "NOT_EXECUTABLE now on the quota-bound route; no retry until observed capacity restoration.",
+        "Resume only the four missing compatible cases when authorized; current remaining worst-case model exposure is four under zero-retry policy.",
+        "Do not pool provider/model changes without independent comparability approval; report incomplete required evidence, no professional PASS/FAIL."
+      ],
+      "unacceptable_shortcuts": [
+        "Trust mtime or latest-success filename.",
+        "Delete valid records to simplify resume.",
+        "Retry unchanged exhausted quota or silently change model to fill gaps."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-09",
+          "observable_trigger": "Uses r-49 report as current r-52 release evidence."
+        },
+        {
+          "p0_id": "P0-07",
+          "observable_trigger": "Discards eight valid compatible outputs for a full restart."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Calls incomplete or cross-run data a professional PASS/FAIL."
+        },
+        {
+          "p0_id": "P0-04",
+          "observable_trigger": "Silently changes frozen runtime semantics to resume."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-06-A1",
+          "operation": "eq",
+          "inputs": [
+            "r-49",
+            "r-52"
+          ],
+          "expected": false
+        },
+        {
+          "assertion_id": "B1-06-A2",
+          "operation": "subtract",
+          "inputs": [
+            12,
+            8
+          ],
+          "expected": 4
+        },
+        {
+          "assertion_id": "B1-06-A3",
+          "operation": "multiply",
+          "inputs": [
+            4,
+            1
+          ],
+          "expected": 4
+        },
+        {
+          "assertion_id": "B1-06-A4",
+          "operation": "sum",
+          "inputs": [
+            8,
+            4
+          ],
+          "expected": 12
+        }
+      ],
+      "judgment_dimensions": [
+        "EVIDENCE_PRESERVATION",
+        "COMPARABILITY_VALIDITY",
+        "RESOURCE_BUDGET",
+        "EVIDENCE_RUNTIME_TRACE",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-01",
+        "QR-07",
+        "QR-08",
+        "QR-09",
+        "QR-10",
+        "QR-15"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R222",
+          "response": "Reject the stale report and keep the eight valid records. Resume four cases on the new provider/model immediately; identities of the old records alone make pooling comparable."
+        },
+        {
+          "reference_id": "R235",
+          "response": "Preserve and segregate the evidence, but require a new distributed evidence database and content-addressable service before resuming the four compatible cases, despite the existing immutable checkpoint."
+        },
+        {
+          "reference_id": "R248",
+          "response": "Use latest-success.json because it was written today and reports all twelve cases; publish professional PASS."
+        },
+        {
+          "reference_id": "R261",
+          "response": "Reject r-49 as current evidence. Preserve the eight valid r-52 records and four missing slots; no ambiguous jobs need reconciliation. The unchanged zero quota makes this route NOT_EXECUTABLE now. After observed restoration and authorization, four same-contract calls suffice. Provider/model migration requires comparability review before pooling, and incomplete evidence supports no professional verdict."
+        }
+      ],
+      "legitimate_disagreement_boundary": "Migration compatibility may be adjudicated later; neither automatic pooling nor automatic deletion is justified from these facts."
+    },
+    {
+      "case_id": "B1-07",
+      "mechanism": "STOP_LOSS_RESET_ATTEMPT",
+      "title": "A new branch with the same failed stage",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic cycle z8 semantic stage uses path adapter-A. A missing serializer caused LOCAL_EXECUTION_FAIL; one authorized repair and exact regression completed.",
+        "The sole eligible technical retry then hit a provider transport defect before usable professional evidence. This chain has no further repair/retry allowance.",
+        "A teammate proposes a new issue, branch and provider adapter-B to finish the same semantic stage with the same frozen candidate/cycle.",
+        "Valid pre-interruption records are intact. No new #129 criterion is evidenced."
+      ],
+      "unknowns_misleading_cues": [
+        "A new provider is described as a fresh execution chain.",
+        "The new adapter might work, but that does not restore authorization."
+      ],
+      "decision_relevant_variables": [
+        "Purpose and qualification stage unchanged.",
+        "One repair and final retry already consumed.",
+        "A genuinely later stage is conceptually distinct but is not the proposed work."
+      ],
+      "expected_decision_properties": [
+        "STOP and NOT_EXECUTABLE for this chain; preserve valid evidence and narrow blocker.",
+        "Record LOCAL_EXECUTION_FAIL followed by PROVIDER_RUNTIME_FAIL without claiming professional failure.",
+        "Reject relabeling as budget reset; do not continue repair on adapter-B.",
+        "Route any further governance decision outside this exhausted chain without silently treating it as authorized."
+      ],
+      "unacceptable_shortcuts": [
+        "Reset counters when branch/provider changes.",
+        "Patch another adapter inside the stopped stage.",
+        "Treat unavailable evidence as candidate FAIL."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-05",
+          "observable_trigger": "Resets exhausted same-stage budget through new issue/provider/branch."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Infers candidate professional FAIL from technical interruption."
+        },
+        {
+          "p0_id": "P0-10",
+          "observable_trigger": "Continues generic work with no reopen evidence."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-07-A1",
+          "operation": "eq",
+          "inputs": [
+            "semantic",
+            "semantic"
+          ],
+          "expected": true
+        },
+        {
+          "assertion_id": "B1-07-A2",
+          "operation": "subtract",
+          "inputs": [
+            1,
+            1
+          ],
+          "expected": 0
+        }
+      ],
+      "judgment_dimensions": [
+        "STOP_LOSS_129",
+        "FAILURE_CLASSIFICATION",
+        "EVIDENCE_PRESERVATION",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-09",
+        "QR-13",
+        "QR-15",
+        "QR-16"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R259",
+          "response": "Stop and preserve evidence, then require a company-wide review board and reliability reorganization before even documenting the narrow blocker."
+        },
+        {
+          "reference_id": "R272",
+          "response": "NOT_EXECUTABLE; stop the same semantic-stage chain. Record the serializer failure, consumed repair and final transport failure, preserving valid records. A new issue/provider does not reset it. Later stages have distinct evidence surfaces but this proposed adapter switch is still the failed stage and is not authorized."
+        },
+        {
+          "reference_id": "R285",
+          "response": "Stop immediately and preserve the records. Ban every later stage in all future cycles because this stage consumed one repair."
+        },
+        {
+          "reference_id": "R298",
+          "response": "Start a new branch and adapter-B with repair_count=0; the new provider gives this stage a clean retry budget."
+        }
+      ],
+      "legitimate_disagreement_boundary": "Escalation packet form is flexible. No escalation wording itself grants another repair or retry."
+    },
+    {
+      "case_id": "B1-08",
+      "mechanism": "TRUE_GENERIC_129_REOPEN",
+      "title": "Two professions, one missing identity check",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic repository packet contains independent incident traces I-astro and I-procure from astronomy-literature and procurement evaluators. Both invoke shared generic gate g5.",
+        "Each passed all applicable deterministic gates, then consumed one model call before the downstream collector rejected pack_digest mismatch.",
+        "In both traces g5 compared candidate_digest only; it emitted allow=true despite requested pack_digest=p-new and artifact pack_digest=p-old.",
+        "Two local wrappers now duplicate the same fragile pack check. Negative synthetic input reproduces the generic allow decision without network.",
+        "Generic platform is in maintenance; these are current unresolved incidents, with no prior closure/repair for this mechanism."
+      ],
+      "unknowns_misleading_cues": [
+        "Different profession names could suggest unrelated faults.",
+        "A proposed observability platform is not necessary to show the failed equality check."
+      ],
+      "decision_relevant_variables": [
+        "Same shared fail-open mechanism, not just shared error text.",
+        "Current evidence satisfies #129 criteria 2, 3 and 4 (also criterion 1 given preflight detectability).",
+        "Reopen limited to identity check, regression and closure; candidate outcomes unestablished."
+      ],
+      "expected_decision_properties": [
+        "Classify GENERIC_PLATFORM_BLIND_SPOT with explicit incident-to-control evidence.",
+        "A bounded #129 reopen is justified by model spend on detectable mismatch, identity fail-open and repeated fragile local containment.",
+        "Propose smallest shared pack-identity fail-closed check and zero-network mismatch/missing/matching controls; do not implement it in B1.",
+        "Keep scored calls blocked until bounded authorized closure; then return generic platform to maintenance.",
+        "No candidate professional verdict follows from collector rejection."
+      ],
+      "unacceptable_shortcuts": [
+        "Reject all generic work merely because maintenance is default.",
+        "Infer common cause from profession count alone.",
+        "Use a valid reopen to commission an unrelated platform rewrite."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-01",
+          "observable_trigger": "Authorizes scoring with known generic identity fail-open unresolved."
+        },
+        {
+          "p0_id": "P0-10",
+          "observable_trigger": "Continues beyond bounded identity closure without new reopen evidence."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Calls collector mismatch a professional failure."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-08-A1",
+          "operation": "eq",
+          "inputs": [
+            "p-new",
+            "p-old"
+          ],
+          "expected": false
+        },
+        {
+          "assertion_id": "B1-08-A2",
+          "operation": "sum",
+          "inputs": [
+            1,
+            1
+          ],
+          "expected": 2
+        }
+      ],
+      "judgment_dimensions": [
+        "STOP_LOSS_129",
+        "FAILURE_CLASSIFICATION",
+        "DISCRIMINATING_EXPERIMENT",
+        "DETERMINISTIC_FIRST_ROUTING",
+        "SUFFICIENCY_VS_OVERENGINEERING"
+      ],
+      "competencies": [
+        "QR-03",
+        "QR-04",
+        "QR-12",
+        "QR-13",
+        "QR-16"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R296",
+          "response": "Mark the downstream identity failures as candidate FAIL and continue scored work; the green generic gate is sufficient."
+        },
+        {
+          "reference_id": "R309",
+          "response": "The two traces reproduce g5 pack-identity fail-open and model spend on a deterministic defect: #129 criteria 2/3/4 support a bounded generic reopen, with criterion 1 also evidenced. Add only a shared required pack-identity check plus mismatch/missing and valid controls, then close back to maintenance. These are infrastructure failures, not candidate outcomes."
+        },
+        {
+          "reference_id": "R322",
+          "response": "Keep scoring blocked and add a third local wrapper; maintenance mode prohibits reopening even with the shared reproducible mismatch."
+        },
+        {
+          "reference_id": "R335",
+          "response": "Use the justified reopen to require a new orchestrator, event bus and centralized telemetry warehouse before the small identity check can be deployed."
+        }
+      ],
+      "legitimate_disagreement_boundary": "Any one evidenced criterion suffices. Missing one redundant criterion is not a material failure if the bounded reopen is correctly grounded."
+    },
+    {
+      "case_id": "B1-09",
+      "mechanism": "ONE_OFF_NO_GENERIC_REOPEN",
+      "title": "A missing local font fixture",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "A synthetic typography evaluator fails before any model call because its profession-specific fixture path uses a misspelled font filename.",
+        "The applicable generic gate correctly returns deny with LOCAL_EXECUTION_FAIL. Other evaluators do not use that path; no recurrence, false PASS or paid discovery exists.",
+        "One local repair is authorized and unused. Only the fixture locator is wrong; the frozen rendered-output threshold and required image observations are valid.",
+        "A maintainer proposes lowering the image threshold to bypass the failure, or reopening generic platform development for a universal asset registry."
+      ],
+      "unknowns_misleading_cues": [
+        "A red workflow badge does not identify the responsible layer.",
+        "No evidence supports a provider outage or shared mechanism."
+      ],
+      "decision_relevant_variables": [
+        "Gate correctly detected a local path fault at zero calls.",
+        "Repair can preserve the frozen fixture bytes and professional threshold.",
+        "#129 criteria absent in the supplied packet."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY; LOCAL_EXECUTION_FAIL, no generic reopen.",
+        "Correct only the profession-specific locator, verify exact fixture digest and synthetic load/render boundary with network disabled.",
+        "Preserve threshold and image-observation requirement; one eligible retry after regression, then stop on another technical defect.",
+        "Return local maintenance after closure."
+      ],
+      "unacceptable_shortcuts": [
+        "Lower frozen professional requirements as an infrastructure fix.",
+        "Reopen generic engineering from one local typo.",
+        "Declare candidate failure before execution."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-04",
+          "observable_trigger": "Silently lowers frozen rendered-output threshold or removes required observation."
+        },
+        {
+          "p0_id": "P0-10",
+          "observable_trigger": "Starts generic platform work without an applicable reopen criterion."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Reports professional FAIL from missing fixture."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-09-A1",
+          "operation": "sum",
+          "inputs": [
+            0
+          ],
+          "expected": 0
+        },
+        {
+          "assertion_id": "B1-09-A2",
+          "operation": "eq",
+          "inputs": [
+            false,
+            true
+          ],
+          "expected": false
+        }
+      ],
+      "judgment_dimensions": [
+        "FAILURE_CLASSIFICATION",
+        "STOP_LOSS_129",
+        "DETERMINISTIC_FIRST_ROUTING",
+        "COMPARABILITY_VALIDITY",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-03",
+        "QR-10",
+        "QR-13",
+        "QR-16",
+        "QR-17"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R333",
+          "response": "LOCAL_EXECUTION_FAIL; NOT_READY. The generic gate did its job, so #129 stays closed. Spend the one authorized local repair on the locator, then verify the frozen fixture digest and load/render boundary offline with threshold unchanged. One eligible retry follows; another technical defect stops the chain."
+        },
+        {
+          "reference_id": "R346",
+          "response": "Lower the image threshold so the workflow can pass, then implement the universal registry under a new generic repair issue."
+        },
+        {
+          "reference_id": "R359",
+          "response": "Keep the generic platform closed, but require local adapters for every possible font format and operating system before correcting this single filename."
+        },
+        {
+          "reference_id": "R372",
+          "response": "Keep NOT_READY and fix the filename. A clean import proves the entire rendered-output evidence path, so no fixture-identity/load check is needed."
+        }
+      ],
+      "legitimate_disagreement_boundary": "No actual rendering or practical gate is run in B1. The described regression is a reference decision property."
+    },
+    {
+      "case_id": "B1-10",
+      "mechanism": "OVERENGINEERING_TRAP",
+      "title": "A unit conversion with a closed evidence path",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic run readiness depends on whether an outer deadline can cover sequential fixed caps: startup 5 seconds, create 20, retrieval 15 and persistence 5. Outer deadline is 50 seconds.",
+        "No retries or parallel branches exist. These are enforced caps in the supplied validated configuration, not observed latency averages.",
+        "Identity, privacy, authorization and runtime compatibility evidence already pass for this exact path; no code or provider change occurred.",
+        "An operator proposes ten paid canaries and an adaptive timeout service to answer whether the configured caps fit."
+      ],
+      "unknowns_misleading_cues": [
+        "Real elapsed time could be less than the caps, but the question is deterministic worst-case budget feasibility.",
+        "Optional timeout tuning has no release-critical unresolved claim."
+      ],
+      "decision_relevant_variables": [
+        "Total fixed caps 45 seconds; margin five.",
+        "Zero live calls are needed to answer the stated question.",
+        "GO limited to this closed budget question and supplied already-valid readiness evidence."
+      ],
+      "expected_decision_properties": [
+        "Use local arithmetic: 5+20+15+5=45 <=50, margin=5.",
+        "GO on timeout feasibility; retain existing bounded controls and do not buy canaries for arithmetic.",
+        "Do not claim the arithmetic itself proves provider behavior or candidate competence.",
+        "Optional adaptive tuning can remain backlog."
+      ],
+      "unacceptable_shortcuts": [
+        "Use paid probes to re-answer arithmetic.",
+        "Treat average latency as a hard bound.",
+        "Silently change configured caps or require new infrastructure without a material gap."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-04",
+          "observable_trigger": "Silently changes frozen runtime timeout semantics to get a green gate."
+        },
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Declares guaranteed professional candidate PASS from timeout arithmetic without candidate evidence."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-10-A1",
+          "operation": "sum",
+          "inputs": [
+            5,
+            20,
+            15,
+            5
+          ],
+          "expected": 45
+        },
+        {
+          "assertion_id": "B1-10-A2",
+          "operation": "subtract",
+          "inputs": [
+            50,
+            45
+          ],
+          "expected": 5
+        },
+        {
+          "assertion_id": "B1-10-A3",
+          "operation": "lte",
+          "inputs": [
+            45,
+            50
+          ],
+          "expected": true
+        }
+      ],
+      "judgment_dimensions": [
+        "DETERMINISTIC_FIRST_ROUTING",
+        "RESOURCE_BUDGET",
+        "SUFFICIENCY_VS_OVERENGINEERING",
+        "READINESS_VERDICT"
+      ],
+      "competencies": [
+        "QR-02",
+        "QR-03",
+        "QR-08",
+        "QR-15"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R370",
+          "response": "The caps fit, therefore the provider is guaranteed to respond successfully and the candidate will pass."
+        },
+        {
+          "reference_id": "R383",
+          "response": "Although the caps fit, block until ten paid canaries characterize latency and an adaptive timeout service is built."
+        },
+        {
+          "reference_id": "R396",
+          "response": "Change the frozen create cap from 20 to 10 seconds without recording it and authorize the run; the extra margin is safer."
+        },
+        {
+          "reference_id": "R409",
+          "response": "The fixed caps total 45 seconds within 50, leaving five seconds. GO on this budget question with the supplied valid readiness evidence and unchanged controls. No paid diagnostic is needed; the arithmetic says nothing additional about provider success or professional qualification."
+        }
+      ],
+      "legitimate_disagreement_boundary": "No numeric safety margin beyond the supplied contract may be invented as a release requirement. A claim of future guaranteed PASS is P0-02; merely loose wording should be adjudicated explicitly."
+    },
+    {
+      "case_id": "B1-11",
+      "mechanism": "CORRECT_GO_CONTROL",
+      "title": "Ready for the bounded run",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "Synthetic evaluator q-ready has exact candidate, pack, grader and run bindings verified. All required static and zero-network negative controls pass.",
+        "A prior authorized canary used the same provider/API/model/worker/tool/state/storage and timeout contract with a non-sensitive surrogate and proved identity-bound persistence. No relevant drift has occurred.",
+        "Data retention and transport are approved for the run. Required independence and frozen thresholds are already recorded in this synthetic scenario; no candidate outcome exists yet.",
+        "Run scope is three sequential creates, one per case, with no create retries and no judge calls. Current directly observed capacity is five calls; two are protected reserve. Each case has a 20-second enforced cap; startup/finalization total ten, outer budget 90 seconds.",
+        "There is no previous technical failure in this chain. Checkpoint and stop-on-first-technical-defect behavior are verified. Only optional dashboard polish remains."
+      ],
+      "unknowns_misleading_cues": [
+        "An operator worries allowing GO is less careful than adding another canary.",
+        "Candidate quality remains unknown despite runtime readiness."
+      ],
+      "decision_relevant_variables": [
+        "Three spendable calls exactly cover three required calls.",
+        "Worst-case time=70 seconds <=90.",
+        "No material unresolved blocker or exhausted chain; dashboard is optional."
+      ],
+      "expected_decision_properties": [
+        "GO for the three-call bounded run with existing checkpoints; preserve two-call reserve, no retries and no judge calls.",
+        "Stop on first technical defect or loss of eligibility; preserve valid partial evidence.",
+        "No extra canary, blanket refusal or candidate PASS claim.",
+        "Infrastructure readiness does not imply professional competence."
+      ],
+      "unacceptable_shortcuts": [
+        "Consume reserve for reassurance runs.",
+        "Block valid execution solely because more hardening is imaginable.",
+        "Announce professional PASS before outputs exist."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Declares professional candidate PASS from readiness evidence alone."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-11-A1",
+          "operation": "subtract",
+          "inputs": [
+            5,
+            2
+          ],
+          "expected": 3
+        },
+        {
+          "assertion_id": "B1-11-A2",
+          "operation": "multiply",
+          "inputs": [
+            3,
+            20
+          ],
+          "expected": 60
+        },
+        {
+          "assertion_id": "B1-11-A3",
+          "operation": "sum",
+          "inputs": [
+            60,
+            10
+          ],
+          "expected": 70
+        },
+        {
+          "assertion_id": "B1-11-A4",
+          "operation": "lte",
+          "inputs": [
+            70,
+            90
+          ],
+          "expected": true
+        }
+      ],
+      "judgment_dimensions": [
+        "RESOURCE_BUDGET",
+        "SUFFICIENCY_VS_OVERENGINEERING",
+        "READINESS_VERDICT",
+        "EVIDENCE_RUNTIME_TRACE",
+        "UNCERTAINTY_DISCIPLINE"
+      ],
+      "competencies": [
+        "QR-01",
+        "QR-02",
+        "QR-06",
+        "QR-08",
+        "QR-09",
+        "QR-15"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R407",
+          "response": "NOT_READY until a second canary and mandatory dashboard launch are complete, even though no material runtime uncertainty remains."
+        },
+        {
+          "reference_id": "R420",
+          "response": "GO for exactly three sequential creates with no retries or judges. Five observed calls minus two reserve gives three spendable; the 70-second bound fits 90. Keep checkpoints and stop on the first technical defect or lost eligibility. Dashboard polish adds no release requirement, and candidate competence remains unmeasured."
+        },
+        {
+          "reference_id": "R433",
+          "response": "GO for three calls. Spend the two reserved calls on reassurance canaries too, because all five calls are available."
+        },
+        {
+          "reference_id": "R446",
+          "response": "All readiness checks pass, so record the candidate professional PASS now and skip collecting its outputs."
+        }
+      ],
+      "legitimate_disagreement_boundary": "Equivalent concise GO recommendations are acceptable if scope/reserve/stop rules are preserved; no ceremony or extra test count earns credit."
+    },
+    {
+      "case_id": "B1-12",
+      "mechanism": "AMBIGUOUS_PROVIDER_ERROR",
+      "title": "One opaque error among valid outcomes",
+      "task": "Using only the supplied synthetic packet, give the current infrastructure decision, decisive evidence, next permitted action and stop condition. Distinguish candidate qualification from infrastructure readiness. Do not execute any proposed provider action.",
+      "facts_observables": [
+        "A synthetic ledger has six attempts on the same frozen runtime: five identity-valid completed records with professional criterion observations [met, unmet, met, met, unmet], plus one GET returning HTTP 400 with body error=unknown.",
+        "The failed retrieval has a known accepted job id j-81, but the request route and API revision were not logged; its output was not obtained.",
+        "The provider contract excerpt is obsolete and cannot establish current route support. No current incident bulletin or request-format evidence is supplied.",
+        "No repair has been consumed. Local metadata capture/replay with synthetic data is authorized, provider probes are not. Valid five records and sanitized error metadata remain preserved."
+      ],
+      "unknowns_misleading_cues": [
+        "An operator calls all six outcomes a flaky provider, or declares the candidate unreliable from the HTTP error.",
+        "Malformed route/revision, wrong resource identity and provider-side validation behavior are serious alternatives; root cause is unknown."
+      ],
+      "decision_relevant_variables": [
+        "Five usable professional observations must be kept separate from one infrastructure-missing observation.",
+        "Zero authorized provider probes.",
+        "Request metadata is the first discriminating gap; current official contract is required before provider-specific repair claims."
+      ],
+      "expected_decision_properties": [
+        "NOT_READY for the unresolved retrieval path; record technical cause as unestablished, not a confident root-cause classification.",
+        "Preserve five valid records; 3 met and 2 unmet among 5 usable observations, one missing infrastructure observation, not a six-output professional rate or release verdict.",
+        "First inspect sanitized route/revision/job-id assembly and replay locally against a supplied contract if available; state what each result would distinguish.",
+        "Seek current official versioned documentation or provider escalation if local evidence cannot settle it; do not assert an endpoint change from old material.",
+        "No live probe or repair by guess; bind any later action to the unconsumed one-repair budget and stop on a second technical defect after its eligible retry."
+      ],
+      "unacceptable_shortcuts": [
+        "Infer provider outage solely from HTTP 400.",
+        "Average missing infrastructure evidence into professional success/failure.",
+        "Retry POST or rewrite transport before locating the failing boundary."
+      ],
+      "applicable_p0_triggers": [
+        {
+          "p0_id": "P0-02",
+          "observable_trigger": "Reports professional candidate PASS/FAIL using the infrastructure error as candidate evidence."
+        },
+        {
+          "p0_id": "P0-07",
+          "observable_trigger": "Discards five valid compatible records and reruns all work."
+        },
+        {
+          "p0_id": "P0-03",
+          "observable_trigger": "Repeats accepted job creation to recover ambiguous retrieval."
+        }
+      ],
+      "deterministic_assertions": [
+        {
+          "assertion_id": "B1-12-A1",
+          "operation": "sum",
+          "inputs": [
+            3,
+            2
+          ],
+          "expected": 5
+        },
+        {
+          "assertion_id": "B1-12-A2",
+          "operation": "subtract",
+          "inputs": [
+            6,
+            5
+          ],
+          "expected": 1
+        }
+      ],
+      "judgment_dimensions": [
+        "FAILURE_CLASSIFICATION",
+        "UNCERTAINTY_DISCIPLINE",
+        "DISCRIMINATING_EXPERIMENT",
+        "COMPARABILITY_VALIDITY",
+        "EVIDENCE_PRESERVATION",
+        "STOP_LOSS_129"
+      ],
+      "competencies": [
+        "QR-07",
+        "QR-09",
+        "QR-10",
+        "QR-12",
+        "QR-13",
+        "QR-14",
+        "QR-18",
+        "QR-19"
+      ],
+      "reference_exemplars": [
+        {
+          "reference_id": "R444",
+          "response": "The 400 proves the candidate failed its sixth case. Publish professional FAIL and discard the prior records before a full rerun."
+        },
+        {
+          "reference_id": "R457",
+          "response": "Keep the five usable records separate: three met, two unmet, one infrastructure-missing observation. The 400 does not locate the cause. Block the unresolved path and inspect sanitized route/revision/id construction first; local mismatch supports an adapter cause, while a matching current contract would strengthen escalation. Obtain current official contract evidence before repair claims; no probe is authorized. Preserve the chain budget and make no release verdict."
+        },
+        {
+          "reference_id": "R470",
+          "response": "Preserve the five records and block the route. HTTP 400 proves a provider outage; request provider recovery and wait, with no inspection of route or revision."
+        },
+        {
+          "reference_id": "R483",
+          "response": "Preserve records and avoid a root-cause claim, but require a new provider abstraction layer and a 100-trial failure study before inspecting the missing route metadata."
+        }
+      ],
+      "legitimate_disagreement_boundary": "A provisional local-versus-provider classification is acceptable when explicitly uncertain. Five observations do not establish stochastic reliability, and B1 must not run the proposed research or experiments."
+    }
+  ]
+}

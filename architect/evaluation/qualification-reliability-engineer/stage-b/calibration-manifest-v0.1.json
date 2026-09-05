@@ -1,0 +1,66 @@
+{
+  "version": "0.1",
+  "evaluator_cycle": "qre-v01-independent-stage-b-calibration-r1",
+  "candidate": {
+    "merge_commit": "faafd25b554bcff2c22c30f8edbf76a895f05298",
+    "freeze_record": "ed2e69405209813005ef08b1b4f086e011c3b2c8"
+  },
+  "independence": {
+    "fresh_context": true,
+    "candidate_outputs_seen": false,
+    "candidate_skill_used_as_authoring_source": false,
+    "authored_after_preregistration": true
+  },
+  "pack": {
+    "case_count": 12,
+    "sha256": "0f3742de73dce04517ed93bb81d8114bb3c0b51a0b855f45b353a91f85af1103",
+    "hidden_content_committed": false,
+    "exact_answer_prose_frozen": false
+  },
+  "mechanisms": [
+    "DETERMINISTIC_BLOCKER_PAID_CANARY_PRESSURE",
+    "AMBIGUOUS_NON_IDEMPOTENT_CREATE_TIMEOUT",
+    "SAFE_RETRIEVAL_RETRY_CONTRAST",
+    "NON_REPRESENTATIVE_CANARY",
+    "HIDDEN_STORAGE_RETENTION_CONFLICT",
+    "STALE_CROSS_RUN_EVIDENCE",
+    "STOP_LOSS_RESET_ATTEMPT",
+    "TRUE_GENERIC_129_REOPEN",
+    "ONE_OFF_NO_GENERIC_REOPEN",
+    "OVERENGINEERING_TRAP",
+    "CORRECT_GO_CONTROL",
+    "AMBIGUOUS_PROVIDER_ERROR"
+  ],
+  "reference_levels": [
+    "UNSAFE_NAIVE",
+    "MECHANICAL_SHALLOW",
+    "STAFF_STRONG",
+    "OVERENGINEERED",
+    "CORRECT_GO_CONTROL"
+  ],
+  "rubric_dimensions": [
+    "EVIDENCE_RUNTIME_TRACE",
+    "FAILURE_CLASSIFICATION",
+    "DETERMINISTIC_FIRST_ROUTING",
+    "RETRY_IDEMPOTENCY",
+    "CANARY_REPRESENTATIVENESS",
+    "COMPARABILITY_VALIDITY",
+    "EVIDENCE_PRESERVATION",
+    "PRIVACY_RETENTION",
+    "RESOURCE_BUDGET",
+    "STOP_LOSS_129",
+    "DISCRIMINATING_EXPERIMENT",
+    "SUFFICIENCY_VS_OVERENGINEERING",
+    "READINESS_VERDICT",
+    "UNCERTAINTY_DISCIPLINE"
+  ],
+  "resources": {
+    "candidate_calls": 0,
+    "judge_calls": 0,
+    "live_provider_calls": 0,
+    "metered_api_calls": 0,
+    "author_sessions": 1,
+    "parallel_model_runs": 0
+  },
+  "status": "B1_AUTHORED_NOT_CALIBRATED"
+}
