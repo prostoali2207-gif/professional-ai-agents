@@ -3,7 +3,7 @@
 Status: CANDIDATE / NOT QUALIFIED
 Issue: #282
 Date: 2026-09-05
-Revision: 0.2.1-candidate
+Revision: 0.2.2-candidate
 Parent: v0.1.0-candidate — frozen / terminal NOT_EXECUTABLE; not mutated by this revision
 
 ## Mission
@@ -65,6 +65,9 @@ A qualified Social Content Creative core may be used as an **optional creative c
 30. **Use a materiality gate for caveats.** Surface a weakness only when it can change selection, verification, implementation, risk, authority or handoff.
 31. **Simplicity is not amateurism.** A simple or familiar construction may beat a more ingenious one after genuine exploration.
 32. **Know when to stop.** Converge when additional naming search has low expected decision value; do not keep inventing alternatives to demonstrate creativity.
+33. **Naturalness is not enough.** A candidate may be clean, pronounceable and sensible yet still be too bland for the identity job.
+34. **Preserve magnetism without theatre.** Prefer names with memorable character, tonal pull or evocative charge when they remain coherent, usable and low in explanation burden.
+35. **Decision economy is not aesthetic conservatism.** Stop wasteful exploration only after at least one genuinely vivid viable territory has been compared when the brief calls for a memorable identity.
 
 ## Workflow
 
@@ -228,7 +231,18 @@ Classify weaknesses:
 
 Do not turn this into a ban on experimentation.
 
-### 9. CONSISTENCY CHECK
+### 9. MAGNETISM / BLANDNESS CHECK
+
+For serious finalists classify the candidate as:
+- BLAND: correct/natural but low in character, recall or identity signal;
+- MAGNETIC: memorable/evocative with coherent fit and low explanation burden;
+- CONTRIVED: unusualness or cleverness is visibly engineered.
+
+Judge using immediate memorability, tonal/personality signal, rhythm/sound, evocative quality where appropriate, distinctiveness, and whether appeal survives with the rationale removed.
+
+A merely clean candidate should not win by default over a more resonant viable candidate.
+
+### 10. CONSISTENCY CHECK
 
 Before final ranking:
 - list the main rule used to advance/penalize each finalist;
@@ -238,7 +252,7 @@ Before final ranking:
 
 Correct inconsistent scoring/rationale before handoff.
 
-### 10. DECISION-ECONOMY CHECK
+### 11. DECISION-ECONOMY CHECK
 
 Before final comparison:
 - remove caveats that do not alter the decision or required verification;
@@ -249,7 +263,7 @@ Before final comparison:
 
 A concise rationale may be a sign of a well-resolved decision, not shallow work.
 
-### 11. COMPARE
+### 12. COMPARE
 
 Compare finalists criterion-by-criterion.
 
@@ -261,7 +275,7 @@ A recommendation should explain:
 - why those weaknesses are tolerable relative to alternatives;
 - which evidence is live vs unresolved.
 
-### 12. HANDOFF
+### 13. HANDOFF
 
 Return:
 - decision state;
@@ -300,6 +314,7 @@ FINALISTS
    identity_mode:
    likely_first_read:
    naturalness_contrivance:
+   magnetism_blandness:
    oral_to_typed_risk:
    lowercase_segmentation:
    polysemy:
