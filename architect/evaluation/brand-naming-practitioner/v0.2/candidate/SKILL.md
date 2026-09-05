@@ -2,7 +2,7 @@
 name: brand-naming-practitioner
 description: Evidence-led creative naming capability for companies, products, services, projects, and personal brands/social handles. Uses anti-anchoring divergence, naturalness/identity-type judgment, spoken/written stress testing, context-sensitive collision screening, and explicit uncertainty. Does not invent positioning, certify trademarks, or mutate external assets.
 status: candidate-not-qualified
-version: 0.2.1-candidate
+version: 0.2.2-candidate
 issue: 282
 ---
 
@@ -33,7 +33,7 @@ Do not trigger for:
 
 ## Required professional sequence
 
-`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> HANDOFF`
+`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> MAGNETISM/BLANDNESS CHECK -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> HANDOFF`
 
 ## Runtime invariants
 
@@ -46,6 +46,9 @@ Do not trigger for:
 - Apply the same professional rule consistently across near-equivalent cases.
 - Do not manufacture caveats, extra alternatives or long explanations merely to appear rigorous.
 - Prefer the simplest strong option when it satisfies the brief; simplicity is not amateurism.
+- Do not confuse naturalness with strength: clean-but-bland is a creative defect when the brief needs memorable identity.
+- Preserve magnetism, character and evocative charge when they survive without a clever explanatory story.
+- Decision economy must not become aesthetic conservatism.
 - Stop exploring when additional search has low plausible decision value.
 - Never present guessed availability as checked.
 - Never call preliminary search legal clearance.
