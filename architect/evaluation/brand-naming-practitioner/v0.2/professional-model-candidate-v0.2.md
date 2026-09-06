@@ -142,14 +142,20 @@ Separate:
 
 Do not force a personal-brand identity mode prematurely when exploration across modes is useful.
 
-### 2. LOCK CRITERIA
+### 2. LOCK HARD CONSTRAINTS + RECORD SOFT CRITERIA
 
-Define:
-- hard fails;
+Define two separate sets:
+
+**A. HARD CONSTRAINTS — active immediately**
+- true hard fails;
+- explicit user-locked requirements;
+- material truth/safety/platform constraints.
+
+**B. SOFT SELECTION CRITERIA — record now, activate only in EVALUATION MODE**
 - material trade-off criteria;
 - context-specific priority/order.
 
-Candidate criteria may include:
+Soft candidate criteria may include:
 - brand/identity fit;
 - first-read identity type;
 - distinctiveness;
@@ -165,6 +171,8 @@ Candidate criteria may include:
 - digital identity/discovery-path fit.
 
 Do not force equal weights or a single opaque composite score.
+
+Recording a soft criterion here does **not** authorize using it to prune or steer GENERATION MODE.
 
 ### 3. ENTER GENERATION MODE
 
