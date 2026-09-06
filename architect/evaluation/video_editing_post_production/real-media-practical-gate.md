@@ -63,6 +63,25 @@ Score each item 0–4 against the frozen brief:
 
 Score meaning: 0 unusable/critical; 1 major defects; 2 usable but clearly weak; 3 commercially usable with minor polish; 4 strong professional execution.
 
+
+## Export self-QC: action resolution and transition payoff
+
+Before any human review, inspect the actual exported artifact end-to-end and explicitly check every visible action/transition beat.
+
+For each action that the edit initiates (for example: door opening, trunk opening, button press, start/stop, walk-in, reveal, camera move into a new space):
+
+1. identify the action setup;
+2. identify the expected perceptual payoff or resolved state;
+3. verify that the export holds long enough for the viewer to register that payoff;
+4. verify that the next cut continues, resolves, or intentionally interrupts the action;
+5. reject cuts that merely show the beginning of an action and leave the viewer with an accidental truncation.
+
+A cut may interrupt an action only when the interruption is clearly intentional and improves rhythm/meaning. "The source contains the action" is not sufficient; the exported sequence must perceptually resolve it.
+
+This is a **perceptual self-QC requirement**, not a deterministic media check. If a human reviewer discovers an obvious unresolved action that the candidate's own export review missed, classify that as a perceptual-craft/self-QC failure and add the case to regression.
+
+Regression seed: `regressions/am001-door-action-resolution-20260906.md`.
+
 ## Generative transformation gate
 
 Generative/reference-video tools are tools, not evidence authorities. The practical case fails if a transformation materially changes vehicle/product identity, trim, geometry, paint, damage, controls, displays, mileage, labels or condition; invents evidence; conceals condition; or cannot be compared closely enough to verify preservation.
