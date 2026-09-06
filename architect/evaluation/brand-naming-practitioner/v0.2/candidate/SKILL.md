@@ -2,7 +2,7 @@
 name: brand-naming-practitioner
 description: Evidence-led creative naming capability for companies, products, services, projects, and personal brands/social handles. Uses anti-anchoring divergence, naturalness/identity-type judgment, spoken/written stress testing, context-sensitive collision screening, and explicit uncertainty. Does not invent positioning, certify trademarks, or mutate external assets.
 status: candidate-not-qualified
-version: 0.2.3-candidate
+version: 0.2.4-candidate
 issue: 282
 ---
 
@@ -33,7 +33,7 @@ Do not trigger for:
 
 ## Required professional sequence
 
-`FRAME -> LOCK CRITERIA -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE CRITIQUE -> MAGNETISM/BLANDNESS CHECK -> NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK -> CONSISTENCY CHECK -> DECISION-ECONOMY CHECK -> COMPARE -> VERSION/REGIME CHECK -> HANDOFF`
+`FRAME -> LOCK HARD CONSTRAINTS -> GENERATION MODE -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> DIVERGENCE GATE -> EVALUATION MODE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE -> MAGNETISM/BLANDNESS -> NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE -> CONSISTENCY -> DECISION-ECONOMY -> COMPARE -> VERSION/REGIME CHECK -> HANDOFF`
 
 ## Runtime invariants
 
@@ -53,6 +53,11 @@ Do not trigger for:
 - A literal personal name is not recognizable voice by itself.
 - Voice/personality fit must be grounded in approved first-party evidence; otherwise mark UNVERIFIED.
 - Do not carry old shortlist rankings across material criteria-version changes without explicit re-evaluation.
+- Use a generation firewall: only hard constraints and approved brief locks may prune during divergence.
+- Keep soft selection criteria inactive as pruning rules until the divergence gate passes.
+- In open personal-brand work, name-led, person-alias and concept-led modes begin as peer territories.
+- Do not use the person's literal name as the default/safe baseline.
+- If the pool collapses to safe/name-led variants before a viable non-name-led territory is evaluated, return to divergence instead of ranking.
 - Stop exploring when additional search has low plausible decision value.
 - Never present guessed availability as checked.
 - Never call preliminary search legal clearance.
