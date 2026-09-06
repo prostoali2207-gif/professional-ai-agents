@@ -18,3 +18,11 @@ Required release order:
 8. only then add a qualification record and promote catalog lifecycle for the claims actually proved.
 
 The maximum first semantic release budget is six model calls: three critical reliability batches plus three complete-suite batches. Infrastructure failure is BLOCKED, not behavioral PASS/FAIL. A polished self-report, edit plan, command log or timeline screenshot is not evidence that the exported video is correct.
+
+
+## Production regressions
+
+Real production misses discovered after export review must be retained as regression evidence.
+
+Current seed:
+- `regressions/am001-door-action-resolution-20260906.md` — catches unresolved action/payoff cuts where an initiated physical action is truncated before the viewer can register the result.
