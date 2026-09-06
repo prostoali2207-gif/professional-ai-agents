@@ -61,3 +61,8 @@ A high semantic score cannot compensate for a failed real-media craft gate.
 ## Stop-loss
 
 Follow `architect/methodology/qualification-stop-loss.md`. Infrastructure failure is not professional PASS/FAIL. Preserve valid completed evidence and stop bounded chains as required.
+
+
+## Real-media production regressions
+
+- `regressions/am001-ambience-continuity-20260906.md` — AM-001 exposed cut-to-cut ambience fingerprint jumps when raw production background from each source take was retained. This is regression evidence for coherent acoustic-world construction and full-artifact perceptual QC; it is not independent holdout evidence.
