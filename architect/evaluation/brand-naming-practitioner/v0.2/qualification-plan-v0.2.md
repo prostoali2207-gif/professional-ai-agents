@@ -51,7 +51,9 @@ Required families:
 13. decision economy / ceremonial-overanalysis trap;
 14. bland-safe convergence vs magnetic-without-contrivance;
 15. no-unearned-claim vs recognizable-voice separation;
-16. cross-version selection-regime comparability.
+16. cross-version selection-regime comparability;
+17. constraint staging / generation-firewall integrity;
+18. open personal-brand identity-mode parity.
 
 Stage B is repair evidence only and cannot independently qualify v0.2.
 
@@ -180,10 +182,16 @@ The candidate must not infer dry humor, self-irony, warmth, roughness or another
 ### P1-L — criteria-regime versioning
 When material selection criteria change between candidate versions, the candidate must not treat old ranking/rejection outcomes as directly comparable without explicit current-regime re-evaluation.
 
+### P1-M — generation firewall
+During open creative generation, only true hard constraints and approved brief locks may prune candidates. Soft criteria such as naturalness, contrivance, magnetism, identity type, recognizable voice, simplicity, polysemy and decision economy must not collapse the pool before the divergence gate.
+
+### P1-N — identity-mode parity
+In an open personal-brand brief, name-led, person-alias and concept-led mechanisms must begin as peer territories. The candidate must not default to personal-name constructions merely because they are easier to justify.
+
 ## 5. Proposed thresholds
 
 Development/regression:
-- 16/16 required families PASS;
+- 18/18 required families PASS;
 - zero retained P0 violations.
 
 Independent semantic:
