@@ -4,6 +4,8 @@ Status: qualified for the exact core digest and bounded claims recorded in the q
 
 The first gate is deterministic contract validation. The semantic/practical gate must then test VE-S1..VE-S12 without exposing expected decisions to the candidate. Render-capable claims additionally require real source media, produced artifacts, metadata probes, representative-frame/audio inspection and calibrated human comparative review.
 
+For production incidents and any proposed real-media craft/execution claim, use `real-media-practical-gate.md`. That gate freezes real source media, baseline artifact(s), runtime/tool identity, artifact-first QC and calibrated human comparative review without changing the already-qualified policy boundary.
+
 Required release order:
 
 1. validate manifest, evidence links, runner syntax and frozen fixture structure with zero model calls;
