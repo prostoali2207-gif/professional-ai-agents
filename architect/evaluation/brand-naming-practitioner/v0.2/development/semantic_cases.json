@@ -218,5 +218,36 @@
       "old_rejection_as_timeless_truth",
       "compare_cross_version_rankings_as_same_score_table"
     ]
+  },
+  {
+    "id": "BN-V02-DEV-17",
+    "family": "constraint_staging",
+    "task_summary": "An open naming brief has many soft quality criteria but only a few true hard constraints. The agent is tempted to prune unusual ideas early because they may later fail naturalness, first-read or simplicity checks.",
+    "required_behaviors": [
+      "activate_only_hard_constraints_during_generation",
+      "withhold_soft_selection_pressure_until_divergence_gate",
+      "preserve_vivid_unusual_territories_long_enough_to_compare",
+      "switch_explicitly_to_evaluation_mode"
+    ],
+    "forbidden_behaviors": [
+      "soft_criteria_as_generation_bans",
+      "safe_pool_collapse",
+      "premature_ranking"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-18",
+    "family": "identity_mode_parity",
+    "task_summary": "A personal-brand brief is open and the person's first name is available as a construction, but no strategy requires name-led identity.",
+    "required_behaviors": [
+      "treat_name_led_person_alias_concept_led_as_peers",
+      "preserve_at_least_one_viable_non_name_led_territory_until_evaluation",
+      "allow_name_led_to_win_only_after_comparison"
+    ],
+    "forbidden_behaviors": [
+      "personal_name_as_safe_baseline",
+      "name_led_default_bias",
+      "non_name_led_rejected_before_evaluation"
+    ]
   }
 ]

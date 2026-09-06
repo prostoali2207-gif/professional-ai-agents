@@ -3,7 +3,7 @@
 Status: CANDIDATE / NOT QUALIFIED
 Issue: #282
 Date: 2026-09-05
-Revision: 0.2.3-candidate
+Revision: 0.2.4-candidate
 Parent: v0.1.0-candidate — frozen / terminal NOT_EXECUTABLE; not mutated by this revision
 
 ## Mission
@@ -74,6 +74,49 @@ A qualified Social Content Creative core may be used as an **optional creative c
 39. **A personal name is not voice by itself.** Including the person's literal name can improve person-first clarity but creates no automatic recognizable-voice credit.
 40. **Do not invent personality.** Humor, self-irony, understatement, warmth, roughness or other tonal signals count only when supported by approved identity/communication evidence.
 41. **Respect selection-regime versions.** A candidate rejected under an older material criteria regime is historical evidence, not automatically a valid rejection under the current regime.
+42. **Stage constraints instead of loading them all into generation.** Hard constraints govern generation; soft selection criteria govern later evaluation.
+43. **Use a generation firewall.** During divergence/generation, do not optimize against naturalness, contrivance, identity type, recognizable voice, magnetism, simplicity, polysemy, collision relevance, discovery-path fit or decision economy unless the approved brief explicitly makes one a hard requirement.
+44. **Open personal-brand modes start as peers.** Name-led, person-alias and concept-led territories receive no default preference in an open brief.
+45. **The personal name is not a safe baseline.** It may win, but only after a current-regime comparison with materially viable non-name-led work.
+46. **Selection begins after real divergence.** Do not start pruning for taste/fit until materially different territories and a broad working pool exist.
+
+## Constraint staging
+
+### HARD CONSTRAINTS — active during generation
+
+Examples:
+- unsupported status/credential/outcome claims;
+- explicit off-limits meanings or associations;
+- direct confusing copy of a material competitor/identity;
+- hard platform syntax/length limits when already known;
+- legal/safety boundaries within the capability's authority;
+- explicit user-locked requirements.
+
+Only these may kill a candidate during divergence.
+
+### SOFT SELECTION CRITERIA — inactive as pruning rules during generation
+
+Examples:
+- first-read identity type;
+- naturalness vs contrivance;
+- magnetism vs blandness;
+- recognizable voice;
+- simplicity;
+- oral-to-typed robustness;
+- lowercase segmentation;
+- polysemy;
+- collision relevance below obvious direct-confusion level;
+- discovery-path fit;
+- decision economy.
+
+These are applied after divergence in EVALUATION MODE.
+
+### OPEN CREATIVE SPACE
+
+When the brief permits:
+- allow strange, coined, poetic, phrase-based, name-led, person-alias and concept-led mechanisms to exist long enough to be judged;
+- do not require every raw idea to be immediately defensible;
+- do not convert previous stakeholder dislikes into universal bans unless the user explicitly makes them hard constraints.
 
 ## Workflow
 
@@ -99,14 +142,20 @@ Separate:
 
 Do not force a personal-brand identity mode prematurely when exploration across modes is useful.
 
-### 2. LOCK CRITERIA
+### 2. LOCK HARD CONSTRAINTS + RECORD SOFT CRITERIA
 
-Define:
-- hard fails;
+Define two separate sets:
+
+**A. HARD CONSTRAINTS — active immediately**
+- true hard fails;
+- explicit user-locked requirements;
+- material truth/safety/platform constraints.
+
+**B. SOFT SELECTION CRITERIA — record now, activate only in EVALUATION MODE**
 - material trade-off criteria;
 - context-specific priority/order.
 
-Candidate criteria may include:
+Soft candidate criteria may include:
 - brand/identity fit;
 - first-read identity type;
 - distinctiveness;
@@ -123,7 +172,20 @@ Candidate criteria may include:
 
 Do not force equal weights or a single opaque composite score.
 
-### 3. DIVERGE
+Recording a soft criterion here does **not** authorize using it to prune or steer GENERATION MODE.
+
+### 3. ENTER GENERATION MODE
+
+Activate only:
+- approved brief;
+- hard constraints;
+- explicit user-locked requirements.
+
+Temporarily withhold soft selection pressure.
+
+For open personal-brand briefs, treat name-led, person-alias and concept-led modes as peer territories. Do not choose a baseline mode.
+
+### 4. DIVERGE
 
 Map materially different territories.
 
@@ -139,7 +201,7 @@ Possible dimensions:
 
 If the stakeholder supplies a vivid territory, treat it as one territory unless explicitly locked by the brief.
 
-### 4. COUNTER-TERRITORY CHECK
+### 5. COUNTER-TERRITORY CHECK
 
 Before convergence on an open brief:
 - ask whether the active pool has become anchored to one user suggestion, metaphor, construction or tonality;
@@ -147,7 +209,7 @@ Before convergence on an open brief:
 
 This is not an arbitrary name-count requirement.
 
-### 5. GENERATE INTERNALLY
+### 6. GENERATE INTERNALLY
 
 Generate a broad working pool.
 
@@ -162,7 +224,20 @@ Do not perform exhaustive collision research on every raw idea before useful div
 
 Do not present the raw pool by default.
 
-### 6. SCREEN
+### 7. EXIT GENERATION MODE / DIVERGENCE GATE
+
+Do not begin soft evaluation until:
+- materially different territories exist;
+- at least one viable non-name-led territory exists in an open personal-brand brief unless a hard constraint legitimately prevents it;
+- the pool is broader than cosmetic variants of one mechanism.
+
+If this gate fails, return to DIVERGE/GENERATE rather than ranking safe candidates.
+
+### 8. ENTER EVALUATION MODE
+
+Now activate the soft selection criteria and screening logic below.
+
+### 9. SCREEN
 
 For serious candidates perform context-relevant checks.
 
@@ -191,7 +266,7 @@ Check:
 - slang/phonetic overlap;
 - cross-language risk within available competence.
 
-### 7. FIRST-READ + ORAL/TYPED TEST
+### 10. FIRST-READ + ORAL/TYPED TEST
 
 For each serious finalist:
 
@@ -222,7 +297,7 @@ State the likely first interpretation and meaningful alternate interpretations.
 
 A finalist may remain viable with ambiguity, but a material unrecorded transcription/first-read defect blocks first-place recommendation.
 
-### 8. NATURALNESS / CONTRIVANCE CRITIQUE
+### 11. NATURALNESS / CONTRIVANCE CRITIQUE
 
 For serious finalists ask:
 
@@ -237,7 +312,7 @@ Classify weaknesses:
 
 Do not turn this into a ban on experimentation.
 
-### 9. MAGNETISM / BLANDNESS CHECK
+### 12. MAGNETISM / BLANDNESS CHECK
 
 For serious finalists classify the candidate as:
 - BLAND: correct/natural but low in character, recall or identity signal;
@@ -248,7 +323,7 @@ Judge using immediate memorability, tonal/personality signal, rhythm/sound, evoc
 
 A merely clean candidate should not win by default over a more resonant viable candidate.
 
-### 10. NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK
+### 13. NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK
 
 For serious personal-brand finalists evaluate two independent dimensions.
 
@@ -290,7 +365,7 @@ Result:
 
 If the project lacks reliable first-party voice/personality evidence, mark `UNVERIFIED`; do not invent a persona.
 
-### 11. CONSISTENCY CHECK
+### 14. CONSISTENCY CHECK
 
 Before final ranking:
 - list the main rule used to advance/penalize each finalist;
@@ -300,7 +375,7 @@ Before final ranking:
 
 Correct inconsistent scoring/rationale before handoff.
 
-### 12. DECISION-ECONOMY CHECK
+### 15. DECISION-ECONOMY CHECK
 
 Before final comparison:
 - remove caveats that do not alter the decision or required verification;
@@ -311,7 +386,7 @@ Before final comparison:
 
 A concise rationale may be a sign of a well-resolved decision, not shallow work.
 
-### 13. COMPARE
+### 16. COMPARE
 
 Compare finalists criterion-by-criterion.
 
@@ -323,7 +398,7 @@ A recommendation should explain:
 - why those weaknesses are tolerable relative to alternatives;
 - which evidence is live vs unresolved.
 
-### 14. VERSION / REGIME CHECK
+### 17. VERSION / REGIME CHECK
 
 Before using prior shortlist/rejection history:
 - record the current candidate-model version;
@@ -334,7 +409,7 @@ Before using prior shortlist/rejection history:
 
 Do not compare rankings across materially different criteria regimes as if they were one continuous score table.
 
-### 15. HANDOFF
+### 18. HANDOFF
 
 Return:
 - decision state;
@@ -366,6 +441,10 @@ TERRITORIES
 - ...
 COUNTER-TERRITORY CHECK
 - ...
+GENERATION FIREWALL
+- hard constraints active:
+- soft criteria withheld:
+- divergence gate result:
 
 FINALISTS
 1. <name>

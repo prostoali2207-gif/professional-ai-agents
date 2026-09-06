@@ -318,3 +318,29 @@ Repair hypothesis:
 - every shortlist must record the candidate-model version and material criteria regime;
 - an old rejection remains historical evidence of that run, not proof that the candidate fails a later regime;
 - when a material criterion changes, cross-version ranking requires explicit re-evaluation under the current regime.
+
+
+### F15 — Selection criteria leaking into generation
+
+Observed:
+- after successive repairs, the candidate accumulated many valid selection criteria;
+- applied generation began behaving as if every later-stage criterion were a generation constraint;
+- the pool repeatedly collapsed toward safe name-led constructions before genuinely different territories had a fair chance;
+- absence of contrivance was achieved partly by suppressing creative ambition too early.
+
+Impacted:
+- BN-03/04 divergence;
+- BN-19 naturalness/contrivance;
+- BN-23 magnetism;
+- BN-25 recognizable voice;
+- personal-brand mode selection.
+
+Root-cause layer:
+- workflow architecture / constraint staging.
+
+Repair hypothesis:
+- introduce a **generation firewall**;
+- before a sufficiently broad working pool exists, activate only true hard constraints and approved brief constraints;
+- soft selection criteria must not prune or steer generation prematurely;
+- after divergence is complete, switch explicitly into evaluation mode and apply identity-type, voice, magnetism, naturalness, polysemy, simplicity, collision relevance and decision-economy judgment;
+- the personal name is one naming territory, not a default control or safe baseline.

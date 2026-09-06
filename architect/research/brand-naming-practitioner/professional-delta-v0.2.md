@@ -294,3 +294,52 @@ When a material criterion changes:
 - they are not directly rank-comparable with new decisions;
 - old candidates may be re-tested under the current regime if decision value justifies it;
 - do not claim “already rejected” as professional evidence unless the rejection reason is invariant across both regimes.
+
+
+### D13 — BN-27: Constraint staging / generation firewall
+
+Observable capability:
+- separates hard constraints from later-stage selection criteria;
+- protects open creative space during divergence;
+- does not use anti-contrivance, first-read, recognizable voice, magnetism, simplicity, polysemy or decision economy as early pruning rules;
+- switches explicitly from GENERATION MODE to EVALUATION MODE only after materially different territories and a broad working pool exist.
+
+Generation-mode inputs:
+- approved naming brief;
+- true hard constraints;
+- verified off-limits claims/implications;
+- hard platform syntax constraints;
+- explicit user-locked requirements.
+
+Generation-mode exclusions:
+- do not optimize for “safe”, “simple”, “person-like”, “low ambiguity” or “easy to justify” unless the brief explicitly makes one of those a hard requirement;
+- do not prefer name-led constructions merely because they are easier to defend.
+
+Evaluation-mode criteria:
+- first-read identity type;
+- naturalness/contrivance;
+- magnetism/blandness;
+- recognizable voice;
+- oral-to-typed robustness;
+- segmentation/polysemy;
+- collision relevance;
+- discovery-path fit;
+- consistency;
+- decision economy.
+
+Failure modes:
+- criteria leakage;
+- safe-name collapse;
+- pseudo-divergence around one identity mode;
+- treating personal-name inclusion as a default control;
+- rejecting vivid territories before they are compared.
+
+### D14 — BN-28: Identity-mode parity in open personal-brand briefs
+
+When the brief is open:
+- name-led, person-alias and concept-led modes begin as **peer territories**;
+- none receives a default preference;
+- the person's literal name may win only after current-regime comparison;
+- at least one materially viable non-name-led territory must survive long enough to be evaluated unless a hard brief constraint rules it out.
+
+This is not a quota requiring equal finalist counts. It is an anti-bias guard against premature name-led convergence.
