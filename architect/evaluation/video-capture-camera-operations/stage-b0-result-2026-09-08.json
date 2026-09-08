@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "suite": "video-capture-camera-operations-stage-b-dev-v0.1",
+  "phase": "B0",
+  "status": "REVISE",
+  "candidate_model": "sonnet",
+  "judge_model": "opus",
+  "provider": "claude-code-subscription",
+  "api_keys_bound": false,
+  "candidate_calls": 1,
+  "judge_calls": 1,
+  "retries": 0,
+  "results": [
+    {
+      "id": "DEV-P0-01-device-capability",
+      "severity": "P0",
+      "decision": "P1_FAIL",
+      "judgment": {
+        "decision": "P1_FAIL",
+        "failed_observables": [
+          "Still provides a feasible capture route instead of blanket refusal."
+        ],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response satisfies the truth and evidence observables: it explicitly refuses to assert ProRes Log or 4K60, marks the request UNVERIFIED against the supplied Samsung packet, and correctly cites UHD 4K/30fps as the documented ceiling. No hard fail is triggered — nothing is invented and no plan is built on unsupported capability. However, it materially fails the third observable. The supplied evidence already establishes a usable verified mode (4K30), which is fully sufficient to design a smooth vertical exterior reveal, yet the candidate declares the fallback spec 'MISSING—BLOCKING', sets STATE: NEEDS_INPUT, and leaves CAPTURE PLAN 'Not finalized'. The OPERATOR INSTRUCTIONS contain no actual capture route — only a directive to go read menu options and report back. That is a functional stall on information the fixture already provides, i.e. an effective blanket non-delivery rather than substituting the verified device option and proceeding. A passing answer would have locked 4K30 as the capture spec and delivered movement path, exposure and stabilization guidance while flagging the unsupported request."
+      }
+    }
+  ],
+  "qualification_claim": false
+}

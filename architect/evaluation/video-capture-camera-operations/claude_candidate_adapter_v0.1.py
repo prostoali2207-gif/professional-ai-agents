@@ -15,6 +15,31 @@ SKILL_PATH = "architect/evaluation/video-capture-camera-operations/candidate/SKI
 MODEL_BLOB = "65ccc214418d269a27042dda2b83adf53bb59c5b"
 SKILL_BLOB = "8b64d280b8b1fe01969bf804212ab0e6ca37a7a8"
 DEFAULT_MODEL = "sonnet"
+
+# Transport isolation contract for the subscription-backed Claude Code route.
+#
+# `--bare` MUST NOT appear here. In Claude Code >= 2.1.x `--bare` restricts
+# Anthropic auth to ANTHROPIC_API_KEY / apiKeyHelper and never reads OAuth,
+# which is mutually exclusive with this route's preregistered
+# subscription-only, no-metered-key contract (it fails with an
+# "Authentication error" before any model call).
+#
+# `--safe-mode` provides the isolation `--bare` was selected for
+# (CLAUDE.md, skills, plugins, hooks, MCP servers, custom commands/agents
+# disabled) while leaving subscription auth intact.
+ISOLATION_FLAGS = (
+    "--effort","high",
+    "--output-format","text",
+    "--no-session-persistence",
+    "--safe-mode",
+    "--restricted",
+    "--tools","",
+    "--disallowedTools","mcp__*",
+    "--strict-mcp-config",
+    "--disable-slash-commands",
+    "--permission-prompts","none",
+)
+FORBIDDEN_FLAGS = ("--bare",)
 FORBIDDEN_ENV = (
     "ANTHROPIC_API_KEY","OPENAI_API_KEY","GEMINI_API_KEY","GROQ_API_KEY","XAI_API_KEY",
     "QUALIFICATION_KEY","HELDOUT","SEALED_PACK","GRADER","EXPECTED_ANSWER","REFERENCE_ANSWER"
@@ -44,12 +69,42 @@ def clean_env() -> dict[str, str]:
             env.pop(key, None)
     return env
 
+def assert_flag_contract() -> None:
+    """Fail deterministically if the invocation flag set contradicts the
+    preregistered subscription-only transport contract."""
+    for flag in FORBIDDEN_FLAGS:
+        if flag in ISOLATION_FLAGS:
+            raise RuntimeError(
+                f"transport flag contract violated: {flag} disables subscription/OAuth auth "
+                "and is incompatible with the no-metered-key route"
+            )
+    for required in ("--safe-mode","--restricted","--no-session-persistence","--strict-mcp-config"):
+        if required not in ISOLATION_FLAGS:
+            raise RuntimeError(f"transport isolation contract violated: missing {required}")
+
 def cli_facts() -> dict:
+    assert_flag_contract()
     version = subprocess.check_output(["claude","--version"], text=True).strip()
     proc = subprocess.run(["claude","auth","status"], text=True, capture_output=True)
     if proc.returncode != 0:
         raise RuntimeError("Claude Code is not authenticated")
-    return {"version": version, "auth_status": (proc.stdout + proc.stderr).strip()[:1000]}
+    raw = (proc.stdout + proc.stderr).strip()
+    try:
+        status = json.loads(proc.stdout)
+    except Exception:
+        raise RuntimeError(f"Claude auth status not machine-readable: {raw[:400]}")
+    if not status.get("loggedIn"):
+        raise RuntimeError("Claude Code is not authenticated")
+    method = str(status.get("authMethod",""))
+    if "api_key" in method or "apiKey" in method:
+        raise RuntimeError(f"metered API-key auth detected ({method}); route requires subscription auth")
+    return {
+        "version": version,
+        "auth_method": method,
+        "api_provider": status.get("apiProvider"),
+        "logged_in": True,
+        "isolation_flags": list(ISOLATION_FLAGS),
+    }
 
 def invoke(candidate: str, visible: dict, model: str, timeout: int) -> str:
     prompt = (
@@ -64,21 +119,11 @@ def invoke(candidate: str, visible: dict, model: str, timeout: int) -> str:
     )
     with tempfile.TemporaryDirectory(prefix="video-capture-claude-candidate-") as raw:
         root = Path(raw)
-        cmd = [
-            "claude","-p",prompt,
-            "--model",model,
-            "--effort","high",
-            "--output-format","text",
-            "--no-session-persistence",
-            "--bare",
-            "--restricted",
-            "--tools","",
-            "--disallowedTools","mcp__*",
-            "--disable-slash-commands"
-        ]
+        cmd = ["claude","-p",prompt,"--model",model] + list(ISOLATION_FLAGS)
         proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, cwd=root, env=clean_env())
         if proc.returncode != 0:
-            raise RuntimeError(f"Claude candidate runtime failed ({proc.returncode}): {proc.stderr[-1400:]}")
+            detail = (proc.stderr.strip() or proc.stdout.strip())[-1400:]
+            raise RuntimeError(f"Claude candidate runtime failed ({proc.returncode}): {detail}")
         answer = proc.stdout.strip()
         if not answer:
             raise RuntimeError("Claude candidate produced no response")

@@ -10,6 +10,31 @@ import sys
 import tempfile
 
 DEFAULT_MODEL = "opus"
+
+# Transport isolation contract for the subscription-backed Claude Code route.
+#
+# `--bare` MUST NOT appear here. In Claude Code >= 2.1.x `--bare` restricts
+# Anthropic auth to ANTHROPIC_API_KEY / apiKeyHelper and never reads OAuth,
+# which is mutually exclusive with this route's preregistered
+# subscription-only, no-metered-key contract (it fails with an
+# "Authentication error" before any model call).
+#
+# `--safe-mode` provides the isolation `--bare` was selected for
+# (CLAUDE.md, skills, plugins, hooks, MCP servers, custom commands/agents
+# disabled) while leaving subscription auth intact.
+ISOLATION_FLAGS = (
+    "--effort","high",
+    "--output-format","text",
+    "--no-session-persistence",
+    "--safe-mode",
+    "--restricted",
+    "--tools","",
+    "--disallowedTools","mcp__*",
+    "--strict-mcp-config",
+    "--disable-slash-commands",
+    "--permission-prompts","none",
+)
+FORBIDDEN_FLAGS = ("--bare",)
 FORBIDDEN_ENV = (
     "ANTHROPIC_API_KEY","OPENAI_API_KEY","GEMINI_API_KEY","GROQ_API_KEY","XAI_API_KEY",
     "QUALIFICATION_KEY","HELDOUT","SEALED_PACK"
@@ -54,21 +79,11 @@ def run(payload: dict, model: str, timeout: int) -> dict:
     )
     with tempfile.TemporaryDirectory(prefix="video-capture-claude-judge-") as raw:
         root = Path(raw)
-        cmd = [
-            "claude","-p",prompt,
-            "--model",model,
-            "--effort","high",
-            "--output-format","text",
-            "--no-session-persistence",
-            "--bare",
-            "--restricted",
-            "--tools","",
-            "--disallowedTools","mcp__*",
-            "--disable-slash-commands"
-        ]
+        cmd = ["claude","-p",prompt,"--model",model] + list(ISOLATION_FLAGS)
         proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, cwd=root, env=clean_env())
         if proc.returncode != 0:
-            raise RuntimeError(f"Claude judge runtime failed ({proc.returncode}): {proc.stderr[-1400:]}")
+            detail = (proc.stderr.strip() or proc.stdout.strip())[-1400:]
+            raise RuntimeError(f"Claude judge runtime failed ({proc.returncode}): {detail}")
         return extract_json(proc.stdout)
 
 def main() -> int:
