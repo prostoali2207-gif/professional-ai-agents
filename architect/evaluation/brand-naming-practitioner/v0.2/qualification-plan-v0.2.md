@@ -53,7 +53,9 @@ Required families:
 15. no-unearned-claim vs recognizable-voice separation;
 16. cross-version selection-regime comparability;
 17. constraint staging / generation-firewall integrity;
-18. open personal-brand identity-mode parity.
+18. open personal-brand identity-mode parity;
+19. semantic-stance diversity / anti-monoculture;
+20. identity-capture vs caption/status distinction.
 
 Stage B is repair evidence only and cannot independently qualify v0.2.
 
@@ -188,10 +190,16 @@ During open creative generation, only true hard constraints and approved brief l
 ### P1-N — identity-mode parity
 In an open personal-brand brief, name-led, person-alias and concept-led mechanisms must begin as peer territories. The candidate must not default to personal-name constructions merely because they are easier to justify.
 
+### P1-O — semantic stance diversity
+A pool with different words but the same psychological/semantic stance must not pass divergence. The candidate must open a materially different counter-stance without imposing a positivity bias.
+
+### P1-P — identity capture
+Serious personal-brand finalists must be evaluated for source-identification potential: whether the name can become a durable identifier rather than functioning mainly as a generic caption/status. This must remain separate from legal protectability.
+
 ## 5. Proposed thresholds
 
 Development/regression:
-- 18/18 required families PASS;
+- 20/20 required families PASS;
 - zero retained P0 violations.
 
 Independent semantic:
