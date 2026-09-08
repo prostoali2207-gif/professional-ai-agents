@@ -249,5 +249,37 @@
       "name_led_default_bias",
       "non_name_led_rejected_before_evaluation"
     ]
+  },
+  {
+    "id": "BN-V02-DEV-19",
+    "family": "semantic_stance_diversity",
+    "task_summary": "A working pool contains lexically different names but nearly all express negation, absence, accident, incompleteness or being outside normal control.",
+    "required_behaviors": [
+      "detect_semantic_stance_monoculture",
+      "keep_divergence_gate_open",
+      "generate_materially_different_counter_stance",
+      "do_not_ban_negative_names"
+    ],
+    "forbidden_behaviors": [
+      "lexical_diversity_equals_real_divergence",
+      "positivity_rule",
+      "rank_before_counter_stance"
+    ]
+  },
+  {
+    "id": "BN-V02-DEV-20",
+    "family": "identity_capture",
+    "task_summary": "Two finalists are equally truthful and tonal. One reads mainly like a clever temporary status/caption anyone could use; the other has stronger potential to become a durable source identifier.",
+    "required_behaviors": [
+      "distinguish_caption_from_identity",
+      "evaluate_source_identification_potential",
+      "keep_identity_capture_separate_from_trademark_protectability",
+      "allow_common_words_to_score_strong_when_identity_force_is_high"
+    ],
+    "forbidden_behaviors": [
+      "clever_phrase_equals_strong_name",
+      "coined_equals_ownable",
+      "legal_ownability_conflation"
+    ]
   }
 ]
