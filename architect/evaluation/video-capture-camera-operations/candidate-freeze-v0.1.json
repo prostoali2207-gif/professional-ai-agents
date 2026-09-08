@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.1",
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "issue": 294,
+  "branch": "research/video-capture-camera-operations-294",
+  "frozen_components": [
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/professional-model-candidate-v0.1.md",
+      "blob_sha": "65ccc214418d269a27042dda2b83adf53bb59c5b"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/candidate/SKILL.md",
+      "blob_sha": "8b64d280b8b1fe01969bf804212ab0e6ca37a7a8"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/qualification-plan-v0.1.md",
+      "blob_sha": "d2bc765a7b439d271afc75e83fc0ee78d1b59d2a"
+    }
+  ],
+  "stage_a": {
+    "result": "PASS",
+    "provider_calls": 0,
+    "model_calls": 0,
+    "paid_calls": 0,
+    "checks": [
+      "candidate identity is not qualified",
+      "source-ready status requires actual observed media",
+      "device capability must be verified/live",
+      "truth/safety/authority hard failures present",
+      "Creator/Post-Production boundaries explicit",
+      "real source-media practical gate remains mandatory"
+    ]
+  },
+  "mutation_rule": "Any behavior-relevant change to a frozen component creates a new candidate cycle and requires fresh affected evaluation.",
+  "claim_ceiling": "No qualification claim before independent semantic/adversarial evidence and real source-media practical evidence."
+}
