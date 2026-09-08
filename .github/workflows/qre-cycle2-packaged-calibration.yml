@@ -1,0 +1,70 @@
+name: QRE cycle 2 packaged calibration static
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/qualification-reliability-engineer/cycle-2/**'
+      - '.github/workflows/qre-cycle2-packaged-calibration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packaged-calibration-zero-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENAI_API_KEY: ''
+      GEMINI_API_KEY: ''
+      GROQ_API_KEY: ''
+      ANTHROPIC_API_KEY: ''
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile pure-stdlib package tooling
+        run: |
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/cycle-2/build_blind_bundle.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/cycle-2/validate_blind_judgments.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/cycle-2/seal_blind_checkpoint.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/cycle-2/compare_calibration.py
+          python -m py_compile architect/evaluation/qualification-reliability-engineer/cycle-2/test_cycle2_package.py
+      - name: Reproduce checked-in blind bundle and template exactly
+        run: python architect/evaluation/qualification-reliability-engineer/cycle-2/build_blind_bundle.py --check
+      - name: Validate untouched reviewer template
+        run: python architect/evaluation/qualification-reliability-engineer/cycle-2/validate_blind_judgments.py architect/evaluation/qualification-reliability-engineer/cycle-2/blind-judgment-template-v0.2.json --template
+      - name: Run fail-closed package regressions
+        run: python architect/evaluation/qualification-reliability-engineer/cycle-2/test_cycle2_package.py
+      - name: Prove no provider SDK or credential code path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          base=Path('architect/evaluation/qualification-reliability-engineer/cycle-2')
+          files=['build_blind_bundle.py','validate_blind_judgments.py','seal_blind_checkpoint.py','compare_calibration.py','test_cycle2_package.py']
+          forbidden=('openai','anthropic','google.genai','groq','OPENAI_API_KEY','GEMINI_API_KEY','GROQ_API_KEY','ANTHROPIC_API_KEY')
+          for name in files:
+              text=(base/name).read_text(encoding='utf-8')
+              for token in forbidden:
+                  assert token not in text, (name,token)
+          print('QRE_CYCLE2_NO_PROVIDER_CODE_PATH_PASS')
+          PY
+      - name: Record package digests
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+          base=Path('architect/evaluation/qualification-reliability-engineer/cycle-2')
+          out={}
+          for name in ['blind-bundle-v0.2.json','blind-judgment-template-v0.2.json']:
+              out[name]=hashlib.sha256((base/name).read_bytes()).hexdigest()
+          Path('qre-cycle2-package-digests.json').write_text(json.dumps(out,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(out,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qre-cycle2-package-digests
+          path: qre-cycle2-package-digests.json
+          if-no-files-found: error
+          retention-days: 14
