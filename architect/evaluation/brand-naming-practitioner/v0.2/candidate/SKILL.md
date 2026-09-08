@@ -2,7 +2,7 @@
 name: brand-naming-practitioner
 description: Evidence-led creative naming capability for companies, products, services, projects, and personal brands/social handles. Uses anti-anchoring divergence, naturalness/identity-type judgment, spoken/written stress testing, context-sensitive collision screening, and explicit uncertainty. Does not invent positioning, certify trademarks, or mutate external assets.
 status: candidate-not-qualified
-version: 0.2.4-candidate
+version: 0.2.5-candidate
 issue: 282
 ---
 
@@ -33,7 +33,7 @@ Do not trigger for:
 
 ## Required professional sequence
 
-`FRAME -> LOCK HARD CONSTRAINTS -> GENERATION MODE -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> DIVERGENCE GATE -> EVALUATION MODE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE -> MAGNETISM/BLANDNESS -> NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE -> CONSISTENCY -> DECISION-ECONOMY -> COMPARE -> VERSION/REGIME CHECK -> HANDOFF`
+`FRAME -> LOCK HARD CONSTRAINTS -> GENERATION MODE -> DIVERGE -> COUNTER-TERRITORY CHECK -> GENERATE -> SEMANTIC-STANCE DIVERSITY GATE -> DIVERGENCE GATE -> EVALUATION MODE -> SCREEN -> FIRST-READ + ORAL/TYPED TEST -> NATURALNESS/CONTRIVANCE -> MAGNETISM/BLANDNESS -> NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE -> IDENTITY CAPTURE -> CONSISTENCY -> DECISION-ECONOMY -> COMPARE -> VERSION/REGIME CHECK -> HANDOFF`
 
 ## Runtime invariants
 
@@ -58,6 +58,11 @@ Do not trigger for:
 - In open personal-brand work, name-led, person-alias and concept-led modes begin as peer territories.
 - Do not use the person's literal name as the default/safe baseline.
 - If the pool collapses to safe/name-led variants before a viable non-name-led territory is evaluated, return to divergence instead of ranking.
+- Lexical variety is not enough: inspect semantic/psychological stance before leaving generation.
+- If one stance dominates (for example serial negation/absence, serial aspiration, serial incompleteness), generate a materially different counter-territory.
+- Do not impose positivity; negative/provocative naming remains valid.
+- In evaluation, test Identity Capture: can the candidate become a durable source/person identifier rather than mainly a caption/status/temporary mood?
+- Keep Identity Capture separate from legal protectability.
 - Stop exploring when additional search has low plausible decision value.
 - Never present guessed availability as checked.
 - Never call preliminary search legal clearance.

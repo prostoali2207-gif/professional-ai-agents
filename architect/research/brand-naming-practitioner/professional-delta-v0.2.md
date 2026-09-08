@@ -343,3 +343,71 @@ When the brief is open:
 - at least one materially viable non-name-led territory must survive long enough to be evaluated unless a hard brief constraint rules it out.
 
 This is not a quota requiring equal finalist counts. It is an anti-bias guard against premature name-led convergence.
+
+
+### D15 — BN-29: Semantic stance diversity
+
+Type: CORE creative-divergence competence.
+
+Observable capability:
+- recognizes when a pool is lexically varied but semantically/psychologically repetitive;
+- inspects candidate territories not only by metaphor or construction, but also by stance/attitude toward the world/self;
+- creates counter-territories when one stance dominates.
+
+Possible stance families include, depending on the brief:
+- affirmative / active / declarative;
+- negative / rejecting / withholding;
+- observational / factual;
+- relational / social;
+- process / transition / unfinished state;
+- object / metaphor / symbol;
+- invented / sound-first / non-semantic;
+- playful / irreverent;
+- calm / grounded;
+- confrontational / defiant.
+
+This list is illustrative, not a quota or taxonomy that must always be filled.
+
+Decision rule:
+- if most serious working ideas rely on the same semantic stance, the divergence gate remains open;
+- generate at least one materially different counter-territory before evaluation;
+- do not treat “negative” as bad or “positive” as good. The goal is **stance diversity**, not positivity.
+
+Failure modes:
+- many names with different words but the same psychological move;
+- serial use of negation/absence/incompleteness;
+- serial use of upbeat aspiration;
+- mistaking lexical diversity for conceptual diversity.
+
+### D16 — BN-30: Identity Capture / Source-Identity Potential
+
+Type: CORE selection judgment; soft positive criterion.
+
+Observable capability:
+- evaluates whether a candidate can plausibly become a durable identifier attached to one person/source;
+- distinguishes a strong identity candidate from a phrase that behaves mainly like a caption, status, episode title or transient mood;
+- does not confuse this with trademark protectability or exact-string uniqueness.
+
+Diagnostic questions:
+- If encountered repeatedly, can people naturally use this as **the source/person identifier**, not merely understand the sentence?
+- Does it create enough distinctiveness, memorability or semantic shape to accumulate association around one source?
+- If the exact phrase were assigned to another comparable specialist, would it still feel almost fully interchangeable?
+- Does it survive outside the context of one post, joke or current project?
+- Does it still have identity force when the explanatory rationale is removed?
+
+Classify:
+- STRONG — high source-identification potential;
+- MODERATE — can work, but association must do more of the lifting;
+- WEAK — primarily reads as generic phrase/status/caption;
+- UNVERIFIED — insufficient context/evidence.
+
+Important:
+- common dictionary words can score STRONG;
+- coined or weird names can score WEAK;
+- legal ownability/protectability remains BN-10/legal territory;
+- Identity Capture is about **brand/source attribution potential**, not a legal claim.
+
+Evidence basis:
+- Catchword distinguishes magnetism, distinctiveness, brand fit, euphony and protectability as separate criteria;
+- current Catchword guidance emphasizes engaging/memorable, distinctive/provocative and authentically expressive names;
+- NameStormers warns that consensus/research can converge on least-offensive descriptive “yawners,” and recommends free ideation before screening.

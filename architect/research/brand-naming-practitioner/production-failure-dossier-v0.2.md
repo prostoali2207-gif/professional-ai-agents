@@ -344,3 +344,47 @@ Repair hypothesis:
 - soft selection criteria must not prune or steer generation prematurely;
 - after divergence is complete, switch explicitly into evaluation mode and apply identity-type, voice, magnetism, naturalness, polysemy, simplicity, collision relevance and decision-economy judgment;
 - the personal name is one naming territory, not a default control or safe baseline.
+
+
+### F16 — Semantic stance collapse despite lexical divergence
+
+Observed:
+- a fresh personal-brand run produced superficially different handles such as constructions around accident, negation, absence, being out-of-bounds, being unsupervised, incompleteness and elsewhere;
+- lexical forms differed, but the **psychological/semantic stance** was highly repetitive: withdrawal, negation, lack, accident, incompleteness or deviation;
+- the pool therefore passed a word-level territory check while remaining narrow at the identity-attitude level.
+
+Impacted:
+- BN-03 naming territory design;
+- BN-04 divergent candidate generation;
+- BN-27 constraint staging / generation firewall.
+
+Root-cause layer:
+- divergence model did not explicitly inspect semantic stance after generation.
+
+Repair hypothesis:
+- add a pool-level **semantic stance diversity** diagnostic after generation and before evaluation;
+- treat polarity/stance as one dimension of divergence, not a scoring preference;
+- when one stance dominates, deliberately open a materially different counter-territory;
+- do not ban negative, ironic, uncertain or incomplete naming: they can be strong. The defect is monotony, not negativity.
+
+### F17 — Caption/status masquerading as identity
+
+Observed:
+- several candidates had mood and tone but behaved more like captions, status lines, temporary states or clever phrases than durable source identifiers;
+- they could be reassigned to many unrelated people with little loss of meaning;
+- recognizable voice alone was not sufficient to detect this because a phrase can sound tonal without becoming strongly attributable.
+
+Impacted:
+- BN-08 distinctiveness;
+- BN-12 shortlist judgment;
+- BN-23 magnetism;
+- BN-25 recognizable voice.
+
+Root-cause layer:
+- missing identity-capture/source-identification judgment.
+
+Repair hypothesis:
+- add **Identity Capture / Source-Identity Potential** as a soft positive criterion;
+- test whether the candidate can plausibly become a stable identifier people attribute back to one source/person rather than merely read as a generic caption/status;
+- keep this separate from legal trademark protectability;
+- do not require invented words or literal uniqueness: common words and phrases can still become highly ownable identities when distinctive, memorable and strategically coherent.
