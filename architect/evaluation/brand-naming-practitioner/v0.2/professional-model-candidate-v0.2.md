@@ -3,7 +3,7 @@
 Status: CANDIDATE / NOT QUALIFIED
 Issue: #282
 Date: 2026-09-05
-Revision: 0.2.4-candidate
+Revision: 0.2.5-candidate
 Parent: v0.1.0-candidate — frozen / terminal NOT_EXECUTABLE; not mutated by this revision
 
 ## Mission
@@ -79,6 +79,10 @@ A qualified Social Content Creative core may be used as an **optional creative c
 44. **Open personal-brand modes start as peers.** Name-led, person-alias and concept-led territories receive no default preference in an open brief.
 45. **The personal name is not a safe baseline.** It may win, but only after a current-regime comparison with materially viable non-name-led work.
 46. **Selection begins after real divergence.** Do not start pruning for taste/fit until materially different territories and a broad working pool exist.
+47. **Lexical diversity is not stance diversity.** Different words can still repeat the same psychological move; inspect whether the pool is dominated by negation, aspiration, incompleteness, rebellion, technicality or another stance.
+48. **Do not optimize for positivity.** Negative, ironic, incomplete or provocative names may be excellent. The requirement is range of stance, not positive sentiment.
+49. **A strong phrase is not automatically a strong identity.** Evaluate whether the candidate can accumulate source/person association rather than behaving mainly as a caption, status or temporary mood.
+50. **Identity Capture is separate from protectability.** Source-identification potential is a branding judgment; legal ownability remains a separate screening/legal question.
 
 ## Constraint staging
 
@@ -224,7 +228,20 @@ Do not perform exhaustive collision research on every raw idea before useful div
 
 Do not present the raw pool by default.
 
-### 7. EXIT GENERATION MODE / DIVERGENCE GATE
+### 7. SEMANTIC STANCE DIVERSITY GATE
+
+Before leaving GENERATION MODE, inspect the working pool at a **stance/attitude** level.
+
+Ask:
+- Are different words repeating the same psychological move?
+- Is the pool dominated by negation/absence, aspiration, incompleteness, irony, technicality, rebellion, calm observation or another stance?
+- Has at least one materially different counter-stance been explored?
+
+If one stance dominates, return to DIVERGE and create a materially different counter-territory.
+
+Do **not** force positive sentiment, equal quotas or a fixed taxonomy. The gate exists to prevent semantic monoculture.
+
+### 8. EXIT GENERATION MODE / DIVERGENCE GATE
 
 Do not begin soft evaluation until:
 - materially different territories exist;
@@ -233,11 +250,11 @@ Do not begin soft evaluation until:
 
 If this gate fails, return to DIVERGE/GENERATE rather than ranking safe candidates.
 
-### 8. ENTER EVALUATION MODE
+### 9. ENTER EVALUATION MODE
 
 Now activate the soft selection criteria and screening logic below.
 
-### 9. SCREEN
+### 10. SCREEN
 
 For serious candidates perform context-relevant checks.
 
@@ -266,7 +283,7 @@ Check:
 - slang/phonetic overlap;
 - cross-language risk within available competence.
 
-### 10. FIRST-READ + ORAL/TYPED TEST
+### 11. FIRST-READ + ORAL/TYPED TEST
 
 For each serious finalist:
 
@@ -297,7 +314,7 @@ State the likely first interpretation and meaningful alternate interpretations.
 
 A finalist may remain viable with ambiguity, but a material unrecorded transcription/first-read defect blocks first-place recommendation.
 
-### 11. NATURALNESS / CONTRIVANCE CRITIQUE
+### 12. NATURALNESS / CONTRIVANCE CRITIQUE
 
 For serious finalists ask:
 
@@ -312,7 +329,7 @@ Classify weaknesses:
 
 Do not turn this into a ban on experimentation.
 
-### 12. MAGNETISM / BLANDNESS CHECK
+### 13. MAGNETISM / BLANDNESS CHECK
 
 For serious finalists classify the candidate as:
 - BLAND: correct/natural but low in character, recall or identity signal;
@@ -323,7 +340,7 @@ Judge using immediate memorability, tonal/personality signal, rhythm/sound, evoc
 
 A merely clean candidate should not win by default over a more resonant viable candidate.
 
-### 13. NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK
+### 14. NO-UNEARNED-CLAIM + RECOGNIZABLE-VOICE CHECK
 
 For serious personal-brand finalists evaluate two independent dimensions.
 
@@ -365,7 +382,26 @@ Result:
 
 If the project lacks reliable first-party voice/personality evidence, mark `UNVERIFIED`; do not invent a persona.
 
-### 14. CONSISTENCY CHECK
+### 15. IDENTITY CAPTURE / SOURCE-IDENTITY POTENTIAL
+
+For serious personal-brand finalists, evaluate whether the candidate can plausibly become a durable identifier attached to one source/person.
+
+Ask:
+- Does this work mainly as a caption/status/episode title, or can it naturally function as **the name/handle people attribute back to one source**?
+- If encountered repeatedly, does it have enough distinctiveness, memorability or semantic shape to accumulate association?
+- Would assigning the exact same mechanism to another comparable specialist leave almost everything unchanged?
+- Does it survive outside one joke, post, project phase or temporary mood?
+- Does it retain identity force when the rationale is removed?
+
+Classify:
+`STRONG | MODERATE | WEAK | UNVERIFIED`
+
+Important:
+- common dictionary words may score STRONG;
+- invented names may score WEAK;
+- this is not a legal trademark/protectability conclusion.
+
+### 16. CONSISTENCY CHECK
 
 Before final ranking:
 - list the main rule used to advance/penalize each finalist;
@@ -375,7 +411,7 @@ Before final ranking:
 
 Correct inconsistent scoring/rationale before handoff.
 
-### 15. DECISION-ECONOMY CHECK
+### 17. DECISION-ECONOMY CHECK
 
 Before final comparison:
 - remove caveats that do not alter the decision or required verification;
@@ -386,7 +422,7 @@ Before final comparison:
 
 A concise rationale may be a sign of a well-resolved decision, not shallow work.
 
-### 16. COMPARE
+### 18. COMPARE
 
 Compare finalists criterion-by-criterion.
 
@@ -398,7 +434,7 @@ A recommendation should explain:
 - why those weaknesses are tolerable relative to alternatives;
 - which evidence is live vs unresolved.
 
-### 17. VERSION / REGIME CHECK
+### 19. VERSION / REGIME CHECK
 
 Before using prior shortlist/rejection history:
 - record the current candidate-model version;
@@ -409,7 +445,7 @@ Before using prior shortlist/rejection history:
 
 Do not compare rankings across materially different criteria regimes as if they were one continuous score table.
 
-### 18. HANDOFF
+### 20. HANDOFF
 
 Return:
 - decision state;
@@ -444,6 +480,7 @@ COUNTER-TERRITORY CHECK
 GENERATION FIREWALL
 - hard constraints active:
 - soft criteria withheld:
+- semantic stance diversity result:
 - divergence gate result:
 
 FINALISTS
@@ -455,6 +492,8 @@ FINALISTS
    magnetism_blandness:
    no_unearned_claim:
    recognizable_voice:
+   identity_capture:
+   semantic_stance:
    oral_to_typed_risk:
    lowercase_segmentation:
    polysemy:
