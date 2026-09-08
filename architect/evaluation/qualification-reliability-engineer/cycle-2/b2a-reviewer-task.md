@@ -1,13 +1,13 @@
 # B2a blind reviewer task — QRE cycle 2
 
-Status: **NOT YET AUTHORIZED UNTIL CYCLE-2 DESIGN GATE IS MERGED AND RECORDED**.
+Status: **AUTHORIZED by `b2a-authorization.md` after merged zero-provider design gate.**
 
 When authorized, work only from these local files in this directory:
-1. `blind-bundle-v0.2.json`
-2. `blind-judgment-template-v0.2.json`
-3. `validate_blind_judgments.py`
-4. `seal_blind_checkpoint.py`
-5. this task
+1. `b2a-authorization.md`\n2. `blind-bundle-v0.2.json`
+3. `blind-judgment-template-v0.2.json`
+4. `validate_blind_judgments.py`
+5. `seal_blind_checkpoint.py`
+6. this task
 
 Do **not** read issue comments, `stage-b/calibration-reference-v0.1.md`, candidate files, old B2 records, or other calibration author fields. Do not use GitHub API/tools to discover instructions or data.
 
