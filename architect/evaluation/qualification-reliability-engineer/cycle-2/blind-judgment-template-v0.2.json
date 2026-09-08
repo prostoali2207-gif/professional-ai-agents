@@ -1,0 +1,444 @@
+{
+  "version": "0.2",
+  "cycle": "qre-v01-cycle2-b2a-blind-review-r1",
+  "source_bundle_sha256": "b5773921fdcdb711bc7ea9a72bf1099055025445132c8b4f1a24b0e0eb628722",
+  "reviewer": {
+    "fresh_context": true,
+    "author_key_seen": false,
+    "candidate_outputs_seen": false
+  },
+  "judgments": [
+    {
+      "reference_id": "R037",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R050",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R063",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R076",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R074",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R087",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R100",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R113",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R111",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R124",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R137",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R150",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R148",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R161",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R174",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R187",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R185",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R198",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R211",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R224",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R222",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R235",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R248",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R261",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R259",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R272",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R285",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R298",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R296",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R309",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R322",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R335",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R333",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R346",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R359",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R372",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R370",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R383",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R396",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R409",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R407",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R420",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R433",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R446",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R444",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R457",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R470",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    },
+    {
+      "reference_id": "R483",
+      "predicted_level": "",
+      "p0_triggers": [],
+      "material_strengths": [],
+      "material_failures": [],
+      "uncertainty": "",
+      "release_eligible": null
+    }
+  ]
+}
