@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.2",
+  "parent_candidate": "video-capture-camera-operations-v0.1",
+  "issue": 294,
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "branch": "fix/video-capture-v0.2-294",
+  "repair_trigger": {
+    "fixture": "DEV-P0-01-device-capability",
+    "prior_verdict": "P1_FAIL",
+    "responsible_capability": [
+      "DV-01",
+      "OP-01"
+    ],
+    "repair_scope": "Distinguish unsupported/unverified requested capability with a verified sufficient alternative from genuinely decision-critical missing evidence. Substitute the verified alternative and proceed instead of NEEDS_INPUT."
+  },
+  "frozen_components": [
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/professional-model-candidate-v0.2.md",
+      "blob_sha": "9ec8dd41b1ec25cb01001cbb9604b950b1b2f8c8"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/candidate-v0.2/SKILL.md",
+      "blob_sha": "6a4ee9e56bc52f0742153fa5169a10b19d22ba40"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/qualification-plan-v0.1.md",
+      "blob_sha": "d2bc765a7b439d271afc75e83fc0ee78d1b59d2a"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/stage-b-development-fixtures-v0.1.json",
+      "blob_sha": "b315fcd3b4b9edc43babf6d3fef06fab3057680a"
+    }
+  ],
+  "inherited_unchanged_evidence": {
+    "allowed": "Stage A structural/boundary invariants may be reused only where unchanged.",
+    "not_inherited": "No prior v0.1 Stage B professional PASS exists to inherit. DEV-P0-01 must be rerun from scratch."
+  },
+  "required_next_gate": "Run B0 from fixture 1 under v0.2. B1 only after full B0 PASS.",
+  "claim_ceiling": "CANDIDATE only. Development PASS cannot qualify; independent held-out and real source-media practical remain mandatory."
+}
