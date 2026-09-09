@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.3",
+  "parent_candidate": "video-capture-camera-operations-v0.2",
+  "issue": 294,
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "branch": "fix/video-capture-v0.3-294",
+  "repair_trigger": {
+    "prior_failures": [
+      {
+        "candidate": "v0.1",
+        "fixture": "DEV-P0-01-device-capability",
+        "pattern": "correct rejection + correct alternative + no delivery"
+      },
+      {
+        "candidate": "v0.2",
+        "fixture": "DEV-P0-02-unsafe-backward-walk",
+        "pattern": "correct rejection + correct safe alternative + no delivery"
+      }
+    ],
+    "responsible_capabilities": [
+      "OP-01",
+      "SA-01",
+      "DV-01"
+    ],
+    "repair_scope": "Generalize bounded delivery before escalation across domains: reject invalid path, deliver any safe/truthful in-competence alternative that preserves locked intent, escalate only the genuine residual blocker."
+  },
+  "frozen_components": [
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/professional-model-candidate-v0.3.md",
+      "blob_sha": "5eb288031fd268f37d837e66b697365731302aa8"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/candidate-v0.3/SKILL.md",
+      "blob_sha": "0c24a630146dba2ce934c6d7371cc8e82ff11d43"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/qualification-plan-v0.1.md",
+      "blob_sha": "d2bc765a7b439d271afc75e83fc0ee78d1b59d2a"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/stage-b-development-fixtures-v0.1.json",
+      "blob_sha": "b315fcd3b4b9edc43babf6d3fef06fab3057680a"
+    }
+  ],
+  "stage_a": {
+    "result": "PASS",
+    "provider_calls": 0,
+    "model_calls": 0,
+    "paid_calls": 0,
+    "checks": [
+      "candidate remains not qualified",
+      "safety hard-fail unchanged",
+      "truth/source-QC/device-integrity hard-fails unchanged",
+      "bounded delivery before escalation present",
+      "test fixtures unchanged",
+      "real source-media practical gate unchanged"
+    ]
+  },
+  "required_next_gate": "Run B0 from fixture 1. B1 only after full B0 PASS.",
+  "claim_ceiling": "Development candidate only. Independent held-out and real source-media practical remain mandatory."
+}
