@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.3",
+  "suite": "video-capture-camera-operations-stage-b-dev-v0.1",
+  "phase": "B1",
+  "status": "REVISE",
+  "candidate_model": "sonnet",
+  "judge_model": "opus",
+  "provider": "claude-code-subscription",
+  "api_keys_bound": false,
+  "candidate_calls": 8,
+  "judge_calls": 8,
+  "retries": 0,
+  "results": [
+    {
+      "id": "DEV-P1-01-perspective",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three expected observables are materially satisfied. (1) Perspective diagnosis: the response attributes the distortion to camera position — proximity and low bumper-height placement — not to lens choice alone; it explicitly instructs maximizing camera-to-subject distance along the bay diagonal, raising to mid-vehicle/chest height, and warns that switching to ultra-wide while stepping closer defeats the purpose ('do not step closer to compensate'). It also names the correct QC signature (edge stretching/warping of wheels and body). (2) Feasible FOV trade-off: main lens first at maximum distance, ultra-wide only as a fallback from the same standing position, and a two-shot 3/4 split-coverage fallback if proportions still fail — a realistic escalation given a tight bay. (3) Concrete operator guidance: numbered, executable steps covering standing spot, phone height, lens order, 3/4 orientation, hold duration, and a playback check with a defined remedy. Boundary discipline is sound: it states no source media exists rather than fabricating reshoot notes, and correctly declines to treat unknown bay dimensions as blocking since the plan is expressed as an adaptive rule. No hard-fail items are listed for this fixture and none are triggered; no invented device capabilities, no unsupported claims about captured footage, and no jargon padding substituting for actionable instruction."
+      }
+    },
+    {
+      "id": "DEV-P1-02-dynamic-range",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three expected observables are materially satisfied. The response explicitly identifies the exterior-to-interior dynamic-range transition and names the specific failure mode of a single auto-exposure pass (one side clips; auto-exposure hunting produces a visible pump). It correctly treats the cabin as the proof subject and prioritizes interior readability, explicitly accepting a blown-out exterior background as the cost. Remedies offered are capture-side and physical — split into separately-exposed exterior and interior shots, locked/manual exposure biased to the cabin, supplemental interior light to close the ratio, HDR only if verified — with no promise of post recovery or grading rescue. No hard-fails are listed for this fixture and none are triggered. The response is gated as NEEDS_INPUT and asks for device, continuity requirement, and light ratio before issuing a final operator plan, which withholds a single step-by-step executable sequence; this is a weakness in operator executability, since the core remedy (split at the threshold or lock exposure for the cabin) is largely device-agnostic and could have been issued under stated assumptions. However, the substantive craft guidance is delivered conditionally rather than withheld, the requested inputs are genuinely decision-relevant (exposure-lock/HDR availability, whether a continuous take is mandatory), and no observable is materially unmet, so this does not rise to a P1 failure."
+      }
+    },
+    {
+      "id": "DEV-P1-03-focus-hunt",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three expected observables are materially satisfied. The response classifies the observed focus hunting as a source defect with explicit material severity and a RESHOOT decision (SOURCE QC block), rather than passing the clip to post or inventing a post-production fix. It defines a concrete focus target and strategy — acquire and lock focus on the control before recording, keep hand and control in a similar depth plane, avoid ultra-wide close framing, static hold, even lighting — plus a realistic fallback (increase distance for deeper DOF, or split into two shots) if lock proves unreliable. Verification of the corrected take is explicitly required both in the plan QC line and operator step 9 (play back and confirm focus held across the full take before moving on). Device capability is honestly marked UNVERIFIED with focus-lock control names flagged as assumed, which preserves truth and boundary discipline instead of asserting unconfirmed device behavior. The fixture lists no hard-fail conditions and none are triggered.\"}"
+      }
+    },
+    {
+      "id": "DEV-P1-04-movement",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three expected observables are materially satisfied. Pace is explicitly tied to the inspection/comprehension job: the response rejects the fast continuous orbit on the grounds that motion blur and lack of dwell time prevent the viewer from reading exterior condition, not on stylistic grounds. Movement is segmented into discrete panel/face legs with slow, even, constant-distance travel between them, and holds are defined concretely (~2-3 sec / 'one-two-three' count) at the start, at each segment boundary, and at the end, with an extra hold when damage is found. No motion is prescribed for production value; the only movement specified is the walkaround itself, which is the approved intent, and the close-up cutaway is explicitly static. Capability claims are honest — device is marked UNVERIFIED with a stated rationale that no exotic mode is needed — and no media is fabricated: reshoot ranking and post handoff are correctly withheld as 'no source observed yet.' Fixture lists no hard fails and none are triggered. Sole defect is a stray non-English character in the audio line ('optional/未 not requested'), which is cosmetic and does not affect operator executability."
+      }
+    },
+    {
+      "id": "DEV-P1-05-audio",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three required observables are materially satisfied. Sync audio is locked as an explicit source requirement in the intent block ('intelligible presenter speech, synced to picture'), not treated as an afterthought or a post-production fix. A concrete short test is specified (10-second test clip, full sentence at normal volume, immediate listen-back through headphones for wind rumble, traffic hiss, HVAC hum, and clipping) alongside practical, executable mitigations tied to the stated environment: orient so wind hits the presenter's back or side, shorten mic-to-mouth distance via tighter framing, shift the walkaround path away from the traffic-facing edge, and use a wall break or alcove for shelter. Fallback is bounded rather than open-ended: reposition once, verify (not assume) a built-in wind-reduction toggle on-device, re-test, then route to ESCALATE_SOUND for an external lav/shotgun rather than repeating phone-only attempts. Evidence integrity holds — no media is claimed as observed, SOURCE QC is marked NO, reshoot priority and post handoff are correctly omitted as not applicable, and the unsupplied phone model is flagged UNVERIFIED with a stated rationale for non-materiality. Boundary discipline is intact: the plan is delivered in full with the equipment dependency named as residual and explicitly non-blocking. The hard-fail list is empty and nothing in the response approaches it."
+      }
+    },
+    {
+      "id": "DEV-P1-06-coverage",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response correctly identifies the coverage gap as a coverage problem rather than a defect: the single 60s continuous walkaround supplies exterior only, with no cabin shot and no proof-detail shot anywhere in the captured material. It keeps the usable exterior take and requests exactly the two missing source shots required by the locked intent (cabin/interior, one proof detail) — no scope inflation, no extra coverage beyond what makes the 30-second edit assemblable. Operator instructions are concrete and executable in-field (position, distance, physical approach instead of digital zoom, angle changes to kill glare, immediate playback check). It does not defer the gap to Post-Production: the handoff explicitly states the sequence cannot be completed until reshoot delivers both shots, and no cropping/reframing/synthesis workaround is proposed. Capability claims are appropriately marked UNVERIFIED where the device was not supplied, and the open question of continued vehicle/location access is flagged as unresolved rather than assumed. Leaving the specific proof point generic is correct, since the fixture does not specify it. No hard-fail items are listed and none are triggered."
+      }
+    },
+    {
+      "id": "DEV-P1-07-coaching",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "Both expected observables are satisfied. The response translates the two jargon terms into concrete physical instruction rather than explaining theory: 'push-in' becomes 'walk straight forward toward the subject, only your feet move, one step per two seconds', and 'parallax' becomes 'keep something in frame that is closer to you than the subject' with a playback check that the near object slides past faster. It supplies the full physical spec set — start/end position and offset for the three-quarter angle, chest/eye height, default main lens with no digital zoom, straight forward path, slow even pace, wide-to-tight start/end with 1s and 2s holds — plus concrete QC cues (foreground slides faster; subject stays in focus at the three-quarter angle) and a stated fallback if no foreground object exists, which is honestly flagged as a limitation rather than passed off as the requested effect. Theory is minimized to one clarifying sentence ('there's no separate technique to learn'), and the approved intent — slow front three-quarter reveal — is preserved without scope drift. Capability claims are appropriately bounded: device is marked UNVERIFIED and the response correctly reasons that the move needs only basic record-and-walk, so no device-specific claim is made and no unverified footage is asserted (SOURCE QC media observed: NO). No hard fails are listed for this fixture and none of the general integrity concerns are triggered. Minor structural overhead exists but does not materially affect operator executability."
+      }
+    },
+    {
+      "id": "DEV-P1-08-boundary",
+      "severity": "P1",
+      "decision": "P1_FAIL",
+      "judgment": {
+        "decision": "P1_FAIL",
+        "failed_observables": [
+          "Still provides capture execution inside the approved intent."
+        ],
+        "triggered_hard_fails": [],
+        "brief_rationale": "Boundary discipline is handled correctly: the response preserves the locked hook/CTA verbatim, explicitly declines the 'more viral' rewrite and routes it to the script/creative owner, and routes the final Reel edit to Post-Production. However, it delivers zero capture work. It returns NEEDS_INPUT with 'CAPTURE PLAN: Not producible yet' and 'OPERATOR INSTRUCTIONS: Not issued', gating everything on device/location/operator facts that were never required to begin useful in-scope execution. The approved intent (capturing the already-locked hook and CTA for a vertical Reel) supports concrete, actionable capture guidance now — vertical framing and headroom for the delivery, safe-zone allowance for Reels UI overlays, audio capture approach and room/mic checks, delivery pacing and take strategy for the exact locked lines, coverage/safety takes, and a QC checklist — with device-specific settings flagged as the one open variable. Correctly refusing the two out-of-scope asks does not license withholding the in-scope deliverable; the response converts a boundary case into a full stop, materially failing the third observable. No hard-fail items are listed or triggered, so this is P1, not P0."
+      }
+    }
+  ],
+  "qualification_claim": false
+}
