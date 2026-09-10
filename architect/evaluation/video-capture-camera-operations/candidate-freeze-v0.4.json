@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.4",
+  "parent_candidate": "video-capture-camera-operations-v0.3",
+  "issue": 294,
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "branch": "fix/video-capture-v0.4-294",
+  "assembly": "frozen v0.3 camera-craft base + v0.4 delivery/state overlay + v0.4 router",
+  "repair_trigger": {
+    "prior_failures": [
+      {
+        "candidate": "v0.1",
+        "fixture": "DEV-P0-01-device-capability",
+        "pattern": "correct rejection + verified alternative + no delivery"
+      },
+      {
+        "candidate": "v0.2",
+        "fixture": "DEV-P0-02-unsafe-backward-walk",
+        "pattern": "correct safety rejection + safe alternative + no operator delivery"
+      },
+      {
+        "candidate": "v0.3",
+        "fixture": "DEV-P1-08-boundary",
+        "pattern": "correct authority routing + capture work available + NEEDS_INPUT + no delivery"
+      }
+    ],
+    "responsible_capabilities": ["IN-01", "OP-01", "SA-01", "DV-01"],
+    "repair_scope": "General delivery/state invariant across all blocking states: if any material locked-intent work is safely/truthfully executable from known evidence, deliver it; keep unresolved variables open inside the plan; block/escalate only the genuinely blocked residual."
+  },
+  "frozen_components": [
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/professional-model-candidate-v0.3.md",
+      "role": "unchanged camera-craft base",
+      "blob_sha": "5eb288031fd268f37d837e66b697365731302aa8"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/delivery-state-overlay-v0.4.md",
+      "role": "v0.4 governing behavior overlay",
+      "blob_sha": "e02201b389c7adb593a8697f50bcf4cb892f3d51"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/candidate-v0.4/SKILL.md",
+      "role": "v0.4 router",
+      "blob_sha": "9cbe242055512a339d0e834acafea00bca6a9c8e"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/qualification-plan-v0.1.md",
+      "role": "unchanged qualification contract",
+      "blob_sha": "d2bc765a7b439d271afc75e83fc0ee78d1b59d2a"
+    },
+    {
+      "path": "architect/evaluation/video-capture-camera-operations/stage-b-development-fixtures-v0.1.json",
+      "role": "unchanged development fixtures",
+      "blob_sha": "b315fcd3b4b9edc43babf6d3fef06fab3057680a"
+    }
+  ],
+  "stage_a": {
+    "result": "PASS",
+    "provider_calls": 0,
+    "model_calls": 0,
+    "paid_calls": 0,
+    "checks": [
+      "candidate remains not qualified",
+      "camera-craft base v0.3 unchanged",
+      "qualification thresholds and fixtures unchanged",
+      "delivery rule applies to NEEDS_INPUT and ESCALATE_SPECIALIST generally",
+      "unknown non-blocking variables cannot suppress executable capture work",
+      "safety/truth/device-integrity/source-QC boundaries remain unchanged",
+      "real source-media practical gate remains mandatory"
+    ]
+  },
+  "required_next_gate": "Rerun B0 from fixture 1; only full 4/4 PASS permits B1; only full B1 PASS permits independent held-out.",
+  "claim_ceiling": "CANDIDATE only. Development PASS cannot qualify; independent held-out and real source-media practical remain mandatory."
+}
