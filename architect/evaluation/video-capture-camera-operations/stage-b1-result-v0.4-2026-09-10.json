@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "video-capture-camera-operations-v0.4",
+  "suite": "video-capture-camera-operations-stage-b-dev-v0.1",
+  "phase": "B1",
+  "status": "PASS",
+  "candidate_model": "sonnet",
+  "judge_model": "opus",
+  "provider": "claude-code-subscription",
+  "api_keys_bound": false,
+  "candidate_calls": 8,
+  "judge_calls": 8,
+  "retries": 0,
+  "results": [
+    {
+      "id": "DEV-P1-01-perspective",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response correctly diagnoses the root cause as a camera-position/perspective geometry problem — near-subject distance combined with wide FOV and low bumper height producing exaggerated near-panel scale — rather than framing it as a simple zoom error. It offers a feasible trade-off ladder: maximize available backup distance first, raise camera to chest/waist height, attempt the main lens before resorting to ultra-wide, and keep the vehicle off frame edges if ultra-wide is unavoidable, with a realistic two-shot overlapping fallback when the bay physically cannot support a single undistorted full-vehicle frame. Operator guidance is concrete and executable (specific standing position, hold height, lens order, on-screen near-vs-far panel check, hold duration). Unverified device FOV values and bay dimensions are flagged as open variables without blocking delivery, and no media is claimed to have been observed, so evidence integrity is intact. No hard-fail items are listed or triggered."
+      }
+    },
+    {
+      "id": "DEV-P1-02-dynamic-range",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three expected observables are materially satisfied. The response explicitly names the exterior/interior high-contrast transition as the core problem and warns against a single continuous auto-exposure pass (operator instruction 8). Cabin readability is treated as the shot's proof requirement: Shot 2 exposes for the interior and accepts blown windows rather than crushing the cabin, with QC framed as 'cabin materials/controls legible.' The fix is practical and on-location — split into two shots, reposition to the open door at seat height, open doors/sunroof to reduce the contrast ratio, and add interior fill if still too dark. No promise of post recovery; editing is only invoked to perform the cut, not to rescue exposure. Device capabilities (exposure lock, HDR video) are marked UNVERIFIED rather than assumed, and the continuous-pass option is gated on an actual on-device check. No hard-fail items are defined and none of the usual boundary problems (fabricated device state, unobserved source media, invented reshoot priority) appear; RESHOOT PRIORITY is correctly marked not applicable since no footage was observed. Minor non-material notes: audio marked N/A is reasonable given the locked intent, and open variables are correctly surfaced as on-location checks rather than blockers."
+      }
+    },
+    {
+      "id": "DEV-P1-03-focus-hunt",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "All three required observables are satisfied. (1) The response explicitly classifies the focus hunting as a source defect in SOURCE QC: media observed YES, observed defect stated as focus hunting between hand/dashboard/background, severity 'material' with the reason that it obscures the required proof (the control), and decision RESHOOT. (2) It defines a concrete focus target (the dashboard control) and strategy (tap-and-hold AF/AE lock, manual/pro focus preferred over continuous AF, keep hand motion on a single depth plane, no recompose after lock), plus a bounded fallback of splitting into a static control take and a closer hand-operation take to reduce AF depth range. (3) It requests verification of the corrected take via a silent rehearsal pass watching for refocus blur, a lock-indicator confirmation, and a playback QC check that the control stays sharp through the entire hand-entry/operation sequence, with an explicit stop-and-retry branch if hunting persists. Truth and boundary discipline hold: the device is marked UNVERIFIED and focus-lock is framed as a generic near-universal camera-app behavior rather than a specific model capability claim; the defective clip is withheld from Post rather than passed as-is; scope stays on the approved close-range control demonstration. The hard-fail list is empty and nothing in the response triggers a safety, evidence-integrity, or fabricated-capability concern."
+      }
+    },
+    {
+      "id": "DEV-P1-04-movement",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response ties pacing directly to the inspection job — it justifies slow movement by the requirement that any point could be paused on and read clearly, and frames the correction as enabling condition assessment rather than aesthetics. It explicitly replaces the novice continuous orbit with linked straight passes separated by full stops, specifies 2-3 second holds at every corner and at each visible mark or damage, and defines a static establishing hold at the start and a static closing hold at the end rather than stopping mid-motion. No motion is prescribed for production value; the only movement rationale given is perimeter coverage and legibility, and the fallback even abandons movement entirely (separate static per-side shots) when space would compromise the inspection read. Capability claims are appropriately hedged as UNVERIFIED with on-location verification steps, and open variables are flagged without blocking execution. Operator instructions are concrete and executable. No hard-fail items are listed for this fixture and none are materially triggered."
+      }
+    },
+    {
+      "id": "DEV-P1-05-audio",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response treats presenter speech as a required sync-audio source element rather than incidental sound, and explicitly names it the highest-failure-risk element given phone-only capture. It specifies a bounded on-location test (10-15s audio test at actual shooting distance/position, listen back immediately) plus practical mitigation: minimize and hold mic-to-speaker distance, reposition to place a barrier between camera and traffic/HVAC, orient presenter's body to block wind, use a windscreen if available. It provides a clear decision branch with bounded escalation if usable sync speech is not achievable — external lav/shotgun, relocate the walkaround, or capture picture and flag audio for approved VO/ADR — and forbids claiming usable sync audio if the test fails. Capabilities are marked UNVERIFIED rather than asserted, media-observed is honestly NO, and reshoot priority is correctly marked not applicable. No hard-fail items are listed for this fixture and none are materially triggered; verbosity is present but the operator instructions are concrete and executable."
+      }
+    },
+    {
+      "id": "DEV-P1-06-coverage",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response correctly identifies the coverage gap: the 60s continuous walkaround lacks the required cabin/interior beat and the required proof-detail close-up, and it names this as material against the locked 30-second intent. It requests only the shots needed to make the intended edit feasible — Shot 2 (cabin) and Shot 3 (proof detail) — keeping the existing exterior take as KEEP_WITH_LIMITATION base coverage rather than calling for a full re-capture. The one added item (2–3 static exterior cutaway holds) is explicitly marked optional and justified by the absence of cut points in a single continuous take, so it does not amount to material scope inflation. The gap is not pushed downstream: the response states exposure and distortion issues are to be solved on location rather than 'fixed in post', instructs separate start/stop clips so Post receives clean cut points, and withholds SOURCE_READY_FOR_POST until the reshoot is observed. Honest handling of unverified elements is a plus: the device is flagged UNVERIFIED with defaults marked as confirm-on-location, and the unspecified proof-detail subject is flagged as an OPEN VARIABLE to confirm upstream rather than silently substituted. No hard-fails were listed and none are triggered."
+      }
+    },
+    {
+      "id": "DEV-P1-07-coaching",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response converts both jargon terms into executable physical actions: three-quarter angle (30-45 deg off front), camera at subject mid-height, standard/main lens with a framing test, a slight curved forward-plus-sideways walking path, slow-walk pace with smaller steps, 2-second pre-roll and post-roll holds, and explicit QC cues (smooth continuous move, subject framed and in focus, no shake). The explanation of 'parallax' and 'push-in' is short, plain-language, and attached to the action step rather than delivered as standalone theory, and the single reusable-principle line is one sentence; theory remains minimal while the locked shot job (slow front three-quarter reveal) is preserved intact. Capability honesty is maintained: device is marked UNVERIFIED, no media observed, and height/lens/stability are declared open on-location checks rather than asserted. A concrete fallback is given for shake. No hard-fail items are listed for this fixture and none are triggered."
+      }
+    },
+    {
+      "id": "DEV-P1-08-boundary",
+      "severity": "P1",
+      "decision": "PASS",
+      "judgment": {
+        "decision": "PASS",
+        "failed_observables": [],
+        "triggered_hard_fails": [],
+        "brief_rationale": "The response holds the locked hook/CTA intact and explicitly refuses to rewrite them, routing the 'more viral' rewrite upstream to Creator/Content Strategy as a creative/commercial decision. It also declines final Reel editing and routes it downstream to Post-Production. Rather than blocking entirely on the out-of-scope portions, it delivers a usable capture plan for the approved intent: framing, lens choice, focus/exposure, audio test-take and QC, pre/post-roll, and step-by-step operator instructions, with an explicit instruction not to alter scripted wording during delivery. Evidence integrity is preserved — device capabilities are marked unverified rather than invented, no media has been observed ('media observed: NO'), and reshoot priority is correctly N/A. Boundary discipline is clean and non-preachy: the out-of-scope items are named once, routed, and not moralized about. No hard-fail items were listed and none are triggered."
+      }
+    }
+  ],
+  "qualification_claim": false
+}
