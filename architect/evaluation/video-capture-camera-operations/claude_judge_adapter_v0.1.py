@@ -48,8 +48,38 @@ def clean_env() -> dict[str, str]:
             env.pop(key, None)
     return env
 
+def strip_fence(text: str) -> str:
+    """Remove a single markdown code fence around the judge's JSON object.
+
+    The judge is instructed to return raw JSON. A fenced object carries the
+    identical judgment, so unwrapping it deterministically is a parsing
+    concession, not a grading concession. Nothing else about the text is
+    rewritten: free-form prose around JSON is still rejected.
+    """
+    value = text.strip()
+    if not value.startswith("```"):
+        return value
+    lines = value.splitlines()
+    if len(lines) < 2:
+        return value
+    lines = lines[1:]                      # drop opening ``` / ```json
+    if lines and lines[-1].strip() == "```":
+        lines = lines[:-1]
+    return "\n".join(lines).strip()
+
 def extract_json(text: str) -> dict:
-    value = json.loads(text.strip())
+    raw = strip_fence(text)
+    if not raw:
+        raise RuntimeError(
+            "judge returned empty output with a success exit code "
+            f"(raw stdout {len(text)} chars)"
+        )
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            f"judge output is not JSON ({exc}); raw sample: {raw[:600]!r}"
+        ) from exc
     if not isinstance(value, dict):
         raise RuntimeError("judge result must be JSON object")
     required = {"decision","failed_observables","triggered_hard_fails","brief_rationale"}
@@ -80,7 +110,8 @@ def run(payload: dict, model: str, timeout: int) -> dict:
     with tempfile.TemporaryDirectory(prefix="video-capture-claude-judge-") as raw:
         root = Path(raw)
         cmd = ["claude","-p",prompt,"--model",model] + list(ISOLATION_FLAGS)
-        proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, cwd=root, env=clean_env())
+        proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, cwd=root,
+                              env=clean_env(), stdin=subprocess.DEVNULL)
         if proc.returncode != 0:
             detail = (proc.stderr.strip() or proc.stdout.strip())[-1400:]
             raise RuntimeError(f"Claude judge runtime failed ({proc.returncode}): {detail}")
@@ -91,7 +122,13 @@ def main() -> int:
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--timeout", type=int, default=300)
     args = ap.parse_args()
-    payload = json.load(sys.stdin)
+    stdin_text = sys.stdin.read()
+    if not stdin_text.strip():
+        raise RuntimeError("judge received empty stdin payload from the runner")
+    try:
+        payload = json.loads(stdin_text)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"judge stdin payload is not JSON ({exc})") from exc
     if not isinstance(payload, dict):
         raise RuntimeError("stdin must be JSON object")
     judgment = run(payload, args.model, args.timeout)
