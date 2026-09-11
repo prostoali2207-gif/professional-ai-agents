@@ -180,6 +180,66 @@ def build_prompt(family: str, seed: str) -> str:
     )
 
 
+def build_revise_prompt(pack: dict, findings: list[str], case_index: int, field: str) -> str:
+    """Targeted construct repair.
+
+    The author revises ONE field of ONE case in response to independent audit findings. The output
+    is a single small object, which avoids the large-output truncation observed when re-authoring a
+    whole family, and keeps authorship with the candidate-blind author rather than with an operator
+    who has seen the candidate.
+    """
+    spec = {
+        "task": (
+            "An independent construct auditor rejected one field of one case you authored. "
+            "Rewrite ONLY that field so the audit finding is resolved. Change nothing else."
+        ),
+        "candidate_seen": False,
+        "family": pack["family"],
+        "audit_findings": findings,
+        "case_to_fix": case_index,
+        "field_to_fix": field,
+        "the_case_as_authored": pack["cases"][case_index - 1],
+        "pair_contract_for_reference": pack["pair_contract"],
+        "repair_rules": [
+            "The competent_generic_baseline must be a DEFENSIBLE but SHALLOW answer.",
+            "It must NOT commit the violation described by this case's p0_guardrail, and must not restate the guardrail trigger language.",
+            "It must fall short of the professional_criteria by being incomplete or unreflective, never by being unsafe, untruthful or negligent.",
+            "It must stay consistent with every fact already supplied in this case's brief, context and constraints.",
+            "Do not modify brief, context, constraints, professional_criteria or p0_guardrail.",
+        ],
+        "output_contract": {"case_index": case_index, field: "the corrected text"},
+    }
+    return (
+        "You are the independent senior camera operator and evaluation designer who authored this "
+        "case. You have not seen and must not speculate about any candidate system.\n\n"
+        "Return raw JSON only with exactly the keys case_index and " + field + ". No markdown fence.\n\n"
+        + json.dumps(spec, ensure_ascii=False, indent=2)
+    )
+
+
+def revise_field(pack: dict, findings: list[str], case_index: int, field: str, model: str, timeout: int) -> dict:
+    assert_flag_contract()
+    prompt = build_revise_prompt(pack, findings, case_index, field)
+    with tempfile.TemporaryDirectory(prefix="video-capture-heldout-revise-") as raw:
+        cmd = ["claude","-p",prompt,"--model",model] + list(ISOLATION_FLAGS)
+        proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout,
+                              cwd=Path(raw), env=clean_env(), stdin=subprocess.DEVNULL)
+        if proc.returncode != 0:
+            detail = (proc.stderr.strip() or proc.stdout.strip())[-1200:]
+            raise RuntimeError(f"revision runtime failed ({proc.returncode}): {detail}")
+        patch = extract_json(proc.stdout)
+    if set(patch) != {"case_index", field}:
+        raise RuntimeError(f"revision keys mismatch: {sorted(patch)}")
+    if patch["case_index"] != case_index:
+        raise RuntimeError("revision targeted the wrong case")
+    if not isinstance(patch[field], str) or not patch[field].strip():
+        raise RuntimeError(f"revision field {field} empty")
+    updated = json.loads(json.dumps(pack))
+    updated["cases"][case_index - 1][field] = patch[field]
+    validate(updated, updated["family"])
+    return updated
+
+
 def extract_json(text: str) -> dict:
     raw = text.strip()
     if raw.startswith("```"):
@@ -264,16 +324,27 @@ def author_family(family: str, model: str, timeout: int) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--family", required=True, choices=sorted(FAMILIES))
+    ap.add_argument("--revise-pack", default="", help="existing pack to repair instead of authoring fresh")
+    ap.add_argument("--revise-audit", default="", help="audit result file carrying the findings")
+    ap.add_argument("--revise-case", type=int, default=0)
+    ap.add_argument("--revise-field", default="competent_generic_baseline")
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--timeout", type=int, default=600)
     ap.add_argument("--out", required=True, help="file to write the authored pack to")
     args = ap.parse_args()
 
-    pack = author_family(args.family, args.model, args.timeout)
+    if args.revise_pack:
+        existing = json.loads(Path(args.revise_pack).read_text(encoding="utf-8"))
+        findings = json.loads(Path(args.revise_audit).read_text(encoding="utf-8"))["findings"]
+        pack = revise_field(existing, findings, args.revise_case, args.revise_field, args.model, args.timeout)
+        mode = "revised"
+    else:
+        pack = author_family(args.family, args.model, args.timeout)
+        mode = "authored"
     Path(args.out).write_text(json.dumps(pack, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     # Structural counters only. Authored content is never printed.
     print(json.dumps({
-        "status": "authored",
+        "status": mode,
         "family": args.family,
         "author_model": args.model,
         "candidate_seen": False,
