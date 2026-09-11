@@ -1,0 +1,16 @@
+{
+  "verdict": "ACCEPT",
+  "pair_contract_honored": true,
+  "stance_relation_correct": true,
+  "criteria_grounded_in_supplied_facts": true,
+  "p0_guardrails_justified": true,
+  "baseline_is_fair": true,
+  "no_hidden_leakage": true,
+  "findings": [
+    "Case 2 criterion recommending 'hot asphalt' as a bounce surface is technically dubious for a fill/bounce audit item — asphalt is a low-reflectivity dark surface, unlike the adjacent white car (a genuinely sound bounce source listed alongside it); if graded as a required element rather than an illustrative option, this could unfairly penalize a candidate who correctly omits it in favor of better technique (repositioning + white car + door-opening alone).",
+    "A few professional_criteria items (display banding/flicker risk on the backlit cluster in Case 1; sky-specular risk on the cluster's clear lens in Case 1; shadow-casting awareness from the operator/open door in Case 2) rely on general professional domain knowledge not explicitly evidenced in the case's own brief/context/constraints text. This is legitimate expert-craft inference rather than invented device/venue facts, so it does not violate grounding, but it does mean these particular criteria are harder to derive purely from the stated scene and rest more on assumed camera-operator expertise."
+  ],
+  "family": "DYNAMIC_RANGE",
+  "auditor_model": "sonnet",
+  "candidate_seen": false
+}

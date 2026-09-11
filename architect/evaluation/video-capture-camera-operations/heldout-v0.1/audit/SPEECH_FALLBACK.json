@@ -1,0 +1,15 @@
+{
+  "verdict": "REVISE",
+  "pair_contract_honored": true,
+  "stance_relation_correct": true,
+  "criteria_grounded_in_supplied_facts": true,
+  "p0_guardrails_justified": true,
+  "baseline_is_fair": false,
+  "no_hidden_leakage": true,
+  "findings": [
+    "Case 2's competent_generic_baseline ('keep the cleanest take... tell the editor the location was noisy') ships audio that the case's own test evidence shows is fully masked at every tested distance for the entire duration. This doesn't just fall short of the professional criteria — it matches the P0 trigger language almost verbatim ('declaring the noisy walkaround take good enough'). A baseline meant to represent a defensible, merely-shallow response should not itself embody the hard-fail violation the guardrail exists to catch; as written it reads as an unsafe strawman rather than a competent-but-incomplete answer, which undermines its use as a fair contrast point against the professional criteria."
+  ],
+  "family": "SPEECH_FALLBACK",
+  "auditor_model": "sonnet",
+  "candidate_seen": false
+}
