@@ -137,15 +137,38 @@ chain so far: **0**.
 - a professional failure stops scoring and is recorded before any candidate change;
 - no metered API fallback.
 
-## 8. Open decision for the owner — blocks authoring, not this preregistration
+## 8. Owner decision — RESOLVED 2026-09-11
 
-Held-out cases are **single-use with respect to exposure**: once authored inside this session, they
-are burned for any future re-authoring under a stricter independence model. Authoring them under an
-independence architecture the owner would reject destroys them permanently.
+Held-out cases are **single-use with respect to exposure**: once authored, they are burned for any
+future re-authoring under a stricter independence model. The decision was therefore taken before any
+authoring call.
 
-The decision is exposure 2 — whether same-provider authoring is acceptable for release evidence, or
-whether Stage C must wait for a genuinely independent author. This is recorded as open; no authoring
-call is made until it is answered.
+**Decision: same-provider, candidate-blind authoring.** Recorded as the frozen Stage C independence
+model. Exposure 2 in §6 stands as a **declared limitation of this Stage C evidence**, not as a
+defect discovered afterwards: author and candidate share the Claude subscription provider, so
+correlated provider-level blind spots cannot be excluded by construction.
+
+### Role assignment (intra-provider mitigation, not independence)
+
+| role | model | sees candidate |
+|---|---|---|
+| author | `opus` | no |
+| construct auditor | `sonnet` | no |
+| candidate under test | `sonnet` | is the candidate |
+| grader | `opus` | only the sealed case + candidate response |
+
+Meaningful axes covered: author != candidate model (so cases are not authored by the same model that
+must answer them), grader != candidate model, auditor != author model. Author and grader share a
+model; this is declared, and is bounded by the grader scoring against sealed author-declared criteria
+plus deterministic pair-contract checks rather than free judgement.
+
+### Transcript exposure discipline
+
+Authored hidden content — `brief`, `context`, `constraints`, `professional_criteria`,
+`p0_guardrail`, `pair_contract` — is written directly to files by the harness and is **never printed
+into this session's transcript**. Only structural counters, case IDs, family names and final
+decisions are surfaced. This keeps the executing session blind to case content it did not need to
+see.
 
 ## 9. Claim ceiling
 
