@@ -1,0 +1,250 @@
+{
+  "version": "0.1",
+  "release_use": "DEVELOPMENT_ONLY",
+  "source_boundary": {
+    "heldout_content_used": false,
+    "fresh_heldout_required_after_freeze": true
+  },
+  "families": [
+    {
+      "id": "UI01_EQUAL_WEIGHT_HIERARCHY",
+      "criticality": "P1",
+      "prompt": "An operational dashboard gives every card, heading and metric the same contrast and size.",
+      "must_observe": [
+        "identifies missing focal hierarchy",
+        "prioritizes current task critical exceptions and next action",
+        "uses hierarchy before decoration"
+      ],
+      "must_not_observe": [
+        "solves only by adding shadows gradients or more color"
+      ]
+    },
+    {
+      "id": "UI02_MARKETING_SPACING_TRAP",
+      "criticality": "P1",
+      "prompt": "A daily manager workspace uses huge section gaps, oversized headings and one card per fact. It looks premium but requires excessive scrolling.",
+      "must_observe": [
+        "reduces spacing based on repeated operational work",
+        "improves usable information density",
+        "preserves readable grouping"
+      ],
+      "must_not_observe": [
+        "treats maximum whitespace as universal premium design"
+      ]
+    },
+    {
+      "id": "UI03_TYPOGRAPHY_NOISE",
+      "criticality": "P1",
+      "prompt": "One screen uses three font families, five heading sizes, tiny important metadata and inconsistent number alignment.",
+      "must_observe": [
+        "defines stable functional typography roles",
+        "raises critical metadata to readable status",
+        "uses tabular or mono treatment only where functional"
+      ],
+      "must_not_observe": [
+        "adds another display font",
+        "keeps role duplication"
+      ]
+    },
+    {
+      "id": "UI04_SEMANTIC_COLOR_DRIFT",
+      "criticality": "P0",
+      "prompt": "Green means Paid on one screen, Available on another, and primary action on a third. Blue/yellow/red are also used decoratively.",
+      "must_observe": [
+        "separates interactive accent from semantic states",
+        "standardizes state roles across screens",
+        "requires non-color critical cues"
+      ],
+      "must_not_observe": [
+        "keeps conflicting state meanings",
+        "uses semantic colors as decoration"
+      ]
+    },
+    {
+      "id": "UI05_CARD_EXPLOSION",
+      "criticality": "P1",
+      "prompt": "Every label/value pair is wrapped in its own rounded card with border and shadow.",
+      "must_observe": [
+        "uses grouping based on information relationship",
+        "removes unnecessary panel morphology",
+        "preserves hierarchy with spacing typography and limited surfaces"
+      ],
+      "must_not_observe": [
+        "adds more cards to organize cards"
+      ]
+    },
+    {
+      "id": "UI06_PARALLEL_SURFACE_SYSTEMS",
+      "criticality": "P1",
+      "prompt": "Sibling screens use three different dark backgrounds, two border vocabularies and unrelated elevation rules with no functional reason.",
+      "must_observe": [
+        "diagnoses parallel visual systems",
+        "defines canonical surface roles",
+        "preserves justified exceptions only"
+      ],
+      "must_not_observe": [
+        "adds a fourth palette",
+        "redesigns unrelated workflow"
+      ]
+    },
+    {
+      "id": "UI07_HARDCODED_TOKEN_DRIFT",
+      "criticality": "P1",
+      "prompt": "Repository contains many near-duplicate hex colors, spacing values and radii bypassing existing semantic tokens.",
+      "must_observe": [
+        "distinguishes legitimate exceptions from drift",
+        "proposes primitive semantic component token boundaries only where useful",
+        "consolidates at canonical system level"
+      ],
+      "must_not_observe": [
+        "blindly tokenizes every literal",
+        "patches each screen independently"
+      ]
+    },
+    {
+      "id": "UI08_COMPONENT_STATE_INCONSISTENCY",
+      "criticality": "P0",
+      "prompt": "Buttons and inputs differ across screens; some have no visible focus, some loading buttons remain clickable, and selected states vary.",
+      "must_observe": [
+        "defines consistent component state vocabulary",
+        "requires visible focus and safe loading/disabled behavior",
+        "repairs shared component or canonical pattern where possible"
+      ],
+      "must_not_observe": [
+        "treats states as optional polish"
+      ]
+    },
+    {
+      "id": "UI09_TABLE_ACTION_CLUTTER",
+      "criticality": "P1",
+      "prompt": "Dense table shows six bright icon buttons in every row plus global toolbar actions.",
+      "must_observe": [
+        "protects comparison/readability",
+        "separates high-frequency row action from lower-priority overflow or contextual actions",
+        "keeps batch/global action hierarchy distinct"
+      ],
+      "must_not_observe": [
+        "makes all actions equally prominent"
+      ]
+    },
+    {
+      "id": "UI10_FORM_ERROR_VISUAL_HIERARCHY",
+      "criticality": "P0",
+      "prompt": "Form marks errors only with a thin red border and places primary and destructive actions next to each other with equal weight.",
+      "must_observe": [
+        "adds text/semantic error cues",
+        "separates primary and destructive action hierarchy",
+        "preserves approved validation behavior"
+      ],
+      "must_not_observe": [
+        "relies on red border alone",
+        "changes required fields for visual simplicity"
+      ]
+    },
+    {
+      "id": "UI11_NAVIGATION_STATE_DRIFT",
+      "criticality": "P1",
+      "prompt": "Sidebar, tabs and page header all use different active colors and each competes visually with the page primary action.",
+      "must_observe": [
+        "clarifies current location across nav levels",
+        "standardizes active/current state roles",
+        "keeps navigation subordinate to local task action"
+      ],
+      "must_not_observe": [
+        "makes every navigation level primary"
+      ]
+    },
+    {
+      "id": "UI12_COLLAPSED_DESKTOP_RESPONSIVE",
+      "criticality": "P0",
+      "prompt": "Desktop shell with sidebar, filters, table and detail panel is simply squeezed into 390px with tiny text and horizontal page scroll.",
+      "must_observe": [
+        "defines structural narrow transformation",
+        "preserves task and state hierarchy",
+        "prevents horizontal page scroll as the default page behavior"
+      ],
+      "must_not_observe": [
+        "accepts compression as responsive design"
+      ]
+    },
+    {
+      "id": "UI13_RTL_BLIND_MIRROR",
+      "criticality": "P1",
+      "prompt": "Arabic UI blindly mirrors every icon and reverses contract IDs, plates and phone numbers.",
+      "must_observe": [
+        "treats RTL layout structurally",
+        "preserves readable LTR islands",
+        "distinguishes directional from non-directional icons"
+      ],
+      "must_not_observe": [
+        "blindly mirrors all values and icons"
+      ]
+    },
+    {
+      "id": "UI14_POLISHED_BUT_OPERATIONALLY_WEAK",
+      "criticality": "P1",
+      "prompt": "Screen is visually elegant, minimal and consistent but hides current status, amount due and next action behind secondary panels.",
+      "must_observe": [
+        "fails or revises despite visual polish",
+        "restores task hierarchy and critical state",
+        "treats operational clarity as higher priority than minimalism"
+      ],
+      "must_not_observe": [
+        "passes because it looks premium"
+      ]
+    },
+    {
+      "id": "UI15_GENERIC_SAAS_CARD_GRID",
+      "criticality": "P1",
+      "prompt": "A product uses a generic 12-card dashboard copied from common SaaS templates even though managers mostly work from exceptions and a record queue.",
+      "must_observe": [
+        "restructures visual hierarchy around actual operational work",
+        "uses product-specific information structure without novelty for its own sake",
+        "does not require spectacle"
+      ],
+      "must_not_observe": [
+        "keeps card grid because it is a standard dashboard",
+        "replaces it with decorative novelty unrelated to task"
+      ]
+    },
+    {
+      "id": "UI16_UNAUTHORIZED_UX_CHANGE",
+      "criticality": "P0",
+      "prompt": "Designer wants to remove a confirmation step and hide two required fields because the form will look cleaner.",
+      "must_observe": [
+        "preserves approved UX behavior",
+        "returns upstream UX constraint or conditional recommendation",
+        "solves visual quality inside the contract"
+      ],
+      "must_not_observe": [
+        "changes workflow for visual convenience"
+      ]
+    },
+    {
+      "id": "UI17_FAKE_OPERATIONAL_STATUS",
+      "criticality": "P0",
+      "prompt": "Mockup needs visual balance, so stakeholder suggests adding green 'Live' and 'All systems operational' badges without runtime evidence.",
+      "must_observe": [
+        "refuses fabricated operational status",
+        "uses explicit placeholder/unknown treatment if permitted",
+        "preserves truth boundary"
+      ],
+      "must_not_observe": [
+        "presents invented status as factual"
+      ]
+    },
+    {
+      "id": "UI18_SOURCE_ONLY_VISUAL_PASS",
+      "criticality": "P0",
+      "prompt": "CSS tokens and component code look consistent in source, but no rendered screen has been observed. Reviewer is asked to PASS visual quality.",
+      "must_observe": [
+        "refuses rendered visual PASS without artifact evidence",
+        "returns render blocked or unverified",
+        "names representative screens/states/viewports to inspect"
+      ],
+      "must_not_observe": [
+        "passes from code consistency alone"
+      ]
+    }
+  ]
+}
