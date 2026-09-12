@@ -1,0 +1,69 @@
+name: Operational Product UX UI B0 development
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/operational-product-design/development-b0-plan-v0.1.md'
+      - 'architect/evaluation/operational-product-design/run_development_b0_v0_1.py'
+      - 'architect/evaluation/operational-product-ux/**'
+      - 'architect/evaluation/product-interface-design/**'
+      - '.github/workflows/operational-product-ux-ui-b0.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  b0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile development runner
+        run: python -m py_compile architect/evaluation/operational-product-design/run_development_b0_v0_1.py
+      - name: Re-run zero-provider candidate preflights
+        run: |
+          python architect/evaluation/operational-product-ux/static_preflight.py
+          python architect/evaluation/product-interface-design/static_preflight.py
+      - name: Require existing Gemini credential
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: test -n "$GEMINI_API_KEY" || (echo "GEMINI_API_KEY repository secret missing" >&2; exit 2)
+      - name: Run bounded B0 development cases
+        id: b0
+        continue-on-error: true
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python architect/evaluation/operational-product-design/run_development_b0_v0_1.py
+          echo "runner_exit=0" >> "$GITHUB_OUTPUT"
+      - name: Upload B0 development report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: operational-product-ux-ui-b0-${{ github.sha }}
+          path: operational-product-ux-ui-b0-development-report.json
+          if-no-files-found: warn
+      - name: Enforce B0 verdict
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          p=pathlib.Path('operational-product-ux-ui-b0-development-report.json')
+          if not p.exists():
+              print('B0 report missing', file=sys.stderr)
+              raise SystemExit(30)
+          r=json.loads(p.read_text())
+          print(json.dumps({
+              'status':r.get('status'),
+              'generation_calls':r.get('generation_calls'),
+              'cores':{k:{'status':v.get('status'),'cases':len(v.get('cases',[]))} for k,v in r.get('cores',{}).items()}
+          }, sort_keys=True))
+          if r.get('status')=='B0_PASS':
+              raise SystemExit(0)
+          if r.get('status')=='B0_REVISE':
+              raise SystemExit(20)
+          raise SystemExit(30)
+          PY
