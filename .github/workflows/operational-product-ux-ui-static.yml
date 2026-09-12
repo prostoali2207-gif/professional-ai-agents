@@ -1,0 +1,28 @@
+name: Operational Product UX UI static preflight
+
+on:
+  pull_request:
+    paths:
+      - 'architect/research/operational-product-design/**'
+      - 'architect/evaluation/operational-product-design/**'
+      - 'architect/evaluation/operational-product-ux/**'
+      - 'architect/evaluation/product-interface-design/**'
+      - '.github/workflows/operational-product-ux-ui-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile profession-specific preflights
+        run: |
+          python -m py_compile architect/evaluation/operational-product-ux/static_preflight.py
+          python -m py_compile architect/evaluation/product-interface-design/static_preflight.py
+      - name: Validate Operational Product UX candidate and fixtures
+        run: python architect/evaluation/operational-product-ux/static_preflight.py
+      - name: Validate Product Interface Design Systems candidate and fixtures
+        run: python architect/evaluation/product-interface-design/static_preflight.py
