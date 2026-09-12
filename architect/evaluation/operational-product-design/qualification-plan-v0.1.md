@@ -2,7 +2,7 @@
 
 Date: 2026-09-12  
 Issue: #298  
-Status: PRE-CANDIDATE / evaluation architecture only  
+Status: CANDIDATES CONSTRUCTED / NOT FROZEN / NOT QUALIFIED  
 Generic qualification platform: maintenance mode under issue #129
 
 ## Release claims
