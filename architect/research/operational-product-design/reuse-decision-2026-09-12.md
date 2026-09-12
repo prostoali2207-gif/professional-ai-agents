@@ -2,7 +2,7 @@
 
 Date: 2026-09-12  
 Issue: #298  
-Status: architecture decision complete; candidate construction NOT YET permitted until competency/evidence models are recorded  
+Status: architecture decision complete; candidates constructed; not frozen; not qualified  
 Target: reusable professional capability for operational SaaS, admin tools, dashboards, data-heavy workspaces, and manager workflows, with later FleetDesk specialization.
 
 ## 1. Problem statement
