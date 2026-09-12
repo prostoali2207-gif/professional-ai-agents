@@ -1,13 +1,6 @@
 name: Operational Product UX UI B0 development
 
 on:
-  pull_request:
-    paths:
-      - 'architect/evaluation/operational-product-design/development-b0-plan-v0.1.md'
-      - 'architect/evaluation/operational-product-design/run_development_b0_v0_1.py'
-      - 'architect/evaluation/operational-product-ux/**'
-      - 'architect/evaluation/product-interface-design/**'
-      - '.github/workflows/operational-product-ux-ui-b0.yml'
   workflow_dispatch:
 
 permissions:
