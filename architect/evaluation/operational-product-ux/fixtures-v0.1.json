@@ -1,0 +1,203 @@
+{
+  "version": "0.1",
+  "release_use": "DEVELOPMENT_ONLY",
+  "source_boundary": {
+    "heldout_content_used": false,
+    "fresh_heldout_required_after_freeze": true
+  },
+  "families": [
+    {
+      "id": "UX01_COMPONENT_FIRST_TRAP",
+      "criticality": "P1",
+      "prompt": "A manager asks: 'Make a nice modal to change a vehicle on an active rental.' No workflow details are supplied.",
+      "must_observe": [
+        "frames the operator job and consequence before choosing a modal",
+        "identifies missing domain/source-of-truth constraints",
+        "does not invent rental business rules"
+      ],
+      "must_not_observe": [
+        "commits to a modal purely from the request",
+        "fabricates replacement eligibility or financial rules"
+      ]
+    },
+    {
+      "id": "UX02_WIZARD_FOR_FREQUENT_WORK_TRAP",
+      "criticality": "P1",
+      "prompt": "A repeated daily 6-field manager task currently fits on one screen. Stakeholder asks to split it into four wizard steps because it looks cleaner.",
+      "must_observe": [
+        "compares repeated-task cost and cognitive load",
+        "rejects or conditions the wizard unless staged dependency earns it",
+        "preserves task speed and correction"
+      ],
+      "must_not_observe": [
+        "accepts wizard because it feels modern",
+        "optimizes visual cleanliness over repeated work"
+      ]
+    },
+    {
+      "id": "UX03_CONDITIONAL_FORM_ALTERNATIVES",
+      "criticality": "P1",
+      "prompt": "A record can be identified either by a unique reference OR by three descriptive fields. Design the input logic.",
+      "must_observe": [
+        "classifies alternative identifiers",
+        "does not require redundant fields after one valid path is satisfied",
+        "defines validation and preserved input"
+      ],
+      "must_not_observe": [
+        "makes every field mandatory",
+        "removes system-required evidence without justification"
+      ]
+    },
+    {
+      "id": "UX04_RECOVERABLE_FAILURE_DATA_PRESERVATION",
+      "criticality": "P0",
+      "prompt": "A user completes a long form. Server returns a recoverable validation error for one field after submit.",
+      "must_observe": [
+        "preserves valid entered values",
+        "places actionable error guidance near the problem",
+        "defines retry without false success"
+      ],
+      "must_not_observe": [
+        "clears the form",
+        "reports success before downstream acceptance"
+      ]
+    },
+    {
+      "id": "UX05_PARTIAL_STALE_DISCONNECTED_STATE",
+      "criticality": "P0",
+      "prompt": "Dashboard receives cached totals from 30 minutes ago, live connection is down, and 3 of 20 detail records failed to load.",
+      "must_observe": [
+        "distinguishes stale partial and disconnected states",
+        "does not display missing records as zero or complete",
+        "exposes enough provenance/freshness for the operator decision"
+      ],
+      "must_not_observe": [
+        "labels the data current/live",
+        "collapses all states into a generic error"
+      ]
+    },
+    {
+      "id": "UX06_DENSE_TABLE_RETRIEVAL",
+      "criticality": "P1",
+      "prompt": "Operational list contains 5,000 records. Managers repeatedly find records by plate, phone, status and date, then compare 5 columns.",
+      "must_observe": [
+        "uses a data retrieval model with search/filter/sort and scalable paging or virtualization as appropriate",
+        "preserves comparison context",
+        "avoids card-grid substitution for tabular comparison"
+      ],
+      "must_not_observe": [
+        "renders an unbounded list",
+        "uses cards just to look modern"
+      ]
+    },
+    {
+      "id": "UX07_SELECT_ALL_SCOPE_TRAP",
+      "criticality": "P0",
+      "prompt": "A paginated table shows 50 of 2,300 rows. Stakeholder wants a 'Select all' checkbox and one batch action.",
+      "must_observe": [
+        "makes selection scope explicit",
+        "distinguishes current page from all matching records",
+        "defines partial success and exception handling"
+      ],
+      "must_not_observe": [
+        "silently treats visible-page selection as all records",
+        "allows ambiguous mass action"
+      ]
+    },
+    {
+      "id": "UX08_CONSEQUENTIAL_GENERIC_CONFIRMATION",
+      "criticality": "P0",
+      "prompt": "A manager action changes a financial balance and an asset's availability. Existing confirmation only says 'Are you sure?'.",
+      "must_observe": [
+        "shows target amount/scope and resulting state before commit",
+        "uses confirmation proportional to risk",
+        "preserves cancel/back and recovery where available"
+      ],
+      "must_not_observe": [
+        "keeps generic confirmation",
+        "hides financial or availability consequence"
+      ]
+    },
+    {
+      "id": "UX09_FALSE_EFFICIENCY_SHORTCUT",
+      "criticality": "P1",
+      "prompt": "Stakeholder wants to remove the review step from a high-risk action to save one click.",
+      "must_observe": [
+        "weights reversibility and failure impact against click count",
+        "preserves necessary review or proposes a safer efficiency mechanism",
+        "explains expert efficiency without sacrificing error prevention"
+      ],
+      "must_not_observe": [
+        "optimizes for minimum clicks alone"
+      ]
+    },
+    {
+      "id": "UX10_COLLAPSED_DESKTOP_MOBILE",
+      "criticality": "P0",
+      "prompt": "Desktop workflow has sidebar, 10-column table, persistent detail panel and toolbar. Proposed mobile solution is 'stack everything vertically'.",
+      "must_observe": [
+        "authors a structural narrow-screen transformation",
+        "preserves primary task and critical state",
+        "avoids horizontal page scroll as the default solution"
+      ],
+      "must_not_observe": [
+        "accepts stacked desktop as sufficient mobile design",
+        "hides the primary action to fit"
+      ]
+    },
+    {
+      "id": "UX11_ACCESSIBILITY_HOVER_DRAG_TRAP",
+      "criticality": "P0",
+      "prompt": "Critical row actions appear only on hover and ordering is possible only by drag-and-drop.",
+      "must_observe": [
+        "requires keyboard/non-hover access to critical actions",
+        "provides a non-drag alternative when applicable",
+        "requires visible focus and non-color cues"
+      ],
+      "must_not_observe": [
+        "treats hover as acceptable sole access",
+        "assumes drag is universally operable"
+      ]
+    },
+    {
+      "id": "UX12_RTL_MIXED_DIRECTION",
+      "criticality": "P1",
+      "prompt": "Arabic RTL manager screen includes phone numbers, contract IDs, vehicle plates, AED values and a side sheet.",
+      "must_observe": [
+        "treats RTL as structural behavior",
+        "keeps LTR identifiers readable",
+        "checks directional icons sheet origin action order and numeric alignment"
+      ],
+      "must_not_observe": [
+        "solves RTL only with text-align right",
+        "blindly mirrors all LTR values"
+      ]
+    },
+    {
+      "id": "UX13_BOUNDARY_DOMAIN_RULE_TRAP",
+      "criticality": "P0",
+      "prompt": "A workflow cannot be finalized because the business has not confirmed whether an overdue payment blocks a vehicle return. Stakeholder says 'just assume yes'.",
+      "must_observe": [
+        "marks an upstream/domain dependency",
+        "preserves known behavior without inventing policy",
+        "continues only with a conditional interaction contract where possible"
+      ],
+      "must_not_observe": [
+        "turns stakeholder guess into business truth"
+      ]
+    },
+    {
+      "id": "UX14_RUNTIME_FALSE_PASS",
+      "criticality": "P0",
+      "prompt": "Source code matches the UX spec, but no browser/render/runtime evidence exists. Reviewer is asked to PASS the flow.",
+      "must_observe": [
+        "refuses runtime PASS for unobserved behavior",
+        "returns runtime unverified or equivalent",
+        "states which observable states must be tested"
+      ],
+      "must_not_observe": [
+        "passes based on source code alone"
+      ]
+    }
+  ]
+}
