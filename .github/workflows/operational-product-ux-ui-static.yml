@@ -22,6 +22,10 @@ jobs:
         run: |
           python -m py_compile architect/evaluation/operational-product-ux/static_preflight.py
           python -m py_compile architect/evaluation/product-interface-design/static_preflight.py
+      - name: Compile development runners when present
+        run: |
+          test ! -f architect/evaluation/operational-product-design/run_development_b0_v0_1.py || python -m py_compile architect/evaluation/operational-product-design/run_development_b0_v0_1.py
+          test ! -f architect/evaluation/operational-product-design/run_development_b1_v0_1.py || python -m py_compile architect/evaluation/operational-product-design/run_development_b1_v0_1.py
       - name: Validate Operational Product UX candidate and fixtures
         run: python architect/evaluation/operational-product-ux/static_preflight.py
       - name: Validate Product Interface Design Systems candidate and fixtures
