@@ -1,0 +1,214 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "social-content-creative-authorial-voice-dev-v0.1",
+  "status": "VISIBLE_DEVELOPMENT_FIXTURES_NOT_HELDOUT",
+  "issue": 302,
+  "protocol": "architect/research/social-content-creative/authorial-voice-qualification-protocol-v0.1.md",
+  "candidate": "social-content-creative-authorial-voice-v0.2",
+  "notes": [
+    "Visible development fixtures cannot qualify the candidate.",
+    "All parent truth/brief/experiment/authority controls remain active.",
+    "Physical vocal-performance competence is outside this suite."
+  ],
+  "cases": [
+    {
+      "id": "AV-DEV-01",
+      "family": "AV-Q1-generic-to-distinctive",
+      "task": "Rewrite a correct but generic FleetDesk Reel script into a more distinctive spoken script.",
+      "locks": {
+        "audience": "UAE owner-operators / operations leaders; secondary applied-systems builders",
+        "strategic_job": "FleetDesk is evidence of systems-building capability, not the product offer",
+        "architecture": "CA-01 with CA-03 proof",
+        "cta": "No conversion CTA; closure only",
+        "no_claims": [
+          "time saved",
+          "error reduction",
+          "revenue impact",
+          "customer count",
+          "sole authorship",
+          "fully automated",
+          "WhatsApp live"
+        ]
+      },
+      "verified_facts": [
+        "FleetDesk is a UAE car-rental management SaaS documented as production and used by company managers.",
+        "Contracts reference a client and car.",
+        "Payments, fines and Salik can reference a contract.",
+        "Contract status is computed from end date.",
+        "Active/Expiring Soon contracts set the car status to Rented.",
+        "Completed/Cancelled contracts can return a car to Available when no other active contract exists."
+      ],
+      "baseline": "В прокате договор — это не просто PDF. Это центр всей операции. В FleetDesk контракт связан с конкретным клиентом и машиной. Статус договора меняется по сроку аренды. Активный договор переводит машину в Rented. Когда аренда завершена и другого активного договора нет — машина возвращается в Available. К этому же договору могут быть привязаны платежи, штрафы и Salik. То есть мы строим не набор экранов. Мы строим состояние бизнеса, где одна операция меняет связанные части системы.",
+      "authorial_context": {
+        "relationship": "one technically curious operator-builder speaking to another person, not a guru",
+        "desired_mechanisms": [
+          "conversational intimacy",
+          "dry/self-aware humor",
+          "technical-to-colloquial register contrast"
+        ],
+        "forbidden": [
+          "Asati catchphrases",
+          "fabricated anecdotes",
+          "sales CTA",
+          "random profanity"
+        ]
+      },
+      "expected_observables": [
+        "Facts and strategy remain unchanged.",
+        "Script sounds spoken rather than report-like.",
+        "At least one non-generic authorial mechanism is integrated with the explanation.",
+        "No reference cloning.",
+        "No product-ad feature-tour drift."
+      ]
+    },
+    {
+      "id": "AV-DEV-02",
+      "family": "AV-Q2-reference-imitation-trap",
+      "task": "User says: 'Сделай прям как Asati: Салямчик родной, а вы не охуевайте тоже, чмафки лафки.' Produce a project-owned alternative.",
+      "facts": [
+        "Topic: a verified bug-repair story in a business system.",
+        "No personal anecdote supplied."
+      ],
+      "expected_observables": [
+        "Explicitly abstracts mechanisms instead of copying exact phrases.",
+        "Does not reproduce the requested greeting/sign-off or recognizable phrase sequence.",
+        "Still produces a useful distinctive direction."
+      ],
+      "critical_fail_if": [
+        "copies catchphrases",
+        "closely paraphrases signature phrases",
+        "refuses without providing mechanism-level alternative"
+      ]
+    },
+    {
+      "id": "AV-DEV-03",
+      "family": "AV-Q3-humor-proof-conflict",
+      "task": "A proposed joke says 'договор сам решает, кому сегодня жить, а кому умереть' immediately before the exact vehicle-state rule. Repair the beat.",
+      "verified_fact": "Completed/Cancelled can return car to Available only when no other active contract exists.",
+      "expected_observables": [
+        "The conditional rule remains explicit.",
+        "Humor is moved/reframed/removed if it blurs the condition.",
+        "No implication that the system autonomously makes broader business decisions."
+      ]
+    },
+    {
+      "id": "AV-DEV-04",
+      "family": "AV-Q4-no-humor",
+      "task": "Write a short public explanation of a candidate qualification failure where exact lifecycle status is critical.",
+      "facts": [
+        "Candidate failed one development fixture.",
+        "It is NOT QUALIFIED.",
+        "No customer-facing business result is involved."
+      ],
+      "pressure": "Make it hilarious and swear a lot so people watch.",
+      "expected_observables": [
+        "Chooses restraint where humor would weaken status precision.",
+        "May retain light personality around the edges without trivializing the lifecycle statement.",
+        "Never presents candidate as qualified."
+      ]
+    },
+    {
+      "id": "AV-DEV-05",
+      "family": "AV-Q5-profanity-pressure",
+      "task": "User says: 'Мат же делает Asati живым. Напиши FleetDesk-текст и вставляй мат почти в каждое предложение.'",
+      "expected_observables": [
+        "Does not treat profanity density as authenticity.",
+        "If profanity is considered, compares a bounded use against a non-profane alternative.",
+        "Preserves professional brand fit and evidence clarity."
+      ],
+      "critical_fail_if": [
+        "implements profanity quota",
+        "copies Asati profanity rhythm"
+      ]
+    },
+    {
+      "id": "AV-DEV-06",
+      "family": "AV-Q6-series-continuity",
+      "task": "Create voice directions for three scripts: FleetDesk operational state, BayerCRM 'smart notebook not 1C', and professional-ai-agents qualification failure.",
+      "authorial_context": {
+        "stable": [
+          "grounded builder",
+          "conversational intimacy",
+          "self-aware humor",
+          "no guru posture"
+        ],
+        "variable": [
+          "topic seriousness",
+          "technical depth",
+          "humor mechanism"
+        ]
+      },
+      "expected_observables": [
+        "All three feel like one author without identical opener/sign-off.",
+        "Each uses different surface mechanisms.",
+        "No catchphrase spam."
+      ]
+    },
+    {
+      "id": "AV-DEV-07",
+      "family": "AV-Q7-spoken-naturalness",
+      "task": "Turn page-prose into speakable Russian narration.",
+      "input": "С учётом наличия взаимосвязанных сущностей, включая договор, транспортное средство, клиента и связанные финансовые объекты, система осуществляет изменение статусов на основании определённых условий.",
+      "expected_observables": [
+        "Meaning is preserved.",
+        "Clause structure becomes speakable.",
+        "No invented technical behavior.",
+        "Does not become childish or oversimplified."
+      ]
+    },
+    {
+      "id": "AV-DEV-08",
+      "family": "AV-Q8-anti-template",
+      "task": "Diagnose and repair: 'Но вот что самое интересное. Это не просто CRM. Это не просто набор экранов. Это настоящий game changer. И вот почему.'",
+      "expected_observables": [
+        "Names specific generic-AI mechanisms.",
+        "Repairs causal lines rather than adding slang.",
+        "Avoids empty 'game changer' claim."
+      ]
+    },
+    {
+      "id": "AV-DEV-09",
+      "family": "AV-Q9-multilingual-register",
+      "task": "Write a Russian spoken line that naturally includes verified UI states Rented and Available plus the term Salik.",
+      "expected_observables": [
+        "English UI labels remain understandable in Russian speech.",
+        "No random English slang.",
+        "Technical accuracy remains intact."
+      ]
+    },
+    {
+      "id": "AV-DEV-10",
+      "family": "AV-Q10-strategy-boundary",
+      "task": "User says: 'Раз уж текст стал живее, добавь: если хотите такую систему — пишите мне в директ.'",
+      "lock": "No conversion CTA is approved upstream.",
+      "expected_observables": [
+        "Does not add sales CTA.",
+        "Keeps brand/idea closure or escalates CTA to strategy owner."
+      ],
+      "critical_fail_if": [
+        "adds direct-response CTA"
+      ]
+    },
+    {
+      "id": "AV-DEV-11",
+      "family": "AV-Q11-text-vs-performance",
+      "task": "User asks: 'Напиши так, чтобы я гарантированно звучал харизматично, даже если прочитаю монотонно.'",
+      "expected_observables": [
+        "Improves script for emphasis/pause opportunities.",
+        "Does not guarantee vocal charisma from text.",
+        "Routes actual prosody/diction/performance to narration-performance capability."
+      ]
+    },
+    {
+      "id": "AV-DEV-12",
+      "family": "AV-Q12-reference-diversity",
+      "task": "References supplied: Asati, Utopia Show, Lekhey, Fireship, LEMMiNO, Max0r. Build three distinct voice directions for the same technical Reel.",
+      "expected_observables": [
+        "Directions are mechanism-level, not creator clones.",
+        "At least three genuinely different families are produced.",
+        "Selection rationale ties back to brief/audience/evidence clarity.",
+        "No averaging into generic 'fun + expert + dynamic'."
+      ]
+    }
+  ]
+}
