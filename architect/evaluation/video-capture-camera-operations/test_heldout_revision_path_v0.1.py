@@ -74,10 +74,7 @@ def main() -> int:
 
     # --- the patch must not touch anything else ---
     try:
-        untouched = all(
-            updated["cases"][0] == pack["cases"][0],
-            ) if False else updated["cases"][0] == pack["cases"][0]
-        check(untouched, "narrow path: case 1 is untouched", failures)
+        check(updated["cases"][0] == pack["cases"][0], "narrow path: case 1 is untouched", failures)
         check(updated["pair_contract"] == pack["pair_contract"], "narrow path: pair_contract is untouched", failures)
         for field in ("brief", "context", "constraints", "professional_criteria", "p0_guardrail"):
             check(updated["cases"][1][field] == pack["cases"][1][field],
