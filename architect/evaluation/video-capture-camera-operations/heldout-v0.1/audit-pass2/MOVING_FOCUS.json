@@ -1,0 +1,13 @@
+{
+  "verdict": "ACCEPT",
+  "pair_contract_honored": true,
+  "stance_relation_correct": true,
+  "criteria_grounded_in_supplied_facts": true,
+  "p0_guardrails_justified": true,
+  "baseline_is_fair": true,
+  "no_hidden_leakage": true,
+  "findings": [],
+  "family": "MOVING_FOCUS",
+  "auditor_model": "sonnet",
+  "candidate_seen": false
+}

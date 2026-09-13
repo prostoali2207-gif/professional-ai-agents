@@ -1,0 +1,16 @@
+{
+  "verdict": "ACCEPT",
+  "pair_contract_honored": true,
+  "stance_relation_correct": true,
+  "criteria_grounded_in_supplied_facts": true,
+  "p0_guardrails_justified": true,
+  "baseline_is_fair": true,
+  "no_hidden_leakage": true,
+  "findings": [
+    "Minor asymmetry: case 2's professional_criteria #4 specifies shooting the odometer 'through the windscreen,' a technique detail not present in case 1's parallel criterion or in either case's supplied context; it doesn't require an unsupplied fact and is a plausible craft choice, but the wording inconsistency between the two otherwise-parallel criteria is worth tightening for a clean minimal-pair.",
+    "The claim in case 1 that Pro Video's Kelvin value 'holds the value you set for the duration of the clip' is read by professional_criteria #1 as persisting across separate clips (start/stop cycles) for the whole shoot, not just within one continuous recording. This is a reasonable real-world inference about how Pro modes behave, but the evidence sentence taken literally only commits to per-clip persistence, so this criterion leans slightly past what's explicitly established rather than what's strictly quoted."
+  ],
+  "family": "DEVICE_TRAP",
+  "auditor_model": "sonnet",
+  "candidate_seen": false
+}

@@ -1,0 +1,15 @@
+{
+  "verdict": "ACCEPT",
+  "pair_contract_honored": true,
+  "stance_relation_correct": true,
+  "criteria_grounded_in_supplied_facts": true,
+  "p0_guardrails_justified": true,
+  "baseline_is_fair": true,
+  "no_hidden_leakage": true,
+  "findings": [
+    "The pair contract's rationale claims the control clip (Clip B) is 'the only discriminator,' but case 2's context also supplies an unmirrored corroborating clue absent from case 1 — the background light pole bowing/springing back in Clip A during frame-by-frame review. Case 1 never states whether an equivalent background element (pole) does or doesn't distort in its Clip A, so case 2 is evidentially over-determined relative to case 1 (two independent tells vs. one). This doesn't break the declared held_constant_facts (the pole-bowing detail was never listed as held constant) or the controlled_material_fact itself, but it slightly inflates case 2's diagnostic ease relative to case 1 and makes the 'only discriminator' framing in the why-section imprecise."
+  ],
+  "family": "STABILIZATION_TRAP",
+  "auditor_model": "sonnet",
+  "candidate_seen": false
+}
