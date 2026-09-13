@@ -18,3 +18,4 @@
 {"status": "author_error", "error": "RuntimeError: author output not valid JSON (Expecting ',' delimiter: line 69 column 2 (char 16327)); first 200 chars: '{\\n  \"family\": \"SPEECH_FALLBACK\",\\n  \"pair_contract\": {\\n    \"controlled_material_fact\": \"Whether the speaking person is visible on camera while speaking (lip movement in frame), which determines whether'"}
 {"status": "author_error", "error": "RuntimeError: revision runtime failed (1): You've hit your session limit · resets 4pm (UTC)"}
 {"status": "author_error", "error": "RuntimeError: revision runtime failed (1): You've hit your session limit · resets 4pm (UTC)"}
+{"status": "revised", "family": "SPEECH_FALLBACK", "author_model": "opus", "candidate_seen": false, "cases": 2, "held_constant_facts": 9, "criteria_counts": [8, 8], "p0_guardrails": 1, "hidden_content_printed": false, "out": "architect/evaluation/video-capture-camera-operations/heldout-v0.1/sealed/SPEECH_FALLBACK.json"}
