@@ -1,0 +1,124 @@
+{
+  "record_version": 1,
+  "issue": {
+    "number": 168,
+    "url": "https://github.com/prostoali2207-gif/professional-ai-agents/issues/168",
+    "role": "independent-held-out-evaluator"
+  },
+  "run": {
+    "started_at": "2026-08-30T06:46:00Z",
+    "ended_at": "2026-08-30T07:13:51Z",
+    "repository_head": "1697c9c688e734582a1354d74593b4279846e847",
+    "branch": "codex/issue-168-heldout",
+    "executor_environment": {
+      "product": "Codex desktop local task",
+      "cli_version_observed": "codex-cli 0.151.0-alpha.7.1",
+      "host": "Windows",
+      "scored_candidate_runtime": "NOT_RUN",
+      "scored_grader_runtime": "NOT_RUN"
+    },
+    "termination_reason": "QUALIFICATION_NOT_EXECUTABLE"
+  },
+  "candidate": {
+    "commit": "1c042d09695dfe2d4186c21d136474dc9d1fbdd9",
+    "digest": "sha256:59dd74cb772f1259a7ed5f6b9da4aa40db7f48be21c380b605bdc044f4dd7b92",
+    "manifest_path": "architect/research/growth-strategy-experiment-portfolio/candidate-artifact-manifest-v0.1.json",
+    "component_blob": "b22bac7a4deed11c466c014f41960f5e2deec2d1",
+    "modified_by_evaluator": false,
+    "identity_check": "PASS"
+  },
+  "qualification_contract": {
+    "latest_preregistered_cycle": "growth-strategy-experiment-portfolio-v0.1-heldout-2026-08-23-r2",
+    "preregistration_path": "architect/evaluation/growth_strategy_experiment_portfolio/qualification-r2-runtime-repair-preregistration.md",
+    "frozen_candidate_runtime": "Gemini gemini-3.5-flash-lite, stateless, no tools",
+    "frozen_judges": [
+      "Gemini gemini-3.5-flash-lite",
+      "Groq qwen/qwen3.6-27b"
+    ],
+    "fixture_count": 24,
+    "family_count": 12,
+    "fixtures_per_family": 2,
+    "contrastive_pair_count": 7,
+    "thresholds": {
+      "critical_hard_fail_count": 0,
+      "minimum_mean_decision_correctness_per_family": 1.7,
+      "minimum_mean_boundary_integrity_per_family": 1.7,
+      "minimum_mean_evidence_calibration_per_family": 1.5,
+      "minimum_mean_mechanism_judgment_per_family": 1.5,
+      "minimum_overall_fixture_pass_rate": 0.9,
+      "contrastive_pairs_must_have_no_unjustified_stance_flip": true
+    },
+    "professional_failure_retry_count": 0
+  },
+  "integrity_checks": {
+    "current_architect_skill_read_from_origin_main": "PASS",
+    "candidate_digest_and_blob_binding": "PASS",
+    "candidate_worktree_unchanged": "PASS",
+    "hidden_fixtures_opened": false,
+    "hidden_graders_or_answer_keys_opened": false,
+    "paid_provider_credentials_present": false,
+    "latest_r2_sealed_manifest_present_in_repository_head": false,
+    "existing_r1_manifest_static_preflight": "PASS_DIAGNOSTIC_ONLY",
+    "generic_platform_test_sample": {
+      "passed_before_stop": 6,
+      "stopped_on": "Windows lacks POSIX fcntl required by an unrelated Sales sealed-runner test",
+      "interpretation": "HOST_INCOMPATIBILITY_DIAGNOSTIC_ONLY"
+    },
+    "sealed_preflight": "NOT_RUN_MISSING_KEY_AND_R2_PACK",
+    "codex_runtime_substitution_preserves_frozen_model_identity": false,
+    "codex_as_candidate_and_uncalibrated_self_judge_prevented": true,
+    "candidate_grader_separation_for_full_run": "NOT_ESTABLISHED"
+  },
+  "historical_runtime_evidence": {
+    "github_actions_run_id": 32690841106,
+    "url": "https://github.com/prostoali2207-gif/professional-ai-agents/actions/runs/32690841106",
+    "conclusion": "failure",
+    "last_successful_stage": "Zero-API frozen candidate and evaluator preflight",
+    "failed_stage": "Author-review-seal fresh r2 pack only if absent",
+    "scored_stage": "SKIPPED",
+    "interpretation": "infrastructure evidence only; no professional evidence about the candidate"
+  },
+  "execution_counts": {
+    "codex_exact_runtime_canary": 0,
+    "heldout_fixtures_executed": 0,
+    "heldout_fixtures_passed": null,
+    "heldout_fixtures_failed": null,
+    "critical_hard_fail_count": null,
+    "candidate_model_calls": 0,
+    "grader_model_calls": 0,
+    "paid_provider_api_calls": 0,
+    "professional_retries": 0
+  },
+  "post_core_gates": {
+    "practical_end_to_end_uae_automotive": "NOT_RUN_CORE_GATE_INCOMPLETE",
+    "adversarial_release_gate": "NOT_RUN_CORE_GATE_INCOMPLETE",
+    "composition_with_growth_experimentation_measurement": "NOT_RUN_CORE_GATE_INCOMPLETE",
+    "composition_with_paid_media": "NOT_RUN_CORE_GATE_INCOMPLETE",
+    "production_ready": false
+  },
+  "resource_accounting": {
+    "pre_run_decision": "BLOCK",
+    "reason": "No scored result could be valid without the frozen calibrated independent judges and an available r2 sealed pack/key.",
+    "planned_paid_api_calls": 0,
+    "actual_paid_api_calls": 0,
+    "scored_codex_subscription_calls": 0,
+    "retries": 0,
+    "protected_release_capacity_consumed": false
+  },
+  "blockers": [
+    {
+      "code": "FROZEN_JUDGE_ROUTE_UNAVAILABLE",
+      "detail": "The latest preregistration requires calibrated Gemini and Groq judges; no provider credentials are present and issue #168 forbids paid provider API fallback."
+    },
+    {
+      "code": "R2_SEALED_PACK_UNAVAILABLE",
+      "detail": "The repository head contains the r2 preregistration and workflow but no r2 sealed qualification manifest or ciphertext parts; the historical r2 workflow failed before creating them."
+    },
+    {
+      "code": "CODEX_MIGRATION_NOT_FROZEN",
+      "detail": "Substituting Codex for the preregistered candidate runtime or judges would change frozen runtime/grader identity and requires explicit independent revalidation before any scored use."
+    }
+  ],
+  "verdict": "NOT EXECUTABLE",
+  "next_action": "Independently preregister and approve the smallest evaluator-only Codex migration addendum that preserves the existing candidate, constructs, fixtures, thresholds and hard-fails; it must freeze an isolated Codex candidate adapter plus calibrated independent non-API grader separation before any canary or held-out execution."
+}
