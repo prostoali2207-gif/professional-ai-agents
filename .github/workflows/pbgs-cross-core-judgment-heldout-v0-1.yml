@@ -1,0 +1,102 @@
+name: PBGS Cross-Core Judgment Heldout v0.1
+
+on:
+  push:
+    branches:
+      - research/pbgs-cross-core-judgment-audit-307-308
+    paths:
+      - 'architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/**'
+      - '.github/workflows/pbgs-cross-core-judgment-heldout-v0-1.yml'
+  pull_request:
+    paths:
+      - 'architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/**'
+      - '.github/workflows/pbgs-cross-core-judgment-heldout-v0-1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  independent-heldout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout evaluator
+        uses: actions/checkout@v4
+        with:
+          path: evaluator
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+
+      - name: Checkout exact PBGS candidate
+        uses: actions/checkout@v4
+        with:
+          repository: prostoali2207-gif/personal-brand-growth-system
+          ref: 4146e2524b91de412cbe984428f2055e04a24bb4
+          path: candidate
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install controlled Copilot runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install github-copilot-sdk
+          python -m copilot download-runtime
+
+      - name: Verify frozen identities and compile
+        shell: bash
+        run: |
+          test "$(git -C candidate rev-parse HEAD)" = "4146e2524b91de412cbe984428f2055e04a24bb4"
+          test -f evaluator/architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/preregistration.md
+          python -m py_compile evaluator/architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/run_independent_heldout_v0_1.py
+          sha256sum evaluator/architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/preregistration.md
+          sha256sum evaluator/architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/run_independent_heldout_v0_1.py
+
+      - name: Execute independent heldout
+        id: heldout
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PBGS_AUDIT_MODEL: auto
+          EVALUATOR_DIR: ${{ github.workspace }}/evaluator
+          PBGS_CANDIDATE_DIR: ${{ github.workspace }}/candidate
+          PBGS_AUDIT_OUT: ${{ runner.temp }}/pbgs-cross-core-heldout-v0.1
+        run: |
+          set +e
+          python evaluator/architect/evaluation/pbgs-cross-core-judgment/heldout-v0.1/run_independent_heldout_v0_1.py
+          code=$?
+          echo "heldout_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Upload sanitized report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pbgs-cross-core-judgment-heldout-v0-1-sanitized
+          path: ${{ runner.temp }}/pbgs-cross-core-heldout-v0.1/sanitized-report.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload consumed hidden evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pbgs-cross-core-judgment-heldout-v0-1-consumed-evidence
+          path: ${{ runner.temp }}/pbgs-cross-core-heldout-v0.1/full-consumed-evidence.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce verdict
+        if: always()
+        shell: bash
+        run: |
+          case "${heldout_exit_code:-missing}" in
+            0) echo "Independent heldout PASS"; exit 0 ;;
+            1) echo "Independent heldout REVISE"; exit 1 ;;
+            2) echo "Independent heldout NOT_EXECUTABLE"; exit 2 ;;
+            *) echo "Missing/invalid heldout exit code"; exit 2 ;;
+          esac
