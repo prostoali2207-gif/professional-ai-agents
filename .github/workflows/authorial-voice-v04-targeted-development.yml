@@ -1,15 +1,6 @@
 name: Authorial Voice v0.4 targeted development
 
 on:
-  push:
-    branches:
-      - research/social-content-authorial-voice-302
-    paths:
-      - 'architect/research/social-content-creative/**authorial-voice**'
-      - 'architect/evaluation/social_content_creative/authorial_voice_dev_v0.1.json'
-      - 'architect/evaluation/social_content_creative/authorial_voice_dev_v0.2.json'
-      - 'architect/evaluation/social_content_creative/run_authorial_voice_v04_targeted_dev.py'
-      - '.github/workflows/authorial-voice-v04-targeted-development.yml'
   workflow_dispatch:
 
 permissions:
