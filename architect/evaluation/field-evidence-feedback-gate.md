@@ -1,6 +1,11 @@
 # Field Evidence Feedback Gate
 
-Use this gate whenever a real deployment is proposed as evidence for changing a qualified Professional Core or durable specialization.
+Use this gate whenever real deployment is proposed as evidence for:
+
+- changing a qualified Professional Core or durable specialization; or
+- supporting a T3 `PRODUCTION-PROVEN` trust claim under `../methodology/professional-trust-validation.md`.
+
+These are different decisions. A field observation can justify neither automatically.
 
 ## Deterministic gate
 
@@ -30,6 +35,24 @@ Before `REVISE_CORE` or `REVISE_SPECIALIZATION`, require:
 
 If the fixture does not reproduce the claimed defect, default to `NO_MODEL_CHANGE`, `ADD_OR_REPAIR_EVAL_ONLY`, or `ESCALATE_RESEARCH` rather than prompt-patching.
 
+## T3 production-proof gate
+
+When field evidence is being used to support T3 rather than only a model change, also require a preregistered production-evidence plan that defines:
+
+- exact deployed behavior/version/runtime;
+- representative task/exposure boundary;
+- monitoring window or exposure target and why it is sufficient;
+- substantive human correction/override capture;
+- incident and near-miss severity definitions;
+- outcome/quality signals and attribution limits;
+- expert spot-review plan where professional judgment is material;
+- drift and downgrade triggers;
+- frozen T3 promotion rule.
+
+Anecdotal success, elapsed time, absence of complaints, or selective examples do not establish T3.
+
+If the field sample is too narrow, too selectively reviewed, too poorly measured, or materially different from the intended deployment, return `INSUFFICIENT_T3_EVIDENCE` while still routing any valid learning.
+
 ## Repair gate
 
 When a reusable defect is demonstrated:
@@ -53,4 +76,6 @@ Before promotion ask:
 - What evidence would make the opposite conclusion more likely?
 - Are we learning from the agent's decision, or from a human/platform action that occurred after it?
 
-PASS means the feedback has been correctly routed and, if it changes reusable knowledge, the change has earned requalification. PASS does not mean every successful field tactic becomes part of the agent.
+For model-learning use, PASS means the feedback has been correctly routed and, if it changes reusable knowledge, the change has earned requalification. PASS does not mean every successful field tactic becomes part of the agent.
+
+For T3 use, return `T3_SUPPORTED` only when both this gate and the promotion requirements in `professional-trust-validation.md` are satisfied. Otherwise retain the strongest lower tier actually supported.
