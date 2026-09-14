@@ -1,0 +1,47 @@
+name: Content Architecture v0.5 held-out static
+
+on:
+  push:
+    branches:
+      - research/content-architecture-constraint-surface-306
+    paths:
+      - 'architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py'
+      - 'architect/evaluation/content_architecture/constraint_surface_v05_heldout_preregistration.md'
+      - '.github/workflows/content-architecture-v05-heldout.yml'
+      - '.github/workflows/content-architecture-v05-heldout-static.yml'
+  pull_request:
+    paths:
+      - 'architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py'
+      - 'architect/evaluation/content_architecture/constraint_surface_v05_heldout_preregistration.md'
+      - '.github/workflows/content-architecture-v05-heldout.yml'
+      - '.github/workflows/content-architecture-v05-heldout-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and enforce invariants
+        run: |
+          python -m py_compile architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('architect/evaluation/content_architecture/constraint_surface_v05_heldout_preregistration.md').read_text()
+          w=Path('.github/workflows/content-architecture-v05-heldout.yml').read_text()
+          r=Path('architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py').read_text()
+          assert 'FROZEN BEFORE HELD-OUT EXECUTION' in p
+          assert '12/12 hidden PASS' in p
+          assert re.search(r'(?m)^on:\n  workflow_dispatch:',w)
+          assert not re.search(r'(?m)^  (push|pull_request):',w)
+          assert 'secrets.GEMINI_API_KEY' in w and 'secrets.GROQ_API_KEY' in w
+          assert 'CATEGORY_COUNTS' in r and 'PAIR-A' in r and 'PAIR-B' in r
+          assert 'no candidate retry' in p.lower()
+          print('CONTENT_ARCHITECTURE_V05_HELDOUT_STATIC_PASS')
+          PY
