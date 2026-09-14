@@ -178,6 +178,16 @@ Every incident-driven change must answer:
 - Does state/security/tool authority change as a side effect?
 - Is rollback possible if the repair regresses production?
 
+## Trust-tier impact
+
+When an agent/core carries T2 `EXPERT-VALIDATED` or T3 `PRODUCTION-PROVEN` evidence under `professional-trust-validation.md`, every validated severe incident and every repeated substantive practitioner correction must include an explicit trust-tier impact decision.
+
+Allowed dispositions include:
+
+`KEEP_TIER | NARROW_CLAIM | REVALIDATE_T2 | REVALIDATE_T3 | DOWNGRADE_TO_T2 | DOWNGRADE_TO_T1 | QUARANTINE | REVOKE`.
+
+Do not treat a historical expert/production PASS as permanent evidence when later field behavior falsifies its assumptions.
+
 ## Quality gate
 
 Production learning passes only when a reviewer can trace:
