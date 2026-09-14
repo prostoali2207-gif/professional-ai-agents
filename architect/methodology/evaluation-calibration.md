@@ -128,6 +128,23 @@ Record at minimum when relevant:
 - grader version;
 - unresolved uncertainty.
 
+## External professional grounding
+
+Internal evaluation can establish repository qualification without establishing strong-practitioner equivalence.
+
+When a release claim depends on tacit, subjective, irreducibly professional, or high-consequence judgment, use `professional-trust-validation.md` to determine whether external practitioner evidence is required.
+
+For an `EXPERT-VALIDATED` claim:
+
+- expert reference judgments are release evidence, not optional decoration;
+- expert eligibility and independence must be documented;
+- authentic tasks must sample the real claim boundary;
+- model graders delegated judgment-heavy criteria must be calibrated against independent practitioner judgments;
+- systematic model-vs-expert disagreement on release-critical criteria blocks the stronger claim;
+- legitimate expert disagreement must be represented as a decision boundary, not averaged away.
+
+Do not require human grading for criteria with reliable mechanical ground truth merely to create the appearance of rigor.
+
 ## Practical release gate
 
 A professional agent should not pass solely on aggregate score. Require all critical criteria to pass.
