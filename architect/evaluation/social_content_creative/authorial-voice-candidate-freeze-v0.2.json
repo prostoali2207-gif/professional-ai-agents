@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "social-content-creative-authorial-voice-v0.2",
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "issue": 302,
+  "date": "2026-09-13",
+  "parent": {
+    "core_id": "social-content-creative",
+    "version": "0.1.0",
+    "lifecycle": "qualified",
+    "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "professional_model_path": "architect/library/cores/social-content-creative/0.1.0/professional-model.md",
+    "professional_model_blob_sha": "d8eee4c6f9141f362d91a340c37dcae6ad6bfa71"
+  },
+  "overlay": {
+    "path": "architect/research/social-content-creative/professional-model-candidate-v0.2-authorial-voice-overlay.md",
+    "blob_sha": "e22b81417a78f85d1bb2e2526228854a54983dbe"
+  },
+  "assembly": {
+    "order": [
+      "architect/library/cores/social-content-creative/0.1.0/professional-model.md",
+      "architect/research/social-content-creative/professional-model-candidate-v0.2-authorial-voice-overlay.md"
+    ],
+    "digest_method": "sha256 of ordered UTF-8 lines '<path>:<git_blob_sha>\\n'",
+    "digest": "sha256:39099fa9b2a32b439cdb6551028ca7dcfc9c56b8f6ee9e47839c141b525e7a4f"
+  },
+  "research_refs": [
+    {
+      "path": "architect/research/social-content-creative/authorial-voice-extension-v0.1.md",
+      "blob_sha": "b801c8c60a47d9b35d26bd34a39bb8afddd70327"
+    },
+    {
+      "path": "architect/research/social-content-creative/authorial-voice-evidence-register-v0.1.md",
+      "blob_sha": "a89ad230eb59da8cbc6e33058809dc08780d9680"
+    }
+  ],
+  "qualification_protocol": {
+    "path": "architect/research/social-content-creative/authorial-voice-qualification-protocol-v0.1.md",
+    "blob_sha": "75d6f43727daf62a3daa9dde9b7d364bada5d4ea",
+    "status": "frozen_before_candidate_implementation"
+  },
+  "claims": {
+    "allowed": [
+      "candidate implements an authorial-voice/spoken-humor extension over the exact qualified parent",
+      "parent qualified invariants remain mandatory",
+      "candidate is eligible for targeted development evaluation"
+    ],
+    "forbidden": [
+      "qualified",
+      "library-admitted",
+      "proven to improve retention or conversion",
+      "proven to deliver charismatic vocal performance",
+      "reference creator style clone"
+    ]
+  },
+  "next_gate": "TARGETED_DEVELOPMENT_EVALUATION"
+}

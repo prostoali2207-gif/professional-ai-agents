@@ -1,0 +1,47 @@
+name: Authorial Voice v0.4 held-out static
+
+on:
+  push:
+    branches:
+      - research/social-content-authorial-voice-302
+    paths:
+      - 'architect/evaluation/social_content_creative/run_authorial_voice_v04_heldout.py'
+      - 'architect/evaluation/social_content_creative/authorial_voice_v04_heldout_preregistration.md'
+      - '.github/workflows/authorial-voice-v04-heldout.yml'
+      - '.github/workflows/authorial-voice-v04-heldout-static.yml'
+  pull_request:
+    paths:
+      - 'architect/evaluation/social_content_creative/run_authorial_voice_v04_heldout.py'
+      - 'architect/evaluation/social_content_creative/authorial_voice_v04_heldout_preregistration.md'
+      - '.github/workflows/authorial-voice-v04-heldout.yml'
+      - '.github/workflows/authorial-voice-v04-heldout-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and enforce invariants
+        run: |
+          python -m py_compile architect/evaluation/social_content_creative/run_authorial_voice_v04_heldout.py
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('architect/evaluation/social_content_creative/authorial_voice_v04_heldout_preregistration.md').read_text()
+          w=Path('.github/workflows/authorial-voice-v04-heldout.yml').read_text()
+          r=Path('architect/evaluation/social_content_creative/run_authorial_voice_v04_heldout.py').read_text()
+          assert 'FROZEN BEFORE HELD-OUT EXECUTION' in p
+          assert '17/17 hidden PASS' in p
+          assert re.search(r'(?m)^on:\n  workflow_dispatch:',w)
+          assert not re.search(r'(?m)^  (push|pull_request):',w)
+          assert 'secrets.GEMINI_API_KEY' in w and 'secrets.GROQ_API_KEY' in w
+          assert 'FAMILIES=[' in r and 'AV-Q17' in r
+          assert 'no candidate retry' in p.lower()
+          print('AUTHORIAL_VOICE_HELDOUT_STATIC_PASS')
+          PY
