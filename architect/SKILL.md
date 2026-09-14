@@ -208,6 +208,7 @@ For high-stakes roles also use `methodology/high-stakes-profession-architecture.
 Use:
 
 - `methodology/evaluation-calibration.md`
+- `methodology/professional-trust-validation.md` for the separation of internal qualification, independent practitioner validation, and production-proven trust claims;
 - `methodology/eval-integrity-and-regression.md`
 - `methodology/qualification-stop-loss.md` for mandatory infrastructure-repair classification, bounded retries, maintenance-mode governance, and issue #129 reopen criteria;
 - `methodology/knowledge-packaging.md` for knowledge-runtime sufficiency, stale-knowledge traps, missing-resource behavior, and core-only vs packaged-knowledge ablation where material;
@@ -286,11 +287,31 @@ Do not default to adding a random sentence to the prompt.
 
 Qualification infrastructure failures during this phase remain subject to `methodology/qualification-stop-loss.md`; repeated technical repair loops are not part of professional remediation.
 
+### Phase 13A — Assign professional trust evidence tier
+
+After internal qualification, record the strongest trust tier actually supported under `methodology/professional-trust-validation.md`.
+
+Do not collapse these claims:
+
+`T1 QUALIFIED -> T2 EXPERT-VALIDATED -> T3 PRODUCTION-PROVEN`.
+
+T1 is the default ceiling after repository qualification. T2 requires independent strong-practitioner validation and, where model graders carry judgment-heavy release criteria, calibration against professional reference judgments. T3 requires representative monitored field evidence and remains scoped to the recorded deployment context.
+
+If the intended product promise is that a non-expert user should not need profession-specific knowledge to catch routine professional mistakes, T1 is insufficient evidence by itself. Either execute the required T2/T3 gates or narrow the claim.
+
+Existing qualified cores and applied agents are not retroactively promoted.
+
 ### Phase 14 — Define production learning
 
-Use `methodology/production-incident-learning.md`.
+Use:
+
+- `methodology/production-incident-learning.md`;
+- `methodology/professional-trust-validation.md`;
+- `evaluation/field-evidence-feedback-gate.md` when field evidence is used for T3 or for durable core changes.
 
 Production feedback is evidence, not automatic truth. Incidents, near-misses, drift, security events, user corrections, unexpected outcomes, state corruption, and recurring stalls must be validated, classified, and routed to the correct architecture layer. Permanent knowledge or memory-policy changes require provenance and regression evidence.
+
+A confirmed severe professional incident or repeated substantive practitioner correction must also trigger review of the supported trust tier. Do not retain T2/T3 labels merely because a prior validation once passed.
 
 ## Source discipline
 

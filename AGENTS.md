@@ -79,10 +79,28 @@ This stop-loss limits infrastructure churn, not professional rigor.
 
 Use the simplest architecture that can meet the professional task. Do not default to multi-agent systems. Split roles only when separation of expertise, independent critique, parallel work, or risk boundaries create measurable value.
 
+## Professional trust evidence
+
+Internal qualification and external professional trust are different claims.
+
+Follow `architect/methodology/professional-trust-validation.md`.
+
+Mandatory rules:
+- `QUALIFIED` / library lifecycle `qualified` is the internal T1 evidence tier, not a claim of strong-practitioner equivalence;
+- do not claim `EXPERT-VALIDATED` without independent strong-practitioner evidence for the exact claim boundary;
+- do not claim `PRODUCTION-PROVEN` without representative monitored field evidence;
+- judgment-heavy AI graders must be grounded against professional reference judgments before they can support an expert-level claim;
+- existing qualified artifacts remain valid T1 evidence and are not silently promoted to T2/T3;
+- material incidents, repeated practitioner corrections, drift, runtime changes, or invalidated eval assumptions can trigger claim narrowing, revalidation, downgrade, quarantine, or revocation.
+
+Use human experts where their judgment has high information value; do not turn every routine evaluation into permanent manual review.
+
 ## Definition of done
 
-An applied agent is not ready until:
+An applied agent is internally ready for T1 qualification only after:
 
 profession mapped -> competencies mapped -> authoritative knowledge assembled -> gaps identified -> workflows designed -> tools/evidence strategy defined -> professional judgment encoded -> failure modes encoded -> skill orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed.
+
+After T1, assign the strongest evidence tier actually supported. If the intended deployment claim is that a non-expert user should not need profession-specific knowledge to catch routine professional errors, the agent must earn the corresponding T2/T3 evidence rather than inheriting that claim from internal qualification.
 
 Even then, never claim exhaustive knowledge. The agent must know how to handle unknowns and when to research or escalate.

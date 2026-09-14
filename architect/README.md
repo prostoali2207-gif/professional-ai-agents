@@ -22,8 +22,15 @@ Every new agent must independently pass the Agent Architect workflow:
 
 A pass for the Architect itself, or for an inherited professional core, is never automatically inherited by an applied agent.
 
+Internal qualification also does not by itself prove strong-practitioner equivalence. Trust evidence is tracked separately:
+
+`T1 QUALIFIED -> T2 EXPERT-VALIDATED -> T3 PRODUCTION-PROVEN`.
+
+T2 requires independent strong-practitioner validation for the relevant claim boundary. T3 requires representative monitored field evidence. Existing `qualified` cores default to T1 unless stronger evidence has actually been recorded.
+
 See:
 
+- `methodology/professional-trust-validation.md`
 - `methodology/professional-core-reuse.md`
 - `evaluation/professional-core-reuse-gate.md`
 - `evaluation/professional-core-reuse-validation-report-2026-08-16.md`
@@ -58,6 +65,6 @@ For reusable professional cores, changed domain assumptions, runtime/tool bindin
 
 ## Boundary
 
-`v1.2 PASS` means the qualified Agent Architect architecture met its recorded integration gates for the capabilities covered by those gates. It does not mean `perfect`, `complete`, knowledgeable about every profession, or that an applied agent automatically passes because it was designed by this Architect or inherits a passed core.
+`v1.2 PASS` means the qualified Agent Architect architecture met its recorded integration gates for the capabilities covered by those gates. It does not mean `perfect`, `complete`, knowledgeable about every profession, that an applied agent automatically passes because it was designed by this Architect or inherits a passed core, or that a T1-qualified professional core has already earned T2/T3 trust evidence.
 
 Unknown, volatile, jurisdiction-specific, disputed, high-stakes, versioned, stateful, or security-sensitive behavior still requires appropriate live evidence, direct verification, and escalation when evidence or authority is insufficient.

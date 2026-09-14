@@ -32,6 +32,14 @@ The immutable profession-level content. Any behavior-relevant modification requi
 
 Evidence about an exact artifact digest in a declared evaluation environment. Qualification records are appendable/revocable evidence objects; they do not mutate the qualified artifact.
 
+### Professional trust evidence record
+
+Evidence that supports a claim above internal qualification, following `professional-trust-validation.md`.
+
+This record is separate from both the core artifact and the catalog lifecycle. It may document independent strong-practitioner validation (T2), monitored field evidence (T3), limitations, downgrade triggers and revalidation state.
+
+A missing trust-evidence record means no claim above T1 should be inferred from `qualified` lifecycle status.
+
 ### Catalog entry
 
 Mutable discovery/lifecycle metadata that points to exact artifact versions and qualification records. Catalog state can change without rewriting historical core/eval evidence.
@@ -137,6 +145,21 @@ Qualification records must state:
 A later target may reuse qualification evidence only for unchanged invariants whose implementation and qualifying assumptions remain applicable.
 
 Changed domain assumptions, runtime/model/tool bindings, authority scope, state contract, volatile claims, security boundary, or composition interactions create affected/new evaluation obligations.
+
+### Qualification is not expert equivalence
+
+The catalog lifecycle `qualified` is intentionally retained as the internal admission state. It must not be renamed or inflated to mean expert-validated or production-proven.
+
+Trust evidence is a separate axis:
+
+`T1 QUALIFIED | T2 EXPERT-VALIDATED | T3 PRODUCTION-PROVEN`.
+
+All existing qualified cores remain valid T1 artifacts unless a separate trust-evidence record supports a stronger tier. Promotion, narrowing and downgrade follow `professional-trust-validation.md`.
+
+This separation avoids two failure modes:
+
+- discarding valid internal qualification evidence merely because external validation has not yet occurred;
+- overclaiming strong-practitioner or field reliability from internal PASS evidence alone.
 
 ## Dependency graph
 
