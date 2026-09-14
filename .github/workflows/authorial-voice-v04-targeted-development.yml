@@ -1,0 +1,49 @@
+name: Authorial Voice v0.4 targeted development
+
+on:
+  push:
+    branches:
+      - research/social-content-authorial-voice-302
+    paths:
+      - 'architect/research/social-content-creative/**authorial-voice**'
+      - 'architect/evaluation/social_content_creative/authorial_voice_dev_v0.1.json'
+      - 'architect/evaluation/social_content_creative/authorial_voice_dev_v0.2.json'
+      - 'architect/evaluation/social_content_creative/run_authorial_voice_v04_targeted_dev.py'
+      - '.github/workflows/authorial-voice-v04-targeted-development.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  targeted-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      AUTHORIAL_VOICE_CANDIDATE_MODEL: gemini-3.5-flash-lite
+      AUTHORIAL_VOICE_JUDGE_MODEL: gemini-3.5-flash-lite
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Static identity checks
+        shell: bash
+        run: |
+          test "$(git hash-object architect/library/cores/social-content-creative/0.1.0/professional-model.md)" = "d8eee4c6f9141f362d91a340c37dcae6ad6bfa71"
+          test "$(git hash-object architect/research/social-content-creative/professional-model-candidate-v0.4-authorial-voice-overlay.md)" = "abed0d6762299c82b82e603355beac9f79b4cca2"
+          test "$(git hash-object architect/research/social-content-creative/authorial-voice-qualification-protocol-v0.2.md)" = "c9942aa64cead4f0b55c7949a6a59debbde88356"
+          python -m py_compile architect/evaluation/social_content_creative/run_authorial_voice_v04_targeted_dev.py
+      - name: Run 18-case visible targeted development gate
+        run: python architect/evaluation/social_content_creative/run_authorial_voice_v04_targeted_dev.py
+      - name: Upload development evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: authorial-voice-v04-targeted-development-${{ github.sha }}
+          path: .tmp/authorial-voice-v04-targeted-development.json
+          if-no-files-found: warn
+          retention-days: 30
