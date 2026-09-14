@@ -1,15 +1,6 @@
 name: Content Architecture v0.5 constraint-surface development
 
 on:
-  push:
-    branches:
-      - research/content-architecture-constraint-surface-306
-    paths:
-      - 'architect/research/content-architecture/constraint-surface-*.md'
-      - 'architect/research/content-architecture/constraint-surface-*.json'
-      - 'architect/evaluation/content_architecture/constraint_surface_dev_v0.1.json'
-      - 'architect/evaluation/content_architecture/run_constraint_surface_v05_dev.py'
-      - '.github/workflows/content-architecture-v05-constraint-surface-development.yml'
   workflow_dispatch:
 
 permissions:
