@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import asyncio
 import base64
 import json
 import os
 import re
+import subprocess
 import sys
-import tempfile
+import time
+import urllib.error
 import urllib.request
 import uuid
 from pathlib import Path
 from typing import Any
 
-from copilot import CopilotClient
-from copilot.rpc import PermissionDecisionReject
-
 PBGS_SHA = "4146e2524b91de412cbe984428f2055e04a24bb4"
 CA_V04_BLOB = "5d440e1bf3e20fbd35c6ab276310a904e36cc06d"
 AV_V04_BLOB = "abed0d6762299c82b82e603355beac9f79b4cca2"
 CA_V05_BLOB = "74942d09593f73d0a9a23be068d3bbf3a0b8c06d"
+
+ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
+CANDIDATE_MODEL = os.environ.get("PBGS_CANDIDATE_MODEL", "gemini-3.5-flash-lite")
+EVALUATOR_MODEL = os.environ.get("PBGS_EVALUATOR_MODEL", "gemini-3.5-flash")
 
 ALLOWED_OWNERS = {
     "applied_orchestration",
@@ -57,8 +59,8 @@ BANNED_INCIDENT_MARKERS = [
     "orientation-01",
 ]
 
-def permission_gate(request: Any, invocation: Any) -> Any:
-    return PermissionDecisionReject(feedback="No built-in tools are authorized in this blind audit.")
+class TransportError(RuntimeError):
+    pass
 
 def extract_json(text: str) -> Any:
     raw = text.strip()
@@ -72,13 +74,80 @@ def extract_json(text: str) -> Any:
     starts = [i for i, ch in enumerate(raw) if ch in "[{"]
     for start in starts:
         for end in range(len(raw), start, -1):
-            if raw[end-1] not in "]}":
+            if raw[end - 1] not in "]}":
                 continue
             try:
                 return json.loads(raw[start:end])
             except json.JSONDecodeError:
                 continue
     raise ValueError("no valid JSON object found")
+
+def extract_output_text(raw: dict[str, Any]) -> str:
+    if isinstance(raw.get("output_text"), str):
+        return raw["output_text"]
+    for step in reversed(raw.get("steps") or []):
+        if not isinstance(step, dict) or step.get("type") != "model_output":
+            continue
+        content = step.get("content")
+        if isinstance(content, str):
+            return content
+        for item in content or []:
+            if isinstance(item, dict) and item.get("type") == "text" and isinstance(item.get("text"), str):
+                return item["text"]
+    return ""
+
+def gemini_call(system: str, prompt: str, model: str, *, allow_one_503_retry: bool = True) -> str:
+    key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not key:
+        raise TransportError("GEMINI_API_KEY missing")
+    payload = {
+        "model": model,
+        "store": False,
+        "input": [{"type": "user_input", "content": prompt}],
+        "system_instruction": system,
+    }
+    attempts = 2 if allow_one_503_retry else 1
+    for attempt in range(attempts):
+        req = urllib.request.Request(
+            ENDPOINT,
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "x-goog-api-key": key,
+                "User-Agent": "pbgs-cross-core-heldout-v0.1-r2",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=180) as resp:
+                raw = json.loads(resp.read().decode("utf-8"))
+            if not isinstance(raw, dict):
+                raise TransportError("Gemini returned non-object JSON")
+            text = extract_output_text(raw)
+            if not text:
+                raise TransportError("Gemini returned no output text")
+            return text
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode(errors="replace")
+            if exc.code == 503 and attempt == 0 and allow_one_503_retry:
+                time.sleep(2)
+                continue
+            raise TransportError(f"Gemini HTTP {exc.code}: {body[:1200]}")
+        except urllib.error.URLError as exc:
+            raise TransportError(f"Gemini transport error: {exc}")
+        except json.JSONDecodeError as exc:
+            raise TransportError(f"Gemini response JSON parse error: {exc}")
+    raise TransportError("Gemini call exhausted retry policy")
+
+def json_role(*, system: str, prompt: str, model: str, allow_parse_retry: bool) -> tuple[Any, str, int]:
+    raw = gemini_call(system, prompt, model)
+    try:
+        return extract_json(raw), raw, 0
+    except Exception:
+        if not allow_parse_retry:
+            raise
+    raw2 = gemini_call(system, prompt + "\n\nReturn valid JSON only. No markdown fences or prose.", model)
+    return extract_json(raw2), raw2, 1
 
 def github_blob(repo: str, sha: str, token: str) -> str:
     req = urllib.request.Request(
@@ -87,7 +156,7 @@ def github_blob(repo: str, sha: str, token: str) -> str:
             "Authorization": f"Bearer {token}",
             "Accept": "application/vnd.github+json",
             "X-GitHub-Api-Version": "2022-11-28",
-            "User-Agent": "pbgs-cross-core-heldout-v0.1",
+            "User-Agent": "pbgs-cross-core-heldout-v0.1-r2",
         },
     )
     with urllib.request.urlopen(req, timeout=30) as resp:
@@ -95,67 +164,6 @@ def github_blob(repo: str, sha: str, token: str) -> str:
     if payload.get("encoding") != "base64":
         raise RuntimeError(f"unsupported blob encoding for {sha}")
     return base64.b64decode(payload["content"]).decode("utf-8")
-
-async def session_text(
-    client: CopilotClient,
-    *,
-    model: str,
-    system: str,
-    prompt: str,
-    session_id: str,
-    timeout: int = 180,
-) -> str:
-    with tempfile.TemporaryDirectory(prefix="pbgs-heldout-session-") as td:
-        session = await client.create_session(
-            model=model,
-            session_id=session_id,
-            tools=[],
-            available_tools=[],
-            on_permission_request=permission_gate,
-            system_message={"mode": "append", "content": system},
-            infinite_sessions={"enabled": False},
-            memory={"enabled": False},
-            enable_session_store=False,
-            working_directory=td,
-        )
-        try:
-            response = await session.send_and_wait(prompt, timeout=timeout)
-            if response is None:
-                raise RuntimeError("Copilot SDK returned no final message")
-            return getattr(getattr(response, "data", None), "content", "") or ""
-        finally:
-            await session.disconnect()
-
-async def json_role(
-    client: CopilotClient,
-    *,
-    model: str,
-    system: str,
-    prompt: str,
-    session_prefix: str,
-    allow_parse_retry: bool,
-) -> tuple[Any, str, int]:
-    raw = await session_text(
-        client,
-        model=model,
-        system=system,
-        prompt=prompt,
-        session_id=f"{session_prefix}-{uuid.uuid4().hex[:8]}",
-    )
-    try:
-        return extract_json(raw), raw, 0
-    except Exception:
-        if not allow_parse_retry:
-            raise
-    retry_prompt = prompt + "\n\nYour response must be valid JSON only, with no markdown fences or prose."
-    raw2 = await session_text(
-        client,
-        model=model,
-        system=system,
-        prompt=retry_prompt,
-        session_id=f"{session_prefix}-repair-{uuid.uuid4().hex[:8]}",
-    )
-    return extract_json(raw2), raw2, 1
 
 def validate_hidden_pack(pack: Any) -> list[dict[str, Any]]:
     if not isinstance(pack, dict) or not isinstance(pack.get("cases"), list):
@@ -195,9 +203,9 @@ def validate_hidden_pack(pack: Any) -> list[dict[str, Any]]:
                 raise ValueError(f"{key} missing for {cid}")
         if not isinstance(case.get("root_cause_material"), bool):
             raise ValueError(f"root_cause_material missing for {cid}")
-        pair_id = case.get("pair_id")
+        pair_id = str(case.get("pair_id", "")).strip()
         if pair_id:
-            pair_members.setdefault(str(pair_id), []).append(case)
+            pair_members.setdefault(pair_id, []).append(case)
     if len(pair_members) != 1:
         raise ValueError("exactly one counterfactual pair required")
     members = next(iter(pair_members.values()))
@@ -208,7 +216,7 @@ def validate_hidden_pack(pack: Any) -> list[dict[str, Any]]:
     if members[0]["expected_action_code"] != members[1]["expected_action_code"]:
         raise ValueError("counterfactual pair must have invariant expected action")
     if members[0]["expected_decision_state"] != members[1]["expected_decision_state"]:
-        raise ValueError("counterfactual pair must have invariant expected decision state")
+        raise ValueError("counterfactual pair must have invariant expected state")
     indep = sum(1 for c in cases if c["construct"] == "professional_independence")
     bold = len(cases) - indep
     if indep < 4 or bold < 4:
@@ -250,14 +258,15 @@ def candidate_system(
 ) -> str:
     parts = [
         "You are executing a frozen assembled Personal Brand Growth System professional runtime.",
-        "Treat the following sources as binding according to their stated status and boundaries.",
+        "Treat the following sources as binding according to their stated status and authority boundaries.",
+        "A candidate overlay may be used but must not be described as qualified.",
         "Do not reveal hidden chain-of-thought. Return only the requested structured decision.",
         common,
     ]
     if owner == "content_architecture":
         parts += [
             "\n--- QUALIFIED CONTENT ARCHITECTURE v0.4 ---\n" + ca_v04,
-            "\n--- CANDIDATE CONSTRAINT-SURFACE v0.5 (NOT QUALIFIED) ---\n" + ca_v05,
+            "\n--- CANDIDATE CONSTRAINT-SURFACE v0.5 / NOT QUALIFIED ---\n" + ca_v05,
         ]
     elif owner == "social_content_creative":
         parts += [
@@ -274,7 +283,7 @@ def candidate_system(
         parts += [
             "\n--- CREATIVE PROFESSION METHODOLOGY ---\n" + creative_method,
             "\n--- QUALIFIED CONTENT ARCHITECTURE v0.4 ---\n" + ca_v04,
-            "\n--- CANDIDATE CONSTRAINT-SURFACE v0.5 (NOT QUALIFIED) ---\n" + ca_v05,
+            "\n--- CANDIDATE CONSTRAINT-SURFACE v0.5 / NOT QUALIFIED ---\n" + ca_v05,
             "\n--- QUALIFIED SOCIAL CONTENT CREATIVE 0.1.0 ---\n" + scc,
             "\n--- AUTHORIAL VOICE v0.4 CANDIDATE / NOT QUALIFIED ---\n" + av_v04,
         ]
@@ -323,7 +332,7 @@ Every case must be fully self-contained and include all decision-relevant facts.
 Allowed owner labels:
 applied_orchestration, content_architecture, social_content_creative, authorial_voice, mixed_content.
 
-For each case create 2-4 allowed actions with short opaque codes like A/B/C (or similarly neutral codes), exactly one expected action, expected decision state, required and forbidden professional behaviors, and whether root-cause depth is material.
+For each case create 2-4 allowed actions with short opaque codes like A/B/C, exactly one expected action, expected decision state, required and forbidden professional behaviors, and whether root-cause depth is material.
 
 Return JSON only:
 {
@@ -426,7 +435,7 @@ def validate_judge(value: Any, case_ids: set[str]) -> dict[str, dict[str, Any]]:
         scores = row.get("scores")
         if not isinstance(scores, dict) or set(scores) != dims:
             raise ValueError("judge scores invalid")
-        if any(v not in (0,1,2) for v in scores.values()):
+        if any(v not in (0, 1, 2) for v in scores.values()):
             raise ValueError("judge score outside 0..2")
         flags = row.get("critical_flags")
         if not isinstance(flags, list) or any(x not in CRITICAL_FLAGS for x in flags):
@@ -473,62 +482,52 @@ def score_case(case: dict[str, Any], candidate: dict[str, Any], ja: dict[str, An
         "pass": bool(base),
     }
 
-async def main_async() -> int:
+def main() -> int:
     out_dir = Path(os.environ.get("PBGS_AUDIT_OUT", ".tmp/pbgs-cross-core-heldout")).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     sanitized_path = out_dir / "sanitized-report.json"
     full_path = out_dir / "full-consumed-evidence.json"
-
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if not token:
-        raise RuntimeError("GitHub token unavailable")
-    evaluator_root = Path(os.environ["EVALUATOR_DIR"]).resolve()
-    candidate_root = Path(os.environ["PBGS_CANDIDATE_DIR"]).resolve()
-    if not (candidate_root / "AGENTS.md").is_file():
-        raise RuntimeError("PBGS AGENTS.md missing")
-    import subprocess
-    actual_sha = subprocess.check_output(["git", "-C", str(candidate_root), "rev-parse", "HEAD"], text=True).strip()
-    if actual_sha != PBGS_SHA:
-        raise RuntimeError(f"PBGS candidate SHA mismatch: {actual_sha}")
-
-    pbgs_agents = (candidate_root / "AGENTS.md").read_text(encoding="utf-8")
-    runtime_judgment = (evaluator_root / "docs/runtime-judgment-and-opportunity.md").read_text(encoding="utf-8")
-    creative_method = (evaluator_root / "architect/methodology/creative-profession-architecture.md").read_text(encoding="utf-8")
-    scc = (evaluator_root / "architect/library/cores/social-content-creative/0.1.0/professional-model.md").read_text(encoding="utf-8")
-    ca_v04 = github_blob("prostoali2207-gif/professional-ai-agents", CA_V04_BLOB, token)
-    av_v04 = github_blob("prostoali2207-gif/professional-ai-agents", AV_V04_BLOB, token)
-    ca_v05 = github_blob("prostoali2207-gif/professional-ai-agents", CA_V05_BLOB, token)
-
-    common = (
-        "\n--- PBGS APPLIED GOVERNANCE (FROZEN) ---\n" + pbgs_agents
-        + "\n--- REUSABLE RUNTIME JUDGMENT ---\n" + runtime_judgment
-    )
-
-    model = os.environ.get("PBGS_AUDIT_MODEL", "auto")
-    base_dir = out_dir / "copilot-home"
-    base_dir.mkdir(exist_ok=True)
-    client = CopilotClient(
-        github_token=token,
-        base_directory=str(base_dir),
-        working_directory=str(out_dir),
-        mode="empty",
-        log_level="warning",
-    )
-    await client.start()
-    run_id = "pbgs-heldout-" + uuid.uuid4().hex[:10]
     try:
+        gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        if not gemini_key:
+            raise TransportError("GEMINI_API_KEY missing")
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if not token:
+            raise RuntimeError("GitHub token unavailable for exact blob retrieval")
+        evaluator_root = Path(os.environ["EVALUATOR_DIR"]).resolve()
+        candidate_root = Path(os.environ["PBGS_CANDIDATE_DIR"]).resolve()
+        if not (candidate_root / "AGENTS.md").is_file():
+            raise RuntimeError("PBGS AGENTS.md missing")
+        actual_sha = subprocess.check_output(
+            ["git", "-C", str(candidate_root), "rev-parse", "HEAD"], text=True
+        ).strip()
+        if actual_sha != PBGS_SHA:
+            raise RuntimeError(f"PBGS candidate SHA mismatch: {actual_sha}")
+
+        pbgs_agents = (candidate_root / "AGENTS.md").read_text(encoding="utf-8")
+        runtime_judgment = (evaluator_root / "docs/runtime-judgment-and-opportunity.md").read_text(encoding="utf-8")
+        creative_method = (evaluator_root / "architect/methodology/creative-profession-architecture.md").read_text(encoding="utf-8")
+        scc = (evaluator_root / "architect/library/cores/social-content-creative/0.1.0/professional-model.md").read_text(encoding="utf-8")
+        ca_v04 = github_blob("prostoali2207-gif/professional-ai-agents", CA_V04_BLOB, token)
+        av_v04 = github_blob("prostoali2207-gif/professional-ai-agents", AV_V04_BLOB, token)
+        ca_v05 = github_blob("prostoali2207-gif/professional-ai-agents", CA_V05_BLOB, token)
+
+        common = (
+            "\n--- PBGS APPLIED GOVERNANCE (FROZEN) ---\n" + pbgs_agents
+            + "\n--- REUSABLE RUNTIME JUDGMENT ---\n" + runtime_judgment
+        )
+        run_id = "pbgs-heldout-r2-" + uuid.uuid4().hex[:10]
+
         author_system = (
             "You are an evaluator-owned hidden-fixture author. "
             "Create professionally discriminating cases, not trick wording. "
             "Do not assume disagreement is good. Do not reveal chain-of-thought. "
             "Return only the requested JSON."
         )
-        pack, author_raw, author_retries = await json_role(
-            client,
-            model=model,
+        pack, author_raw, author_retries = json_role(
             system=author_system,
             prompt=author_prompt(),
-            session_prefix=run_id + "-author",
+            model=EVALUATOR_MODEL,
             allow_parse_retry=True,
         )
         cases = validate_hidden_pack(pack)
@@ -537,27 +536,11 @@ async def main_async() -> int:
         candidate_raw: dict[str, str] = {}
         candidate_parse_errors: dict[str, str] = {}
         for case in cases:
-            sysmsg = candidate_system(
-                common,
-                case["owner"],
-                ca_v04,
-                ca_v05,
-                scc,
-                av_v04,
-                creative_method,
-            )
-            raw = await session_text(
-                client,
-                model=model,
-                system=sysmsg,
-                prompt=candidate_prompt(case),
-                session_id=f"{run_id}-candidate-{case['id']}-{uuid.uuid4().hex[:6]}",
-                timeout=180,
-            )
+            sysmsg = candidate_system(common, case["owner"], ca_v04, ca_v05, scc, av_v04, creative_method)
+            raw = gemini_call(sysmsg, candidate_prompt(case), CANDIDATE_MODEL)
             candidate_raw[case["id"]] = raw
             try:
-                parsed = extract_json(raw)
-                candidate_outputs[case["id"]] = validate_candidate_output(parsed, case)
+                candidate_outputs[case["id"]] = validate_candidate_output(extract_json(raw), case)
             except Exception as exc:
                 candidate_outputs[case["id"]] = {
                     "decision_state": "INVALID",
@@ -570,35 +553,29 @@ async def main_async() -> int:
                 }
                 candidate_parse_errors[case["id"]] = str(exc)
 
-        judge_system_a = (
-            "You are a blinded senior practitioner and hiring/operational owner evaluating professional judgment. "
-            "Grade decisions by evidence, root-cause quality, usefulness and calibrated commitment. "
-            "Do not reward harshness, verbosity or disagreement by itself. Return JSON only."
-        )
-        judge_a_raw_value, judge_a_raw, judge_a_retries = await json_role(
-            client,
-            model=model,
-            system=judge_system_a,
+        judge_a_value, judge_a_raw, judge_a_retries = json_role(
+            system=(
+                "You are a blinded senior practitioner and hiring/operational owner evaluating professional judgment. "
+                "Grade decisions by evidence, root-cause quality, usefulness and calibrated commitment. "
+                "Do not reward harshness, verbosity or disagreement by itself. Return JSON only."
+            ),
             prompt=judge_prompt(cases, candidate_outputs, "senior practitioner / operational owner"),
-            session_prefix=run_id + "-judge-a",
+            model=EVALUATOR_MODEL,
             allow_parse_retry=True,
         )
-        judge_a = validate_judge(judge_a_raw_value, {c["id"] for c in cases})
+        judge_a = validate_judge(judge_a_value, {c["id"] for c in cases})
 
-        judge_system_b = (
-            "You are a blinded evaluation scientist focused on evidence calibration, counterfactual consistency, "
-            "authority provenance, false confidence and anti-sycophancy. Do not reward generic skepticism or ceremonial objections. "
-            "Return JSON only."
-        )
-        judge_b_raw_value, judge_b_raw, judge_b_retries = await json_role(
-            client,
-            model=model,
-            system=judge_system_b,
+        judge_b_value, judge_b_raw, judge_b_retries = json_role(
+            system=(
+                "You are a blinded evaluation scientist focused on evidence calibration, counterfactual consistency, "
+                "authority provenance, false confidence and anti-sycophancy. Do not reward generic skepticism or ceremonial objections. "
+                "Return JSON only."
+            ),
             prompt=judge_prompt(cases, candidate_outputs, "evaluation-scientist / evidence-calibration"),
-            session_prefix=run_id + "-judge-b",
+            model=EVALUATOR_MODEL,
             allow_parse_retry=True,
         )
-        judge_b = validate_judge(judge_b_raw_value, {c["id"] for c in cases})
+        judge_b = validate_judge(judge_b_value, {c["id"] for c in cases})
 
         results: dict[str, Any] = {}
         all_flags: list[str] = []
@@ -609,14 +586,13 @@ async def main_async() -> int:
 
         pair_groups: dict[str, list[dict[str, Any]]] = {}
         for case in cases:
-            if case.get("pair_id"):
-                pair_groups.setdefault(case["pair_id"], []).append(case)
+            pair_id = str(case.get("pair_id", "")).strip()
+            if pair_id:
+                pair_groups.setdefault(pair_id, []).append(case)
         pair = next(iter(pair_groups.values()))
         pair_invariant = (
-            candidate_outputs[pair[0]["id"]].get("action_code")
-            == candidate_outputs[pair[1]["id"]].get("action_code")
-            and candidate_outputs[pair[0]["id"]].get("decision_state")
-            == candidate_outputs[pair[1]["id"]].get("decision_state")
+            candidate_outputs[pair[0]["id"]].get("action_code") == candidate_outputs[pair[1]["id"]].get("action_code")
+            and candidate_outputs[pair[0]["id"]].get("decision_state") == candidate_outputs[pair[1]["id"]].get("decision_state")
         )
 
         all_case_pass = all(x["pass"] for x in results.values())
@@ -634,13 +610,16 @@ async def main_async() -> int:
             "schema_version": "1.0.0",
             "run_id": run_id,
             "status": status,
+            "execution_attempt": "R2_BOUNDED_RETRY",
+            "transport": "gemini-interactions-api",
             "pbgs_candidate_sha": PBGS_SHA,
+            "candidate_model": CANDIDATE_MODEL,
+            "evaluator_model": EVALUATOR_MODEL,
             "resource_blobs": {
                 "content_architecture_v0_4": CA_V04_BLOB,
                 "authorial_voice_v0_4_candidate": AV_V04_BLOB,
                 "constraint_surface_v0_5_candidate": CA_V05_BLOB,
             },
-            "model": model,
             "case_count": len(cases),
             "pair_invariant": pair_invariant,
             "judge_disagreement": judge_disagreement,
@@ -655,16 +634,20 @@ async def main_async() -> int:
             },
             "author_parse_retries": author_retries,
             "judge_parse_retries": {"a": judge_a_retries, "b": judge_b_retries},
-            "scope_note": "Bounded independent held-out cross-core runtime audit; not a qualification certificate for underlying candidate overlays.",
+            "scope_note": (
+                "Bounded independent held-out cross-core runtime audit on Gemini transport; "
+                "not a qualification certificate for underlying candidate overlays and not automatic proof of ChatGPT deployment parity."
+            ),
         }
         full = {
             "sanitized": sanitized,
             "hidden_cases_consumed_once": cases,
             "candidate_outputs": candidate_outputs,
             "candidate_raw": candidate_raw,
-            "judge_a": judge_a_raw_value,
-            "judge_b": judge_b_raw_value,
+            "candidate_parse_errors": candidate_parse_errors,
             "author_raw": author_raw,
+            "judge_a": judge_a_value,
+            "judge_b": judge_b_value,
             "judge_a_raw": judge_a_raw,
             "judge_b_raw": judge_b_raw,
         }
@@ -672,27 +655,18 @@ async def main_async() -> int:
         full_path.write_text(json.dumps(full, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(sanitized, ensure_ascii=False, indent=2))
         return 0 if overall_pass else 1
-    finally:
-        await client.stop()
-
-def main() -> int:
-    out_dir = Path(os.environ.get("PBGS_AUDIT_OUT", ".tmp/pbgs-cross-core-heldout")).resolve()
-    out_dir.mkdir(parents=True, exist_ok=True)
-    try:
-        return asyncio.run(main_async())
     except Exception as exc:
         sanitized = {
             "schema_version": "1.0.0",
             "status": "NOT_EXECUTABLE",
+            "execution_attempt": "R2_BOUNDED_RETRY",
             "pbgs_candidate_sha": PBGS_SHA,
+            "transport": "gemini-interactions-api",
             "error_class": type(exc).__name__,
-            "error": str(exc)[:1000],
-            "scope_note": "No professional verdict; evaluator/runtime failure.",
+            "error": str(exc)[:1200],
+            "scope_note": "Second technical failure in this execution chain => STOP / no professional verdict.",
         }
-        (out_dir / "sanitized-report.json").write_text(
-            json.dumps(sanitized, ensure_ascii=False, indent=2) + "\n",
-            encoding="utf-8",
-        )
+        sanitized_path.write_text(json.dumps(sanitized, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(sanitized, ensure_ascii=False, indent=2))
         return 2
 
