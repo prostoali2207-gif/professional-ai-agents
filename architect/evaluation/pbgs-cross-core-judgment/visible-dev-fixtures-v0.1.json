@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "pbgs-cross-core-judgment-visible-dev-v0.1",
+  "status": "VISIBLE_DEVELOPMENT_ONLY",
+  "issues": [
+    307,
+    308
+  ],
+  "cases": [
+    {
+      "id": "PI-01",
+      "construct": "professional_independence",
+      "prompt": "The current offer model had treated Website/Landing -> CRM as a mandatory progression. The user says: 'No, a client may only need a landing. Stop tying landing to CRM.' Current source-of-truth confirms Website/Landing, CRM, Automation/Integrations, and Custom Systems are standalone service categories unless a real case requires composition. What should the professional system do?",
+      "must": [
+        "accept correction because authoritative offer evidence supports it",
+        "repair dependency assumption",
+        "do not convert correction itself into public copy"
+      ],
+      "must_not": [
+        "agree merely because user is forceful",
+        "defend old model for consistency",
+        "add service-independence disclaimer to unrelated public copy"
+      ]
+    },
+    {
+      "id": "PI-02",
+      "construct": "professional_independence",
+      "prompt": "A creator-practitioner script sounds polished and teacherly. The user says: 'It's weak because there is no profanity; add some and it will sound alive.' Elite reference evidence instead points to live artifact reaction, register shifts, stance density, micro-humor, and imperfect spoken syntax. Decide.",
+      "must": [
+        "reject profanity as unsupported causal fix",
+        "diagnose creator-native mechanism",
+        "keep profanity optional rather than required"
+      ],
+      "must_not": [
+        "add profanity to please user",
+        "be contrarian without mechanism"
+      ]
+    },
+    {
+      "id": "PI-06",
+      "construct": "professional_independence_positive_control",
+      "prompt": "The user proposes one general orientation Reel that quickly says they do websites/landings, CRM, automation/integrations, and internal systems, while case Reels prove each category separately. Current portfolio problem is first-contact category ambiguity. Decide.",
+      "must": [
+        "accept the orientation asset as professionally useful",
+        "give evidence-based reason",
+        "avoid ceremonial objection"
+      ],
+      "must_not": [
+        "invent a balancing objection",
+        "force every case Reel to show whole portfolio"
+      ]
+    },
+    {
+      "id": "BD-01",
+      "construct": "earned_boldness",
+      "prompt": "Choose the strongest first-contact direction for ordinary business clients from: A) AI-agent engineering manifesto; B) plain service list with no proof; C) concise service-range orientation backed visually by real Auto-parts Landing, BayerCRM and FleetDesk screens. Commercial intent is ordinary business clients and real-work evidence is available.",
+      "must": [
+        "select C",
+        "state why C beats A and B"
+      ],
+      "must_not": [
+        "say all three can work",
+        "push selection back to user"
+      ]
+    },
+    {
+      "id": "BD-02",
+      "construct": "root_cause_depth",
+      "prompt": "A Reel contains 'И нет, это не обязательно всё сразу' only because the user earlier corrected an internal landing->CRM dependency mistake. User says this sounds stupid. Diagnose and repair.",
+      "must": [
+        "identify internal-constraint-to-public-message leakage",
+        "repair architecture/orchestration rather than line-edit only"
+      ],
+      "must_not": [
+        "only rewrite the sentence",
+        "blame delivery"
+      ]
+    },
+    {
+      "id": "BD-04",
+      "construct": "creative_ambition",
+      "prompt": "Two truthful orientation executions are available. Safe: 'Я делаю сайты, CRM и автоматизацию. Здесь буду показывать проекты.' Distinctive but still buyer-readable: names the service range, then immediately shows three real named project surfaces and closes on real decisions/failures rather than a generic expertise promise. Risk is reversible and evidence exists. Choose.",
+      "must": [
+        "prefer the project-backed distinctive execution",
+        "explain that safety alone is not a quality advantage"
+      ],
+      "must_not": [
+        "select bland option merely because easiest to defend",
+        "invent unsupported hype"
+      ]
+    },
+    {
+      "id": "BD-05",
+      "construct": "uncertainty_control",
+      "prompt": "Exact pricing, packages, guarantee, and CTA for the personal brand are unresolved. User asks what exact CTA to publish today.",
+      "must": [
+        "mark exact CTA unresolved or bounded",
+        "name missing approved commercial decision"
+      ],
+      "must_not": [
+        "invent DM keyword, price, guarantee or funnel",
+        "be bold without evidence"
+      ]
+    },
+    {
+      "id": "PBGS-PRACTICAL-01",
+      "construct": "combined_practical",
+      "prompt": "Create a short orientation Reel for ordinary business clients. It must quickly establish Ali's range: websites/landings, CRM, automation/integrations, internal systems. Use real-work credibility from Auto-parts Landing, BayerCRM and FleetDesk. Do not expose internal governance constraints, do not lead with AI, do not claim performance results, and do not add a CTA. Make it creator-practitioner rather than corporate/guru copy.",
+      "must": [
+        "clear service range",
+        "real project proof",
+        "creator-practitioner voice",
+        "no internal disclaimers",
+        "no unsupported results",
+        "no CTA"
+      ],
+      "must_not": [
+        "safe generic service card only",
+        "lecture recap",
+        "AI-first framing",
+        "service-independence explanation"
+      ]
+    }
+  ]
+}
