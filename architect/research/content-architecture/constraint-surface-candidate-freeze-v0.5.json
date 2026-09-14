@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "content-architecture-v0.5-constraint-surface-overlay",
+  "issue": 306,
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "frozen_at": "2026-09-13",
+  "qualified_parent": {
+    "id": "content-architecture-creative-structure-practitioner",
+    "version": "0.4",
+    "professional_model_blob": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d"
+  },
+  "overlay": {
+    "path": "architect/research/content-architecture/constraint-surface-overlay-v0.5.md",
+    "blob": "74942d09593f73d0a9a23be068d3bbf3a0b8c06d"
+  },
+  "qualification_protocol": {
+    "path": "architect/research/content-architecture/constraint-surface-qualification-protocol-v0.1.md",
+    "blob": "d90c9daab6256fce3388025db7a656dc06489f1a",
+    "frozen_before_candidate": true
+  },
+  "next_gate": "VISIBLE_DEVELOPMENT_REGRESSION_PLUS_PBGS_ORIENTATION_PRACTICAL"
+}
