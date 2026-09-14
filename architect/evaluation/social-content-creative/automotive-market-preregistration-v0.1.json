@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "social-content-creative-automotive-market-v0.1",
+  "candidate": {
+    "core_id": "social-content-creative",
+    "version": "0.1.0",
+    "artifact_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f"
+  },
+  "status": "preregistered_not_executed",
+  "claim_ceiling": "T1_STRENGTHENING_ONLY",
+  "case_authoring": {
+    "exact_cases_public": false,
+    "reason": "Prevent candidate contamination and superficial imitation of market references.",
+    "authoring_time": "immediately_before_execution",
+    "reference_visibility_to_candidate": "none",
+    "market_metrics_visibility_to_candidate": "none",
+    "required_freshness": "use current market references or explicitly frozen archived references"
+  },
+  "families": [
+    {
+      "id": "MB-01",
+      "name": "price_or_budget_anchor",
+      "count": 2,
+      "required_mechanism": "A price/budget constraint must become the immediate premise rather than a generic vehicle introduction.",
+      "must_test": ["hook_speed", "sales_relevance", "truthfulness", "shootability"]
+    },
+    {
+      "id": "MB-02",
+      "name": "comparison_or_physical_test",
+      "count": 2,
+      "required_mechanism": "Use a simple observable comparison/test that can be filmed on a dealership lot with phone/small-team constraints.",
+      "must_test": ["concept_strength", "visual_storytelling", "payoff", "shootability"]
+    },
+    {
+      "id": "MB-03",
+      "name": "buyer_tension_or_pov",
+      "count": 2,
+      "required_mechanism": "Turn a real buyer objection, negotiation tension, misconception or decision conflict into short-form content.",
+      "must_test": ["hook_speed", "platform_native_feel", "sales_relevance", "distinctiveness"]
+    },
+    {
+      "id": "MB-04",
+      "name": "utility_or_trust",
+      "count": 2,
+      "required_mechanism": "Give useful buyer information or condition/transparency evidence that reduces uncertainty.",
+      "must_test": ["truthfulness", "payoff", "buyer_value", "non_genericity"]
+    },
+    {
+      "id": "MB-05",
+      "name": "interactive_choice_or_game",
+      "count": 2,
+      "required_mechanism": "Create an interaction/choice/guessing mechanism without relying on exotic-car novelty.",
+      "must_test": ["concept_strength", "engagement_mechanism", "visual_storytelling", "payoff"]
+    },
+    {
+      "id": "MB-06",
+      "name": "bad_user_premise",
+      "count": 2,
+      "required_mechanism": "User requests a weak, misleading, overhyped or obviously generic concept. Candidate must improve/reject the weak mechanism while still producing usable work.",
+      "must_test": ["professional_pushback", "truthfulness", "alternative_quality", "decision_judgment"]
+    },
+    {
+      "id": "MB-07",
+      "name": "anti_safe_generic_creative",
+      "count": 2,
+      "required_mechanism": "The brief permits a bolder but defensible solution. Candidate must not retreat to brochure-like or excessively cautious creative.",
+      "must_test": ["proportionate_boldness", "distinctiveness", "concept_strength", "shootability"]
+    },
+    {
+      "id": "MB-08",
+      "name": "ordinary_vehicle_challenge",
+      "count": 2,
+      "required_mechanism": "Create attention for an ordinary/non-luxury vehicle without celebrity, trend audio, expensive production or unsupported claims.",
+      "must_test": ["creative_mechanism", "hook_speed", "sales_relevance", "platform_native_feel"]
+    }
+  ],
+  "total_cases": 16,
+  "comparison_protocol": {
+    "blind_candidate_label": true,
+    "hide_market_account_names": true,
+    "hide_views_and_followers_during_qualitative_scoring": true,
+    "reveal_performance_evidence_after_qualitative_scoring": true,
+    "separate_concept_from_production_polish": true,
+    "music_not_required": true,
+    "raw_views_not_score": true
+  },
+  "dimensions": [
+    "scroll_stop_hook",
+    "concept_strength",
+    "distinctiveness",
+    "payoff",
+    "sales_relevance",
+    "truthfulness",
+    "visual_storytelling",
+    "shootability",
+    "proportionate_boldness",
+    "platform_native_feel",
+    "selection_judgment"
+  ],
+  "hard_failures": [
+    "unsupported_material_claim",
+    "brief_or_offer_fabrication",
+    "repeated_brochure_like_genericity_on_open_creative_tasks",
+    "repeated_excessive_caution_when_bolder_defensible_work_is available",
+    "unshootable_plan_under_frozen_constraints",
+    "candidate_copies_or_reconstructs_market_reference_after_exposure"
+  ],
+  "verdicts": [
+    "MARKET_BENCHMARK_PASS",
+    "MARKET_BENCHMARK_REVISE",
+    "MARKET_BENCHMARK_FAIL",
+    "NOT_EXECUTABLE"
+  ],
+  "trust_rule": "No verdict from this benchmark can promote the candidate to T2 EXPERT-VALIDATED."
+}
