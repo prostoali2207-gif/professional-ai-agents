@@ -1,0 +1,296 @@
+[
+  {
+    "id": "MG3-D01",
+    "family": "CRAFT_GENERIC_UI",
+    "priority": "P1",
+    "prompt": "A vertical explainer is technically clear and well aligned, but every scene uses rounded app-card panels, equal-weight labels and safe centered spacing. It feels like a polished dashboard template rather than authored motion design. Diagnose the failure and state the repair strategy.",
+    "must_observe": [
+      "distinguish_functional_clarity_from_authored_craft",
+      "identify_observable_system_causes_not_vague_premium_language",
+      "repair_visual_system_not_add_effects",
+      "preserve_comprehension"
+    ],
+    "reject_if": [
+      "declare_pass_because_clean_and_readable",
+      "fix_only_by_more_glow_particles_or_animation"
+    ]
+  },
+  {
+    "id": "MG3-D02",
+    "family": "ART_DIRECTION_SELECTION",
+    "priority": "P1",
+    "prompt": "Three motion directions all communicate the same approved message correctly: A is minimal editorial type with strong negative space, B is diagram-led with a restrained spatial system, C is highly decorated with layered UI cards and effects. Select a direction for a serious short-form business reel using the brief, visual-system coherence and craft rather than novelty alone.",
+    "must_observe": [
+      "compare_multiple_plausible_directions",
+      "use_brief_coherence_composition_type_motion_and_function",
+      "allow_restrained_direction_to_win_when_authored",
+      "reject_decoration_as_default_quality_signal"
+    ],
+    "reject_if": [
+      "choose_most_effects_as_best",
+      "choose_by_personal_taste_without_observable_reasons"
+    ]
+  },
+  {
+    "id": "MG3-D03",
+    "family": "COMPARATIVE_CRITIQUE",
+    "priority": "P1",
+    "prompt": "Artifact A is extremely polished but generic: familiar card stacks, predictable kinetic type and stock transitions. Artifact B is quieter but has a coherent custom typographic rhythm, purposeful spacing, one original explanatory motif and better subject integration. Compare them professionally.",
+    "must_observe": [
+      "separate_polish_from_genericity",
+      "distinguish_restraint_from_underdesign",
+      "cite_observable_craft_causes",
+      "preserve_legitimate_alternative_judgment"
+    ],
+    "reject_if": [
+      "equate_more_polish_effects_with_stronger_craft",
+      "use_unexplained_taste_labels"
+    ]
+  },
+  {
+    "id": "MG3-D04",
+    "family": "OVERLAY_INTEGRITY",
+    "priority": "P0",
+    "prompt": "The approved narration says a process continues through purchase, holding and later exit. A beautifully designed overlay says 'The whole cycle ends at purchase.' Typography and animation are flawless. Decide release status and next action.",
+    "must_observe": [
+      "block_release_for_semantic_contradiction",
+      "map_overlay_to_approved_statement_and_time_range",
+      "classify_composed_system_failure",
+      "repair_text_or_timing_then_rerender_and_reinspect"
+    ],
+    "reject_if": [
+      "pass_because_visual_execution_is_correct",
+      "treat_overlay_as_decorative_and_nonfactual"
+    ]
+  },
+  {
+    "id": "MG3-D05",
+    "family": "STRUCTURAL_EDIT_LOCK",
+    "priority": "P0",
+    "prompt": "The rough edit is still changing: two sentences may be removed and the order of the middle section is undecided. The team wants to fully animate three complex diagrams now to save time. Decide the workflow.",
+    "must_observe": [
+      "require_rough_or_structural_edit_lock_before_expensive_motion",
+      "allow_bounded_prototype_or_styleframe_work_if_useful",
+      "invalidate_affected_motion_timing_after_material_structure_change",
+      "avoid_full_motion_polish_on_unstable_edit"
+    ],
+    "reject_if": [
+      "fully_animate_before_structure_is_stable",
+      "treat_timeline_changes_as_no_effect_on_motion"
+    ]
+  },
+  {
+    "id": "MG3-D06",
+    "family": "TOOL_ROUTE_ASSET_SURFACE",
+    "priority": "P0",
+    "prompt": "The selected direction relies on custom vector illustration, textured masks and a hand-built icon language. The available renderer can animate text and CSS-like shapes but cannot author the required assets well. What should the agent do?",
+    "must_observe": [
+      "renderer_capability_not_equal_asset_authoring_capability",
+      "route_to_eligible_asset_authoring_step_or_select_simpler_direction_deliberately",
+      "do_not_silently_downgrade_craft_to_easy_css_cards",
+      "preserve_truth_and_reproducibility"
+    ],
+    "reject_if": [
+      "force_direction_into_generic_cards_because_tool_is_easy",
+      "claim_professional_execution_without_required_authoring_surface"
+    ]
+  },
+  {
+    "id": "MG3-D07",
+    "family": "REFERENCE_FIT",
+    "priority": "P1",
+    "prompt": "For a mobile talking-head explainer, the available references include a famous award-winning film title, a luxury web landing page, mediocre reel templates and several current strong short-form explainers with similar information density. Build the reference set.",
+    "must_observe": [
+      "prioritize_task_format_audience_mechanism_fit_over_prestige",
+      "inspect_actual_rendered_work",
+      "use_small_mechanism_diverse_set",
+      "extract_transferable_principles_and_derivative_risk",
+      "stop_when_reference_value_saturates"
+    ],
+    "reject_if": [
+      "award_or_fame_is_sufficient_relevance",
+      "dump_large_average_reference_set",
+      "single_reference_surface_becomes_template"
+    ]
+  },
+  {
+    "id": "MG3-D08",
+    "family": "TYPOGRAPHY_CRAFT",
+    "priority": "P1",
+    "prompt": "All text is readable and inside safe zones, but titles, labels and captions use the same visual weight, awkward line breaks and generic pills. The user asks for a more professional result. Diagnose without prescribing a fashionable font.",
+    "must_observe": [
+      "legibility_not_equal_typographic_craft",
+      "evaluate_role_hierarchy_character_scale_density_rhythm_linebreaks_emphasis_integration",
+      "repair_system_not_decorate",
+      "review_at_phone_size"
+    ],
+    "reject_if": [
+      "fix_only_with_color_shadow_or_italic",
+      "hardcode_specific_trend_as_professional_rule"
+    ]
+  },
+  {
+    "id": "MG3-D09",
+    "family": "SUBTITLE_SEMANTICS",
+    "priority": "P1",
+    "prompt": "The creator wants some caption words to grow, tilt or change color because successful reels do that. The video also contains a subject and an explanatory graphic. Define when emphasis is justified.",
+    "must_observe": [
+      "require_semantic_or_attention_job",
+      "treat_accent_devices_as_optional",
+      "preserve_exact_words_timing_readability_and_hierarchy",
+      "integrate_with_subject_and_graphic",
+      "avoid_accent_spam"
+    ],
+    "reject_if": [
+      "highlight_every_keyword",
+      "copy_reference_caption_surface",
+      "treat_captions_as_separate_decoration_layer"
+    ]
+  },
+  {
+    "id": "MG3-D10",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "A support request moves from received to triaged to assigned to resolved. The draft uses four unrelated numbered boxes. Design a clearer mechanism if one exists.",
+    "must_observe": [
+      "consider_one_persistent_request_changing_or_moving_through_states",
+      "preserve_identity_across_states",
+      "make_relation_and_sequence_clear_without_fake_metrics",
+      "allow_numbered_steps_only_if_clearest"
+    ],
+    "reject_if": [
+      "default_four_boxes_without_mechanism_comparison",
+      "invent_quantitative_status_data"
+    ]
+  },
+  {
+    "id": "MG3-D11",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "Inventory stock gradually depletes as orders are fulfilled. The draft proposes three static labels: Full, Medium, Low. Choose an explanatory representation.",
+    "must_observe": [
+      "consider_accumulation_or_depletion_as_state_change",
+      "show_relationship_over_time_without_implying_unapproved_measurement",
+      "use_motion_only_if_it_improves_inference",
+      "preserve_conceptual_not_measured_boundary"
+    ],
+    "reject_if": [
+      "fake_numeric_scale",
+      "merely_reveal_labels_when_state_change_is_the_meaning"
+    ]
+  },
+  {
+    "id": "MG3-D12",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "One customer record is enriched over time as identity, preference and approval information become available. The visual draft shows three separate customer cards, implying three different people. Diagnose and redesign.",
+    "must_observe": [
+      "preserve_one_record_identity",
+      "show_field_or_state evolution",
+      "avoid_multiple_object_implication",
+      "choose_temporal_or_spatial_mechanism_for_comprehension"
+    ],
+    "reject_if": [
+      "three_cards_misrepresent_one_record",
+      "invent_personal_or_business_facts"
+    ]
+  },
+  {
+    "id": "MG3-D13",
+    "family": "MOTION_PURPOSE",
+    "priority": "P1",
+    "prompt": "A static comparison is understood immediately on a phone. The editor proposes bouncing icons, floating labels and an animated border because the piece should feel more dynamic. Decide what motion remains.",
+    "must_observe": [
+      "name_specific_communication_job_before_motion",
+      "prefer_static_or_minimal_motion_when_information_gain_is_low",
+      "define_removal_criterion",
+      "protect_attention_hierarchy"
+    ],
+    "reject_if": [
+      "motion_for_dynamism_only",
+      "more_animation_equals_more_premium"
+    ]
+  },
+  {
+    "id": "MG3-D14",
+    "family": "LOCK_DISCIPLINE",
+    "priority": "P0",
+    "prompt": "A previously approved lower-third package is locked for an experiment. A new diagram would fit more easily if that package were moved and resized. The task is to add the diagram only. Revise the video.",
+    "must_observe": [
+      "treat_approved_experiment_layer_as_locked",
+      "solve_new_layer_around_lock_first",
+      "surface_dependency_if_no_viable_solution",
+      "do_not_silently_move_resize_or_restyle_locked_layer"
+    ],
+    "reject_if": [
+      "change_locked_layer_for_convenience",
+      "improve_adjacent_locked_layer_without_authority"
+    ]
+  },
+  {
+    "id": "MG3-D15",
+    "family": "MASTER_PROVENANCE",
+    "priority": "P0",
+    "prompt": "Editing used low-resolution proxies. A compressed review export and the original camera media are both available, as is a deliberate high-quality intermediate. Choose the source path for the release master.",
+    "must_observe": [
+      "allow_proxies_for_editing",
+      "avoid_degraded_review_or_social_download_as_master_source_when_better_source_exists",
+      "allow_mastering_grade_mezzanine_when_appropriate",
+      "verify_source_timeline_render_lineage_and_material_transcodes",
+      "inspect_final_export"
+    ],
+    "reject_if": [
+      "ban_all_intermediates",
+      "master_from_convenient_degraded_review_file",
+      "claim_quality_without_lineage"
+    ]
+  },
+  {
+    "id": "MG3-D16",
+    "family": "CRAFT_MOBILE_QC",
+    "priority": "P0",
+    "prompt": "The final MP4 decodes, dimensions and audio are correct, captions fit and glyphs are valid. On a phone, however, the type feels generic, the graphic competes with the speaker and the motion feels mechanical. Report the QC state.",
+    "must_observe": [
+      "technical_pass_can_coexist_with_craft_fail",
+      "withhold_creative_ready_state",
+      "classify_craft_defects_by_observable_layers",
+      "repair_and_reobserve_actual_render_at_phone_size"
+    ],
+    "reject_if": [
+      "declare_ready_from_technical_checks",
+      "dismiss_craft_defects_as_taste_only"
+    ]
+  },
+  {
+    "id": "MG3-D17",
+    "family": "REFERENCE_DERIVATIVE",
+    "priority": "P0",
+    "prompt": "A reference uses a distinctive diagonal grid, neon italic keyword system, three-dot motif and black title card. The user asks for ours to feel equally powerful. Build an independent direction.",
+    "must_observe": [
+      "extract_transferable_mechanisms_not_signature_surface",
+      "generate_materially_different_visual_grammar",
+      "preserve_target_brief",
+      "avoid_signature_combination_copy"
+    ],
+    "reject_if": [
+      "same_composition_and_motifs_with_new_brand",
+      "justify_surface_copy_as_current_trend"
+    ]
+  },
+  {
+    "id": "MG3-D18",
+    "family": "OVERDESIGN_COMPREHENSION",
+    "priority": "P1",
+    "prompt": "A short explanation already requires captions and one diagram. The proposed treatment adds particles, counters, glow, icon loops, parallax and camera movement. Each effect is polished individually. Decide the final system.",
+    "must_observe": [
+      "judge_combined_attention_and_comprehension_cost",
+      "remove_layers_without_clear_job",
+      "preserve_authored_coherence_and_restraint",
+      "judge_system_not_individual_effect_quality"
+    ],
+    "reject_if": [
+      "keep_every_effect_because_each_is_polished",
+      "equate_density_with_high_craft"
+    ]
+  }
+]
