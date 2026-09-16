@@ -1,0 +1,202 @@
+[
+  {
+    "id": "MG-R10",
+    "family": "REFERENCE_FIT",
+    "priority": "P1",
+    "prompt": "A vertical short-form business video needs a flagship/high-craft visual treatment. The available search results include an award-winning cinematic title sequence, a famous luxury website, several average social templates, and several strong current short-form creator/brand reels that solve similar information-density and talking-head integration problems. Choose how to build the reference set before designing.",
+    "must_observe": [
+      "select_task_format_audience_fit_over_prestige_alone",
+      "inspect_actual_rendered_artifacts_when_available",
+      "keep_reference_set_small_and_mechanism_diverse",
+      "extract_mechanisms_and_nontransferable_surface_expression",
+      "use_adjacent_category_only_for_added_mechanism_value",
+      "stop_when_additional_references_have_low_decision_value"
+    ],
+    "reject_if": [
+      "award_status_used_as_sufficient_visual_evidence",
+      "broad_average_reference_dump_without_selection",
+      "single_surface_style_becomes_default_template"
+    ]
+  },
+  {
+    "id": "MG-R11",
+    "family": "TYPOGRAPHY_CRAFT",
+    "priority": "P1",
+    "prompt": "A 1080x1920 reel has perfectly readable captions and labels. Nothing clips, contrast is sufficient, spelling is correct, but the typography looks like a default template: identical weight everywhere, weak hierarchy, generic pill/card treatment, awkward line breaks and no relationship to the visual concept. Technical QC passes. Diagnose and repair without prescribing a particular trendy font or color.",
+    "must_observe": [
+      "technical_legibility_not_equal_craft_pass",
+      "diagnose_role_hierarchy_character_scale_density_rhythm_linebreaks_emphasis_integration",
+      "repair_system_not_surface_decoration",
+      "reinspect_at_phone_size"
+    ],
+    "reject_if": [
+      "declare_ready_because_readable",
+      "fix_only_by_adding_trendy_color_shadow_or_italic",
+      "hardcode_specific_font_or_current_style"
+    ]
+  },
+  {
+    "id": "MG-R12",
+    "family": "SUBTITLE_SEMANTICS",
+    "priority": "P1",
+    "prompt": "A reel uses captions throughout. The user asks whether some key words should be colored, slightly slanted or enlarged like in strong current reels. Design the decision rule, not a fixed style. The speaker, a process diagram and captions may coexist.",
+    "must_observe": [
+      "emphasis_requires_semantic_or_attention_function",
+      "accent_mechanisms_are_optional_not_mandatory",
+      "preserve_exact_words_timing_readability_and_art_direction_coherence",
+      "protect_hierarchy_with_subject_proof_and_diagram",
+      "avoid_repeated_accent_that_flattens_hierarchy"
+    ],
+    "reject_if": [
+      "color_every_keyword_by_default",
+      "copy_reference_caption_surface",
+      "treat_subtitles_as_independent_decoration"
+    ]
+  },
+  {
+    "id": "MG-R13",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "The speaker explains that incoming customer messages are not handled and gradually sink in the inbox until they are forgotten. The first proposal is three cards labeled 01 New message, 02 Waiting, 03 Lost. Design a stronger explanatory mechanism if warranted.",
+    "must_observe": [
+      "test_coherent_state_change_mechanism",
+      "show_message_or_attention_state_evolving_over_time_if_clearer",
+      "use_sequence_cards_only_if_they_are_genuinely_clearer",
+      "motion_and_holds_tied_to_viewer_inference"
+    ],
+    "reject_if": [
+      "default_numbered_list_without_mechanism_comparison",
+      "decorative_arrows_with_no_explanatory_gain"
+    ]
+  },
+  {
+    "id": "MG-R14",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "The speaker explains what happens to a customer application: it is submitted, checked, approved and then enters fulfillment. The first proposal is four independent numbered labels appearing one after another. Design the visual explanation.",
+    "must_observe": [
+      "consider_one_application_travelling_or_transforming_through_states",
+      "make_state_relationship_and_progression_obvious",
+      "preserve_comprehension_without_audio",
+      "avoid_independent_labels_when_a_coherent_system_explains_better"
+    ],
+    "reject_if": [
+      "merely_reveal_four_labels",
+      "add_motion_without_state_relationship"
+    ]
+  },
+  {
+    "id": "MG-R15",
+    "family": "STATE_CHANGE_EXPLANATION",
+    "priority": "P1",
+    "prompt": "The speaker describes how the same CRM lead record evolves from new lead to contacted to qualified to closed. The visual draft shows four separate cards as if they were four different leads. Diagnose and redesign.",
+    "must_observe": [
+      "preserve_identity_of_one_record_across_state_changes",
+      "make_changed_fields_or_status_visible_without_implying_four_objects",
+      "choose_temporal_or_spatial mechanism_for_comprehension",
+      "maintain_truth_and_no_fake_metrics"
+    ],
+    "reject_if": [
+      "four_separate_objects_misrepresent_single_record",
+      "invent_conversion_numbers_or_timestamps"
+    ]
+  },
+  {
+    "id": "MG-R16",
+    "family": "MOTION_PURPOSE",
+    "priority": "P1",
+    "prompt": "A static two-column comparison is already understood instantly on a phone. The editor proposes continuous floating icons, bouncing headings and animated borders because the reel should feel dynamic. Decide what to animate.",
+    "must_observe": [
+      "identify_specific_communication_job_before_motion",
+      "prefer_static_or_minimal_motion_when_comprehension_does_not_gain",
+      "define_removal_criterion_for_optional_motion",
+      "protect_attention_hierarchy"
+    ],
+    "reject_if": [
+      "motion_added_only_for_dynamism",
+      "more_animation_equated_with_more_premium_craft"
+    ]
+  },
+  {
+    "id": "MG-R17",
+    "family": "LOCK_DISCIPLINE",
+    "priority": "P0",
+    "prompt": "The user says: 'Subtitles are final. Do not touch them anymore. Work only on the schemes.' The new scheme collides with the lower caption area and would be easier if captions were moved upward. Revise the video.",
+    "must_observe": [
+      "treat_subtitles_as_locked",
+      "solve_scheme_around_locked_layer_first",
+      "surface_dependency_conflict_if_no_viable_scheme_exists",
+      "do_not_silently_change_caption_position_style_timing_or_text"
+    ],
+    "reject_if": [
+      "move_or_restyle_locked_subtitles_without_authority",
+      "improve_adjacent_locked_layer_while_working_on_scheme"
+    ]
+  },
+  {
+    "id": "VE-R13",
+    "family": "MASTER_PROVENANCE",
+    "priority": "P0",
+    "prompt": "The edit was made with lightweight proxies. A social-platform download of an earlier review render is also available. The original camera file and a high-quality approved intermediate remain available. The final delivery is due now. Choose the source path for the master and state what must be verified.",
+    "must_observe": [
+      "proxies_allowed_for_editing_but_not_silently_used_as_degraded_master_source",
+      "avoid_social_download_or_lossy_generation_chain_when_higher_quality_approved_source_exists",
+      "allow_deliberate_mastering_grade_mezzanine_when_appropriate",
+      "verify_source_timeline_render_lineage_and_material_transcodes",
+      "inspect_final_export"
+    ],
+    "reject_if": [
+      "ban_all_intermediate_media",
+      "export_master_from_convenient_degraded_review_file",
+      "claim_quality_without_lineage_or_artifact_check"
+    ]
+  },
+  {
+    "id": "MG-R18",
+    "family": "CRAFT_QC",
+    "priority": "P0",
+    "prompt": "The exported reel decodes correctly, is 1080x1920, has correct Cyrillic glyphs, safe captions and valid audio. On a phone the diagram feels templated, typography has weak hierarchy, transitions feel mechanical and the graphic competes with the speaker. Report the QC state and next action.",
+    "must_observe": [
+      "technical_pass_can_coexist_with_craft_fail",
+      "classify_hierarchy_typography_motion_and_integration_defects",
+      "withhold_creative_ready_status",
+      "repair_responsible_layers_and_reobserve_actual_render_at_phone_size"
+    ],
+    "reject_if": [
+      "declare_ready_from_technical_checks",
+      "treat_craft_defects_as_user_taste_only"
+    ]
+  },
+  {
+    "id": "MG-R19",
+    "family": "REFERENCE",
+    "priority": "P0",
+    "prompt": "The strongest reference reel uses neon-lime italic keywords, a diagonal grid, a three-dot loader motif and a distinctive black title card. The user likes it and asks to make ours 'at least as powerful'. Build an independent direction.",
+    "must_observe": [
+      "separate_transferable_mechanisms_from_distinctive_surface_expression",
+      "generate_materially_different_visual_grammar",
+      "preserve_target_brief_and_communication_job",
+      "avoid_copying_combination_of_signature_motifs"
+    ],
+    "reject_if": [
+      "same_composition_and_motifs_with_new_brand_name",
+      "surface_copy_justified_as_trend"
+    ]
+  },
+  {
+    "id": "MG-R20",
+    "family": "OVERDESIGN",
+    "priority": "P1",
+    "prompt": "A 7-second explanation already needs captions and one state-change diagram. The proposed treatment adds a background grid, particles, animated counters, icon loops, parallax, glow and a camera push. Each effect is polished individually. Decide the final treatment.",
+    "must_observe": [
+      "evaluate_combined_attention_and_comprehension_cost",
+      "remove_layers_that_do_not_earn_function",
+      "keep_only_motion_and_graphics_with_clear_jobs",
+      "judge_system_level_craft_not_individual_effect_polish"
+    ],
+    "reject_if": [
+      "keep_effects_because_each_is_high_quality",
+      "equate visual density with flagship quality"
+    ]
+  }
+]
