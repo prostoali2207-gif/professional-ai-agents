@@ -1,0 +1,213 @@
+{
+  "stage": "A",
+  "verdict": "STAGE_A_PASS",
+  "branch": "repair/motion-graphics-v0-3-production-incident-2026-09-16",
+  "freeze_commit": "83fed979f9dd0c2cbed51fd2a4703a5e2f415c0d",
+  "candidate": "motion-graphics-visual-explanation-video@0.3.0-candidate",
+  "checks_total": 40,
+  "checks_failed": 0,
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "checks": [
+    {
+      "name": "A1_branch_head_is_freeze_commit",
+      "ok": true,
+      "detail": "origin/repair/motion-graphics-v0-3-production-incident-2026-09-16=83fed979f9dd0c2cbed51fd2a4703a5e2f415c0d"
+    },
+    {
+      "name": "A1_freeze_object_is_commit",
+      "ok": true,
+      "detail": "83fed979f9dd0c2cbed51fd2a4703a5e2f415c0d"
+    },
+    {
+      "name": "A2_candidate_identity",
+      "ok": true,
+      "detail": "motion-graphics-visual-explanation-video@0.3.0-candidate"
+    },
+    {
+      "name": "A3_fixture_count_18",
+      "ok": true,
+      "detail": "count=18"
+    },
+    {
+      "name": "A3_fixture_ids_unique",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A3_fixture_ids_contiguous_D01_D18",
+      "ok": true,
+      "detail": "MG3-D01,MG3-D02,MG3-D03,MG3-D04,MG3-D05,MG3-D06,MG3-D07,MG3-D08,MG3-D09,MG3-D10,MG3-D11,MG3-D12,MG3-D13,MG3-D14,MG3-D15,MG3-D16,MG3-D17,MG3-D18"
+    },
+    {
+      "name": "A3_fixture_ids_match_freeze_manifest",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A3_every_fixture_has_prompt_and_criteria",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A4_blob_professional-model-candidate-v0.3.md",
+      "ok": true,
+      "detail": "expected=61558427fa40a9050eb6d0d10f8a2278ea8a50a3 actual=61558427fa40a9050eb6d0d10f8a2278ea8a50a3"
+    },
+    {
+      "name": "A4_blob_SKILL.md",
+      "ok": true,
+      "detail": "expected=c1fad726ad06025aa148ab58acab6e8899e3045b actual=c1fad726ad06025aa148ab58acab6e8899e3045b"
+    },
+    {
+      "name": "A4_blob_v0.3-production-incident-regression-preregistration.md",
+      "ok": true,
+      "detail": "expected=35f776785b07eacbb52a2c1365d1784c2039b6f1 actual=35f776785b07eacbb52a2c1365d1784c2039b6f1"
+    },
+    {
+      "name": "A4_blob_semantic-fixtures-v0.3-production-incident.json",
+      "ok": true,
+      "detail": "expected=5c218a58c1eb013ec2a4dc35a155a146f2fe28bc actual=5c218a58c1eb013ec2a4dc35a155a146f2fe28bc"
+    },
+    {
+      "name": "A4_blob_heldout-transfer-protocol-v0.3.md",
+      "ok": true,
+      "detail": "expected=33db146644432ac0fc6e328d7e7d377f8628c8e3 actual=33db146644432ac0fc6e328d7e7d377f8628c8e3"
+    },
+    {
+      "name": "A5_preregistration_and_protocol_predate_implementation",
+      "ok": true,
+      "detail": "prereg_last=1789540363 impl_first=1789540406"
+    },
+    {
+      "name": "A5_ancestry_v0.3-production-incident-regression-preregistration.md_before_professional-model-candidate-v0.3.md",
+      "ok": true,
+      "detail": "d0d317ff->eeeb77df"
+    },
+    {
+      "name": "A5_ancestry_v0.3-production-incident-regression-preregistration.md_before_SKILL.md",
+      "ok": true,
+      "detail": "d0d317ff->328f35b3"
+    },
+    {
+      "name": "A5_ancestry_semantic-fixtures-v0.3-production-incident.json_before_professional-model-candidate-v0.3.md",
+      "ok": true,
+      "detail": "a4673f0e->eeeb77df"
+    },
+    {
+      "name": "A5_ancestry_semantic-fixtures-v0.3-production-incident.json_before_SKILL.md",
+      "ok": true,
+      "detail": "a4673f0e->328f35b3"
+    },
+    {
+      "name": "A5_ancestry_heldout-transfer-protocol-v0.3.md_before_professional-model-candidate-v0.3.md",
+      "ok": true,
+      "detail": "c12d0e8a->eeeb77df"
+    },
+    {
+      "name": "A5_ancestry_heldout-transfer-protocol-v0.3.md_before_SKILL.md",
+      "ok": true,
+      "detail": "c12d0e8a->328f35b3"
+    },
+    {
+      "name": "A6_parent_professional_model_blob",
+      "ok": true,
+      "detail": "expected=705485185f38c8f8ca7d154c2564e763badb0201 actual=705485185f38c8f8ca7d154c2564e763badb0201"
+    },
+    {
+      "name": "A6_parent_content_digest_recomputed",
+      "ok": true,
+      "detail": "expected=sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b recomputed=sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b"
+    },
+    {
+      "name": "A6_parent_not_mutated_vs_main",
+      "ok": true,
+      "detail": "no diff"
+    },
+    {
+      "name": "A6_parent_mutation_forbidden_flag",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A7_v01_baseline_blob_matches_freeze",
+      "ok": true,
+      "detail": "expected=dd42a0acbb18eea77aed17147962acc384243e92 actual=dd42a0acbb18eea77aed17147962acc384243e92"
+    },
+    {
+      "name": "A7_v01_baseline_single_immutable_blob",
+      "ok": true,
+      "detail": "revisions=1 distinct_blobs=1"
+    },
+    {
+      "name": "A8_v02_digest_preserved",
+      "ok": true,
+      "detail": "sha256:55e04a52f789f42e0213d75534d9772ccca0c6a26e372b7c54d57004258f1fe6"
+    },
+    {
+      "name": "A8_v02_version_recorded",
+      "ok": true,
+      "detail": "0.2.0-candidate"
+    },
+    {
+      "name": "A8_v02_provenance_gap_declared",
+      "ok": true,
+      "detail": "{\"version\": \"0.2.0-candidate\", \"digest\": \"sha256:55e04a52f789f42e0213d75534d9772ccca0c6a26e372b7c54d57004258f1fe6\", \"source_reachable_in_current_repo\": false, \"provenance_status\": \"PROVENANCE_GAP\", \"inheritance_claim\": \"NO_BYTE_INHERITANCE_CLAIM\"}"
+    },
+    {
+      "name": "A8_no_v02_source_artifact_in_any_ref",
+      "ok": true,
+      "detail": "none"
+    },
+    {
+      "name": "A8_candidate_does_not_reuse_v02_identity",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A8_no_byte_inheritance_claim_in_candidate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A9_manifest_verdict_not_qualified",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A9_skill_status_candidate_not_qualified",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A9_model_status_not_qualified",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A9_status_ceiling_present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A10_transfer_protocol_frozen_without_hidden_cases",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "A11_coupled_cases_exact_set",
+      "ok": true,
+      "detail": "MG-S3,MG-S4,MG-S5,MG-S7,MG-S8,MG-S9"
+    },
+    {
+      "name": "A11_coupled_cases_resolvable",
+      "ok": true,
+      "detail": "MG-S1,MG-S2,MG-S3,MG-S4,MG-S5,MG-S6,MG-S7,MG-S8,MG-S9"
+    },
+    {
+      "name": "A11_uncoupled_cases_excluded",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
