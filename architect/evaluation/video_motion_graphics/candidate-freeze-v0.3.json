@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.3",
+  "candidate_id": "motion-graphics-visual-explanation-video",
+  "candidate_version": "0.3.0-candidate",
+  "freeze_status": "candidate-frozen-for-development-regression",
+  "frozen_at": "2026-09-16",
+  "incident_issue": 316,
+  "historical_root_repair_issue": 292,
+  "historical_frozen_candidate": {
+    "version": "0.2.0-candidate",
+    "digest": "sha256:55e04a52f789f42e0213d75534d9772ccca0c6a26e372b7c54d57004258f1fe6",
+    "source_reachable_in_current_repo": false,
+    "provenance_status": "PROVENANCE_GAP",
+    "inheritance_claim": "NO_BYTE_INHERITANCE_CLAIM"
+  },
+  "accessible_baseline": {
+    "version": "0.1.0-candidate",
+    "professional_model_path": "architect/evaluation/video_motion_graphics/professional-model-candidate-v0.1.md",
+    "git_blob_sha": "dd42a0acbb18eea77aed17147962acc384243e92"
+  },
+  "qualified_parent": {
+    "id": "video-editing-post-production",
+    "version": "0.1.0",
+    "content_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
+    "professional_model_blob": "705485185f38c8f8ca7d154c2564e763badb0201",
+    "mutation_allowed": false
+  },
+  "preregistered_before_candidate": [
+    {
+      "path": "architect/evaluation/video_motion_graphics/v0.3-production-incident-regression-preregistration.md",
+      "git_blob_sha": "35f776785b07eacbb52a2c1365d1784c2039b6f1"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/semantic-fixtures-v0.3-production-incident.json",
+      "git_blob_sha": "5c218a58c1eb013ec2a4dc35a155a146f2fe28bc"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/heldout-transfer-protocol-v0.3.md",
+      "git_blob_sha": "33db146644432ac0fc6e328d7e7d377f8628c8e3"
+    }
+  ],
+  "candidate_components": [
+    {
+      "path": "architect/evaluation/video_motion_graphics/professional-model-candidate-v0.3.md",
+      "git_blob_sha": "61558427fa40a9050eb6d0d10f8a2278ea8a50a3"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/candidate-v0.3/SKILL.md",
+      "git_blob_sha": "c1fad726ad06025aa148ab58acab6e8899e3045b"
+    }
+  ],
+  "visible_development_cases": [
+    "MG3-D01",
+    "MG3-D02",
+    "MG3-D03",
+    "MG3-D04",
+    "MG3-D05",
+    "MG3-D06",
+    "MG3-D07",
+    "MG3-D08",
+    "MG3-D09",
+    "MG3-D10",
+    "MG3-D11",
+    "MG3-D12",
+    "MG3-D13",
+    "MG3-D14",
+    "MG3-D15",
+    "MG3-D16",
+    "MG3-D17",
+    "MG3-D18"
+  ],
+  "coupled_historical_cases": [
+    "MG-S3",
+    "MG-S4",
+    "MG-S5",
+    "MG-S7",
+    "MG-S8",
+    "MG-S9"
+  ],
+  "integrity_rules": [
+    "Any behavior-relevant change to candidate components invalidates this freeze and requires a new revision/freeze.",
+    "Visible development fixtures are not qualification evidence.",
+    "Hidden transfer prompts must be authored after this freeze under heldout-transfer-protocol-v0.3.md.",
+    "Do not claim byte inheritance from historical frozen 0.2 while its exact source is unavailable.",
+    "Do not mutate qualified Video Editing parent artifacts.",
+    "Do not reuse the 0.2.0-candidate identity.",
+    "Do not tune frozen criteria after scored v0.3 outcomes.",
+    "A same-source practical rerun is regression evidence only; a second materially different real-media task is required before qualification."
+  ],
+  "current_verdict": "NOT_QUALIFIED",
+  "promotion_blockers": [
+    "PROVENANCE_GAP",
+    "TARGETED_REGRESSION_NOT_RUN",
+    "PRACTICAL_REGRESSION_NOT_RUN",
+    "HIDDEN_TRANSFER_NOT_RUN"
+  ]
+}
