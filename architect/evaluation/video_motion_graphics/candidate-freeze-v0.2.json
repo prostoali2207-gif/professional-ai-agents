@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.2",
+  "candidate_id": "motion-graphics-visual-explanation-video",
+  "candidate_version": "0.2.0-candidate",
+  "freeze_status": "candidate-frozen-for-development-regression",
+  "frozen_at": "2026-09-16",
+  "incident_issue": 316,
+  "candidate_commit_before_freeze_record": "3bf683b6bb698a344fd9527d7c8b158b3529e6d7",
+  "qualified_parent": {
+    "id": "video-editing-post-production",
+    "version": "0.1.0",
+    "content_digest": "sha256:7ff8ee887d64565632536596acaacfbcf884404abadd6003f2584f61eb1dfb9b",
+    "mutation_allowed": false
+  },
+  "historical_candidate": {
+    "version": "0.1.0-candidate",
+    "professional_model_blob": "dd42a0acbb18eea77aed17147962acc384243e92",
+    "history_preserved": true,
+    "issue": 292
+  },
+  "preregistered_before_candidate": [
+    {
+      "path": "architect/evaluation/video_motion_graphics/v0.2-production-incident-regression-preregistration.md",
+      "git_blob_sha": "3a285719824ba22e73fc2141e40582b12643db2a"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/semantic-fixtures-v0.2-production-incident.json",
+      "git_blob_sha": "f1d54f00526cdab722a8583096ee0d5020493ad5"
+    }
+  ],
+  "candidate_components": [
+    {
+      "path": "architect/evaluation/video_motion_graphics/professional-model-candidate-v0.1.md",
+      "git_blob_sha": "dd42a0acbb18eea77aed17147962acc384243e92",
+      "role": "inherited historical motion capability"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/professional-model-candidate-v0.2.md",
+      "git_blob_sha": "77d42715702ed56c9b14b11eeba6883509ca32c7",
+      "role": "production-incident behavioral repair overlay"
+    },
+    {
+      "path": "architect/evaluation/video_motion_graphics/candidate-v0.2/SKILL.md",
+      "git_blob_sha": "9a044ac9c9533f1c7ba7d9fe22d0df9f73203c82",
+      "role": "v0.2 runtime router"
+    }
+  ],
+  "required_regressions": {
+    "historical_fixture_pack": "architect/evaluation/video_motion_graphics/semantic-fixtures-v0.1.json",
+    "historical_cases": [
+      "MG-S1",
+      "MG-S2",
+      "MG-S3",
+      "MG-S4",
+      "MG-S5",
+      "MG-S6",
+      "MG-S7",
+      "MG-S8",
+      "MG-S9"
+    ],
+    "incident_fixture_pack": "architect/evaluation/video_motion_graphics/semantic-fixtures-v0.2-production-incident.json",
+    "incident_cases": [
+      "MG-R10",
+      "MG-R11",
+      "MG-R12",
+      "MG-R13",
+      "MG-R14",
+      "MG-R15",
+      "MG-R16",
+      "MG-R17",
+      "VE-R13",
+      "MG-R18",
+      "MG-R19",
+      "MG-R20"
+    ]
+  },
+  "integrity_rules": [
+    "Any behavior-relevant change to a candidate component invalidates this freeze and requires a new candidate version/freeze.",
+    "Do not edit v0.1 historical fixtures or results to make v0.2 pass.",
+    "Do not edit the preregistered v0.2 regression contract after observing scored v0.2 outcomes.",
+    "Development regression evidence is not qualification evidence.",
+    "Practical craft claims require actual rendered artifact evidence at representative phone size.",
+    "Qualified parent artifacts remain immutable.",
+    "Visual Design / Art Direction v0.3 remains independently frozen and is not modified by this candidate."
+  ],
+  "current_verdict": "NOT_QUALIFIED"
+}
