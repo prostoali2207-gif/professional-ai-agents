@@ -120,3 +120,37 @@ jobs:
               echo '```'
             } | tee -a "$GITHUB_STEP_SUMMARY"
           done
+
+      - name: Report the published failure signal for both runs
+        if: steps.window.outputs.retained == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Everything printed here comes from the sanitized report, which exists
+          # to be publishable. No sealed pack is opened and no hidden case
+          # content is available in this file by construction.
+          for run in 32636661187 32636679740; do
+            {
+              echo "## run $run failure signal"
+              echo '```json'
+              python - "evidence/run-$run/$REPORT_NAME" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          print(json.dumps({
+              "execution_status": r["execution_status"],
+              "verdict": r["verdict"],
+              "trials_attempted": r["attempted"],
+              "trials_passed": r["passed"],
+              "critical_hard_fails": r["critical_hard_fails"],
+              "tasks_passed": sum(v["tasks_passed"] for v in r["family_level_aggregate"].values()),
+              "tasks_total": sum(v["tasks_total"] for v in r["family_level_aggregate"].values()),
+              "families_with_lost_tasks": {
+                  k: v for k, v in sorted(r["family_level_aggregate"].items())
+                  if v["tasks_passed"] < v["tasks_total"]
+              },
+              "report_top_level_fields": sorted(r),
+          }, indent=2, ensure_ascii=False))
+          PY
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          done
