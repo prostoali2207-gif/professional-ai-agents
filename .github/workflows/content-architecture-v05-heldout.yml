@@ -1,0 +1,49 @@
+name: Content Architecture v0.5 held-out qualification
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  heldout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      CA_V05_CANDIDATE_MODEL: gemini-3.5-flash-lite
+      CA_V05_GEMINI_JUDGE_MODEL: gemini-3.5-flash-lite
+      CA_V05_GROQ_MODEL: qwen/qwen3.6-27b
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight frozen identities
+        run: |
+          test "$(git hash-object architect/research/content-architecture/constraint-surface-overlay-v0.5.md)" = "74942d09593f73d0a9a23be068d3bbf3a0b8c06d"
+          test "$(git hash-object architect/research/content-architecture/constraint-surface-qualification-protocol-v0.1.md)" = "d90c9daab6256fce3388025db7a656dc06489f1a"
+          python -m py_compile architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py
+      - name: Run fresh held-out + dual judge
+        run: python architect/evaluation/content_architecture/run_constraint_surface_v05_heldout.py
+      - name: Upload sanitized evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v05-heldout-sanitized-${{ github.sha }}
+          path: .tmp/content-architecture-v05-heldout/sanitized-report.json
+          if-no-files-found: error
+          retention-days: 60
+      - name: Upload consumed held-out evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v05-heldout-consumed-${{ github.sha }}
+          path: .tmp/content-architecture-v05-heldout/full-consumed-evidence.json
+          if-no-files-found: warn
+          retention-days: 30
