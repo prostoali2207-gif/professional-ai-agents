@@ -1,0 +1,60 @@
+{
+  "artifact": {
+    "version": "0.1.0-candidate",
+    "composite_binding": "sha256:377331ed31256d1416448b5270e8067edea6019059f33865ed70c5d7b5fb37d8",
+    "binding_method": "sha256 over newline-joined path:git_blob_sha entries in listed order",
+    "paths": [
+      {
+        "path": "agents/muscle-gain-progress-analysis/0.1.0/SKILL.md",
+        "git_blob_sha": "ae6b598bcda125c22a1121ea377daefde31cbacc"
+      },
+      {
+        "path": "agents/muscle-gain-progress-analysis/0.1.0/procedures/decision_reference.py",
+        "git_blob_sha": "df026880f4f8706db072423830da7fb2aca5459b"
+      },
+      {
+        "path": "agents/muscle-gain-progress-analysis/0.1.0/schemas/longitudinal-state.schema.json",
+        "git_blob_sha": "66f120dffa7b96cf2f4881c3f9fe433c8a3b4568"
+      },
+      {
+        "path": "architect/research/muscle-gain-progress-analysis/architecture-v0.1.md",
+        "git_blob_sha": "deeed64c11f6661548c1adf3ba1044bdec7cb9d9"
+      },
+      {
+        "path": "architect/research/muscle-gain-progress-analysis/source-register-v0.1.md",
+        "git_blob_sha": "2675389dccdbb01182ea19bf74ba285b416f8135"
+      },
+      {
+        "path": "architect/evaluation/muscle_gain_progress_analysis/evaluation-plan-v0.1.md",
+        "git_blob_sha": "fb7e23d473ba2cf7a9cea4e931c9b00b0bd8e04f"
+      },
+      {
+        "path": "architect/evaluation/muscle_gain_progress_analysis/fixtures-v0.1.json",
+        "git_blob_sha": "390218969580c485b8d1cbee4f5d3274ac703128"
+      },
+      {
+        "path": "architect/evaluation/muscle_gain_progress_analysis/run_practical_v0_1.py",
+        "git_blob_sha": "57473cbc35a05b5737a030d3ae1b1a0c2c216404"
+      },
+      {
+        "path": "architect/evaluation/muscle_gain_progress_analysis/root-cause-repair-v0.1.md",
+        "git_blob_sha": "fb39ca21f3d0ee802542839d5c9fa5d10914e9dd"
+      }
+    ]
+  },
+  "candidate": {
+    "id": "muscle-gain-progress-analysis",
+    "version": "0.1.0-candidate",
+    "reuse_decision": "ADAPT qualified measurement/comparability capabilities + BUILD NEW sports/training domain skill",
+    "qualification_status": "UNQUALIFIED_CANDIDATE",
+    "trust_tier": "below T1",
+    "local_gate": "PASS",
+    "limitations": [
+      "visible development/practical suite is not independent held-out T1 evidence",
+      "no independent strong-practitioner validation",
+      "no representative production field evidence",
+      "cross-runtime reliability not established",
+      "photo/image practical evaluation requires representative standardized/nonstandardized image artifacts"
+    ]
+  }
+}
