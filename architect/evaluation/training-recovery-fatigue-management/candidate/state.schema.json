@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Training Recovery Fatigue Longitudinal State",
+  "type": "object",
+  "required": ["schema_version", "observations", "sessions", "performance_anchors", "load_history", "interventions"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "training_status": {"type": ["string", "null"]},
+        "goal": {"type": ["string", "null"]},
+        "normal_weekly_schedule": {"type": ["string", "object", "array", "null"]},
+        "measurement_methods": {"type": ["array", "null"], "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "source"],
+        "properties": {
+          "date": {"type": "string"},
+          "source": {"type": "string"},
+          "sleep_start": {"type": ["string", "null"]},
+          "sleep_end": {"type": ["string", "null"]},
+          "sleep_duration_estimate_h": {"type": ["number", "null"], "minimum": 0, "maximum": 24},
+          "sleep_quality": {"type": ["number", "string", "null"]},
+          "fatigue": {"type": ["number", "string", "null"]},
+          "stress": {"type": ["number", "string", "null"]},
+          "mood": {"type": ["number", "string", "null"]},
+          "soreness_by_region": {
+            "type": "object",
+            "additionalProperties": {"type": ["number", "string", "null"]}
+          },
+          "illness_or_injury_concern": {"type": ["boolean", "null"]},
+          "wearable": {
+            "type": ["object", "null"],
+            "properties": {
+              "device_model": {"type": ["string", "null"]},
+              "metric_name": {"type": ["string", "null"]},
+              "value": {"type": ["number", "string", "null"]},
+              "unit": {"type": ["string", "null"]},
+              "measurement_conditions": {"type": ["string", "null"]},
+              "recorded_at": {"type": ["string", "null"]},
+              "proprietary_score": {"type": ["boolean", "null"]}
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "exercises"],
+        "properties": {
+          "date": {"type": "string"},
+          "duration_min": {"type": ["number", "null"], "minimum": 0},
+          "session_rpe": {"type": ["number", "null"], "minimum": 0},
+          "novelty_or_eccentric_emphasis": {"type": ["boolean", "null"]},
+          "completion_or_abort_reason": {"type": ["string", "null"]},
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["exercise", "order", "sets"],
+              "properties": {
+                "exercise": {"type": "string"},
+                "variant": {"type": ["string", "null"]},
+                "order": {"type": "integer", "minimum": 1},
+                "technique_or_rom_change": {"type": ["boolean", "null"]},
+                "equipment_change": {"type": ["boolean", "null"]},
+                "sets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["reps"],
+                    "properties": {
+                      "load": {"type": ["number", "string", "null"]},
+                      "reps": {"type": "number", "minimum": 0},
+                      "rir_or_rpe": {"type": ["number", "null"]},
+                      "effort_scale": {"type": ["string", "null"], "enum": ["RIR", "RPE", null]},
+                      "to_failure": {"type": ["boolean", "null"]}
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "performance_anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["anchor_id", "exercise", "date", "comparable"],
+        "properties": {
+          "anchor_id": {"type": "string"},
+          "exercise": {"type": "string"},
+          "variant": {"type": ["string", "null"]},
+          "date": {"type": "string"},
+          "comparable": {"type": "boolean"},
+          "load": {"type": ["number", "string", "null"]},
+          "reps": {"type": ["number", "null"]},
+          "rir_or_rpe": {"type": ["number", "null"]},
+          "effort_scale": {"type": ["string", "null"], "enum": ["RIR", "RPE", null]},
+          "result": {"type": ["number", "string", "null"]},
+          "noncomparability_reason": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "load_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["week_start", "hard_sets_by_muscle", "frequency_by_muscle", "failure_sets", "notable_changes"],
+        "properties": {
+          "week_start": {"type": "string"},
+          "hard_sets_by_muscle": {
+            "type": "object",
+            "additionalProperties": {"type": "integer", "minimum": 0}
+          },
+          "frequency_by_muscle": {
+            "type": "object",
+            "additionalProperties": {"type": "integer", "minimum": 0}
+          },
+          "failure_sets": {"type": "integer", "minimum": 0},
+          "notable_changes": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    },
+    "interventions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["intervention_id", "date_started", "hypothesis", "variable_changed", "review_criterion", "result"],
+        "properties": {
+          "intervention_id": {"type": "string"},
+          "date_started": {"type": "string"},
+          "hypothesis": {"type": "string"},
+          "evidence_trigger": {"type": ["array", "null"], "items": {"type": "string"}},
+          "variable_changed": {"type": "string"},
+          "old_state": {},
+          "new_state": {},
+          "expected_effect": {"type": ["string", "null"]},
+          "review_criterion": {"type": "string"},
+          "result": {"enum": ["pending", "helped", "neutral", "worsened", "unclear"]},
+          "actual_outcome": {"type": ["string", "null"]},
+          "superseded_by": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "escalations": {"type": "array"}
+  },
+  "additionalProperties": false
+}
