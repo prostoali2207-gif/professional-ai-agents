@@ -1,0 +1,26 @@
+{
+  "gate": "hypertrophy-training-pre-skill-v0.1",
+  "date": "2026-09-21",
+  "status": "PASS",
+  "scope": "candidate_skill_assembly_only",
+  "professional_qualification": false,
+  "t1_qualified": false,
+  "artifact_count_checked": 14,
+  "target_skill_present_before_gate": false,
+  "checks": {
+    "profession_reconstruction": "PASS",
+    "reuse_gate_BUILD_NEW": "PASS",
+    "competency_evidence_map": "PASS",
+    "knowledge_packaging_freshness": "PASS",
+    "judgment_scope_authority": "PASS",
+    "procedural_capabilities_verification": "PASS",
+    "state_memory_context": "PASS",
+    "security_trust": "PASS",
+    "evaluation_integrity_regression": "PASS",
+    "production_learning": "PASS",
+    "red_team": "PASS"
+  },
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "note": "Observed through repository connector immediately before SKILL creation; PASS authorizes assembly only."
+}
