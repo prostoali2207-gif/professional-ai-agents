@@ -121,11 +121,16 @@ def call(candidate:str,task:str,state:dict,timeout:int)->tuple[dict,dict]:
 def main()->int:
     p=argparse.ArgumentParser()
     p.add_argument("--qualification-contract",action="store_true")
+    p.add_argument("--verify-candidate",action="store_true")
     p.add_argument("--canary",action="store_true")
     p.add_argument("--model-timeout",type=int,default=150)
     args=p.parse_args()
     if args.qualification_contract:
         print(json.dumps(contract(),sort_keys=True))
+        return 0
+    if args.verify_candidate:
+        verify_candidate()
+        print(json.dumps({"status":"candidate_verified","candidate_commit":CANDIDATE_COMMIT,"candidate_digest":CANDIDATE_DIGEST},sort_keys=True))
         return 0
     candidate=verify_candidate()
     if args.canary:
