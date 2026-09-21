@@ -46,7 +46,12 @@
       "increase_quad_volume",
       "bench_to_failure_by_default",
       "no_concrete_prescription"
-    ]
+    ],
+    "current_prescription": {
+      "bench": "3 work sets, 4-6 reps, 1-2 RIR",
+      "machine_press": "3 work sets, 8-12 reps, 1-2 RIR",
+      "quads": "17 direct sets/week across 2 sessions; prior known-tolerated baseline 10 direct sets/week"
+    }
   },
   {
     "id": "HT-PRAC-02",
