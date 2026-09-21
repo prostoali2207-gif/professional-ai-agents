@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/muscle-gain-progress-analysis/longitudinal-state.schema.json",
+  "title": "Muscle Gain Progress Analysis Longitudinal State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject_scope","periods","interventions","uncertainties"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "subject_scope": {
+      "type":"object",
+      "additionalProperties":false,
+      "required":["goal"],
+      "properties":{
+        "goal":{"type":"string"},
+        "target_rate":{"type":["object","null"],"properties":{"min":{"type":"number"},"max":{"type":"number"},"unit":{"type":"string"},"provenance":{"type":"string"}},"required":["min","max","unit","provenance"],"additionalProperties":false}
+      }
+    },
+    "protocols": {
+      "type":"array",
+      "items":{
+        "type":"object","additionalProperties":false,
+        "required":["id","kind","version","status","provenance"],
+        "properties":{
+          "id":{"type":"string"},"kind":{"type":"string"},"version":{"type":"string"},
+          "status":{"enum":["CURRENT","SUPERSEDED","CONTESTED"]},
+          "provenance":{"type":"string"},"supersedes":{"type":["string","null"]}
+        }
+      }
+    },
+    "periods": {
+      "type":"array",
+      "items":{
+        "type":"object","additionalProperties":false,
+        "required":["id","start","end","comparability","signals","verdict"],
+        "properties":{
+          "id":{"type":"string"},"start":{"type":"string"},"end":{"type":"string"},
+          "comparability":{"enum":["COMPARABLE","PARTIAL","NONCOMPARABLE","UNKNOWN"]},
+          "signals":{"type":"object"},
+          "verdict":{"type":"string"},
+          "source_refs":{"type":"array","items":{"type":"string"}},
+          "notes":{"type":"string"}
+        }
+      }
+    },
+    "interventions": {
+      "type":"array",
+      "items":{
+        "type":"object","additionalProperties":false,
+        "required":["id","variable","started_at","hypothesis","expected_effect","controlled_variables","review_condition","status"],
+        "properties":{
+          "id":{"type":"string"},"variable":{"type":"string"},"started_at":{"type":"string"},
+          "hypothesis":{"type":"string"},"expected_effect":{"type":"string"},
+          "controlled_variables":{"type":"array","items":{"type":"string"}},
+          "review_condition":{"type":"string"},
+          "confounders":{"type":"array","items":{"type":"string"}},
+          "status":{"enum":["ACTIVE","SUPPORTED","NOT_SUPPORTED","INCONCLUSIVE","SUPERSEDED"]},
+          "observed_followup":{"type":["string","null"]}
+        }
+      }
+    },
+    "uncertainties": {
+      "type":"array",
+      "items":{
+        "type":"object","additionalProperties":false,
+        "required":["id","proposition","state","missing_evidence"],
+        "properties":{
+          "id":{"type":"string"},"proposition":{"type":"string"},
+          "state":{"enum":["SUPPORTED","PLAUSIBLE","WEAK","UNKNOWN","CONTESTED"]},
+          "missing_evidence":{"type":"array","items":{"type":"string"}}
+        }
+      }
+    },
+    "next_review_condition":{"type":["string","null"]},
+    "checkpoint":{"type":["object","null"]}
+  }
+}

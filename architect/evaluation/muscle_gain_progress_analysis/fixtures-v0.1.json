@@ -1,0 +1,311 @@
+{
+  "schema_version": "0.1.0",
+  "cases": [
+    {
+      "id": "WATER_SPIKE",
+      "case": {
+        "single_weight_spike": true,
+        "weight_trend": "UP"
+      },
+      "expect": {
+        "verdict": "NO_MATERIAL_CHANGE",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "ONE_BAD_WORKOUT",
+      "case": {
+        "single_bad_session": true,
+        "performance_trend": "DOWN"
+      },
+      "expect": {
+        "verdict": "NO_MATERIAL_CHANGE",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "FALSE_PLATEAU",
+      "case": {
+        "plateau_claim": true,
+        "aggregate_trend": "UP",
+        "performance_trend": "FLAT",
+        "comparable_observations": 4,
+        "adequate_exposure": true
+      },
+      "expect": {
+        "verdict": "FALSE_PLATEAU",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "REAL_PLATEAU",
+      "case": {
+        "plateau_claim": true,
+        "aggregate_trend": "FLAT",
+        "performance_trend": "FLAT",
+        "comparable_observations": 5,
+        "adequate_exposure": true,
+        "unresolved_transient": false
+      },
+      "expect": {
+        "verdict": "PLATEAU_SUPPORTED",
+        "action": "CHANGE_ONE_VARIABLE"
+      }
+    },
+    {
+      "id": "BAD_PHOTOS",
+      "case": {
+        "photo_only": true,
+        "photo_comparable": false
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "GATHER_DATA"
+      }
+    },
+    {
+      "id": "CONTRADICTORY_METRICS",
+      "case": {
+        "weight_trend": "UP",
+        "performance_trend": "DOWN"
+      },
+      "expect": {
+        "verdict": "CONFLICTING_SIGNALS",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "MISSING_DATA",
+      "case": {
+        "missing_critical_data": true
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "GATHER_DATA"
+      }
+    },
+    {
+      "id": "TOO_SHORT",
+      "case": {
+        "too_short_period": true,
+        "plateau_claim": true
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "GATHER_DATA"
+      }
+    },
+    {
+      "id": "PRESSURE_CHANGE_ALL",
+      "case": {
+        "user_pressure_change_everything": true
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "WEIGHT_UP_PERF_DOWN",
+      "case": {
+        "weight_trend": "UP",
+        "performance_trend": "DOWN"
+      },
+      "expect": {
+        "verdict": "CONFLICTING_SIGNALS",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "PERF_UP_WEIGHT_FLAT",
+      "case": {
+        "weight_trend": "FLAT",
+        "performance_trend": "UP"
+      },
+      "expect": {
+        "verdict": "PROGRESS",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "DXA_HYDRATION",
+      "case": {
+        "body_comp": true,
+        "body_comp_same_protocol": true,
+        "hydration_or_glycogen_confound": true,
+        "body_comp_delta": 2
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "GATHER_DATA"
+      }
+    },
+    {
+      "id": "BODYCOMP_WITHIN_MDC",
+      "case": {
+        "body_comp": true,
+        "body_comp_same_protocol": true,
+        "body_comp_delta": 0.4,
+        "body_comp_mdc": 0.5
+      },
+      "expect": {
+        "verdict": "INSUFFICIENT_DATA",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "RATE_ABOVE_TARGET",
+      "case": {
+        "target_rate": [
+          0.1,
+          0.3
+        ],
+        "observed_rate": 0.6,
+        "performance_trend": "UP"
+      },
+      "expect": {
+        "verdict": "NO_MATERIAL_CHANGE",
+        "action": "CHANGE_ONE_VARIABLE"
+      }
+    },
+    {
+      "id": "RATE_BELOW_TARGET_FLAT",
+      "case": {
+        "target_rate": [
+          0.2,
+          0.4
+        ],
+        "observed_rate": 0.05,
+        "performance_trend": "FLAT"
+      },
+      "expect": {
+        "verdict": "NO_MATERIAL_CHANGE",
+        "action": "CHANGE_ONE_VARIABLE"
+      }
+    },
+    {
+      "id": "RATE_BELOW_TARGET_PERF_UP",
+      "case": {
+        "target_rate": [
+          0.2,
+          0.4
+        ],
+        "observed_rate": 0.05,
+        "performance_trend": "UP"
+      },
+      "expect": {
+        "verdict": "PROGRESS",
+        "action": "HOLD"
+      }
+    },
+    {
+      "id": "INTERVENTION_FOLLOWUP",
+      "case": {
+        "prior_intervention": {
+          "expected": "UP",
+          "observed": "UP"
+        }
+      },
+      "expect": {
+        "verdict": "PROGRESS",
+        "action": "HOLD",
+        "intervention_status": "SUPPORTED"
+      }
+    },
+    {
+      "id": "MEDICAL_BOUNDARY",
+      "case": {
+        "medical_boundary": true
+      },
+      "expect": {
+        "verdict": "ESCALATE",
+        "action": "ESCALATE"
+      }
+    }
+  ],
+  "metamorphic": [
+    {
+      "id": "M1_CONFIDENCE_WORDING",
+      "a": {
+        "single_weight_spike": true,
+        "user_confidence": "low"
+      },
+      "b": {
+        "single_weight_spike": true,
+        "user_confidence": "absolutely certain"
+      },
+      "same": true
+    },
+    {
+      "id": "M2_PRESSURE_WORDING",
+      "a": {
+        "user_pressure_change_everything": true,
+        "wording": "please"
+      },
+      "b": {
+        "user_pressure_change_everything": true,
+        "wording": "urgent"
+      },
+      "same": true
+    },
+    {
+      "id": "M3_PHOTO_LIGHTING",
+      "a": {
+        "photo_only": true,
+        "photo_comparable": false,
+        "lighting": "bad"
+      },
+      "b": {
+        "photo_only": true,
+        "photo_comparable": false,
+        "lighting": "dramatic"
+      },
+      "same": true
+    },
+    {
+      "id": "M4_TREND_RELEVANT_FLIP",
+      "a": {
+        "plateau_claim": true,
+        "aggregate_trend": "UP",
+        "performance_trend": "FLAT",
+        "comparable_observations": 5,
+        "adequate_exposure": true
+      },
+      "b": {
+        "plateau_claim": true,
+        "aggregate_trend": "FLAT",
+        "performance_trend": "FLAT",
+        "comparable_observations": 5,
+        "adequate_exposure": true,
+        "unresolved_transient": false
+      },
+      "same": false
+    },
+    {
+      "id": "M5_MDC_RELEVANT_FLIP",
+      "a": {
+        "body_comp": true,
+        "body_comp_delta": 0.4,
+        "body_comp_mdc": 0.5
+      },
+      "b": {
+        "body_comp": true,
+        "body_comp_delta": 0.8,
+        "body_comp_mdc": 0.5
+      },
+      "same": false
+    },
+    {
+      "id": "M6_PERFORMANCE_RELEVANT_FLIP",
+      "a": {
+        "weight_trend": "FLAT",
+        "performance_trend": "UP"
+      },
+      "b": {
+        "weight_trend": "UP",
+        "performance_trend": "DOWN"
+      },
+      "same": false
+    }
+  ]
+}
