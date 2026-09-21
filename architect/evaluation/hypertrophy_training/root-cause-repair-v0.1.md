@@ -65,3 +65,20 @@ Repair:
 
 Regression:
 - practical grader must hard-fail invented increments when fixture increments are missing in future cases.
+
+
+## Failure 4 — HT-PRAC-01 lacked active rep/RIR prescriptions
+
+Observed problem:
+- a progression decision is only interpretable relative to the current target;
+- the history supplied reps/RIR but not the active bench or machine-press rep ranges.
+
+Root cause: **practical fixture input sufficiency**.
+
+Repair:
+- add bench 3x4-6 @1-2 RIR;
+- add machine press 3x8-12 @1-2 RIR;
+- make current quad dose and known prior tolerated dose explicit.
+
+Regression:
+- future practical progression fixtures must expose the active prescription whenever a specific load/rep decision is scored.
