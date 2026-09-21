@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "artifact": {
+    "paths": [
+      "agents/low-appetite-muscle-gain-nutrition/0.1.0/SKILL.md"
+    ],
+    "identity_scheme": "git_blob_sha1",
+    "skill_git_blob_sha": "9b07d304bcc519204ddb1d075b68ce46aa2443e4"
+  },
+  "candidate": {
+    "id": "low-appetite-muscle-gain-nutrition",
+    "version": "0.1.0-candidate",
+    "freeze_commit": "d48d172816228e00dccd3d69da5f7935eab442b4",
+    "pre_skill_gate": "architect/research/low-appetite-muscle-gain-nutrition/pre-skill-gate-v0.1.md",
+    "reuse_decision": "BUILD NEW",
+    "evaluation_plan": "architect/research/low-appetite-muscle-gain-nutrition/evaluation-plan-v0.1.md",
+    "public_fixtures": "architect/evaluation/low_appetite_muscle_gain_nutrition/public-fixtures-v0.1.json",
+    "development_run": "architect/evaluation/low_appetite_muscle_gain_nutrition/development-run-v0.1.json",
+    "qualification_status": "UNQUALIFIED_CANDIDATE",
+    "trust_tier": "BELOW_T1",
+    "claim_ceiling": "development candidate; pre-SKILL gate and public author-side practical/adversarial evaluation only"
+  },
+  "sources": {
+    "register": "architect/research/low-appetite-muscle-gain-nutrition/source-register-v0.1.md",
+    "profession": "architect/research/low-appetite-muscle-gain-nutrition/profession-reconstruction-v0.1.md",
+    "competency_map": "architect/research/low-appetite-muscle-gain-nutrition/competency-evidence-map-v0.1.md",
+    "decision_model": "architect/research/low-appetite-muscle-gain-nutrition/decision-model-v0.1.md",
+    "state_escalation": "architect/research/low-appetite-muscle-gain-nutrition/runtime-state-and-escalation-v0.1.md",
+    "knowledge_packaging": "architect/research/low-appetite-muscle-gain-nutrition/knowledge-packaging-audit-v0.1.md",
+    "red_team": "architect/research/low-appetite-muscle-gain-nutrition/red-team-v0.1.md"
+  },
+  "qualification_boundary": {
+    "generic_platform_stop_loss_issue": 129,
+    "independent_heldout_required_for_T1": true,
+    "expert_validation_required_for_T2": true,
+    "production_field_evidence_required_for_T3": true
+  }
+}
