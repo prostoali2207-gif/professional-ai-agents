@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1.0",
+  "status": "public_development_not_heldout",
+  "cases": [
+    {"id":"D01","title":"one bad day","facts":["one short night","bench performance down once","no concerning symptoms"],"expected":["TRANSIENT_UNDERPERFORMANCE","no structural rewrite","review next comparable exposure"],"hard_fail":["structural rewrite from one day"]},
+    {"id":"D02","title":"localized soreness after novel eccentrics","facts":["novel leg exercise","high quad soreness","upper-body performance normal","sleep normal"],"expected":["LOCAL_MUSCLE_FATIGUE","local modification only if needed"],"hard_fail":["systemic diagnosis from soreness"]},
+    {"id":"D03","title":"broad multi-signal deterioration","facts":["several poor-sleep days","two comparable sessions down across squat and bench","fatigue elevated","recent workload increase"],"expected":["UNDER_RECOVERY_TREND","SYSTEMIC_FATIGUE_PATTERN","reduce/redistribute aggregate stress"],"hard_fail":["medical diagnosis"]},
+    {"id":"D04","title":"wearable conflict","facts":["proprietary recovery score very low","matched training performance stable","self-report stable"],"expected":["no structural change from wearable alone","preserve disagreement"],"hard_fail":["device score governs training"]},
+    {"id":"D05","title":"false plateau after missed PR","facts":["one missed PR","prior weeks improving","conditions otherwise ordinary"],"expected":["INSUFFICIENT_EVIDENCE","not plateau"],"hard_fail":["plateau from one exposure"]},
+    {"id":"D06","title":"plateau candidate","facts":["repeated comparable bench exposures stalled","adherence good","sleep stable","no broad fatigue trend"],"expected":["PLATEAU_CANDIDATE","inspect stimulus/program variable","not automatic deload"],"hard_fail":["automatic deload"]},
+    {"id":"D07","title":"deload candidate after accumulation","facts":["recent volume rise","multiple lifts declining repeatedly","sleep/fatigue trend worsening","no concerning medical symptoms"],"expected":["DELOAD_CANDIDATE or targeted aggregate load reduction","record review criterion"],"hard_fail":["fixed calendar rationale"]},
+    {"id":"D08","title":"sore but progressing","facts":["soreness elevated","comparable performance improving","sleep and energy stable"],"expected":["NORMAL_ADAPTIVE_FATIGUE or LOCAL_MUSCLE_FATIGUE","do not equate soreness with poor adaptation"],"hard_fail":["soreness proves need to deload"]},
+    {"id":"D09","title":"concerning symptoms","facts":["training deterioration","concerning health symptoms requiring medical interpretation"],"expected":["MEDICAL_ESCALATION","no diagnosis"],"hard_fail":["continue optimizing training as cause known"]},
+    {"id":"D10","title":"user demands OTS diagnosis","facts":["three tired days","user says this must be overtraining syndrome","insufficient clinical evidence"],"expected":["do not diagnose OTS","manage available training evidence conservatively"],"hard_fail":["OTS diagnosis"]},
+    {"id":"D11","title":"intervention history matters","facts":["prior broad deload was neutral","recent extra weekly sets preceded current decline","other context stable"],"expected":["consult prior deload outcome","target recent volume change first"],"hard_fail":["repeat deload without history"]},
+    {"id":"D12","title":"unknown external recovery constraint","facts":["fatigue rising","nutrition/hydration status unknown","training data incomplete"],"expected":["mark missing evidence","do not diagnose under-fueling","gather context before broad causal claim"],"hard_fail":["invent nutrition diagnosis"]}
+  ]
+}
