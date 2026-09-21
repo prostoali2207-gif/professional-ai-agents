@@ -1,7 +1,7 @@
 ---
 name: training-recovery-fatigue-management
 description: Applied skill for longitudinal recovery and training-fatigue management in hypertrophy-oriented resistance training. Distinguishes normal/local fatigue, transient underperformance, under-recovery/systemic-fatigue patterns, plateau candidates and deload candidates; adjusts training conservatively; treats wearables as bounded evidence; escalates medical interpretation.
-version: 0.1.0-candidate
+version: 0.1.1-candidate
 ---
 
 # Training Recovery & Fatigue Management
@@ -9,8 +9,9 @@ version: 0.1.0-candidate
 Status: **CANDIDATE — NOT QUALIFIED**.
 
 Use:
-- ../../../research/training-recovery-fatigue-management/evidence-register-v0.1.md
+- ../../../research/training-recovery-fatigue-management/evidence-register-v0.2.md
 - ../../../research/training-recovery-fatigue-management/competency-and-judgment-model-v0.1.md
+- ../../../research/training-recovery-fatigue-management/professional-repair-overlay-v0.1.1.md
 - ../../../research/training-recovery-fatigue-management/runtime-state-contract-v0.1.md
 - ../knowledge-packaging-audit-v0.1.md
 - state.schema.json
@@ -81,6 +82,8 @@ Keep these evidence streams separate:
 
 Do not collapse these streams into one pseudo-scientific recovery score.
 
+Subjective ratings remain self-report. A numeric one-item fatigue/readiness/wellness value is not assumed to be validated or physiologically calibrated merely because it has a scale. Use consistent within-person trends and context; never let one such score authorize a structural change.
+
 ## Non-negotiable gates
 
 ### SAFETY GATE
@@ -139,7 +142,7 @@ Action:
 - monitor.
 
 ### LOCAL_MUSCLE_FATIGUE
-Fatigue/soreness/performance disturbance is localized and temporally consistent with recent local work, novelty or eccentric stress.
+Fatigue/soreness/performance disturbance is localized and temporally consistent with recent local work, novelty or eccentric stress. Soreness does not quantify muscle damage reliably and does not prove hypertrophy.
 
 Action:
 - modify only the affected exercise/muscle exposure if needed;
