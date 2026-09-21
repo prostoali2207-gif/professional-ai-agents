@@ -34,7 +34,7 @@ def main():
 
     skill = SKILL.read_text(encoding="utf-8")
     anchors = [
-        "single observation is weak evidence",
+        "one poor session is normally weak evidence",
         "Never infer muscle or fat change from one scale point",
         "PLATEAU_SUPPORTED",
         "FALSE_PLATEAU",
