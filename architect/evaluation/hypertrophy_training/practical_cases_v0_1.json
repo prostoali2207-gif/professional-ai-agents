@@ -10,7 +10,11 @@
         "bench 1RM priority 1",
         "chest hypertrophy priority 2",
         "quad hypertrophy priority 2"
-      ]
+      ],
+      "equipment_increments": {
+        "bench_total_kg": 2.5,
+        "machine_press_kg": 2.5
+      }
     },
     "history": {
       "bench": [
@@ -32,8 +36,9 @@
     "task": "Write the next microcycle decisions with concrete bench/chest/quad prescriptions and verification criteria.",
     "required": [
       "bench_specific_work_remains_early",
-      "machine_press_progresses_load_smallest_increment",
-      "quad_fatigue_volume_reduction",
+      "bench_hold_87_5_until_rep_target_progresses",
+      "machine_press_progresses_to_72_5kg_with_same_rep_rir_target",
+      "quad_volume_returns_toward_known_tolerated_baseline",
       "no_global_deload",
       "verification_per_change"
     ],
