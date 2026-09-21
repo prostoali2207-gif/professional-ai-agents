@@ -1,0 +1,40 @@
+{
+  "candidate_name": "training-recovery-fatigue-management",
+  "candidate_version": "0.1.1-candidate",
+  "status": "FROZEN_NOT_QUALIFIED",
+  "freeze_date": "2026-09-21",
+  "candidate_source_commit": "7b0529ed3c865f6e2dcc8ca605ef07c37002f194",
+  "qualification_scope": "APPLIED_SKILL",
+  "supersedes_candidate_freeze": "architect/evaluation/training-recovery-fatigue-management/candidate-freeze-v0.1.json",
+  "components": {
+    "architect/evaluation/training-recovery-fatigue-management/candidate/SKILL.md": "b56c8048ed1066ef2695f84367b37adfb11ef967",
+    "architect/evaluation/training-recovery-fatigue-management/candidate/state.schema.json": "1b0dbf3d483ca1589cd0d2b8d02503b5d714ea4e",
+    "architect/research/training-recovery-fatigue-management/evidence-register-v0.2.md": "0ae2a3727f4353330e8d6b0ef5d2101c3777d6c7",
+    "architect/research/training-recovery-fatigue-management/competency-and-judgment-model-v0.1.md": "052015797095e7ece339a3a0b471d41ec616f594",
+    "architect/research/training-recovery-fatigue-management/professional-repair-overlay-v0.1.1.md": "7b1a1cb8423fce5c75f3e388acbe433a20f1eed0",
+    "architect/research/training-recovery-fatigue-management/runtime-state-contract-v0.1.md": "9786c4f7c800603d1ddcb2a3946550b7dd66008a",
+    "architect/evaluation/training-recovery-fatigue-management/knowledge-packaging-audit-v0.1.md": "f4202162ff4e4aad78649281ec3c1a05f2852ec0"
+  },
+  "qualification_plan": {
+    "path": "architect/evaluation/training-recovery-fatigue-management/qualification-plan-v0.1.1.md",
+    "blob": "6c067fc0ffe03fc99c489225a7e5a5399e35d72a"
+  },
+  "development_cases": {
+    "path": "architect/evaluation/training-recovery-fatigue-management/development-cases-v0.1.1.json",
+    "blob": "19cec30ca80ae7be98d2a5f888b71a4c85421d2f",
+    "held_out": false,
+    "count": 14
+  },
+  "development_ci": {
+    "workflow_run_id": 35623814639,
+    "job_id": 106413107366,
+    "conclusion": "success",
+    "provider_calls": 0
+  },
+  "architecture": "SINGLE_MODULAR_APPLIED_SKILL_WITH_LONGITUDINAL_STATE_AND_MEDICAL_ESCALATION",
+  "release_state": "NOT_QUALIFIED",
+  "trust_tier": "BELOW_T1_DEVELOPMENT_EVIDENCE_ONLY",
+  "immutability_rule": "Any behavior-bearing component change invalidates this qualification cycle and requires a new candidate revision/freeze.",
+  "library_admission": "NOT_APPLICABLE_APPLIED_SKILL",
+  "qualification_platform_policy": "Issue #129 maintenance mode remains binding; no generic platform repair is authorized."
+}
