@@ -1,0 +1,23 @@
+name: Hypertrophy Training Static
+
+on:
+  pull_request:
+    paths:
+      - "agents/hypertrophy-training/**"
+      - "architect/research/hypertrophy-training/**"
+      - "architect/evaluation/hypertrophy_training/**"
+      - ".github/workflows/hypertrophy-training-static.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile evaluator
+        run: python -m py_compile architect/evaluation/hypertrophy_training/static_preflight_v0_1.py
+      - name: Run hypertrophy candidate preflight
+        run: python architect/evaluation/hypertrophy_training/static_preflight_v0_1.py
