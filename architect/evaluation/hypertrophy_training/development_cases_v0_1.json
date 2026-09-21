@@ -182,11 +182,11 @@
   {
     "id": "HT-DEV-13",
     "family": "state_continuity",
-    "task": "Stored plan says dumbbell incline press 32 kg. New authoritative session log says the gym replaced dumbbells and the closest available pair is 30 kg, with 30 kg x 12 @2 RIR completed. Decide next prescription.",
+    "task": "Stored plan says dumbbell incline press 32 kg with an 8-15 rep target at 1-2 RIR. The gym replaced the dumbbells; available pairs are now 30 kg then 35 kg. New authoritative session log: 30 kg x 12 @2 RIR with stable technique. Decide next prescription.",
     "expected_primary": "PROGRESS_REPS",
     "required": [
       "new_equipment_state_supersedes_stale_load_assumption",
-      "use_actual_available_increment",
+      "progress_reps_at_30kg_within_8_15_target_before_large_35kg_jump",
       "preserve_old_state_as_history_not_current"
     ],
     "hard_fails": [
