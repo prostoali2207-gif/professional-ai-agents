@@ -1,0 +1,19 @@
+{
+  "artifact": {
+    "paths": [
+      "agents/exercise-technique-selection/0.1.0/SKILL.md"
+    ],
+    "git_blob_sha": "630ae091ce6b837ee4ca67ceaab3aa3da19cf0ca"
+  },
+  "candidate": {
+    "version": "0.1.0-candidate",
+    "origin_base_commit": "62e75f3b5e6808617adab846a0549ce3dc254d04",
+    "architecture_decision": "BUILD NEW applied skill",
+    "pre_skill_gate": "architect/evaluation/exercise-technique-selection/pre-skill-gate-v0.1.md",
+    "evaluation_plan": "architect/evaluation/exercise-technique-selection/evaluation-plan-v0.1.md",
+    "post_assembly_regression": "architect/evaluation/exercise-technique-selection/post-assembly-regression-v0.1.md",
+    "readiness": "architect/evaluation/exercise-technique-selection/readiness-v0.1.md",
+    "qualification_status": "UNQUALIFIED_DEVELOPMENT_CANDIDATE",
+    "trust_tier": "BELOW_T1"
+  }
+}
