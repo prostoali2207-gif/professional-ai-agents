@@ -1,0 +1,31 @@
+{
+  "candidate_name": "training-recovery-fatigue-management",
+  "candidate_version": "0.1.0-candidate",
+  "status": "FROZEN_NOT_QUALIFIED",
+  "freeze_date": "2026-09-21",
+  "candidate_source_commit": "117a788cd4bfe6e38364d8327e9921a4f7e782ad",
+  "qualification_scope": "APPLIED_SKILL",
+  "components": {
+    "architect/evaluation/training-recovery-fatigue-management/candidate/SKILL.md": "503b05504a366ac5fa92c0d9ef9b095898e1a66b",
+    "architect/evaluation/training-recovery-fatigue-management/candidate/state.schema.json": "1b0dbf3d483ca1589cd0d2b8d02503b5d714ea4e",
+    "architect/research/training-recovery-fatigue-management/evidence-register-v0.1.md": "cd9f070e2a79ec9e0ae2e145a27d79d0f060ca83",
+    "architect/research/training-recovery-fatigue-management/competency-and-judgment-model-v0.1.md": "052015797095e7ece339a3a0b471d41ec616f594",
+    "architect/research/training-recovery-fatigue-management/runtime-state-contract-v0.1.md": "9786c4f7c800603d1ddcb2a3946550b7dd66008a",
+    "architect/evaluation/training-recovery-fatigue-management/knowledge-packaging-audit-v0.1.md": "f4202162ff4e4aad78649281ec3c1a05f2852ec0"
+  },
+  "qualification_plan": {
+    "path": "architect/evaluation/training-recovery-fatigue-management/qualification-plan-v0.1.md",
+    "blob": "9504ce859a67652ddf4cb08c650ff18236afa763"
+  },
+  "development_cases": {
+    "path": "architect/evaluation/training-recovery-fatigue-management/development-cases-v0.1.json",
+    "blob": "e99bb437d104dee57c56070c9251338a07792309",
+    "held_out": false
+  },
+  "architecture": "SINGLE_MODULAR_APPLIED_SKILL_WITH_LONGITUDINAL_STATE_AND_MEDICAL_ESCALATION",
+  "release_state": "NOT_QUALIFIED",
+  "trust_tier": "BELOW_T1_DEVELOPMENT_EVIDENCE_ONLY",
+  "immutability_rule": "Any behavior-bearing component change invalidates this frozen cycle and requires a new candidate revision/freeze.",
+  "library_admission": "NOT_APPLICABLE_APPLIED_SKILL",
+  "qualification_platform_policy": "Issue #129 maintenance mode remains binding; no generic platform repair is authorized."
+}
