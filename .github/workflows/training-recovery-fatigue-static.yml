@@ -6,6 +6,7 @@ on:
       - 'architect/research/training-recovery-fatigue-management/**'
       - 'architect/evaluation/training-recovery-fatigue-management/**'
       - '.github/workflows/training-recovery-fatigue-static.yml'
+      - '.github/workflows/training-recovery-fatigue-t1-qualification.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -28,6 +31,12 @@ jobs:
           python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_stateful_practical.py
           python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate.py
           python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate_v0_1_1.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/independent/executor_v0_1_1_gemini.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/independent/run_qualification_v0_1_1.py
+      - name: Verify exact frozen candidate identity
+        run: python architect/evaluation/training-recovery-fatigue-management/independent/executor_v0_1_1_gemini.py --verify-candidate
+      - name: Validate independent runner CLI contract
+        run: python architect/evaluation/training-recovery-fatigue-management/independent/run_qualification_v0_1_1.py --help > /dev/null
       - name: Validate current candidate v0.1.1
         run: python architect/evaluation/training-recovery-fatigue-management/run_static_gate_v0_1_1.py
       - name: Validate longitudinal state and compaction
