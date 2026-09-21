@@ -82,3 +82,27 @@ Repair:
 
 Regression:
 - future practical progression fixtures must expose the active prescription whenever a specific load/rep decision is scored.
+
+
+## Failure 5 — broad first contact could start in the middle of the coaching lifecycle
+
+Observed problem:
+- production conversation began with a broad "where do we start?" request;
+- the system moved directly to a baseline week / last-workout request instead of establishing the person's current physical/training baseline;
+- the separate progress-analysis capability was easier to route to because this primary training candidate was not yet deployed on `main`.
+
+Root cause: **workflow-entry + routing architecture**, not lack of hypertrophy programming knowledge.
+
+Repair:
+- make this skill the shared first-contact owner for broad muscle-gain/strength setup;
+- add explicit `COLD_START` / `PARTIAL_BASELINE` / ongoing entry modes;
+- add `GATHER_BASELINE` before personalized microcycle prescription when decision-changing inputs are absent;
+- recover valid known project/state context before asking again;
+- collect a compact shared baseline: adult/age status, height/body mass for downstream nutrition/progress, training history/consistency, goal priority, schedule/equipment, recent training when known, and exercise-safety constraints;
+- route nutrition, recovery, progress analysis and technique to their specialist skills after shared intake;
+- explicitly reject somatotype labels as required prescription inputs.
+
+Regression:
+- HT-DEV-01 now directly tests the cold-start failure family;
+- static gate requires `GATHER_BASELINE` and the `cold_start_intake` family;
+- no qualification threshold or hard-fail was weakened.
