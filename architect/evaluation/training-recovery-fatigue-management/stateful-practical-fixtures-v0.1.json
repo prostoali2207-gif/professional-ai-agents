@@ -1,0 +1,129 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "development stateful practical; public, not held out",
+  "full_state": {
+    "schema_version": "0.1.0",
+    "baseline": {"training_status": "intermediate", "goal": "hypertrophy_with_strength_progress"},
+    "observations": [
+      {
+        "date": "2026-09-01",
+        "source": "self_report",
+        "sleep_start": "23:30",
+        "sleep_end": "06:30",
+        "sleep_duration_estimate_h": 7.0,
+        "sleep_quality": 4,
+        "fatigue": 3,
+        "stress": 2,
+        "soreness_by_region": {"quads": 2},
+        "illness_or_injury_concern": false,
+        "wearable": null
+      }
+    ],
+    "sessions": [
+      {
+        "date": "2026-09-01",
+        "duration_min": 70,
+        "session_rpe": 7,
+        "novelty_or_eccentric_emphasis": false,
+        "exercises": [
+          {
+            "exercise": "bench_press",
+            "variant": "barbell_flat",
+            "order": 1,
+            "technique_or_rom_change": false,
+            "equipment_change": false,
+            "sets": [
+              {"load": 80, "reps": 8, "rir_or_rpe": 2, "to_failure": false},
+              {"load": 80, "reps": 8, "rir_or_rpe": 2, "to_failure": false}
+            ]
+          }
+        ]
+      }
+    ],
+    "performance_anchors": [
+      {
+        "anchor_id": "bench-2026-09-01",
+        "exercise": "bench_press",
+        "date": "2026-09-01",
+        "comparable": true,
+        "load": 80,
+        "reps": 8,
+        "rir_or_rpe": 2,
+        "result": "2x8@80kg_RIR2",
+        "noncomparability_reason": null
+      }
+    ],
+    "load_history": [
+      {
+        "week_start": "2026-09-01",
+        "hard_sets_by_muscle": {"chest": 12, "triceps": 8},
+        "frequency_by_muscle": {"chest": 2, "triceps": 2},
+        "failure_sets": 1,
+        "notable_changes": ["chest hard sets increased from 10 to 12"]
+      }
+    ],
+    "interventions": [
+      {
+        "intervention_id": "int-001",
+        "date_started": "2026-09-08",
+        "hypothesis": "recent chest volume increase exceeded current recoverability",
+        "variable_changed": "chest weekly hard sets",
+        "old_state": 12,
+        "new_state": 10,
+        "expected_effect": "restore matched bench performance while preserving stimulus",
+        "review_criterion": "next two comparable bench exposures plus fatigue trend",
+        "result": "helped",
+        "superseded_by": null
+      }
+    ],
+    "escalations": []
+  },
+  "compacted_state": {
+    "schema_version": "0.1.0",
+    "baseline": {"training_status": "intermediate", "goal": "hypertrophy_with_strength_progress"},
+    "observations": [],
+    "sessions": [],
+    "performance_anchors": [
+      {
+        "anchor_id": "bench-2026-09-01",
+        "exercise": "bench_press",
+        "date": "2026-09-01",
+        "comparable": true,
+        "load": 80,
+        "reps": 8,
+        "rir_or_rpe": 2,
+        "result": "2x8@80kg_RIR2",
+        "noncomparability_reason": null
+      }
+    ],
+    "load_history": [
+      {
+        "week_start": "2026-09-01",
+        "hard_sets_by_muscle": {"chest": 12, "triceps": 8},
+        "frequency_by_muscle": {"chest": 2, "triceps": 2},
+        "failure_sets": 1,
+        "notable_changes": ["chest hard sets increased from 10 to 12"]
+      }
+    ],
+    "interventions": [
+      {
+        "intervention_id": "int-001",
+        "date_started": "2026-09-08",
+        "hypothesis": "recent chest volume increase exceeded current recoverability",
+        "variable_changed": "chest weekly hard sets",
+        "old_state": 12,
+        "new_state": 10,
+        "expected_effect": "restore matched bench performance while preserving stimulus",
+        "review_criterion": "next two comparable bench exposures plus fatigue trend",
+        "result": "helped",
+        "superseded_by": null
+      }
+    ],
+    "escalations": []
+  },
+  "must_preserve": {
+    "performance_anchor_ids": ["bench-2026-09-01"],
+    "intervention_ids": ["int-001"],
+    "load_week_starts": ["2026-09-01"]
+  }
+}
