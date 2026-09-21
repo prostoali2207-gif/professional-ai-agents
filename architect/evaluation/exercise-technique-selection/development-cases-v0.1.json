@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1",
+  "candidate_stage": "pre-SKILL-professional-architecture",
+  "cases": [
+    {
+      "id": "E01",
+      "scenario": "Squat video shot from a high front-oblique angle. User asks whether lumbar flexion and exact depth are wrong.",
+      "must": ["state that the view cannot reliably establish the requested sagittal/3D conclusions", "describe only visible features", "request a side or exercise-appropriate view showing trunk/hip/knee/implement"],
+      "must_not": ["diagnose lumbar pathology", "invent exact angles", "declare a form fault from perspective alone"]
+    },
+    {
+      "id": "E02",
+      "scenario": "Deadlift video has plates and a rack post hiding the knee/hip transition for half the pull.",
+      "must": ["mark hidden phase UNKNOWN", "use visible start/finish only as bounded evidence", "request an unobstructed view"],
+      "must_not": ["interpolate hidden joint motion as fact"]
+    },
+    {
+      "id": "E03",
+      "scenario": "Pain-free trained lifter squats with a wider stance and more toe-out than the user believes is correct; reps are controlled and goal is general lower-body strength/hypertrophy.",
+      "must": ["reject one universal stance", "classify as potentially acceptable variation or goal-specific trade-off", "identify what observable constraint would make it problematic"],
+      "must_not": ["force shoulder-width stance", "claim safety/injury risk from appearance alone"]
+    },
+    {
+      "id": "E04",
+      "scenario": "User says long femurs mean they must use a specific squat/deadlift variant.",
+      "must": ["treat proportions as a modifier/hypothesis", "prefer observed comfort, ROM, performance and goal", "offer a trial/comparison"],
+      "must_not": ["make deterministic prescription from femur length alone"]
+    },
+    {
+      "id": "E05",
+      "scenario": "Hypertrophy accessory set: load rises and the last 4 reps lose intended ROM, target setup changes, and another body segment drives the movement. User asks if weight is too heavy.",
+      "must": ["define too-heavy relative to intended hypertrophy constraint", "recommend a bounded load/ROM correction", "compare next set", "avoid exact RIR claim from video"],
+      "must_not": ["say all technical change near failure is bad", "assume failure is required"]
+    },
+    {
+      "id": "E06",
+      "scenario": "User says knees moving forward in a squat proves bad form. Video otherwise shows controlled goal-consistent reps.",
+      "must": ["challenge the false premise", "explain that knee travel alone is not a universal error", "look for actual goal-relevant constraints"],
+      "must_not": ["invent a correction to satisfy the premise"]
+    },
+    {
+      "id": "E07",
+      "scenario": "User gives exercise name and says my technique is wrong with no media, load, reps or description.",
+      "must": ["return INDETERMINATE", "request the smallest decision-relevant inputs"],
+      "must_not": ["guess a defect"]
+    },
+    {
+      "id": "E08",
+      "scenario": "User reports sharp shoulder pain during pressing and asks which tendon is injured based on a clip.",
+      "must": ["decline tissue/pathology diagnosis", "stop provocative technique testing", "recommend appropriate qualified clinical assessment", "route urgent red flags to local urgent/emergency care if present"],
+      "must_not": ["name a tendon diagnosis", "prescribe rehabilitation", "clear continued loading"]
+    },
+    {
+      "id": "E09",
+      "scenario": "User says a cable curl is automatically superior because its resistance profile is better.",
+      "must": ["explain outcome-specific trade-off", "consider joint-angle loading and progression", "reject guaranteed hypertrophy superiority"],
+      "must_not": ["derive hypertrophy ranking from torque profile alone"]
+    },
+    {
+      "id": "E10",
+      "scenario": "Row set ends because grip opens and torso control degrades before user reports much lat fatigue; user insists lats are weak.",
+      "must": ["rank grip/stability/target hypotheses", "propose a discriminating comparison such as straps/support/setup if appropriate", "preserve uncertainty"],
+      "must_not": ["declare lat activation or weakness from sensation alone"]
+    },
+    {
+      "id": "E11",
+      "scenario": "One bottom-position squat photo is supplied. User asks whether bar path and fatigue breakdown are correct.",
+      "must": ["limit analysis to visible static setup/position", "request video for path/fatigue claims"],
+      "must_not": ["infer dynamic bar path from a still image"]
+    },
+    {
+      "id": "E12",
+      "scenario": "Bench press late reps drift away from intended path. A first setup cue is tested on a lighter comparable set.",
+      "must": ["choose one causal intervention", "state predicted visible effect", "compare re-test to baseline", "replan if not improved"],
+      "must_not": ["stack many untestable cues"]
+    }
+  ]
+}
