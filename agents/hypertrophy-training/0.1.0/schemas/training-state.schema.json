@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hypertrophy-training-state-v0.1",
+  "title": "Hypertrophy Training State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["athlete", "goals", "exercise_registry", "sessions", "current_plan"],
+  "properties": {
+    "athlete": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["adult_status", "training_status"],
+      "properties": {
+        "adult_status": {"enum": ["adult", "unknown"]},
+        "training_status": {"enum": ["novice", "intermediate", "advanced", "unknown"]},
+        "constraints": {"type": "array", "items": {"type": "string"}},
+        "equipment": {"type": "array", "items": {"type": "string"}},
+        "symptom_boundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {"enum": ["clear", "flagged", "unknown"]},
+            "minimum_note": {"type": "string"}
+          }
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "priority"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {"enum": ["hypertrophy", "exercise_strength"]},
+          "target": {"type": "string"},
+          "priority": {"type": "integer", "minimum": 1},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "exercise_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["exercise_id", "exercise_version", "name", "function"],
+        "properties": {
+          "exercise_id": {"type": "string"},
+          "exercise_version": {"type": "string"},
+          "name": {"type": "string"},
+          "function": {"type": "string"},
+          "target_muscles": {"type": "array", "items": {"type": "string"}},
+          "strength_specificity": {"type": "string"},
+          "equipment_setup": {"type": "string"},
+          "rom_standard": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "sets"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "session_id": {"type": "string"},
+          "readiness_note": {"type": "string"},
+          "sets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["exercise_id", "exercise_version", "set_index", "load", "reps"],
+              "properties": {
+                "exercise_id": {"type": "string"},
+                "exercise_version": {"type": "string"},
+                "set_index": {"type": "integer", "minimum": 1},
+                "load": {"type": "number", "minimum": 0},
+                "load_unit": {"enum": ["kg", "lb", "machine_unit", "bodyweight", "other"]},
+                "reps": {"type": "integer", "minimum": 0},
+                "rir": {"type": ["number", "null"], "minimum": 0},
+                "rir_confidence": {"enum": ["high", "medium", "low", "unknown"]},
+                "rpe": {"type": ["number", "null"], "minimum": 1, "maximum": 10},
+                "technique_comparable": {"type": "boolean"},
+                "rom_comparable": {"type": "boolean"},
+                "completed": {"type": "boolean"},
+                "symptom_flag": {"type": "string"},
+                "notes": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "current_plan": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["version", "effective_from"],
+      "properties": {
+        "version": {"type": "string"},
+        "effective_from": {"type": "string", "format": "date"},
+        "prescription": {"type": "array", "items": {"type": "object"}}
+      }
+    },
+    "decision_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "decision", "basis", "verification"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "decision": {"type": "string"},
+          "basis": {"type": "string"},
+          "verification": {"type": "string"},
+          "status": {"enum": ["pending", "supported", "not_supported", "unresolved", "superseded"]}
+        }
+      }
+    }
+  }
+}
