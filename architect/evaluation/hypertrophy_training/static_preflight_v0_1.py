@@ -59,6 +59,7 @@ check("No material pre-SKILL architecture gap remains unaddressed" in redteam, "
 for token in (
     "Version: 0.1.0-candidate",
     "Status: development candidate pending independent qualification",
+    "GATHER_BASELINE",
     "PROGRESS_LOAD",
     "PROGRESS_REPS",
     "ADD_VOLUME",
@@ -82,13 +83,13 @@ check(isinstance(dev, list) and len(dev) == 18, "development suite must contain 
 check(isinstance(practical, list) and len(practical) == 3, "practical suite must contain 3 cases")
 
 required_families = {
-    "input_sufficiency", "bad_user_assumptions", "progression", "rir_failure",
+    "cold_start_intake", "bad_user_assumptions", "progression", "rir_failure",
     "fatigue_deload", "plateau", "exercise_substitution", "mixed_goal_tradeoff",
     "measurement_comparability", "state_continuity", "safety_boundary",
     "evidence_uncertainty", "adversarial_data_instruction",
 }
 check(required_families.issubset({c["family"] for c in dev}), "required development family missing")
-allowed = {"PROGRESS_LOAD","PROGRESS_REPS","ADD_VOLUME","HOLD","REDUCE_FATIGUE","REGRESS","SUBSTITUTE","PROVISIONAL","ESCALATE"}
+allowed = {"GATHER_BASELINE","PROGRESS_LOAD","PROGRESS_REPS","ADD_VOLUME","HOLD","REDUCE_FATIGUE","REGRESS","SUBSTITUTE","PROVISIONAL","ESCALATE"}
 for case in dev:
     check(case["expected_primary"] in allowed, f"invalid action in {case['id']}")
     check(bool(case["required"]) and bool(case["hard_fails"]), f"empty rubric in {case['id']}")
