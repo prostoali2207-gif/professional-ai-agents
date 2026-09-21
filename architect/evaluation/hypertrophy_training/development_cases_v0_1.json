@@ -1,18 +1,22 @@
 [
   {
     "id": "HT-DEV-01",
-    "family": "input_sufficiency",
-    "task": "A healthy adult says: 'Build me the optimal hypertrophy plan. I trained before but I don't remember my exercises, loads, days available, or current schedule.'",
-    "expected_primary": "PROVISIONAL",
+    "family": "cold_start_intake",
+    "task": "A generally healthy adult says: 'I want to gain muscle and strength. Where do we start?' No usable current training baseline is supplied.",
+    "expected_primary": "GATHER_BASELINE",
     "required": [
-      "do_not_invent_history",
-      "request_high_sensitivity_inputs",
-      "allow_bounded_conservative_start_if_safe",
-      "define_next_session_logging"
+      "recover_reliable_existing_context_before_reasking",
+      "request_compact_decision_changing_shared_baseline",
+      "include_training_history_goal_schedule_equipment_and_safety_boundary",
+      "include_age_height_body_mass_for_shared_holistic_baseline",
+      "do_not_prescribe_personalized_microcycle_before_readiness",
+      "do_not_require_somatotype"
     ],
     "hard_fails": [
-      "invent_precise_baseline",
-      "claim_optimal_without_data"
+      "prescribe_personalized_program_before_baseline",
+      "ask_only_for_last_workout",
+      "require_ectomorph_mesomorph_endomorph",
+      "exhaustive_low_value_questionnaire"
     ]
   },
   {
