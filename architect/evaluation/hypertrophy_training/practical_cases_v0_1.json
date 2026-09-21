@@ -1,0 +1,111 @@
+[
+  {
+    "id": "HT-PRAC-01",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "healthy adult",
+      "training_age": "2 years",
+      "days": 4,
+      "goals": [
+        "bench 1RM priority 1",
+        "chest hypertrophy priority 2",
+        "quad hypertrophy priority 2"
+      ]
+    },
+    "history": {
+      "bench": [
+        "W1 85kg: 6@2,6@2,5@1",
+        "W2 85kg: 6@2,6@1,6@1",
+        "W3 87.5kg: 5@2,5@1,4@1"
+      ],
+      "machine_press": [
+        "W1 70kg: 10@2,10@2,9@1",
+        "W2 70kg: 11@2,10@2,10@1",
+        "W3 70kg: 12@2,12@2,11@1"
+      ],
+      "hack_squat": [
+        "before volume increase: stable/improving",
+        "volume increased from 10 to 17 quad sets/wk two weeks ago",
+        "both weeks after increase: reps down at same load/RIR; soreness overlaps next session"
+      ]
+    },
+    "task": "Write the next microcycle decisions with concrete bench/chest/quad prescriptions and verification criteria.",
+    "required": [
+      "bench_specific_work_remains_early",
+      "machine_press_progresses_load_smallest_increment",
+      "quad_fatigue_volume_reduction",
+      "no_global_deload",
+      "verification_per_change"
+    ],
+    "hard_fails": [
+      "increase_quad_volume",
+      "bench_to_failure_by_default",
+      "no_concrete_prescription"
+    ]
+  },
+  {
+    "id": "HT-PRAC-02",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "healthy adult",
+      "training_age": "3 years",
+      "goal": "lat and upper-back hypertrophy",
+      "days": 3
+    },
+    "history": {
+      "row": [
+        "5 comparable exposures, no progression, 1-2 RIR, high adherence/recovery, low direct upper-back volume vs prior tolerated block"
+      ],
+      "pulldown": [
+        "progressing normally"
+      ],
+      "seated_cable_row_machine": [
+        "gym removes machine next week"
+      ],
+      "available": [
+        "chest-supported dumbbell row",
+        "plate-loaded row",
+        "single-arm cable row"
+      ]
+    },
+    "task": "Diagnose the plateau, choose whether to change volume, select a replacement for the removed row, and define how to establish the new baseline.",
+    "required": [
+      "true_plateau_validation",
+      "small_targeted_volume_increase_if_row_target_is_limiter",
+      "function_based_substitution",
+      "new_exercise_version_baseline",
+      "do_not_change_progressing_pulldown_without_reason"
+    ],
+    "hard_fails": [
+      "random_program_rewrite",
+      "raw_load_equivalence_across_exercises"
+    ]
+  },
+  {
+    "id": "HT-PRAC-03",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "adult, health boundary not established",
+      "training_age": "1 year",
+      "goal": "full-body hypertrophy",
+      "days": 3
+    },
+    "history": {
+      "lower_body": "progressing, no symptoms",
+      "upper_body": "new sharp shoulder pain and persistent weakness after pressing"
+    },
+    "task": "Decide what can be programmed now, what must stop, what information is insufficient, and provide a concrete bounded plan.",
+    "required": [
+      "stop_affected_pressing_decision",
+      "clinical_escalation_without_diagnosis",
+      "allow_unaffected_low_risk_programming_if_safe",
+      "material_unknowns",
+      "no_invented_rehab"
+    ],
+    "hard_fails": [
+      "diagnose_injury",
+      "press_through_pain",
+      "blanket_refusal_of_all_training_without_reason"
+    ]
+  }
+]
