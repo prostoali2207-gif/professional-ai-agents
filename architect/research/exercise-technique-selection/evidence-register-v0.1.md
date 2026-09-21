@@ -28,7 +28,7 @@ Material behavior is based on source-appropriate evidence. This register disting
 | ETS-015 | Alzhrani AM et al. 2017 2D video vs 3D motion capture. PMID 28437781. https://pubmed.ncbi.nlm.nih.gov/28437781/ | Specific 2D measures can be highly reliable under controlled protocols, but validity is measure/task specific. | Permit bounded qualitative/plane-specific use, not blanket rejection of video. | Small healthy sample and specific tasks. |
 | ETS-016 | 2D pose-estimation validation study, 2022. PMID 36198251. https://pubmed.ncbi.nlm.nih.gov/36198251/ | Markerless 2D pose estimation had useful sagittal relationships for some joints but weak frontal-plane knee agreement with 3D. | Pose/AI tools are assistive, not ground truth. | Single-leg squat/adolescent-athlete context. |
 | ETS-017 | NHS. **Sprains and strains**. https://www.nhs.uk/conditions/sprains-and-strains/ | Severe/worsening pain, major swelling, inability to use/weight-bear, deformity, numbness/tingling and acute injury can require medical assessment. | Pain/injury boundary. | Public clinical guidance; local care pathways vary by jurisdiction. |
-| ETS-018 | NHS. **Joint pain**. https://www.nhs.uk/symptoms/joint-pain/ | Explicitly advises against self-diagnosis and lists urgent/emergency patterns after injury. | Do not diagnose pain from form/video. | Public clinical guidance; local emergency pathways vary. |
+| ETS-018 | NHS. **Joint pain**. https://www.nhs.uk/symptoms/joint-pain/ | Explicitly advises against self-diagnosis and lists urgent/emergency patterns after injury. | Do not diagnose pain from form/video. | Public clinical guidance; local emergency pathways vary. |\n| ETS-019 | Grgic J et al. 2021 meta-analysis of attentional focus and muscular strength. PMID 34822352. DOI 10.3390/sports9110153. https://pubmed.ncbi.nlm.nih.gov/34822352/ | External focus showed a small acute strength advantage; long-term strength differences were uncertain. | Cueing/motor-control: prefer task-relevant concise cues when useful, but verify individual response. | Ten studies; does not justify a universal cue or guarantee learning. |
 
 ## Derived stable principles
 
@@ -39,7 +39,7 @@ Material behavior is based on source-appropriate evidence. This register disting
 5. **Anthropometry is a modifier, not destiny:** segment lengths can alter geometry and some performance relations, but available prediction evidence is limited/weak. ETS-009—011.
 6. **Fatigue changes kinematics:** later-rep deviation can be an effort/load signal; it is not automatically pathology or incompetence. ETS-012—013.
 7. **2D vision has a claim ceiling:** use visible qualitative/plane-specific evidence, state uncertainty, request better views, and never manufacture precise 3D joint loading from uncontrolled media. ETS-014—016.
-8. **Pain terminates non-clinical diagnosis:** the skill may advise stopping/adjusting the exercise and seeking appropriate clinical assessment; it may not identify injured tissue or prescribe rehabilitation. ETS-017—018.
+8. **Pain terminates non-clinical diagnosis:** the skill may advise stopping/adjusting the exercise and seeking appropriate clinical assessment; it may not identify injured tissue or prescribe rehabilitation. ETS-017—018.\n9. **Cueing is an intervention to test, not a truth claim:** attentional-focus evidence supports task-relevant cue design, but response varies and long-term superiority is not guaranteed. ETS-019.
 
 ## Explicitly rejected overclaims
 
