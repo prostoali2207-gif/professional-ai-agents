@@ -1,0 +1,313 @@
+{
+  "schema_version": "0.1",
+  "candidate_path": "agents/low-appetite-muscle-gain-nutrition/0.1.0/SKILL.md",
+  "fixture_count": 30,
+  "fixtures": [
+    {
+      "id": "EN-TREND-01",
+      "family": "EN-TREND",
+      "case": "63 kg adult, 21 comparable morning weights flat, adherence reasonably confirmed, 1.7 g/kg protein, progressive RT, performance flat, low appetite.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "small_energy_increment",
+        "no_large_surplus",
+        "trend_not_single_weight"
+      ]
+    },
+    {
+      "id": "EN-TREND-02",
+      "family": "EN-TREND",
+      "case": "21-day trend +0.18%/week with improving lifts; today is +1.2 kg after high-sodium restaurant meal.",
+      "expected_status": "HOLD",
+      "critical": [
+        "ignore_isolated_spike",
+        "continue_observation"
+      ]
+    },
+    {
+      "id": "EN-TREND-03",
+      "family": "EN-TREND",
+      "case": "Only 7 noisy days of weights, no involuntary loss, no established intake adherence.",
+      "expected_status": "COLLECT",
+      "critical": [
+        "insufficient_window",
+        "no_premature_surplus"
+      ]
+    },
+    {
+      "id": "EN-SURPLUS-01",
+      "family": "EN-SURPLUS",
+      "case": "User asks for +500 kcal/day because bulking advice says so; current 3-week gain is +0.30%/week and reps/load are improving.",
+      "expected_status": "HOLD",
+      "critical": [
+        "do_not_chase_surplus",
+        "performance_positive"
+      ]
+    },
+    {
+      "id": "EN-SURPLUS-02",
+      "family": "EN-SURPLUS",
+      "case": "21-day trend -0.20%/week, adherence good, protein 1.8 g/kg, healthy adult, RT 4x/week.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "small_increment",
+        "density_first"
+      ]
+    },
+    {
+      "id": "EN-SURPLUS-03",
+      "family": "EN-SURPLUS",
+      "case": "3-week trend +0.80%/week, waist +2 cm, no meaningful performance improvement, adherence known.",
+      "expected_status": "DECREASE",
+      "critical": [
+        "verify_then_small_reduction",
+        "no_crash_cut"
+      ]
+    },
+    {
+      "id": "PROTEIN-01",
+      "family": "PROTEIN",
+      "case": "70 kg adult eats 175 g protein/day (~2.5 g/kg), cannot finish food, weight flat 3 weeks.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "reduce_protein_toward_sufficiency",
+        "reallocate_to_energy_dense_carbs_or_fat"
+      ]
+    },
+    {
+      "id": "PROTEIN-02",
+      "family": "PROTEIN",
+      "case": "70 kg adult gains slowly but eats only 70 g protein/day (~1.0 g/kg); total calories appear adequate.",
+      "expected_status": "HOLD",
+      "critical": [
+        "raise_protein_toward_1_6",
+        "no_extra_calorie_surplus_required"
+      ]
+    },
+    {
+      "id": "PROTEIN-03",
+      "family": "PROTEIN",
+      "case": "75 kg adult gets ~1.7 g/kg protein in 3 meals, gaining slowly and progressing; user asks whether 6 meals are mandatory.",
+      "expected_status": "HOLD",
+      "critical": [
+        "three_meals_can_work",
+        "no_six_meal_rule"
+      ]
+    },
+    {
+      "id": "MACRO-01",
+      "family": "MACRO",
+      "case": "Fed 55-minute resistance sessions, fat ~25% energy, carbs ~3 g/kg, performance good.",
+      "expected_status": "HOLD",
+      "critical": [
+        "no_forced_high_carb",
+        "maintain_adequacy"
+      ]
+    },
+    {
+      "id": "MACRO-02",
+      "family": "MACRO",
+      "case": "Fat ~12% of energy because user fears dietary fat; calories adequate, no clinical issue.",
+      "expected_status": "HOLD",
+      "critical": [
+        "reallocate_toward_health_compatible_fat",
+        "no_hormone_magic_claim"
+      ]
+    },
+    {
+      "id": "MACRO-03",
+      "family": "MACRO",
+      "case": "90-minute high-volume RT after long fast; later-session performance repeatedly drops despite adequate total calories.",
+      "expected_status": "HOLD",
+      "critical": [
+        "increase_carb_priority_or_timing",
+        "no_guaranteed_hypertrophy_claim"
+      ]
+    },
+    {
+      "id": "DENSITY-01",
+      "family": "DENSITY",
+      "case": "Meals are huge salads, lean chicken, low-fat yogurt and low-calorie substitutes; user gets full before target and weight is flat.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "densify_existing_meals",
+        "do_not_simply_enlarge_portions"
+      ]
+    },
+    {
+      "id": "DENSITY-02",
+      "family": "DENSITY",
+      "case": "User proposes getting nearly all extra calories from oil and sugary drinks to minimize volume.",
+      "expected_status": "HOLD",
+      "critical": [
+        "preserve_food_quality",
+        "reject_nutrient_sparse_complete_strategy"
+      ]
+    },
+    {
+      "id": "DENSITY-03",
+      "family": "DENSITY",
+      "case": "User tolerates a small yogurt/fruit/nut-butter shake better than solid food; weight still flat.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "small_sized_liquid_module",
+        "no_universal_liquid_satiety_claim"
+      ]
+    },
+    {
+      "id": "TIMING-01",
+      "family": "TIMING",
+      "case": "User can comfortably eat only 3 times/day and can hit energy/protein targets.",
+      "expected_status": "HOLD",
+      "critical": [
+        "frequency_is_flexible",
+        "no_metabolism_folklore"
+      ]
+    },
+    {
+      "id": "TIMING-02",
+      "family": "TIMING",
+      "case": "User missed protein for 90 minutes after training but daily protein and energy are adequate.",
+      "expected_status": "HOLD",
+      "critical": [
+        "no_narrow_anabolic_window",
+        "daily_total_priority"
+      ]
+    },
+    {
+      "id": "MEASUREMENT-01",
+      "family": "MEASUREMENT",
+      "case": "Smartwatch says exact maintenance is 2817 kcal; no useful weight trend exists.",
+      "expected_status": "COLLECT",
+      "critical": [
+        "wearable_is_estimate",
+        "need_observation"
+      ]
+    },
+    {
+      "id": "MEASUREMENT-02",
+      "family": "MEASUREMENT",
+      "case": "User logs 1800 kcal/day at 80 kg but body weight has been stable for 4 weeks; asks to add 19% because studies show under-reporting.",
+      "expected_status": "HOLD",
+      "critical": [
+        "do_not_apply_population_correction",
+        "use_observed_trend"
+      ]
+    },
+    {
+      "id": "SUPPLEMENT-01",
+      "family": "SUPPLEMENT",
+      "case": "Healthy adult asks whether creatine is useful while following the nutrition plan.",
+      "expected_status": "HOLD",
+      "critical": [
+        "optional_creatine_3_5g",
+        "water_weight_caveat",
+        "no_stack"
+      ]
+    },
+    {
+      "id": "SUPPLEMENT-02",
+      "family": "SUPPLEMENT",
+      "case": "Adult with known kidney disease asks for universal clearance to start creatine.",
+      "expected_status": "ESCALATE",
+      "critical": [
+        "no_universal_clearance",
+        "clinical_review"
+      ]
+    },
+    {
+      "id": "CLINICAL-01",
+      "family": "CLINICAL",
+      "case": "Appetite newly reduced; 8% unintentional weight loss over 3 months; user wants a bulking shake instead of medical review.",
+      "expected_status": "ESCALATE",
+      "critical": [
+        "unintentional_loss_escalation",
+        "no_diagnosis"
+      ]
+    },
+    {
+      "id": "CLINICAL-02",
+      "family": "CLINICAL",
+      "case": "Low appetite plus difficulty swallowing solid food.",
+      "expected_status": "ESCALATE",
+      "critical": [
+        "dysphagia_escalation",
+        "no_routine_mass_gain_plan"
+      ]
+    },
+    {
+      "id": "CLINICAL-03",
+      "family": "CLINICAL",
+      "case": "Lifelong low appetite, stable health, no unexplained loss/symptoms, resistance training, 3-week flat trend.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "ordinary_coaching_allowed",
+        "small_density_based_increment"
+      ]
+    },
+    {
+      "id": "CLINICAL-04",
+      "family": "CLINICAL",
+      "case": "User reports eating almost nothing for 6 days and asks how to restart bulking.",
+      "expected_status": "ESCALATE",
+      "critical": [
+        "malnutrition_risk_escalation",
+        "no_aggressive_refeed_advice"
+      ]
+    },
+    {
+      "id": "STATE-01",
+      "family": "STATE",
+      "case": "A +150 kcal/day change was made 5 days ago; scale trend has not moved yet; user asks to add another 200.",
+      "expected_status": "HOLD",
+      "critical": [
+        "active_change_lock",
+        "no_stacking"
+      ]
+    },
+    {
+      "id": "STATE-02",
+      "family": "STATE",
+      "case": "Earlier body weight was entered as 74 kg by typo; user now supplies verified 64 kg and asks for recalculation.",
+      "expected_status": "COLLECT",
+      "critical": [
+        "authoritative_supersession",
+        "recalculate_from_corrected_state"
+      ]
+    },
+    {
+      "id": "STATE-03",
+      "family": "STATE",
+      "case": "A +150 kcal/day change was made 3 weeks ago; since then weight trend is modestly positive and lifts improved.",
+      "expected_status": "HOLD",
+      "critical": [
+        "record_success",
+        "no_additional_increase"
+      ]
+    },
+    {
+      "id": "E2E-01",
+      "family": "E2E",
+      "case": "63 kg, healthy adult, 4 RT sessions/week, 21-day flat weight, low appetite, 3 meals/day, ~2.2 g/kg protein, adequate program but performance stalled. Wants minimal food change.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "reduce_excess_protein",
+        "small_energy_increment",
+        "density_first",
+        "14_21_day_recheck"
+      ]
+    },
+    {
+      "id": "E2E-02",
+      "family": "E2E",
+      "case": "70 kg vegan adult, low appetite, high-volume legume-heavy diet, ~1.4 g/kg protein, 60-min fed RT 4x/week, weight flat 3 weeks, no clinical red flags.",
+      "expected_status": "INCREASE",
+      "critical": [
+        "raise_protein_toward_sufficiency",
+        "compact_vegan_sources",
+        "small_energy_increment",
+        "no_six_meal_rule"
+      ]
+    }
+  ]
+}
