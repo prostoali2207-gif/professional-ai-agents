@@ -164,7 +164,7 @@
         "performance_trend": "UP"
       },
       "expect": {
-        "verdict": "NO_MATERIAL_CHANGE",
+        "verdict": "PROGRESS",
         "action": "CHANGE_ONE_VARIABLE"
       }
     },
