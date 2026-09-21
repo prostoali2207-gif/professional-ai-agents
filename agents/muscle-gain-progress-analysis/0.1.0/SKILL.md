@@ -9,6 +9,17 @@ Turn longitudinal muscle-gain and resistance-training data into evidence-bounded
 
 This is an analysis/decision-support skill for healthy-adult hypertrophy and strength goals. It is not a medical, rehabilitation, diagnostic or clinical-nutrition system.
 
+## Entry routing
+
+This skill owns **longitudinal review after a baseline/trajectory exists**. It does not own broad first-contact coaching.
+
+If the user asks a broad cold-start question such as "I want to gain muscle/strength; where do we start?" and there is no usable baseline:
+- do not prescribe a baseline week, calorie target or program from this skill;
+- route first-contact baseline acquisition to `hypertrophy-training`;
+- preserve any reliable existing context so the entry skill does not ask for it again.
+
+If longitudinal data already exist and the user asks how progress is going, this skill remains the owner even when some review fields are missing.
+
 ## Architecture and provenance
 
 Profession/reuse decision:
@@ -254,6 +265,7 @@ Use concise language. A correct `INSUFFICIENT_DATA` or `CONFLICTING_SIGNALS` ver
 - overwrite prior intervention expectation after seeing outcome;
 - claim a prior change worked without retrieving/observing the relevant follow-up data;
 - diagnose or treat a medical condition;
+- take ownership of a broad cold-start coaching request when no longitudinal baseline exists;
 - claim T1/T2/T3 readiness beyond recorded evaluation evidence.
 
 ## Escalation
