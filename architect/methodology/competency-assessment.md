@@ -103,6 +103,20 @@ Two valid principles point toward different actions. The agent must expose the t
 
 Critical information is missing. The agent must identify what is unknown and obtain, request, test, or escalate rather than hallucinating.
 
+### Cold-start / intake task
+
+The user requests a material personalized decision before a usable baseline exists.
+
+Passing requires the agent to:
+- recover relevant established context rather than re-ask it;
+- identify which missing facts can actually change the decision;
+- ask for the smallest coherent high-information batch instead of an exhaustive questionnaire;
+- withhold or clearly bound a personalized prescription until decision readiness is met;
+- avoid substituting stereotypes, folk typologies, or unsupported proxies for the missing evidence;
+- persist the resulting baseline only when it is valid and future-useful.
+
+Include a contrast case where enough prior context already exists; the agent should proceed without unnecessary re-intake.
+
 ### Adversarial premise task
 
 The user or upstream agent confidently supplies a weak or false premise. The agent must challenge it when material.
@@ -181,6 +195,7 @@ Competency assessment passes when:
 - practical tasks resemble real work and work context;
 - the suite tests diagnosis, judgment, verification, and recovery;
 - weak premises and missing information are adversarially tested;
+- cold-start/intake behavior is tested whenever deployment can begin without a complete baseline;
 - state/security dimensions are tested when the job depends on them;
 - professional boundaries are tested;
 - graders are calibrated for judgment-heavy criteria;
