@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Training Recovery Fatigue Longitudinal State",
+  "type": "object",
+  "required": ["schema_version", "observations", "sessions", "performance_anchors", "interventions"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "baseline": {"type": "object"},
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "source"],
+        "properties": {
+          "date": {"type": "string"},
+          "source": {"type": "string"},
+          "sleep_duration_estimate_h": {"type": ["number", "null"]},
+          "sleep_quality": {"type": ["number", "string", "null"]},
+          "fatigue": {"type": ["number", "string", "null"]},
+          "stress": {"type": ["number", "string", "null"]},
+          "soreness_by_region": {"type": "object"},
+          "illness_or_injury_concern": {"type": ["boolean", "null"]},
+          "wearable": {"type": ["object", "null"]}
+        }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["date", "exercises"],
+        "properties": {
+          "date": {"type": "string"},
+          "duration_min": {"type": ["number", "null"]},
+          "session_rpe": {"type": ["number", "null"]},
+          "exercises": {"type": "array"},
+          "novelty_or_eccentric_emphasis": {"type": ["boolean", "null"]}
+        }
+      }
+    },
+    "performance_anchors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["exercise", "date", "comparable"],
+        "properties": {
+          "exercise": {"type": "string"},
+          "date": {"type": "string"},
+          "comparable": {"type": "boolean"},
+          "load": {"type": ["number", "null"]},
+          "reps": {"type": ["number", "null"]},
+          "rir_or_rpe": {"type": ["number", "null"]},
+          "result": {"type": ["number", "string", "null"]},
+          "noncomparability_reason": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "load_history": {"type": "array"},
+    "interventions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["intervention_id", "date_started", "hypothesis", "variable_changed", "review_criterion", "result"],
+        "properties": {
+          "intervention_id": {"type": "string"},
+          "date_started": {"type": "string"},
+          "hypothesis": {"type": "string"},
+          "variable_changed": {"type": "string"},
+          "old_state": {},
+          "new_state": {},
+          "expected_effect": {"type": ["string", "null"]},
+          "review_criterion": {"type": "string"},
+          "result": {"enum": ["pending", "helped", "neutral", "worsened", "unclear"]},
+          "superseded_by": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "escalations": {"type": "array"}
+  },
+  "additionalProperties": true
+}
