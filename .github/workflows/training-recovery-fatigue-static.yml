@@ -1,0 +1,36 @@
+name: Training Recovery Fatigue static preflight
+
+on:
+  pull_request:
+    paths:
+      - 'architect/research/training-recovery-fatigue-management/**'
+      - 'architect/evaluation/training-recovery-fatigue-management/**'
+      - '.github/workflows/training-recovery-fatigue-static.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deterministic state validation dependency
+        run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Compile TRFM evaluators
+        run: |
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_static_gate.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_static_gate_v0_1_1.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_stateful_practical.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate_v0_1_1.py
+      - name: Validate current candidate v0.1.1
+        run: python architect/evaluation/training-recovery-fatigue-management/run_static_gate_v0_1_1.py
+      - name: Validate longitudinal state and compaction
+        run: python architect/evaluation/training-recovery-fatigue-management/run_stateful_practical.py
+      - name: Validate adversarial policy coverage
+        run: python architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate_v0_1_1.py
