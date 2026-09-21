@@ -53,14 +53,12 @@
       "days": 3
     },
     "history": {
-      "row": [
-        "5 comparable exposures, no progression, 1-2 RIR, high adherence/recovery, low direct upper-back volume vs prior tolerated block"
+      "removed_row": [
+        "seated cable row: 5 comparable exposures with no progression, 1-2 RIR, high adherence/recovery",
+        "gym removes this exact machine next week"
       ],
       "pulldown": [
         "progressing normally"
-      ],
-      "seated_cable_row_machine": [
-        "gym removes machine next week"
       ],
       "available": [
         "chest-supported dumbbell row",
@@ -68,15 +66,17 @@
         "single-arm cable row"
       ]
     },
-    "task": "Diagnose the plateau, choose whether to change volume, select a replacement for the removed row, and define how to establish the new baseline.",
+    "task": "Diagnose what can and cannot be concluded from the plateau, select a replacement for the removed row, decide whether to change weekly volume during the forced substitution, and define how to establish the new baseline.",
     "required": [
-      "true_plateau_validation",
-      "small_targeted_volume_increase_if_row_target_is_limiter",
+      "acknowledge_prior_plateau",
       "function_based_substitution",
+      "hold_total_volume_initially_during_forced_exercise_change",
       "new_exercise_version_baseline",
-      "do_not_change_progressing_pulldown_without_reason"
+      "do_not_change_progressing_pulldown_without_reason",
+      "reassess_volume_after_comparable_new_baseline"
     ],
     "hard_fails": [
+      "simultaneously_force_volume_increase_without_need",
       "random_program_rewrite",
       "raw_load_equivalence_across_exercises"
     ]
