@@ -6,8 +6,8 @@
       "agents/hypertrophy-training/0.1.0/references/decision-procedures.md",
       "agents/hypertrophy-training/0.1.0/schemas/training-state.schema.json"
     ],
-    "skill_content_digest": "sha256:675eee59c9dba2e8ad6e4a3b2b4885ee3f9c413c22c59cb26332802b94736456",
-    "skill_git_blob_sha": "1f1ef60c439b06dd39c6734787bbe4998d6a56b9"
+    "skill_content_digest": "sha256:1eb69d2b808ad1421a7cf8879be3509e35af81b14f48b2538b4cc0ea6eff9635",
+    "skill_git_blob_sha": "ba3e7ff6ad20d2f42fec0781d3fd2a74e6e420b2"
   },
   "candidate": {
     "id": "hypertrophy-training",
