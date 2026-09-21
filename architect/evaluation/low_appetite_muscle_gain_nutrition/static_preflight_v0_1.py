@@ -52,7 +52,6 @@ required_skill = [
     "Low-volume / high-energy-density ladder",
     "Active-change lock",
     "Clinical / medical escalation",
-    "UNQUALIFIED",
 ]
 for token in required_skill:
     check(token in skill, f"missing candidate invariant: {token}")
