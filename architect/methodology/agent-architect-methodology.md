@@ -28,6 +28,25 @@ Map what a strong practitioner actually does:
 
 Use cognitive-task-analysis logic: difficult professional work is often distinguished by decisions and cue recognition that are tacit rather than by explicit checklist knowledge.
 
+## 2A. Entry state, intake, and decision readiness
+
+Map how the profession begins work when the case is not already well specified.
+
+For every material decision:
+- identify its prerequisite facts/evidence;
+- distinguish safety-critical, decision-changing, calibration-only, and optional inputs;
+- define how existing state is recovered before asking the user again;
+- define the smallest high-information intake that closes the decision gap;
+- define when the agent must pause the decision, when a provisional action is justified, and when escalation is required;
+- distinguish direct decision-relevant measurements/history from stereotypes, folk typologies, or weak proxies.
+
+Model at least these entry modes when applicable:
+`COLD_START | PARTIAL_BASELINE | ONGOING | FOLLOW_UP | CONFLICTING_STATE`.
+
+A professional workflow that is correct only after perfect inputs are magically present is incomplete.
+
+Use `initial-intake-and-decision-readiness.md`.
+
 ## 3. Expert-vs-average discriminator
 
 For each significant capability, identify:
@@ -229,6 +248,7 @@ Minimum dimensions for serious agents include as applicable:
 - application;
 - diagnosis;
 - practical execution;
+- cold-start/first-contact behavior when deployment permits it;
 - conflicting requirements;
 - bad user assumptions;
 - insufficient information;
@@ -303,6 +323,7 @@ Do not write the final role SKILL until:
 
 - profession reconstruction is evidence-backed;
 - competency/evidence and knowledge architecture exist;
+- entry states, intake prerequisites, and decision-readiness behavior are modeled where deployment can begin from incomplete context;
 - judgment, scope, tools, authority, and escalation are modeled;
 - procedural packaging is designed where useful;
 - state/memory/context and execution control are designed where material;
@@ -313,7 +334,7 @@ Do not write the final role SKILL until:
 
 ## Definition of done
 
-`profession mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> knowledge gaps identified -> judgment/workflows/tools designed -> procedural capabilities defined -> state/memory/context defined where material -> execution-control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> failure modes encoded -> SKILL orchestrates the system -> competency evaluation completed -> stateful/security/control-loop tests completed where applicable -> weaknesses corrected -> practical evaluation passed -> production feedback loop defined`.
+`profession mapped -> entry states/intake prerequisites mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> knowledge gaps identified -> judgment/workflows/tools designed -> procedural capabilities defined -> state/memory/context defined where material -> execution-control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> failure modes encoded -> SKILL orchestrates the system -> competency evaluation completed -> stateful/security/control-loop tests completed where applicable -> weaknesses corrected -> practical evaluation passed -> production feedback loop defined`.
 
 ## Benchmark qualification note
 

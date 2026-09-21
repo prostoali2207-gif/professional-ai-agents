@@ -44,6 +44,21 @@ Do not confuse:
 - execution with verification;
 - instructions with training material.
 
+## Entry state and decision readiness
+
+For every applied agent, model how professional work begins, not only how it proceeds after good inputs already exist.
+
+When the deployment can receive a new/unknown user, incomplete case, or first-turn request:
+- distinguish cold-start/onboarding from ongoing/follow-up work;
+- recover relevant established context before asking for it again;
+- map each material decision to its decision-critical prerequisites;
+- classify missing inputs as safety-critical, decision-changing, calibration-only, or optional;
+- obtain the smallest high-information set of missing decision-critical facts before making a personalized material decision;
+- allow a provisional action only when the missing information cannot plausibly reverse the decision and the uncertainty is explicit;
+- do not substitute folk labels, stereotypes, or convenient proxies for direct decision-relevant measurements/history.
+
+Use `architect/methodology/initial-intake-and-decision-readiness.md`.
+
 ## Verification
 
 If an outcome can be directly observed or tested, direct observation/test is required. Reasoning is not a substitute for execution evidence.
@@ -99,7 +114,7 @@ Use human experts where their judgment has high information value; do not turn e
 
 An applied agent is internally ready for T1 qualification only after:
 
-profession mapped -> competencies mapped -> authoritative knowledge assembled -> gaps identified -> workflows designed -> tools/evidence strategy defined -> professional judgment encoded -> failure modes encoded -> skill orchestrates the system -> competency evaluation run -> weaknesses corrected -> practical evaluation passed.
+profession mapped -> entry states/intake prerequisites mapped -> competencies mapped -> authoritative knowledge assembled -> gaps identified -> workflows designed -> tools/evidence strategy defined -> professional judgment encoded -> failure modes encoded -> skill orchestrates the system -> cold-start/incomplete-information evaluation run where applicable -> competency evaluation run -> weaknesses corrected -> practical evaluation passed.
 
 After T1, assign the strongest evidence tier actually supported. If the intended deployment claim is that a non-expert user should not need profession-specific knowledge to catch routine professional errors, the agent must earn the corresponding T2/T3 evidence rather than inheriting that claim from internal qualification.
 

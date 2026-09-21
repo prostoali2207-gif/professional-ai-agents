@@ -1,6 +1,6 @@
 # Agent Architect Pre-SKILL Completeness Audit
 
-Status: v0.2 / PASS.
+Status: v0.3 / PASS.
 
 The Architect must not receive a final `SKILL.md` until this audit passes.
 
@@ -121,8 +121,23 @@ The frontend-engineer dry-run demonstrated that the methodology can:
 
 The dry-run did not create a frontend agent; it tested the Architect methodology only.
 
+## L. Entry-state and decision-readiness architecture — PASS
+
+Production correction on 2026-09-21 exposed a general gap: the methodology could model a profession after inputs existed while failing to require how a practitioner obtains the baseline on first contact.
+
+Implemented:
+- cold-start/partial/ongoing/follow-up/conflicting-state entry modes;
+- decision-prerequisite mapping;
+- missing-input criticality classification;
+- minimal high-information intake;
+- prior-context recovery before re-asking;
+- provisional-vs-blocked decision rules;
+- cold-start evaluation family.
+
+Evidence: `methodology/initial-intake-and-decision-readiness.md` and `evaluation/entry-state-intake-regression.md`.
+
 ## Decision
 
-`PASS` for creation of the first Agent Architect `SKILL.md`.
+`PASS` for creation of the first Agent Architect `SKILL.md`, with the v0.3 entry-state correction now part of the mandatory methodology.
 
 This does **not** mean the Architect is finished. After SKILL assembly, the Architect itself must be evaluated as an executable agent workflow. Failures must be repaired at the responsible methodology/knowledge/process layer rather than patched with arbitrary prompt lines.
