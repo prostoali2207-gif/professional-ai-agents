@@ -42,9 +42,6 @@ def decide(case: dict) -> dict:
     if weight == "UP" and perf == "DOWN":
         return {"verdict":"CONFLICTING_SIGNALS","action":"HOLD","claim":"mass and performance signals conflict"}
 
-    if perf == "UP" and weight in {"FLAT", None}:
-        return {"verdict":"PROGRESS","action":"HOLD","claim":"performance progress supported; hypertrophy unresolved"}
-
     if case.get("plateau_claim"):
         if case.get("aggregate_trend") == "UP" or perf == "UP":
             return {"verdict":"FALSE_PLATEAU","action":"HOLD","claim":"valid positive longitudinal signal contradicts plateau"}
@@ -57,11 +54,18 @@ def decide(case: dict) -> dict:
     if target and rate is not None:
         low, high = target
         if rate > high:
-            return {"verdict":"NO_MATERIAL_CHANGE","action":"CHANGE_ONE_VARIABLE","claim":"observed mass-gain rate is above explicit target; tissue composition not inferred"}
+            return {
+                "verdict":"PROGRESS" if perf == "UP" else "NO_MATERIAL_CHANGE",
+                "action":"CHANGE_ONE_VARIABLE",
+                "claim":"observed mass-gain rate is above explicit target; tissue composition not inferred"
+            }
         if rate < low:
             if perf == "UP":
                 return {"verdict":"PROGRESS","action":"HOLD","claim":"rate is below explicit target but performance is progressing"}
             return {"verdict":"NO_MATERIAL_CHANGE","action":"CHANGE_ONE_VARIABLE","claim":"rate is below explicit target and no positive performance signal is present"}
+
+    if perf == "UP" and weight in {"FLAT", None}:
+        return {"verdict":"PROGRESS","action":"HOLD","claim":"performance progress supported; hypertrophy unresolved"}
 
     if case.get("prior_intervention"):
         expected = case["prior_intervention"].get("expected")
@@ -69,7 +73,12 @@ def decide(case: dict) -> dict:
         status = "INCONCLUSIVE"
         if observed is not None:
             status = "SUPPORTED" if observed == expected else "NOT_SUPPORTED"
-        return {"verdict":"PROGRESS" if status=="SUPPORTED" else "NO_MATERIAL_CHANGE","action":"HOLD","intervention_status":status,"claim":"prior intervention reviewed against frozen expectation"}
+        return {
+            "verdict":"PROGRESS" if status=="SUPPORTED" else "NO_MATERIAL_CHANGE",
+            "action":"HOLD",
+            "intervention_status":status,
+            "claim":"prior intervention reviewed against frozen expectation"
+        }
 
     return {"verdict":"NO_MATERIAL_CHANGE","action":"HOLD","claim":"no material supported change"}
 
