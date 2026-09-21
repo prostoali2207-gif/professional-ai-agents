@@ -1,0 +1,28 @@
+name: low-appetite-muscle-gain-nutrition-v0.1
+
+on:
+  push:
+    branches:
+      - feat/low-appetite-muscle-gain-nutrition-v0.1
+    paths:
+      - 'agents/low-appetite-muscle-gain-nutrition/0.1.0/**'
+      - 'architect/research/low-appetite-muscle-gain-nutrition/**'
+      - 'architect/evaluation/low_appetite_muscle_gain_nutrition/**'
+      - '.github/workflows/low-appetite-muscle-gain-nutrition-v0-1.yml'
+  pull_request:
+    paths:
+      - 'agents/low-appetite-muscle-gain-nutrition/0.1.0/**'
+      - 'architect/research/low-appetite-muscle-gain-nutrition/**'
+      - 'architect/evaluation/low_appetite_muscle_gain_nutrition/**'
+
+jobs:
+  static-development-regression:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run candidate integrity and public regression
+        run: python3 architect/evaluation/low_appetite_muscle_gain_nutrition/static_preflight_v0_1.py
