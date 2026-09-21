@@ -18,6 +18,7 @@ Do not become a physician, physiotherapist, clinical exercise specialist, nutrit
 ## Trigger
 
 Use this skill when the task materially requires one or more of:
+- begin a broad muscle-gain/strength coaching case such as "where do I start?" and no better shared baseline owner is active;
 - build or revise a resistance-training program for muscle growth and/or strength;
 - decide the next load, rep, set or RIR/RPE target from training history;
 - diagnose an apparent plateau;
@@ -58,6 +59,45 @@ For longitudinal work use `schemas/training-state.schema.json` or an equivalent 
 
 If current/superseding science or a special-population boundary materially changes the answer, use live authoritative research or narrow/escalate instead of improvising from memory.
 
+## Entry state and shared baseline
+
+For a broad first-contact muscle/strength request, this skill owns the **shared coaching entrypoint**. It must establish enough common baseline to route later decisions without making every specialist repeat intake.
+
+Classify entry state as:
+- `COLD_START` — no usable current baseline;
+- `PARTIAL_BASELINE` — some current facts exist but decision-changing facts are missing;
+- `ONGOING` — baseline and current training state are usable;
+- `FOLLOW_UP` — new evidence updates a prior decision;
+- `CONFLICTING_STATE` — current evidence conflicts with stored/earlier context.
+
+Always recover reliable existing project/state context before asking the user again.
+
+For a cold-start **holistic muscle-gain/strength setup**, obtain the smallest coherent shared baseline needed for the next decisions:
+- age/adult status;
+- height and current body mass for downstream nutrition/progress calibration;
+- resistance-training history: total experience, recent consistency and any meaningful layoff;
+- primary goal(s) and priority order;
+- days/time available and equipment;
+- current/recent program and approximate working loads/repetitions when known;
+- relevant pain/injury symptoms, medical restrictions or other exercise-safety constraints;
+- major recovery constraints only when they can materially change the initial training decision.
+
+Do **not** require ectomorph/mesomorph/endomorph or another somatotype label. If body-composition or physique context becomes decision-relevant, prefer direct repeatable measurements, weight trend, comparable photos or validated body-composition evidence within their limits.
+
+Cold-start readiness:
+- if a missing fact can materially reverse the initial prescription, choose `GATHER_BASELINE` and ask for the missing high-information facts before prescribing the first personalized microcycle;
+- if only calibration-level detail is missing, a bounded `PROVISIONAL` decision is allowed with explicit uncertainty;
+- do not issue a personalized program first and append baseline questions afterward.
+
+After the shared baseline exists, route domain-specific work rather than duplicating it:
+- training prescription/progression -> this skill;
+- low-appetite muscle-gain nutrition -> `low-appetite-muscle-gain-nutrition` when available;
+- recovery/fatigue -> `training-recovery-fatigue-management`;
+- longitudinal trend/progress attribution -> `muscle-gain-progress-analysis`;
+- exercise choice/technique media analysis -> `exercise-technique-selection` when available.
+
+Specialist availability does not justify inventing its conclusions. If a required specialist is unavailable, remain within this skill's scope or state the gap.
+
 ## Required inputs
 
 Classify each material input as `KNOWN | ESTIMATED | UNKNOWN | CONFLICTING`:
@@ -79,11 +119,11 @@ Missing history is not permission to invent it.
 
 If a missing fact can reverse a safety decision, stop that decision and obtain/escalate.
 
-If the task is otherwise safe and useful, a clearly labeled `PROVISIONAL` plan is allowed with conservative starting exposure and explicit next-session data collection.
+If the task is otherwise safe and useful, a clearly labeled `PROVISIONAL` plan is allowed only when the unresolved facts cannot plausibly reverse the bounded action, with explicit next-session data collection.
 
 ## Professional sequence
 
-`SAFETY -> SUFFICIENCY -> GOAL PRIORITY -> COMPARABILITY -> TRAJECTORY -> LIMITING-FACTOR HYPOTHESIS -> SMALLEST USEFUL CHANGE -> CONCRETE PRESCRIPTION -> VERIFICATION -> STATE UPDATE`
+`ENTRY_STATE -> BASELINE / DECISION_READINESS -> SAFETY -> SUFFICIENCY -> GOAL PRIORITY -> COMPARABILITY -> TRAJECTORY -> LIMITING-FACTOR HYPOTHESIS -> SMALLEST USEFUL CHANGE -> CONCRETE PRESCRIPTION -> VERIFICATION -> STATE UPDATE`
 
 Do not skip diagnosis merely because the user asks for a more aggressive program.
 
@@ -91,6 +131,7 @@ Do not skip diagnosis merely because the user asks for a more aggressive program
 
 Use one primary decision per material exercise/muscle/lift when possible:
 
+- `GATHER_BASELINE`
 - `PROGRESS_LOAD`
 - `PROGRESS_REPS`
 - `ADD_VOLUME`
@@ -324,6 +365,7 @@ Do not accept as unconditional truth:
 ## State and memory
 
 Maintain:
+- shared baseline fields only when valid and future-useful: age/adult status, height, body mass, training-history summary and current consistency;
 - goals and priorities;
 - exercise registry with `exercise_id + exercise_version`;
 - raw session sets;
@@ -386,7 +428,14 @@ Do not use a generic "consult a professional" disclaimer when the exact exceeded
 
 ## Output contract
 
-When making a material training decision, return:
+On `COLD_START` / `GATHER_BASELINE`, return only:
+1. **KNOWN ALREADY** — only relevant reliable context;
+2. **NEEDED NOW** — one compact batch of decision-changing questions;
+3. **NEXT DECISION** — what those answers will unlock.
+
+Do not fill a microcycle before readiness.
+
+When making a material training decision after readiness, return:
 
 1. **CURRENT STATE / MATERIAL UNKNOWNS**
 2. **DECISION** — primary action(s)
@@ -408,6 +457,9 @@ Prefer the actual prescription over generic physiology explanation.
 - medical diagnosis/rehab prescription beyond authority;
 - continuing/intensifying an affected exercise despite clear escalation evidence;
 - inventing training history, symptoms or equipment;
+- prescribing a personalized first microcycle from a cold start before obtaining decision-changing baseline facts;
+- re-asking reliable current baseline facts already present in project/state context;
+- using somatotype labels such as ectomorph/mesomorph/endomorph as a required or primary programming variable;
 - universal weekly-set target presented as mandatory;
 - universal failure rule;
 - universal deload calendar;
