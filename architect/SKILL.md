@@ -37,7 +37,11 @@ Start from the actual goal and work, not the user's title.
 
 Identify real profession(s), responsibilities/outputs, boundaries, recurring work, difficult decisions, cues/misleading cues, uncertainty/trade-offs, failure/recovery patterns, tools, stakeholders/work context, and verification evidence.
 
+Also reconstruct the **entry state**: how a strong practitioner behaves when the case is new, incomplete, ambiguous, or already has prior state. Identify what must be known before each material decision, what may remain unknown, and what can be safely provisional.
+
 Use:
+
+- `methodology/initial-intake-and-decision-readiness.md`
 
 - `methodology/agent-architect-methodology.md`
 - `methodology/cognitive-task-analysis.md`
@@ -81,6 +85,8 @@ Do not promote a one-off agent or shallow role prompt into a reusable profession
 ### Phase 3 — Build the competency and evidence model
 
 Each material competency must be observable and testable. Include as relevant: purpose, professional situation, required knowledge, observable capability, cues, decision model, trade-offs, failure modes, expert-vs-average discriminator, tools, evidence, boundary/escalation, evaluation, and adversarial evaluation.
+
+For any capability that can be invoked from an incomplete or cold-start case, explicitly map decision prerequisites and the intake behavior that obtains only the missing decision-critical information.
 
 For each critical competency explicitly connect:
 
@@ -132,7 +138,15 @@ For creative professions also use `methodology/creative-profession-architecture.
 
 ### Phase 6 — Design procedural capabilities, workflow, tools, and evidence
 
-Map the actual professional process rather than forcing a universal sequence. A generic loop may be:
+Map the actual professional process rather than forcing a universal sequence.
+
+Before the ordinary work loop, define the entry-mode controller when relevant:
+
+`classify entry state -> recover known context -> identify missing decision-critical inputs -> ask/observe/test -> confirm decision readiness -> proceed or stay provisional/escalate`.
+
+Use `methodology/initial-intake-and-decision-readiness.md`.
+
+A generic work loop may then be:
 
 `understand -> diagnose -> identify uncertainty -> research/retrieve -> generate alternatives -> decide -> execute -> observe -> critique -> revise`.
 
@@ -217,7 +231,9 @@ Use:
 - `evaluation/resource_cost_engineering/` when material resource/cost decisions, budget gates, volatile pricing/quota behavior, targeting, or post-run accounting are part of the capability claim;
 - files under `evaluation/`.
 
-Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, knowledge-package selection and runtime availability, empirical validity/comparability, reuse compatibility and composition boundaries, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+Evaluation should cover as appropriate: fundamentals, application, diagnosis, practical execution, **cold-start/first-contact behavior**, bad assumptions, conflicting requirements, insufficient information, source/retrieval quality, knowledge-package selection and runtime availability, empirical validity/comparability, reuse compatibility and composition boundaries, tool use, direct evidence, state/memory correctness, context loss, replanning/recovery, security/trust-boundary attacks, edge cases, critique, self-critique, permissions/authority, material cost/latency, and termination correctness.
+
+When first-contact behavior is part of deployment, include at least one case where the user asks for a material recommendation before supplying the baseline. Passing requires recovering already-known context, requesting the minimal decision-critical remainder, and not issuing a falsely personalized prescription before readiness.
 
 For every critical behavioral claim require an executable evidence chain:
 
