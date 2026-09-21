@@ -48,3 +48,20 @@ No generic qualification infrastructure changed.
 No threshold/hard-fail was weakened.
 No SKILL rule was patched to memorize either fixture.
 The responsible evaluator layer was corrected before further scoring.
+
+
+## Failure 3 — HT-PRAC-01 lacked load-increment observability
+
+Observed problem:
+- practical expected a concrete machine-press load progression;
+- available equipment increments were absent;
+- inventing a 2.5 kg step would itself violate the candidate's no-invention rule.
+
+Root cause: **practical fixture input sufficiency**.
+
+Repair:
+- add explicit 2.5 kg total bench increment and 2.5 kg machine-press increment;
+- freeze the expected machine-press progression to 72.5 kg while bench load remains 87.5 kg until its current rep target progresses.
+
+Regression:
+- practical grader must hard-fail invented increments when fixture increments are missing in future cases.
