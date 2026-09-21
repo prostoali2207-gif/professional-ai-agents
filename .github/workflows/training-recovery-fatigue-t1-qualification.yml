@@ -1,0 +1,146 @@
+name: Training Recovery Fatigue v0.1.1 independent T1 qualification
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_paid_run:
+        description: 'Type RUN_PAID_QUALIFICATION to authorize the preregistered T1 cycle'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    if: ${{ inputs.confirm_paid_run == 'RUN_PAID_QUALIFICATION' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      QUALIFICATION_SEALED_PACK_MASTER_KEY: ${{ secrets.QUALIFICATION_SEALED_PACK_MASTER_KEY }}
+      TRFM_MODEL: gemini-3.5-flash-lite
+      CANDIDATE_COMMIT: 7b0529ed3c865f6e2dcc8ca605ef07c37002f194
+      CANDIDATE_DIGEST: sha256:b9aebed05ff76955a88035b79d31a81aebe5c5d52cb029f7ce9a337f67ec2fe1
+      CYCLE_ID: trfm-0.1.1-independent-t1-2026-09-21
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: skill/training-recovery-fatigue-management
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run budget and stop-loss gate
+        run: |
+          echo 'objective=independent T1 behavioral qualification of frozen TRFM 0.1.1'
+          echo 'candidate_calls_max=33 (1 unscored canary + 28 scored static trials + 4 scored stateful steps)'
+          echo 'judge_calls=0'
+          echo 'provider=Gemini interactions API'
+          echo 'candidate_model=gemini-3.5-flash-lite'
+          echo 'protected_rule=no professional-failure rerun in this cycle'
+          echo 'technical_rule=classify; at most one bounded local repair and one eligible retry; then STOP'
+          echo 'trust_ceiling=T1 only'
+
+      - name: Frozen candidate and evaluator static preflight
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/independent/executor_v0_1_1_gemini.py
+          python -m py_compile architect/evaluation/training-recovery-fatigue-management/independent/run_qualification_v0_1_1.py
+          git cat-file -e "$CANDIDATE_COMMIT^{commit}"
+          python architect/evaluation/training-recovery-fatigue-management/independent/executor_v0_1_1_gemini.py --qualification-contract > "$RUNNER_TEMP/trfm-contract.json"
+          CONTRACT="$RUNNER_TEMP/trfm-contract.json" python - <<'PY'
+          import json, os
+          p=json.load(open(os.environ['CONTRACT']))
+          assert p['candidate_commit']==os.environ['CANDIDATE_COMMIT']
+          assert p['candidate_digest']==os.environ['CANDIDATE_DIGEST']
+          assert p['provider']=='gemini-interactions-api'
+          assert p['state_protocol']=='external-longitudinal-state-v1'
+          assert p['observable_protocol']=='structured-decision-v1'
+          print('TRFM_FROZEN_RUNTIME_CONTRACT_PASS')
+          PY
+          python architect/evaluation/training-recovery-fatigue-management/run_static_gate_v0_1_1.py
+          python architect/evaluation/training-recovery-fatigue-management/run_stateful_practical.py
+          python architect/evaluation/training-recovery-fatigue-management/run_adversarial_policy_gate_v0_1_1.py
+
+      - name: Require evaluator secrets before provider calls
+        run: |
+          test -n "$QUALIFICATION_SEALED_PACK_MASTER_KEY" || { echo 'sealed seed secret missing; zero provider calls attempted' >&2; exit 21; }
+          test -n "$GEMINI_API_KEY" || { echo 'Gemini credential missing; zero provider calls attempted' >&2; exit 22; }
+
+      - name: Exact-runtime unscored canary
+        run: |
+          python architect/evaluation/training-recovery-fatigue-management/independent/executor_v0_1_1_gemini.py --canary --model-timeout 150 > "$RUNNER_TEMP/trfm-canary.json"
+          CANARY="$RUNNER_TEMP/trfm-canary.json" python - <<'PY'
+          import json, os
+          x=json.load(open(os.environ['CANARY']))
+          assert x['status']=='completed'
+          assert x['candidate_identity']['commit']==os.environ['CANDIDATE_COMMIT']
+          assert x['candidate_identity']['digest']==os.environ['CANDIDATE_DIGEST']
+          assert isinstance(x.get('decision'),dict)
+          print('TRFM_EXACT_RUNTIME_CANARY_PASS')
+          PY
+
+      - name: Run frozen independent T1 qualification
+        id: scored
+        shell: bash
+        run: |
+          set +e
+          python architect/evaluation/training-recovery-fatigue-management/independent/run_qualification_v0_1_1.py             --out "$RUNNER_TEMP/trfm-v0.1.1-t1-report.json"             --timeout 180             --pace 13
+          code=$?
+          echo "qualification_exit_code=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Validate sanitized report
+        if: always()
+        id: validate
+        run: |
+          REPORT="$RUNNER_TEMP/trfm-v0.1.1-t1-report.json"
+          test -f "$REPORT"
+          REPORT="$REPORT" python - <<'PY'
+          import json, os
+          x=json.load(open(os.environ['REPORT']))
+          assert x['cycle_id']==os.environ['CYCLE_ID']
+          assert x['candidate_commit']==os.environ['CANDIDATE_COMMIT']
+          assert x['candidate_digest']==os.environ['CANDIDATE_DIGEST']
+          assert x['exact_hidden_cases_published'] is False
+          assert x['trial_count']==2
+          assert x['static_case_count']==14
+          assert x['candidate_calls']==32
+          assert x['thresholds']['min_static_trial_pass']==26
+          assert x['thresholds']['zero_hard_failures'] is True
+          assert x['trust_ceiling']=='T1_ONLY'
+          assert x['t2_claim'] is False and x['t3_claim'] is False
+          forbidden=('task','reasoning_summary','secret','seed')
+          # The sanitized report may contain a seed fingerprint key but never the seed itself or task text.
+          text=open(os.environ['REPORT']).read()
+          assert '"task"' not in text and '"reasoning_summary"' not in text
+          print('TRFM_SANITIZED_REPORT_PASS')
+          PY
+
+      - name: Publish sanitized qualification evidence
+        if: always() && steps.validate.outcome == 'success'
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: trfm-v0.1.1-independent-t1-evidence
+          path: ${{ runner.temp }}/trfm-v0.1.1-t1-report.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Post-run accounting
+        if: always()
+        run: |
+          echo 'planned_candidate_calls=33 including canary'
+          echo 'planned_judge_calls=0'
+          echo "qualification_exit_code=${qualification_exit_code:-not_started}"
+          echo 'exact hidden task text is not intentionally published'
+
+      - name: Enforce preregistered verdict
+        if: always()
+        run: |
+          test "${qualification_exit_code:-missing}" = "0"
+          test "${{ steps.validate.outcome }}" = "success"
+          test "${{ steps.upload.outcome }}" = "success"
