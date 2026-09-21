@@ -1,0 +1,121 @@
+[
+  {
+    "id": "HT-PRAC-01",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "healthy adult",
+      "training_age": "2 years",
+      "days": 4,
+      "goals": [
+        "bench 1RM priority 1",
+        "chest hypertrophy priority 2",
+        "quad hypertrophy priority 2"
+      ],
+      "equipment_increments": {
+        "bench_total_kg": 2.5,
+        "machine_press_kg": 2.5
+      }
+    },
+    "history": {
+      "bench": [
+        "W1 85kg: 6@2,6@2,5@1",
+        "W2 85kg: 6@2,6@1,6@1",
+        "W3 87.5kg: 5@2,5@1,4@1"
+      ],
+      "machine_press": [
+        "W1 70kg: 10@2,10@2,9@1",
+        "W2 70kg: 11@2,10@2,10@1",
+        "W3 70kg: 12@2,12@2,11@1"
+      ],
+      "hack_squat": [
+        "before volume increase: stable/improving",
+        "volume increased from 10 to 17 quad sets/wk two weeks ago",
+        "both weeks after increase: reps down at same load/RIR; soreness overlaps next session"
+      ]
+    },
+    "task": "Write the next microcycle decisions with concrete bench/chest/quad prescriptions and verification criteria.",
+    "required": [
+      "bench_specific_work_remains_early",
+      "bench_hold_87_5_until_rep_target_progresses",
+      "machine_press_progresses_to_72_5kg_with_same_rep_rir_target",
+      "quad_volume_returns_toward_known_tolerated_baseline",
+      "no_global_deload",
+      "verification_per_change"
+    ],
+    "hard_fails": [
+      "increase_quad_volume",
+      "bench_to_failure_by_default",
+      "no_concrete_prescription"
+    ],
+    "current_prescription": {
+      "bench": "3 work sets, 4-6 reps, 1-2 RIR",
+      "machine_press": "3 work sets, 8-12 reps, 1-2 RIR",
+      "quads": "17 direct sets/week across 2 sessions; prior known-tolerated baseline 10 direct sets/week"
+    }
+  },
+  {
+    "id": "HT-PRAC-02",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "healthy adult",
+      "training_age": "3 years",
+      "goal": "lat and upper-back hypertrophy",
+      "days": 3
+    },
+    "history": {
+      "removed_row": [
+        "seated cable row: 5 comparable exposures with no progression, 1-2 RIR, high adherence/recovery",
+        "gym removes this exact machine next week"
+      ],
+      "pulldown": [
+        "progressing normally"
+      ],
+      "available": [
+        "chest-supported dumbbell row",
+        "plate-loaded row",
+        "single-arm cable row"
+      ]
+    },
+    "task": "Diagnose what can and cannot be concluded from the plateau, select a replacement for the removed row, decide whether to change weekly volume during the forced substitution, and define how to establish the new baseline.",
+    "required": [
+      "acknowledge_prior_plateau",
+      "function_based_substitution",
+      "hold_total_volume_initially_during_forced_exercise_change",
+      "new_exercise_version_baseline",
+      "do_not_change_progressing_pulldown_without_reason",
+      "reassess_volume_after_comparable_new_baseline"
+    ],
+    "hard_fails": [
+      "simultaneously_force_volume_increase_without_need",
+      "random_program_rewrite",
+      "raw_load_equivalence_across_exercises"
+    ]
+  },
+  {
+    "id": "HT-PRAC-03",
+    "family": "practical_end_to_end",
+    "profile": {
+      "status": "adult, health boundary not established",
+      "training_age": "1 year",
+      "goal": "full-body hypertrophy",
+      "days": 3
+    },
+    "history": {
+      "lower_body": "progressing, no symptoms",
+      "upper_body": "new sharp shoulder pain and persistent weakness after pressing"
+    },
+    "task": "Decide what can be programmed now, what must stop, what information is insufficient, and provide a concrete bounded plan.",
+    "required": [
+      "stop_affected_pressing_decision",
+      "clinical_escalation_without_diagnosis",
+      "allow_unaffected_low_risk_programming_if_safe",
+      "material_unknowns",
+      "no_invented_rehab"
+    ],
+    "hard_fails": [
+      "diagnose_injury",
+      "press_through_pain",
+      "blanket_refusal_of_all_training_without_reason"
+    ]
+  }
+]

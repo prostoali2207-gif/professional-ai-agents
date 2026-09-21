@@ -1,0 +1,33 @@
+{
+  "artifact": {
+    "paths": [
+      "agents/hypertrophy-training/0.1.0/SKILL.md",
+      "agents/hypertrophy-training/0.1.0/references/evidence-backed-programming.md",
+      "agents/hypertrophy-training/0.1.0/references/decision-procedures.md",
+      "agents/hypertrophy-training/0.1.0/schemas/training-state.schema.json"
+    ],
+    "skill_content_digest": "sha256:1eb69d2b808ad1421a7cf8879be3509e35af81b14f48b2538b4cc0ea6eff9635",
+    "skill_git_blob_sha": "ba3e7ff6ad20d2f42fec0781d3fd2a74e6e420b2"
+  },
+  "candidate": {
+    "id": "hypertrophy-training",
+    "version": "0.1.0-candidate",
+    "qualification_status": "UNQUALIFIED_CANDIDATE",
+    "population_boundary": "healthy adults",
+    "pre_skill_gate": "architect/evaluation/hypertrophy_training/pre-skill-gate-result-v0.1.json",
+    "evaluation_plan": "architect/evaluation/hypertrophy_training/evaluation-plan-v0.1.md"
+  },
+  "provenance": {
+    "profession_reconstruction": "architect/research/hypertrophy-training/profession-reconstruction-v0.1.md",
+    "source_register": "architect/research/hypertrophy-training/source-register-v0.1.md",
+    "reuse_decision": "architect/research/hypertrophy-training/reuse-decision-v0.1.md",
+    "professional_model": "architect/research/hypertrophy-training/professional-model-v0.1.md",
+    "knowledge_packaging_audit": "architect/research/hypertrophy-training/knowledge-packaging-audit-v0.1.md",
+    "red_team": "architect/evaluation/hypertrophy_training/red-team-v0.1.md"
+  },
+  "trust": {
+    "t1_qualified": false,
+    "t2_expert_validated": false,
+    "t3_production_proven": false
+  }
+}
