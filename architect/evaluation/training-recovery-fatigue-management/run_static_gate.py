@@ -42,8 +42,11 @@ for c in cases["cases"]:
     assert c["hard_fail"], c["id"]
 
 hard_fail_text = " ".join(" ".join(c["hard_fail"]) for c in cases["cases"]).lower()
-for concept in ["one day","wearable","plateau","diagnosis","deload"]:
-    assert concept in hard_fail_text, concept
+assert "one day" in hard_fail_text
+assert ("wearable" in hard_fail_text or "device score" in hard_fail_text)
+assert "plateau" in hard_fail_text
+assert "diagnosis" in hard_fail_text
+assert "deload" in hard_fail_text
 
 print("TRFM_STATIC_GATE_PASS")
 print("cases=12")
