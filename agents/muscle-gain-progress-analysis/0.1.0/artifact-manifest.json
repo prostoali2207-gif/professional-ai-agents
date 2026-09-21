@@ -1,12 +1,12 @@
 {
   "artifact": {
     "version": "0.1.0-candidate",
-    "composite_binding": "sha256:377331ed31256d1416448b5270e8067edea6019059f33865ed70c5d7b5fb37d8",
+    "composite_binding": "sha256:2606fa086f1be9a3a78e00df184d3213b39f1299a6812b897d56fc4caf46c918",
     "binding_method": "sha256 over newline-joined path:git_blob_sha entries in listed order",
     "paths": [
       {
         "path": "agents/muscle-gain-progress-analysis/0.1.0/SKILL.md",
-        "git_blob_sha": "ae6b598bcda125c22a1121ea377daefde31cbacc"
+        "git_blob_sha": "2555b0a50dec3f888fb4972725ffcd3ebae90aea"
       },
       {
         "path": "agents/muscle-gain-progress-analysis/0.1.0/procedures/decision_reference.py",
