@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "candidate_binding": "sha256:377331ed31256d1416448b5270e8067edea6019059f33865ed70c5d7b5fb37d8",
+  "practical": {
+    "passed": 18,
+    "total": 18,
+    "critical_failures": 0
+  },
+  "metamorphic_regression": {
+    "passed": 6,
+    "total": 6,
+    "critical_failures": 0
+  },
+  "static_contract": {
+    "passed": 12,
+    "total": 12,
+    "critical_failures": 0
+  },
+  "failure_repairs": [
+    {
+      "class": "LOCAL_EXECUTION_FAIL",
+      "repair": "register imported procedure module before execution",
+      "threshold_change": false
+    },
+    {
+      "class": "PROFESSIONAL_FAIL",
+      "repair": "route hydration/glycogen-confounded and within-MDC body-composition evidence to bounded/insufficient conclusions",
+      "threshold_change": false
+    },
+    {
+      "class": "EVALUATOR_CONSTRUCT_FAIL",
+      "repair": "replace brittle exact-string static check with semantic invariant anchor",
+      "threshold_change": false
+    },
+    {
+      "class": "PROFESSIONAL_FAIL",
+      "repair": "honor explicit rate target before generic performance-only branch while preserving valid progress signal",
+      "threshold_change": false
+    }
+  ],
+  "readiness": "READY_FOR_CONTROLLED_DEVELOPMENT_USE",
+  "trust_tier": "below T1",
+  "t1_blockers": [
+    "fresh independent/sealed held-out evaluation of exact assembled candidate/runtime",
+    "stateful persistence/restart evaluation against an actual structured store",
+    "representative photo comparability evaluation with real image artifacts",
+    "cross-runtime evidence if portability is claimed"
+  ],
+  "t2_blockers": [
+    "independent strong-practitioner validation of judgment-heavy boundary cases",
+    "calibration of scalable judgment graders against practitioner reference judgments"
+  ],
+  "t3_blockers": [
+    "representative monitored field evidence with correction/incident/drift capture"
+  ]
+}
