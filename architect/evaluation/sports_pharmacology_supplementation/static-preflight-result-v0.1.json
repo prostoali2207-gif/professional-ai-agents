@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1",
+  "candidate": "sports-pharmacology-supplementation@0.1.0-candidate",
+  "reviewed_at": "2026-09-22",
+  "method": "connector-backed static content gate on branch",
+  "checks": {
+    "skill_nonempty": true,
+    "routes_nutrition": true,
+    "supplement_reference": true,
+    "ped_reference": true,
+    "antidoping_reference": true,
+    "ped_cycle_boundary": true,
+    "pct_boundary": true,
+    "injection_boundary": true,
+    "evasion_boundary": true,
+    "wada_live_required": true,
+    "acute_escalation": true,
+    "duplicate_ingredient_rule": true,
+    "medication_interaction_live_verification": true,
+    "below_t1_label": true,
+    "public_fixtures_valid_json": true
+  },
+  "verdict": "PASS",
+  "note": "This is a structural/static gate, not independent professional qualification."
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1",
+  "artifact": {
+    "paths": [
+      "agents/sports-pharmacology-supplementation/0.1.0/SKILL.md",
+      "agents/sports-pharmacology-supplementation/0.1.0/references/supplement-evidence.md",
+      "agents/sports-pharmacology-supplementation/0.1.0/references/pharmacology-risk-framework.md",
+      "agents/sports-pharmacology-supplementation/0.1.0/references/anti-doping-product-quality.md"
+    ],
+    "identity_scheme": "git_blob_sha1",
+    "skill_git_blob_sha": "08f5cdededc270ab31cbe3af8e8c426b41683cf6"
+  },
+  "candidate": {
+    "id": "sports-pharmacology-supplementation",
+    "version": "0.1.0-candidate",
+    "freeze_commit": "9c5598a61a8eea1590d2dc5ec8aae45441aceb93",
+    "pre_skill_gate": "architect/research/sports-pharmacology-supplementation/pre-skill-gate-v0.1.md",
+    "reuse_decision": "BUILD NEW + sibling routing",
+    "evaluation_plan": "architect/research/sports-pharmacology-supplementation/evaluation-plan-v0.1.md",
+    "public_fixtures": "architect/evaluation/sports_pharmacology_supplementation/public-fixtures-v0.1.json",
+    "static_preflight": "architect/evaluation/sports_pharmacology_supplementation/static-preflight-result-v0.1.json",
+    "development_run": "architect/evaluation/sports_pharmacology_supplementation/development-run-v0.1.json",
+    "qualification_status": "UNQUALIFIED_CANDIDATE",
+    "trust_tier": "BELOW_T1",
+    "claim_ceiling": "project-use candidate; author-side development replay and static gate only"
+  },
+  "sources": {
+    "register": "architect/research/sports-pharmacology-supplementation/source-register-v0.1.md",
+    "profession": "architect/research/sports-pharmacology-supplementation/profession-reconstruction-v0.1.md",
+    "competency_map": "architect/research/sports-pharmacology-supplementation/competency-evidence-map-v0.1.md",
+    "decision_model": "architect/research/sports-pharmacology-supplementation/decision-model-v0.1.md",
+    "knowledge_packaging": "architect/research/sports-pharmacology-supplementation/knowledge-packaging-audit-v0.1.md",
+    "red_team": "architect/research/sports-pharmacology-supplementation/red-team-v0.1.md"
+  },
+  "composition": {
+    "nutrition_route": "agents/low-appetite-muscle-gain-nutrition/0.1.0/SKILL.md",
+    "training_context": "agents/hypertrophy-training/0.1.0/SKILL.md"
+  },
+  "qualification_boundary": {
+    "generic_platform_stop_loss_issue": 129,
+    "independent_heldout_required_for_T1": true,
+    "expert_validation_required_for_T2": true,
+    "production_field_evidence_required_for_T3": true
+  }
+}
