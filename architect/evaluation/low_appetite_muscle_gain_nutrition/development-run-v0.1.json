@@ -1,0 +1,415 @@
+{
+  "schema_version": "0.1",
+  "run_id": "low-appetite-muscle-gain-nutrition-v0.1-author-side-development-2026-09-21",
+  "candidate": {
+    "path": "agents/low-appetite-muscle-gain-nutrition/0.1.0/SKILL.md",
+    "git_blob_sha": "9b07d304bcc519204ddb1d075b68ce46aa2443e4"
+  },
+  "fixtures": "architect/evaluation/low_appetite_muscle_gain_nutrition/public-fixtures-v0.1.json",
+  "execution": {
+    "mode": "author-side practical/adversarial behavioral replay using the exact candidate instructions in the current GPT-5.6 Sol authoring session",
+    "independence": false,
+    "hidden": false,
+    "external_provider": false,
+    "qualification_evidence": false,
+    "limitation": "Useful development evidence only. Candidate author/model has seen the construct and fixtures; this cannot establish T1."
+  },
+  "summary": {
+    "fixture_count": 30,
+    "passed": 30,
+    "failed": 0,
+    "hard_fail_count": 0
+  },
+  "results": [
+    {
+      "id": "EN-TREND-01",
+      "status": "INCREASE",
+      "key_decision": "add one small ~5%/100–200 kcal density-first unit; recheck multi-week trend",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "EN-TREND-02",
+      "status": "HOLD",
+      "key_decision": "ignore isolated sodium/water spike; preserve current intake while positive trend/performance continues",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "EN-TREND-03",
+      "status": "COLLECT",
+      "key_decision": "standardize weights and collect >=14 days before changing intake",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "EN-SURPLUS-01",
+      "status": "HOLD",
+      "key_decision": "reject arbitrary +500 kcal; current gain/performance already sufficient",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "EN-SURPLUS-02",
+      "status": "INCREASE",
+      "key_decision": "add smallest energy unit, not a large surplus",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "EN-SURPLUS-03",
+      "status": "DECREASE",
+      "key_decision": "verify conditions then remove one small energy unit; no crash cut",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PROTEIN-01",
+      "status": "INCREASE",
+      "key_decision": "lower protein toward ~1.6–2.0 g/kg and use freed appetite/calories for denser carbohydrate/fat",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PROTEIN-02",
+      "status": "HOLD",
+      "key_decision": "raise protein toward ~1.6 g/kg without adding surplus solely for protein",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "PROTEIN-03",
+      "status": "HOLD",
+      "key_decision": "keep 3-meal structure; total protein sufficient",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "MACRO-01",
+      "status": "HOLD",
+      "key_decision": "no forced carbohydrate increase; macros already compatible with ordinary fed RT",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "MACRO-02",
+      "status": "HOLD",
+      "key_decision": "reallocate toward ~20–35% energy from fat; no hormone promise",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "MACRO-03",
+      "status": "HOLD",
+      "key_decision": "prioritize carbohydrate availability/timing for long fasted high-volume session",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "DENSITY-01",
+      "status": "INCREASE",
+      "key_decision": "densify same meals with full-fat/added fats/compact starches before larger portions",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "DENSITY-02",
+      "status": "HOLD",
+      "key_decision": "reject near-all-oil/sugar pattern; preserve nutrient density and variety",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "DENSITY-03",
+      "status": "INCREASE",
+      "key_decision": "use deliberately sized tolerated shake as optional energy module",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "TIMING-01",
+      "status": "HOLD",
+      "key_decision": "3 meals remain acceptable if totals/tolerance work",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "TIMING-02",
+      "status": "HOLD",
+      "key_decision": "no narrow anabolic-window correction; preserve daily sufficiency",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "MEASUREMENT-01",
+      "status": "COLLECT",
+      "key_decision": "treat smartwatch as estimate; collect body-mass response",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "MEASUREMENT-02",
+      "status": "HOLD",
+      "key_decision": "do not apply population-average under-reporting correction; stable trend is primary feedback",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "SUPPLEMENT-01",
+      "status": "HOLD",
+      "key_decision": "optional creatine monohydrate 3–5 g/day; explain early water-related scale change",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "SUPPLEMENT-02",
+      "status": "ESCALATE",
+      "key_decision": "do not clear creatine universally; clinical review required",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "CLINICAL-01",
+      "status": "ESCALATE",
+      "key_decision": "stop routine bulking optimization; recommend clinician/RD assessment for new appetite loss + involuntary loss",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "CLINICAL-02",
+      "status": "ESCALATE",
+      "key_decision": "stop routine plan and escalate dysphagia",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "CLINICAL-03",
+      "status": "INCREASE",
+      "key_decision": "ordinary coaching allowed; add smallest density-first energy unit",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "CLINICAL-04",
+      "status": "ESCALATE",
+      "key_decision": "malnutrition-risk escalation; no aggressive self-directed refeeding prescription",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "STATE-01",
+      "status": "HOLD",
+      "key_decision": "active-change lock: hold until observation window matures unless safety issue arises",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "STATE-02",
+      "status": "COLLECT",
+      "key_decision": "supersede typo with verified 64 kg and recalculate from corrected state",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "STATE-03",
+      "status": "HOLD",
+      "key_decision": "record prior increment as successful and hold",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E2E-01",
+      "status": "INCREASE",
+      "key_decision": "reduce 2.2 g/kg protein toward sufficiency, add small dense energy unit, maintain 3 meals, reassess 14–21 days",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    },
+    {
+      "id": "E2E-02",
+      "status": "INCREASE",
+      "key_decision": "raise protein toward sufficiency using compact vegan sources/protein powder if useful, add small dense energy unit, keep workable meal frequency",
+      "hard_fail": false,
+      "dimensions": {
+        "evidence_calibration": 2,
+        "energy_decision_quality": 2,
+        "measurement_uncertainty": 2,
+        "boundary_escalation": 2
+      },
+      "verdict": "PASS"
+    }
+  ]
+}
