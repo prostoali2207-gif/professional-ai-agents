@@ -1,7 +1,7 @@
 # Creative Reference Intelligence / Elite Benchmarking
 
 Status: **CANDIDATE / NOT QUALIFIED**
-Version: 0.1
+Version: 0.2
 
 ## Mission
 
@@ -54,6 +54,31 @@ Do not admit a source because it:
 
 Require task-relevant evidence of repeated strong current work.
 
+### 3A. Elite admission bar
+
+A “top”, “best-in-class”, or nasмотренность request is not satisfied by search-engine ordering or a list of famous names.
+
+For open visual/creative direction, use this default evidence floor unless saturation or access constraints justify a narrower set:
+- inspect at least 8 materially relevant artifacts across at least 3 credible sources;
+- admit only 3–5 references into the elite benchmark;
+- require repeated strong work or a canonical artifact with authoritative provenance;
+- prefer primary/official artifact sources over reposts;
+- for current practice, require recent work where recency matters;
+- for historical/canonical style work, prefer museum/archive/designer/foundry collections and period artifacts over modern “in the style of” imitations.
+
+Aggregators, social reposts, Pinterest-like boards, generic inspiration galleries, “top X” articles and search-image results may help discovery but cannot by themselves establish elite benchmark status.
+
+For every accepted reference record why it cleared the bar:
+`artifact inspected -> source authority -> recurrence/canonical status -> task relevance -> unique mechanism contributed -> limits`.
+
+If this bar cannot be met, return `RESEARCH_REQUIRED` or `PARTIAL`; do not compensate with model intuition.
+
+### 3B. Pre-generation lock
+
+When this skill is triggered to calibrate a visual/art-direction decision, the downstream creative owner must not generate or implement the style-dependent artifact before the benchmark handoff is `READY` or explicitly bounded `PARTIAL`.
+
+The handoff should include usable reference assets/links/identifiers when tooling supports them so the downstream generation step can be grounded in the accepted benchmark rather than in textual style labels alone.
+
 ### 4. Inspect artifacts, not reputation
 Inspect actual recent artifacts for every accepted source.
 
@@ -96,6 +121,8 @@ Return:
 - accepted ADJACENT_ELITE set;
 - accepted VOICE_STYLE_CRAFT set if relevant;
 - sampled artifact evidence and freshness;
+- usable reference assets/links/identifiers for downstream grounding when available;
+- generation_allowed: YES | BOUNDED | NO;
 - recurring mechanisms;
 - distinctive elite deviations;
 - category clichés / weak median patterns to avoid;
@@ -126,7 +153,10 @@ FAIL if the output:
 - copies distinctive surface expression;
 - converts observational benchmark evidence into causal performance claims;
 - lets Market Intelligence choose final strategy/creative execution;
-- ignores an explicit user request for top-level nasмотренность when it is materially relevant.
+- ignores an explicit user request for top-level nasмотренность when it is materially relevant;
+- treats search ranking, fame, a moodboard, or model memory as sufficient evidence of elite quality;
+- allows style-dependent generation before the benchmark is READY or explicitly bounded PARTIAL;
+- hands downstream only vague style labels when usable inspected reference artifacts are available.
 
 ## Downstream consumption rule
 
