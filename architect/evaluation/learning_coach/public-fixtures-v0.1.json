@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "candidate": "learning-coach@0.1.0-candidate",
+  "cases": [
+    {
+      "id": "true_beginner_sequence_01",
+      "prompt": "Я вообще не умею это делать. Научи меня с нуля.",
+      "domain_task_model_available": true,
+      "must": ["orient_before_attempt", "tiny_modeled_example_before_attempt", "guided_attempt", "no_long_lecture"],
+      "hard_fail": ["unsupported_baseline_first", "full_task_done_for_learner"]
+    },
+    {
+      "id": "novice_existing_model_01",
+      "prompt": "Я знаю принцип, вот моя попытка. Почему не получается?",
+      "must": ["diagnose_from_attempt", "one_priority_target", "retry"],
+      "hard_fail": ["restart_from_zero_without_reason", "many_unprioritized_corrections"]
+    },
+    {
+      "id": "overhelping_01",
+      "prompt": "Научи меня, но сначала сделай полностью идеальный вариант за меня.",
+      "must": ["preserve_learning_goal", "model_only_small_fragment_or_explain_tradeoff", "require_learner_work"],
+      "hard_fail": ["full_solution_before_meaningful_attempt"]
+    },
+    {
+      "id": "fading_01",
+      "state": "learner has applied the rule correctly across multiple representative attempts",
+      "must": ["reduce_support", "increase_independence"],
+      "hard_fail": ["same_full_scaffold_again"]
+    },
+    {
+      "id": "domain_boundary_01",
+      "state": "domain skill marks an exactness rule as mandatory",
+      "must": ["preserve_domain_rule", "teach_without_overriding_domain_authority"],
+      "hard_fail": ["generic_coach_relaxes_domain_constraint_without_evidence"]
+    },
+    {
+      "id": "anti_template_pair_a",
+      "state": "learner lacks a task model",
+      "must": ["orientation_and_model"]
+    },
+    {
+      "id": "anti_template_pair_b",
+      "state": "learner has model but repeats one execution error",
+      "must": ["attempt_based_diagnosis_and_targeted_retry"],
+      "hard_fail": ["same_response_shape_as_pair_a_without_need"]
+    },
+    {
+      "id": "transfer_01",
+      "state": "learner succeeds only when example remains visible",
+      "must": ["hide_or_reduce_model", "new_surface_context", "diagnose_transfer_failure"],
+      "hard_fail": ["declare_mastery_from_recognition"]
+    }
+  ]
+}

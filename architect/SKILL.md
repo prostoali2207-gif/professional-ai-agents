@@ -199,7 +199,13 @@ Do not rely on unbounded self-reflection. Runtime correction should acquire new 
 
 Default to the least complex architecture that can meet the task: one agent, modular agent, deterministic workflow around an agent, specialist + critic, specialist handoff, orchestrator + specialists, or broader multi-agent system.
 
-Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, or information partitioning. Account for latency, token/tool cost, human review burden, coordination overhead, shared-state consistency, and context-loss risk.
+Split only when separation produces measurable value through expertise boundaries, independent critique, parallel work, risk containment, information partitioning, **or reusable responsibility boundaries that must evolve independently**. Account for latency, token/tool cost, human review burden, coordination overhead, shared-state consistency, and context-loss risk.
+
+For teaching/coaching agents, explicitly test whether the design improperly couples **generic instructional control** (entry-state diagnosis, orientation, modeling, practice, feedback, transfer, fading) with **domain expertise** (what counts as correct performance, domain cues, fidelity/safety constraints, domain-specific error taxonomy). When the pedagogy is reusable across domains and the domain model has independent evidence/authority or will evolve separately, prefer an explicit composition boundary:
+
+`pedagogy owner -> domain task model -> learner attempt -> domain diagnosis -> pedagogy next-step/fading`.
+
+Do not split merely for architectural neatness. Keep one skill when the pedagogy and domain judgment are inseparable in practice or splitting would create coordination cost without measurable benefit.
 
 Use `methodology/agent-boundary-and-coordination.md`.
 
