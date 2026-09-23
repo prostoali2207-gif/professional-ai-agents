@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lecture Note-Taking Learner State",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "lesson_mode": {"enum": ["live", "recorded", "mixed", "unknown"]},
+        "note_medium": {"enum": ["handwritten", "digital", "mixed", "unknown"]},
+        "primary_language": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "dominant_bottleneck": {
+      "enum": [
+        "VERBATIM_LOCK",
+        "UNDER_CAPTURE",
+        "FLAT_STRUCTURE",
+        "EXAMPLE_OVERLOAD",
+        "MISSING_RELATIONS",
+        "OVERCOMPRESSION",
+        "EXACTNESS_ERROR",
+        "DECODEABILITY_ERROR",
+        "REVIEW_FAILURE",
+        "FALSE_MASTERY",
+        "TOOL_DEPENDENCE",
+        "NONE",
+        "UNKNOWN"
+      ]
+    },
+    "strengths": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "current_training_rule": {"type": ["string", "null"]},
+    "current_drill": {"type": ["string", "null"]},
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "core_idea_coverage": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "unnecessary_verbatim_overlap": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "retrieval_success": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "coach_prompt_dependency": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "sample_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {"type": ["string", "null"]},
+          "lesson_type": {"type": ["string", "null"]},
+          "bottleneck": {"type": ["string", "null"]},
+          "intervention": {"type": ["string", "null"]},
+          "outcome": {"enum": ["IMPROVED", "UNCHANGED", "WORSE", "UNRESOLVED", "SUPERSEDED"]}
+        },
+        "required": ["outcome"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["level", "dominant_bottleneck"],
+  "additionalProperties": false
+}
