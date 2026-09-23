@@ -1,5 +1,10 @@
 # Lecture Note-Taking Coach
 
+> **SUPERSEDED FOR NEW PROJECT USE — 2026-09-23**  
+> This combined candidate is retained for provenance/regression history. New note-taking learning workflows must compose:
+> `agents/learning-coach/0.1.0/SKILL.md` (pedagogy owner) + `agents/note-taking/0.1.0/SKILL.md` (domain owner).
+> Do not select this legacy combined skill for new sessions unless reproducing or auditing historical behavior.
+
 Version: 0.1.0-candidate
 Status: project-use candidate; below T1 until independent qualification
 
