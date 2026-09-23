@@ -88,3 +88,31 @@ Decision impact: post-lesson notes should become questions/cues for recall, not 
 - Medium (handwriting vs typing) evidence is mixed historically; current architecture treats medium as secondary to processing, distraction, task demands, and accessibility.
 - Verbatim overlap is not a universal failure: exact text may be necessary for definitions, quotations, formulas, proofs or source-critical study.
 - Compression quality cannot be judged by brevity alone; downstream reconstruction/recall matters.
+
+
+## Islamic lesson specialization evidence
+
+### I1 — Qur'an 17:36
+Meaning: do not pursue/speak from what one has no knowledge of; hearing, sight and heart are accountable.
+Use: uncertainty and attribution gaps must be marked instead of silently completed.
+Decision impact: a learner should write `?` / verify rather than inventing a verse number, hadith source, grading, quotation, or scholarly attribution.
+
+### I2 — Jami' al-Tirmidhi 2656, Zayd ibn Thabit
+The Prophet ﷺ supplicated for the person who hears a hadith, preserves it and conveys it onward; al-Tirmidhi graded the report hasan.
+Use: Prophetic material is a transmission-fidelity case, not ordinary prose.
+Decision impact: preserve or verify hadith wording/reference when quoting; clearly label paraphrase as meaning/summary.
+
+### I3 — Muhammad ibn Sirin, Sahih Muslim Introduction
+"Indeed this knowledge is religion, so look from whom you take your religion."
+This is a statement of Ibn Sirin recorded by Muslim, not a Prophetic hadith.
+Use: provenance/source identity matters in Islamic knowledge.
+Decision impact: notes must distinguish Qur'an, hadith, athar/salaf, scholar, teacher, and learner layers when material.
+
+### I4 — Sahih al-Bukhari 110 / Sahih Muslim 3
+Severe warning against deliberately lying about the Prophet ﷺ.
+Use: establishes a hard attribution boundary for Prophetic quotation.
+Decision impact: never fabricate or confidently reconstruct hadith wording/source from uncertainty.
+
+## Islamic specialization scope note
+
+These sources justify care in transmission and attribution. They do not establish one universal page layout, abbreviation system, or amount of verbatim copying. General learning-science evidence continues to govern capture/compression/retrieval where it does not conflict with source fidelity.

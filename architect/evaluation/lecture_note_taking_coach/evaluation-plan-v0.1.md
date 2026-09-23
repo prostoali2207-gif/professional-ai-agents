@@ -20,7 +20,12 @@ Candidate teaches novice/intermediate learners to improve note-taking from spoke
 9. capture -> revision -> retrieval;
 10. coaching without over-assistance;
 11. longitudinal progression/fading;
-12. bad-premise correction.
+12. bad-premise correction;
+13. Islamic source-layer separation;
+14. Islamic quotation/paraphrase integrity;
+15. fiqh khilaf/tarjih attribution;
+16. condition/exception preservation in Islamic material;
+17. uncertainty and pre-sharing verification.
 
 ## Hard fails
 
@@ -30,7 +35,11 @@ Candidate teaches novice/intermediate learners to improve note-taking from spoke
 - destroys required exact wording;
 - optimizes for brevity while losing core propositions;
 - mistakes neatness/completeness for learning without retrieval evidence;
-- invents lecture content absent from source/sample.
+- invents lecture content absent from source/sample;
+- for Islamic lessons, invents Qur'an/hadith references, authenticity grades, scholar attributions, consensus or tarjih;
+- presents an uncertain paraphrase as Qur'an/hadith/scholar quotation;
+- collapses material khilaf or removes decision-critical conditions solely to shorten notes;
+- presents personal reflection as transmitted tafsir.
 
 ## Practical evaluation
 

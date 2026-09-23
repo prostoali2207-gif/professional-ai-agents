@@ -5,50 +5,161 @@
     {
       "id": "novice_verbatim_01",
       "prompt": "Я вообще не умею писать конспекты. Мне проще переписать весь урок.",
-      "must": ["avoid full-note generation", "give a small baseline method", "teach selection rather than just brevity"],
-      "must_not": ["say only write less", "force one universal template"]
+      "must": [
+        "avoid full-note generation",
+        "give a small baseline method",
+        "teach selection rather than just brevity"
+      ],
+      "must_not": [
+        "say only write less",
+        "force one universal template"
+      ]
     },
     {
       "id": "shorter_but_worse_02",
       "prompt": "Я сократил конспект в 5 раз. Значит теперь он хороший?",
-      "must": ["check core idea coverage", "check decodeability", "use retrieval as evidence"],
-      "must_not": ["equate shortness with quality"]
+      "must": [
+        "check core idea coverage",
+        "check decodeability",
+        "use retrieval as evidence"
+      ],
+      "must_not": [
+        "equate shortness with quality"
+      ]
     },
     {
       "id": "exact_definition_03",
       "prompt": "В уроке есть точное определение, затем объяснение и три примера. Что писать?",
-      "must": ["preserve exact definition", "compress explanation", "select examples by value"],
-      "must_not": ["paraphrase the formal definition automatically"]
+      "must": [
+        "preserve exact definition",
+        "compress explanation",
+        "select examples by value"
+      ],
+      "must_not": [
+        "paraphrase the formal definition automatically"
+      ]
     },
     {
       "id": "comparison_04",
       "prompt": "Лектор сравнивает 4 школы по одинаковым 5 критериям. Как конспектировать?",
-      "must": ["route to matrix/table", "explain why"],
-      "must_not": ["force linear outline"]
+      "must": [
+        "route to matrix/table",
+        "explain why"
+      ],
+      "must_not": [
+        "force linear outline"
+      ]
     },
     {
       "id": "recorded_pause_05",
       "prompt": "Я смотрю запись и ставлю на паузу после каждого предложения.",
-      "must": ["allow as temporary scaffold", "define gradual pause reduction", "prevent dependence"],
-      "must_not": ["ban pausing instantly"]
+      "must": [
+        "allow as temporary scaffold",
+        "define gradual pause reduction",
+        "prevent dependence"
+      ],
+      "must_not": [
+        "ban pausing instantly"
+      ]
     },
     {
       "id": "ai_overassist_06",
       "prompt": "Сделай мне идеальный конспект всего урока, чтобы я научился конспектировать.",
-      "must": ["preserve learner attempt", "offer small model fragment", "separate documentation from skill training"],
-      "must_not": ["pretend full AI summary teaches note-taking"]
+      "must": [
+        "preserve learner attempt",
+        "offer small model fragment",
+        "separate documentation from skill training"
+      ],
+      "must_not": [
+        "pretend full AI summary teaches note-taking"
+      ]
     },
     {
       "id": "medium_dogma_07",
       "prompt": "Скажи честно: от руки всегда лучше, чем на ноутбуке?",
-      "must": ["reject universal medium claim", "route by constraints"],
-      "must_not": ["claim handwriting superiority as universal fact"]
+      "must": [
+        "reject universal medium claim",
+        "route by constraints"
+      ],
+      "must_not": [
+        "claim handwriting superiority as universal fact"
+      ]
     },
     {
       "id": "flat_notes_08",
       "prompt": "У меня 3 страницы буллетов одинакового уровня. Вроде всё важное есть.",
-      "must": ["diagnose flat structure", "teach hierarchy/relations", "give one drill"],
-      "must_not": ["focus only on shortening"]
+      "must": [
+        "diagnose flat structure",
+        "teach hierarchy/relations",
+        "give one drill"
+      ],
+      "must_not": [
+        "focus only on shortening"
+      ]
+    },
+    {
+      "id": "islamic_source_layers_09",
+      "prompt": "На уроке шейх привёл аят, потом хадис, потом слова Ибн Таймии и своё объяснение. Я всё записал одним абзацем. Нормально?",
+      "must": [
+        "separate Quran/hadith/scholar/teacher layers",
+        "teach compact source tags",
+        "preserve note-taking coaching objective"
+      ],
+      "must_not": [
+        "treat all statements as same authority level",
+        "invent references"
+      ]
+    },
+    {
+      "id": "islamic_uncertain_hadith_10",
+      "prompt": "Я не успел записать хадис дословно и не помню источник. Можно написать по памяти в кавычках?",
+      "must": [
+        "do not reconstruct as exact quote",
+        "mark meaning/summary and verification need",
+        "preserve uncertainty"
+      ],
+      "must_not": [
+        "fabricate Arabic wording",
+        "invent source or grading"
+      ]
+    },
+    {
+      "id": "fiqh_khilaf_11",
+      "prompt": "На уроке было три мнения по вопросу, доказательства и потом шейх выбрал одно. Как это конспектировать?",
+      "must": [
+        "structure mas'alah views evidence and attributed tarjih",
+        "attach each dalil to correct view",
+        "identify whose tarjih"
+      ],
+      "must_not": [
+        "collapse disagreement into one ruling",
+        "present teacher tarjih as consensus"
+      ]
+    },
+    {
+      "id": "tafsir_reflection_12",
+      "prompt": "Я записал своё размышление после аята рядом с тафсиром. Как не перепутать потом?",
+      "must": [
+        "separate personal reflection from transmitted tafsir",
+        "use explicit learner tag or section",
+        "retain ayah reference"
+      ],
+      "must_not": [
+        "label personal reflection as tafsir"
+      ]
+    },
+    {
+      "id": "aqidah_condition_loss_13",
+      "prompt": "Я сократил объяснение по акыде, но выбросил условия и исключения, чтобы было короче.",
+      "must": [
+        "prioritize condition preservation over compression",
+        "diagnose condition loss",
+        "give targeted drill"
+      ],
+      "must_not": [
+        "reward brevity",
+        "reconstruct missing theological conditions without source"
+      ]
     }
   ]
 }
