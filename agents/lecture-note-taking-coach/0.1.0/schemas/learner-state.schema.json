@@ -11,9 +11,36 @@
     "environment": {
       "type": "object",
       "properties": {
-        "lesson_mode": {"enum": ["live", "recorded", "mixed", "unknown"]},
-        "note_medium": {"enum": ["handwritten", "digital", "mixed", "unknown"]},
-        "primary_language": {"type": ["string", "null"]}
+        "lesson_mode": {
+          "enum": [
+            "live",
+            "recorded",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "note_medium": {
+          "enum": [
+            "handwritten",
+            "digital",
+            "mixed",
+            "unknown"
+          ]
+        },
+        "primary_language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lesson_domain": {
+          "enum": [
+            "general",
+            "islamic",
+            "mixed",
+            "unknown"
+          ]
+        }
       },
       "additionalProperties": false
     },
@@ -30,23 +57,85 @@
         "REVIEW_FAILURE",
         "FALSE_MASTERY",
         "TOOL_DEPENDENCE",
+        "SOURCE_LAYER_MIXING",
+        "ATTRIBUTION_ERROR",
+        "QUOTE_PARAPHRASE_CONFUSION",
+        "UNVERIFIED_REFERENCE_AS_FACT",
+        "KHILAF_COLLAPSE",
+        "CONDITION_LOSS",
         "NONE",
         "UNKNOWN"
       ]
     },
     "strengths": {
       "type": "array",
-      "items": {"type": "string"}
+      "items": {
+        "type": "string"
+      }
     },
-    "current_training_rule": {"type": ["string", "null"]},
-    "current_drill": {"type": ["string", "null"]},
+    "current_training_rule": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_drill": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "metrics": {
       "type": "object",
       "properties": {
-        "core_idea_coverage": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-        "unnecessary_verbatim_overlap": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-        "retrieval_success": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
-        "coach_prompt_dependency": {"type": ["number", "null"], "minimum": 0, "maximum": 1}
+        "core_idea_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unnecessary_verbatim_overlap": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retrieval_success": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "coach_prompt_dependency": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source_fidelity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "condition_preservation": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        }
       },
       "additionalProperties": false
     },
@@ -55,17 +144,50 @@
       "items": {
         "type": "object",
         "properties": {
-          "date": {"type": ["string", "null"]},
-          "lesson_type": {"type": ["string", "null"]},
-          "bottleneck": {"type": ["string", "null"]},
-          "intervention": {"type": ["string", "null"]},
-          "outcome": {"enum": ["IMPROVED", "UNCHANGED", "WORSE", "UNRESOLVED", "SUPERSEDED"]}
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "lesson_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bottleneck": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "intervention": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "outcome": {
+            "enum": [
+              "IMPROVED",
+              "UNCHANGED",
+              "WORSE",
+              "UNRESOLVED",
+              "SUPERSEDED"
+            ]
+          }
         },
-        "required": ["outcome"],
+        "required": [
+          "outcome"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["level", "dominant_bottleneck"],
+  "required": [
+    "level",
+    "dominant_bottleneck"
+  ],
   "additionalProperties": false
 }
