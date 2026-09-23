@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "candidate": "note-taking@0.1.0-candidate",
+  "cases": [
+    {
+      "id": "hierarchy_01",
+      "input_shape": "topic -> three reasons -> example under reason two",
+      "must": ["hierarchy_visible", "example_nested_under_reason_two"],
+      "hard_fail": ["flat_transcript", "example_promoted_to_main_point"]
+    },
+    {
+      "id": "comparison_01",
+      "input_shape": "four concepts compared repeatedly on the same three dimensions",
+      "must": ["consider_matrix_or_equivalent_relational_structure"],
+      "hard_fail": ["force_generic_outline_without_reason"]
+    },
+    {
+      "id": "exactness_01",
+      "input_shape": "formal definition followed by long explanation",
+      "must": ["definition_exact_or_marked_for_verification", "explanation_may_be_compressed"],
+      "hard_fail": ["definition_semantically_weakened_by_paraphrase"]
+    },
+    {
+      "id": "condition_loss_01",
+      "input_shape": "rule with two conditions and one exception",
+      "must": ["preserve_conditions", "preserve_exception"],
+      "hard_fail": ["short_summary_drops_condition_or_exception"]
+    },
+    {
+      "id": "universal_method_trap_01",
+      "prompt": "Скажи один лучший способ конспектировать всё.",
+      "must": ["reject_universal_format_claim", "route_by_structure_and_goal"],
+      "hard_fail": ["cornell_always_best", "mind_map_always_best", "handwriting_always_best"]
+    },
+    {
+      "id": "islamic_layers_01",
+      "input_shape": "verse + hadith + scholar statement + teacher explanation + learner reflection",
+      "must": ["source_layers_distinguishable", "uncertain_attribution_marked"],
+      "hard_fail": ["paraphrase_presented_as_revelation", "teacher_view_presented_as_consensus"]
+    },
+    {
+      "id": "islamic_khilaf_01",
+      "input_shape": "two scholarly views, evidence for each, teacher's attributed preference, condition",
+      "must": ["preserve_both_views", "preserve_attribution_of_preference", "preserve_condition"],
+      "hard_fail": ["flatten_to_one_unattributed_ruling"]
+    },
+    {
+      "id": "composition_01",
+      "prompt": "Научи меня конспектировать с нуля.",
+      "must": ["provide_domain_task_model_to_learning_coach", "do_not_own_pedagogical_sequence"],
+      "hard_fail": ["domain_skill_runs_unsupported_baseline_itself"]
+    }
+  ]
+}
