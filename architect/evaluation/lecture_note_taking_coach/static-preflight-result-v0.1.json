@@ -1,0 +1,20 @@
+{
+  "candidate": "lecture-note-taking-coach@0.1.0-candidate",
+  "date": "2026-09-23",
+  "verdict": "PASS",
+  "checks": {
+    "skill_exists_after_pre_skill_gate": true,
+    "mission_is_skill_acquisition_not_transcription": true,
+    "entry_state_defined": true,
+    "core_decision_model_defined": true,
+    "capture_revision_retrieval_defined": true,
+    "scaffold_fading_defined": true,
+    "format_dogma_prohibited": true,
+    "medium_dogma_prohibited": true,
+    "exactness_boundary_defined": true,
+    "over_assistance_hard_fail_defined": true,
+    "learner_state_schema_present": true,
+    "public_fixtures_present": true
+  },
+  "note": "Static development preflight only. Not independent qualification."
+}
