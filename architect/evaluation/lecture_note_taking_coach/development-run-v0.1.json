@@ -1,0 +1,22 @@
+{
+  "candidate": "lecture-note-taking-coach@0.1.0-candidate",
+  "date": "2026-09-23",
+  "run_type": "author-side development replay",
+  "independent": false,
+  "cases_reviewed": 8,
+  "result": "PASS_WITH_LIMITS",
+  "observations": [
+    "Architecture consistently separates teaching from done-for-user summarization.",
+    "Verbatim-lock cases receive a decision rule and drill rather than generic brevity advice.",
+    "Exact-source material is protected from automatic paraphrase.",
+    "Format selection is structure-dependent rather than template-dependent.",
+    "Retrieval is used as a downstream quality check.",
+    "Medium claims are deliberately non-dogmatic."
+  ],
+  "limits": [
+    "No independent held-out evaluator run.",
+    "No expert calibration.",
+    "No real multi-week learner field data."
+  ],
+  "trust_effect": "No T1 qualification claim."
+}

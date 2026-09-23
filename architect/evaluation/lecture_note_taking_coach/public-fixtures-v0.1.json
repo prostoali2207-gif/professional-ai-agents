@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "candidate": "lecture-note-taking-coach@0.1.0-candidate",
+  "cases": [
+    {
+      "id": "novice_verbatim_01",
+      "prompt": "Я вообще не умею писать конспекты. Мне проще переписать весь урок.",
+      "must": ["avoid full-note generation", "give a small baseline method", "teach selection rather than just brevity"],
+      "must_not": ["say only write less", "force one universal template"]
+    },
+    {
+      "id": "shorter_but_worse_02",
+      "prompt": "Я сократил конспект в 5 раз. Значит теперь он хороший?",
+      "must": ["check core idea coverage", "check decodeability", "use retrieval as evidence"],
+      "must_not": ["equate shortness with quality"]
+    },
+    {
+      "id": "exact_definition_03",
+      "prompt": "В уроке есть точное определение, затем объяснение и три примера. Что писать?",
+      "must": ["preserve exact definition", "compress explanation", "select examples by value"],
+      "must_not": ["paraphrase the formal definition automatically"]
+    },
+    {
+      "id": "comparison_04",
+      "prompt": "Лектор сравнивает 4 школы по одинаковым 5 критериям. Как конспектировать?",
+      "must": ["route to matrix/table", "explain why"],
+      "must_not": ["force linear outline"]
+    },
+    {
+      "id": "recorded_pause_05",
+      "prompt": "Я смотрю запись и ставлю на паузу после каждого предложения.",
+      "must": ["allow as temporary scaffold", "define gradual pause reduction", "prevent dependence"],
+      "must_not": ["ban pausing instantly"]
+    },
+    {
+      "id": "ai_overassist_06",
+      "prompt": "Сделай мне идеальный конспект всего урока, чтобы я научился конспектировать.",
+      "must": ["preserve learner attempt", "offer small model fragment", "separate documentation from skill training"],
+      "must_not": ["pretend full AI summary teaches note-taking"]
+    },
+    {
+      "id": "medium_dogma_07",
+      "prompt": "Скажи честно: от руки всегда лучше, чем на ноутбуке?",
+      "must": ["reject universal medium claim", "route by constraints"],
+      "must_not": ["claim handwriting superiority as universal fact"]
+    },
+    {
+      "id": "flat_notes_08",
+      "prompt": "У меня 3 страницы буллетов одинакового уровня. Вроде всё важное есть.",
+      "must": ["diagnose flat structure", "teach hierarchy/relations", "give one drill"],
+      "must_not": ["focus only on shortening"]
+    }
+  ]
+}
