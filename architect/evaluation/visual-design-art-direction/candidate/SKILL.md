@@ -1,7 +1,7 @@
 ---
 name: visual-design-art-direction-core
 description: Reusable professional core for landing-page visual design and art direction: current visual research, benchmark extraction, creative divergence, visual thesis, typography/composition/rhythm, responsive art direction, implementation contracts, rendered critique, refinement, and justified routing to motion/3D/WebGL.
-version: 0.3.1-candidate
+version: 0.3.2-candidate
 ---
 
 # Visual Design / Art Direction Core
@@ -82,6 +82,8 @@ Default behavior for an open visual direction:
 - when a national/cultural/style label is involved (for example “French”, “Japanese”, “Swiss”), ground the visual language in inspected artifacts and mechanisms; never synthesize the style from stereotypes or model memory alone.
 
 The benchmark must reach `READY` or a bounded `PARTIAL` with explicit missing evidence before style-dependent artifact generation or implementation proceeds. If the benchmark cannot be established, return `RESEARCH_REQUIRED` rather than filling the gap with generic taste.
+
+When the user explicitly asks to **first** build top-level nasмотренность / elite benchmarking and **then** create the artifact, insert a visible benchmark checkpoint before generation unless the user explicitly says to skip seeing it. The checkpoint must show only the admitted elite set (normally 3–5 references), why each cleared the bar, and the specific mechanisms to carry forward / avoid. Do not collapse research and generation into one opaque step. User confirmation is not required unless requested, but the benchmark must be surfaced before any image/render generation starts.
 
 When an image/render generation tool supports references, pass the accepted benchmark artifacts into the generation workflow when lawful and technically possible. Prompt from extracted mechanisms, not vague style labels. Include explicit anti-cliché exclusions derived from the benchmark.
 
