@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1",
+  "artifact": {
+    "paths": [
+      "agents/lecture-note-taking-coach/0.1.0/SKILL.md",
+      "agents/lecture-note-taking-coach/0.1.0/references/coaching-protocol.md",
+      "agents/lecture-note-taking-coach/0.1.0/references/note-taking-methods.md",
+      "agents/lecture-note-taking-coach/0.1.0/schemas/learner-state.schema.json"
+    ],
+    "identity_scheme": "git_blob_sha1",
+    "skill_git_blob_sha": "ae57e55739b12e7e3f0b5792c31b2ae9ff0fb21f"
+  },
+  "candidate": {
+    "id": "lecture-note-taking-coach",
+    "version": "0.1.0-candidate",
+    "pre_skill_gate": "architect/evaluation/lecture_note_taking_coach/pre-skill-gate-result-v0.1.json",
+    "evaluation_plan": "architect/evaluation/lecture_note_taking_coach/evaluation-plan-v0.1.md",
+    "public_fixtures": "architect/evaluation/lecture_note_taking_coach/public-fixtures-v0.1.json",
+    "static_preflight": "architect/evaluation/lecture_note_taking_coach/static-preflight-result-v0.1.json",
+    "development_run": "architect/evaluation/lecture_note_taking_coach/development-run-v0.1.json",
+    "qualification_status": "UNQUALIFIED_CANDIDATE",
+    "trust_tier": "BELOW_T1",
+    "claim_ceiling": "project-use candidate; author-side development replay and static preflight only"
+  },
+  "provenance": {
+    "profession_reconstruction": "architect/research/lecture-note-taking-coach/profession-reconstruction-v0.1.md",
+    "reuse_decision": "architect/research/lecture-note-taking-coach/reuse-decision-v0.1.md",
+    "source_register": "architect/research/lecture-note-taking-coach/source-register-v0.1.md",
+    "competency_map": "architect/research/lecture-note-taking-coach/competency-map-v0.1.md",
+    "professional_model": "architect/research/lecture-note-taking-coach/professional-model-v0.1.md",
+    "knowledge_packaging": "architect/research/lecture-note-taking-coach/knowledge-packaging-audit-v0.1.md",
+    "execution_control": "architect/research/lecture-note-taking-coach/execution-control-and-production-learning-v0.1.md",
+    "red_team": "architect/evaluation/lecture_note_taking_coach/red-team-v0.1.md"
+  },
+  "qualification_boundary": {
+    "generic_platform_stop_loss_issue": 129,
+    "independent_heldout_required_for_T1": true,
+    "expert_validation_required_for_T2": true,
+    "production_field_evidence_required_for_T3": true
+  }
+}
