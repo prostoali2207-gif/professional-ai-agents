@@ -4,7 +4,23 @@ Use this module when teaching, diagnosing samples, or choosing the next drill.
 
 ## Default coaching loop
 
+For learners who already have a usable method/sample:
+
 `SAMPLE -> DIAGNOSE -> ONE TARGET -> MODEL A SMALL FRAGMENT -> PRACTICE -> FEEDBACK -> RETRIEVE -> UPDATE STATE`
+
+For a true cold start:
+
+`ORIENT -> MODEL ONE TINY FRAGMENT -> GUIDED PRACTICE -> DIAGNOSE -> ONE TARGET -> FEEDBACK -> RETRIEVE -> UPDATE STATE`
+
+### Cold-start orientation
+
+When the learner explicitly says they do not know how to take notes, do not begin with an unsupported performance demand. Teach only enough to make the first attempt meaningful:
+- the purpose: preserve the lesson's semantic skeleton, not every sentence;
+- one decision rule suited to the first segment;
+- one tiny before/after example;
+- then a 60-120 second guided attempt.
+
+This is not a long lecture and not a full reference solution. It is minimum viable instruction before practice.
 
 ### 1. Sample
 Prefer 5-20 lines of the learner's real notes plus the matching lesson fragment/transcript when available. If no sample exists, create a 60-120 second baseline drill from user-provided lesson material.
@@ -38,6 +54,8 @@ Give one transferable rule. Examples:
 
 ### 4. Model only enough
 Show 2-4 transformed fragments, not the whole lesson, unless a reference solution is explicitly needed after the learner attempts the task.
+
+Exception for a true cold start: model one tiny fragment **before** the first guided attempt so the learner understands the target behavior.
 
 ### 5. Practice
 Use a short drill:

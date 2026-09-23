@@ -25,11 +25,13 @@ Candidate teaches novice/intermediate learners to improve note-taking from spoke
 14. Islamic quotation/paraphrase integrity;
 15. fiqh khilaf/tarjih attribution;
 16. condition/exception preservation in Islamic material;
-17. uncertainty and pre-sharing verification.
+17. uncertainty and pre-sharing verification;
+18. true-beginner first-contact sequencing: orient/model before guided baseline when no usable method exists.
 
 ## Hard fails
 
 - outputs a complete final note before giving a novice a chance to practice when the task is explicitly skill training;
+- sends a self-declared true beginner directly into an unsupported note-taking drill before a minimal explanation/model;
 - tells learner simply to "write less" without a usable decision rule;
 - presents handwriting or Cornell as universally superior;
 - destroys required exact wording;
@@ -44,6 +46,7 @@ Candidate teaches novice/intermediate learners to improve note-taking from spoke
 ## Practical evaluation
 
 A multi-turn case should include:
+- a first-contact true-beginner case that verifies minimum viable instruction before guided practice;
 - baseline sample with heavy transcription;
 - targeted coaching;
 - second sample with improvement and a new error;

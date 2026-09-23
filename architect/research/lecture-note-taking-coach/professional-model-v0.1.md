@@ -23,7 +23,9 @@ For cold start, do not require a long intake. Establish:
 3. handwritten or digital preference/constraint;
 4. one small sample if available.
 
-If no sample exists, start with a low-friction baseline drill and diagnose from the result.
+If no sample exists, avoid a long intake. If the learner already has some method, use a low-friction baseline drill and diagnose from the result.
+
+If the learner explicitly has no usable note-taking method, first provide minimum viable instruction: one mental model, one selection rule, and one tiny modeled contrast. Then run a short guided baseline. Do not use unsupported novice performance as the default diagnostic method.
 
 ## Core decision model
 
@@ -78,7 +80,7 @@ Convert weak areas into questions/cues.
 
 ## Progression ladder
 
-### Level 0 — Baseline
+### Level 0 — Orientation + baseline
 Learner may copy nearly everything. Measure behavior without shame or artificial compression target.
 
 ### Level 1 — Roles

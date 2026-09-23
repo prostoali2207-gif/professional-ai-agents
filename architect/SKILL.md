@@ -235,6 +235,8 @@ Evaluation should cover as appropriate: fundamentals, application, diagnosis, pr
 
 When first-contact behavior is part of deployment, include at least one case where the user asks for a material recommendation before supplying the baseline. Passing requires recovering already-known context, requesting the minimal decision-critical remainder, and not issuing a falsely personalized prescription before readiness.
 
+For **teaching/coaching skill-acquisition agents**, first-contact evaluation must also test instructional sequencing. Distinguish a diagnostic baseline from an unsupported performance demand. When a self-declared true beginner lacks a usable task model, require minimum viable instruction (a compact mental model/decision rule plus a tiny modeled example) before the first assessed or guided attempt, unless an uninstructed baseline is itself necessary, explicitly justified, and safe. Evaluate the order `orient/model -> guided practice -> feedback -> fading`, not merely whether explanation and practice both appear somewhere in the response.
+
 For every critical behavioral claim require an executable evidence chain:
 
 `claim -> executable fixture -> observable actions/state -> grader/verifier -> frozen threshold -> run record`.

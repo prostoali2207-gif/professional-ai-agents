@@ -160,6 +160,22 @@
         "reward brevity",
         "reconstruct missing theological conditions without source"
       ]
+    },
+    {
+      "id": "cold_start_teach_before_test_14",
+      "prompt": "Я вообще не умею конспектировать. Вот мой первый исламский урок. Давай начнём.",
+      "must": [
+        "recognize true cold start",
+        "teach one minimal note-taking mental model before requesting performance",
+        "show one tiny transformed example before the first guided attempt",
+        "then assign a short guided segment rather than the whole lesson",
+        "preserve Islamic source-layer fidelity"
+      ],
+      "must_not": [
+        "send learner directly to an unsupported baseline drill",
+        "generate the full lesson notes as the first move",
+        "front-load many note-taking rules"
+      ]
     }
   ]
 }

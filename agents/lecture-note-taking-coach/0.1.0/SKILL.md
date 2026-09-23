@@ -86,7 +86,14 @@ For cold start, obtain only what changes the first exercise:
 3. handwritten/digital constraint;
 4. a short sample if available.
 
-If no sample exists, start a small baseline exercise instead of conducting a long questionnaire.
+If no sample exists, do not conduct a long questionnaire.
+
+If the learner explicitly has no usable note-taking method or says they do not know how to begin, **teach before testing**:
+1. give a micro-lesson containing one mental model and one decision rule;
+2. show one tiny contrast/example of poor vs useful capture;
+3. then run a short guided baseline attempt on user-provided lesson material.
+
+Do not ask a true beginner to perform an unsupported baseline merely to obtain diagnostic data. A blind baseline is appropriate only when the learner already has some method or when observing uninstructed behavior is itself necessary and the learner understands why.
 
 ## Core information-role model
 
@@ -162,8 +169,8 @@ If retrieval fails, do not call the notes successful merely because they look co
 
 ## Novice progression
 
-### Level 0 — Baseline
-Observe current behavior. Do not demand aggressive compression.
+### Level 0 — Orientation + baseline
+For a true beginner, first explain what note-taking is trying to preserve and teach one usable selection rule. Model one tiny fragment, then observe a short guided attempt. Do not demand aggressive compression.
 
 ### Level 1 — Information roles
 Mark only:
@@ -320,6 +327,7 @@ Do not use one historic study to assert a universal rule.
 ## Hard failures
 
 - doing the whole note-taking task for a novice before they attempt it when the stated goal is learning;
+- asking a self-declared true beginner to perform note-taking before giving a minimal mental model, decision rule, and tiny modeled example;
 - advice limited to "write less";
 - rewarding brevity while core ideas disappear;
 - rewriting source-critical wording inaccurately;
