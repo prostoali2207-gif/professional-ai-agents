@@ -1,7 +1,7 @@
 ---
 name: visual-design-art-direction-core
 description: Reusable professional core for landing-page visual design and art direction: current visual research, benchmark extraction, creative divergence, visual thesis, typography/composition/rhythm, responsive art direction, implementation contracts, rendered critique, refinement, and justified routing to motion/3D/WebGL.
-version: 0.3.0-candidate
+version: 0.3.1-candidate
 ---
 
 # Visual Design / Art Direction Core
@@ -63,6 +63,30 @@ Any failed or unresolved item forbids READY.
 
 Do not create separate agents for these modes.
 
+## Elite-reference gate for taste-sensitive visual work
+
+When the user explicitly asks for **nasмотренность, top/best-in-class references, inspiration, visual taste calibration, or how the strongest practitioners do it**, or when current reference literacy can materially change the visual decision, this core MUST load and follow:
+
+`architect/research/creative-reference-intelligence/candidate/SKILL.md`.
+
+This gate runs **before** proposing a visual direction to the user and before generating, rendering, or implementing a style-dependent artifact.
+
+Default behavior for an open visual direction:
+- discover broadly, but inspect actual artifacts rather than names, thumbnails, reputation, follower counts, search ranking, or generic “top X” lists;
+- inspect at least 8 materially relevant artifacts across at least 3 credible sources by default, unless evidence saturation or access constraints justify fewer;
+- admit only a small elite set, normally 3–5 references, that materially changes or calibrates the decision;
+- separate DIRECT, ADJACENT_ELITE, and VOICE_STYLE_CRAFT references;
+- prefer primary/official sources and actual work: studio/designer/foundry portfolios, live sites, campaign pages, specimen pages, museum/archive collections, or other authoritative artifact sources;
+- for historical/canonical styles, use museum, archive, designer, foundry, or authoritative collection evidence rather than modern imitation boards;
+- use aggregators, Pinterest-like boards, search-image grids, trend articles, and generic inspiration sites only for discovery, never as the benchmark by themselves;
+- when a national/cultural/style label is involved (for example “French”, “Japanese”, “Swiss”), ground the visual language in inspected artifacts and mechanisms; never synthesize the style from stereotypes or model memory alone.
+
+The benchmark must reach `READY` or a bounded `PARTIAL` with explicit missing evidence before style-dependent artifact generation or implementation proceeds. If the benchmark cannot be established, return `RESEARCH_REQUIRED` rather than filling the gap with generic taste.
+
+When an image/render generation tool supports references, pass the accepted benchmark artifacts into the generation workflow when lawful and technically possible. Prompt from extracted mechanisms, not vague style labels. Include explicit anti-cliché exclusions derived from the benchmark.
+
+Before showing a generated artifact to the user, visually inspect it against the accepted benchmark and the brief. Reject and regenerate/rework outputs that drift into generic genre clichés, unrelated historical styling, decorative noise, or model-invented motifs. A first generated draft is not evidence of visual quality and must not be surfaced merely because generation succeeded.
+
 ## Required process
 
 ### 1. Frame
@@ -84,7 +108,7 @@ If artifact-dependent judgment is requested and the render cannot be observed, r
 
 ### 3. Research current visual work when decision value is material
 
-For substantial DISCOVER/reset work, inspect current rendered references with enough breadth to avoid anchoring. Include relevant category work and useful adjacent/cross-category work; deliberately include some references that expand beyond the obvious visual vocabulary.
+For substantial DISCOVER/reset work, inspect current rendered references with enough breadth to avoid anchoring. When the elite-reference gate fires, execute this research through Creative Reference Intelligence and do not bypass its admission criteria. Include relevant category work and useful adjacent/cross-category work; deliberately include some references that expand beyond the obvious visual vocabulary.
 
 For each useful benchmark extract:
 `problem -> mechanism -> why it works -> transferable principle -> context-specific/non-transferable element -> derivative risk -> TAKE / ADAPT / REJECT`.
@@ -187,6 +211,7 @@ Fix the responsible layer, batch related corrections, re-observe, and stop when 
 - Cards are grouping tools, not the default morphology for every section.
 - Avoid generic SaaS/dashboard/card-grid language unless the actual product/task calls for it.
 - Avoid generic AI visual decoration and fashionable imitation.
+- Do not infer a national, regional, historical or cultural visual language from stereotypes, memory, or broad style labels when reference inspection can ground the decision.
 - A technically correct design can still fail for weak concept, hierarchy, rhythm, typography, distinctiveness or perceived quality.
 - Mobile is authored art direction, not collapsed desktop; unusable mobile is a hard failure, not a style trade-off.
 - Rule breaking must be intentional: `rule -> purpose -> reason to violate -> intended effect -> risk -> verification`; hard function, factual truth and delegated authority are not silently waivable design conventions.
