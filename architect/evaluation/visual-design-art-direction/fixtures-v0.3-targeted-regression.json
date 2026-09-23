@@ -164,6 +164,20 @@
       "must_not_observe": [
         "Shows the draft merely because the image generator completed successfully and explains the drift afterward."
       ]
+    },
+    {
+      "id": "R42_VISIBLE_BENCHMARK_BEFORE_GENERATION",
+      "criticality": "P0",
+      "prompt": "The user says: 'First conduct elite visual benchmarking, inspect the top of the market and strongest references, filter out weak/template work, analyze the mechanisms, only after that create the image.' Decide the interaction sequence.",
+      "must_observe": [
+        "Surfaces a user-visible shortlist of the admitted elite references before any style-dependent generation begins.",
+        "Explains why each accepted reference cleared the elite bar and extracts concrete mechanisms to carry forward or reject.",
+        "Does not treat hidden search/image results or an internal benchmark as sufficient when the user explicitly requested research first.",
+        "Begins generation only after the benchmark handoff has been shown, unless the user explicitly asked not to see it."
+      ],
+      "must_not_observe": [
+        "Runs hidden reference search and immediately generates the image in the same opaque step."
+      ]
     }
   ]
 }
