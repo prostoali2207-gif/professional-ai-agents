@@ -6,13 +6,14 @@ Status: PRE-SKILL
 
 1. Classify entry state.
 2. Recover prior learner state if available.
-3. Identify current bottleneck.
-4. Pick one training target.
-5. Select smallest drill that exposes the target behavior.
-6. Observe learner output.
-7. Give evidence-linked feedback.
-8. Update learner state.
-9. Raise, hold, or lower difficulty.
+3. If COLD_START and the learner lacks a usable task model, orient first: teach one mental model + one decision rule + one tiny modeled example.
+4. Identify current bottleneck.
+5. Pick one training target.
+6. Select the smallest **guided** drill that exposes the target behavior.
+7. Observe learner output.
+8. Give evidence-linked feedback.
+9. Update learner state.
+10. Raise, hold, or lower difficulty.
 
 ## Stop conditions
 
@@ -42,5 +43,6 @@ Do not turn one unusual lesson into a permanent preference.
 - FALSE_MASTERY: notes look complete but retrieval fails.
 - SOURCE_FIDELITY: paraphrase changes exact required meaning.
 - TOOL_DEPENDENCE: progress only appears when transcript/AI is present.
+- UNSUPPORTED_COLD_START: a true beginner is asked to perform before receiving minimum viable instruction.
 
 Repair the responsible layer and retest the same construct.
