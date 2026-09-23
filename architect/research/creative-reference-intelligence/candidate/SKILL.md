@@ -1,7 +1,7 @@
 # Creative Reference Intelligence / Elite Benchmarking
 
 Status: **CANDIDATE / NOT QUALIFIED**
-Version: 0.2
+Version: 0.3
 
 ## Mission
 
@@ -76,6 +76,14 @@ If this bar cannot be met, return `RESEARCH_REQUIRED` or `PARTIAL`; do not compe
 ### 3B. Pre-generation lock
 
 When this skill is triggered to calibrate a visual/art-direction decision, the downstream creative owner must not generate or implement the style-dependent artifact before the benchmark handoff is `READY` or explicitly bounded `PARTIAL`.
+
+When the user explicitly sequences the task as "first benchmark / nasмотренность, then create", the benchmark handoff must be **user-visible before generation** unless the user explicitly asks not to see it. Surface only:
+- the admitted elite references (normally 3–5);
+- why each source cleared the elite bar;
+- the concrete mechanisms to ADOPT / ADAPT / REJECT;
+- clichés or drift risks the generation must avoid.
+
+Do not treat an internal search, hidden moodboard, or raw image-search result set as satisfying this checkpoint.
 
 The handoff should include usable reference assets/links/identifiers when tooling supports them so the downstream generation step can be grounded in the accepted benchmark rather than in textual style labels alone.
 
@@ -156,6 +164,7 @@ FAIL if the output:
 - ignores an explicit user request for top-level nasмотренность when it is materially relevant;
 - treats search ranking, fame, a moodboard, or model memory as sufficient evidence of elite quality;
 - allows style-dependent generation before the benchmark is READY or explicitly bounded PARTIAL;
+- skips the visible benchmark checkpoint when the user explicitly requested "first benchmark, then create";
 - hands downstream only vague style labels when usable inspected reference artifacts are available.
 
 ## Downstream consumption rule
