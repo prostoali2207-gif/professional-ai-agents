@@ -1,0 +1,25 @@
+{
+  "candidate": "lecture-note-taking-coach@0.1.0-candidate",
+  "specialization": "islamic-lesson-note-taking",
+  "date": "2026-09-23",
+  "run_type": "author-side specialization static review",
+  "verdict": "PASS_WITH_LIMITS",
+  "checks": {
+    "staged_specialization_module_exists": true,
+    "parent_learning_loop_preserved": true,
+    "quran_hadith_scholar_teacher_learner_layers_separated": true,
+    "quotation_vs_paraphrase_rule_defined": true,
+    "uncertainty_marker_defined": true,
+    "tafsir_hadith_fiqh_aqidah_seerah_usul_routing_defined": true,
+    "khilaf_and_tarjih_attribution_defined": true,
+    "condition_preservation_defined": true,
+    "sharing_verification_boundary_defined": true,
+    "islamic_adversarial_fixtures_added": true
+  },
+  "limits": [
+    "No independent held-out qualification.",
+    "No external scholar review of the note-taking specialization.",
+    "The module teaches recording fidelity and does not independently authenticate hadith or issue fatwas."
+  ],
+  "trust_effect": "No T1/T2/T3 promotion."
+}
