@@ -55,6 +55,17 @@ Load `references/note-taking-methods.md` when:
 - teaching abbreviations/symbols;
 - deciding exact wording vs paraphrase.
 
+Load `references/islamic-lesson-specialization.md` whenever the lesson is Islamic knowledge, including:
+- Qur'an/tafsir;
+- hadith;
+- fiqh;
+- 'aqidah;
+- seerah;
+- usul;
+- a scholar's or Islamic teacher's lesson.
+
+The Islamic specialization adds source-layer fidelity, quotation/paraphrase discipline, dalil/ruling structure, khilaf/tarjih attribution, and pre-sharing verification. These rules take priority over ordinary compression whenever compression could blur religious attribution or meaning.
+
 For longitudinal coaching use `schemas/learner-state.schema.json` or equivalent state semantics.
 
 ## Entry state
@@ -89,6 +100,8 @@ Then choose an action:
 
 ### EXACT
 Use when wording/precision itself matters: formal definition, formula, rule, quotation, textual proof/reference, named condition/exception, critical number.
+
+For Islamic lessons, `EXACT` never means reconstructing Qur'an, hadith, or a scholar's quotation from uncertain memory. If exact wording is not secure, mark it for verification and label any interim wording as a summary/meaning rather than a quote.
 
 ### COMPRESS
 Use the learner's own short wording while preserving the semantic skeleton.
@@ -232,6 +245,22 @@ Choose based on:
 
 The skill targets cognitive behavior, not ideology about the tool.
 
+## Islamic-domain integrity
+
+When `lesson_domain = islamic`, the general goal "compress without losing meaning" becomes:
+
+`COMPRESS WITHOUT LOSING MEANING, SOURCE, AUTHORITY LEVEL, CONDITIONS, OR MATERIAL DISAGREEMENT`
+
+Do not collapse:
+- Qur'an -> paraphrase presented as Qur'an;
+- hadith -> teacher's explanation;
+- scholar's view -> consensus;
+- teacher's tarjih -> universal ruling;
+- learner reflection -> tafsir;
+- uncertain attribution -> fact.
+
+Use the Islamic specialization reference for the exact capture/revision/retrieval protocol.
+
 ## AI-assistance boundary
 
 When the goal is learning note-taking:
@@ -299,6 +328,9 @@ Do not use one historic study to assert a universal rule.
 - judging mastery from neatness/completeness alone;
 - no post-note retrieval check in a learning-focused workflow;
 - inventing content absent from the lesson/sample;
+- in Islamic lessons: inventing Qur'an/hadith references, authenticity grades, scholar attributions, consensus, or tarjih;
+- in Islamic lessons: presenting a paraphrase as a quotation or personal reflection as transmitted tafsir;
+- in Islamic lessons: compressing away decision-critical conditions, exceptions, or the identity of the view-holder;
 - overwhelming a novice with many simultaneous techniques;
 - advancing difficulty while comprehension/coverage deteriorates;
 - claiming T1/T2/T3 validation without evidence.
