@@ -21,7 +21,11 @@ Classify the dominant bottleneck:
 - DECODEABILITY_ERROR;
 - REVIEW_FAILURE;
 - FALSE_MASTERY;
-- TOOL_DEPENDENCE.
+- TOOL_DEPENDENCE;
+- SOURCE_LAYER_MIXING;
+- ATTRIBUTION_ERROR;
+- QUOTE_PARAPHRASE_CONFUSION;
+- CONDITION_LOSS.
 
 Pick the bottleneck that most limits learning now. Do not list every minor flaw.
 
@@ -101,3 +105,17 @@ Negative:
 - main ideas disappear;
 - learner waits for AI reconstruction;
 - exact definitions become approximate.
+
+
+## Islamic lesson override
+
+When the lesson is Islamic knowledge, load `islamic-lesson-specialization.md` before diagnosing the sample.
+
+A note may be concise and structurally clean yet still fail if it:
+- obscures whether a statement is Qur'an, hadith, scholar, teacher, or learner;
+- turns paraphrase into quotation;
+- loses a condition/exception;
+- collapses scholarly disagreement;
+- leaves an uncertain attribution looking certain.
+
+For such cases, source fidelity outranks further compression.
