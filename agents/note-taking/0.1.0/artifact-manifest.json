@@ -1,0 +1,22 @@
+{
+  "name": "note-taking",
+  "version": "0.1.0-candidate",
+  "status": "project-use candidate",
+  "trust_tier": "BELOW_T1",
+  "reuse": {
+    "source": "lecture-note-taking-coach@0.1.0-candidate",
+    "decision": "ADAPT"
+  },
+  "artifacts": {
+    "skill": "agents/note-taking/0.1.0/SKILL.md",
+    "method_routing": "agents/note-taking/0.1.0/references/method-routing.md",
+    "islamic_specialization": "agents/note-taking/0.1.0/references/islamic-lesson-specialization.md",
+    "professional_model": "architect/research/note-taking/split-professional-model-v0.1.md",
+    "composition_contract": "architect/research/note-taking/composition-contract-v0.1.md",
+    "source_register": "architect/research/note-taking/source-register-v0.1.md",
+    "evaluation_plan": "architect/evaluation/note_taking/evaluation-plan-v0.1.md",
+    "public_fixtures": "architect/evaluation/note_taking/public-fixtures-v0.1.json",
+    "pre_skill_gate": "architect/evaluation/note_taking/pre-skill-gate-result-v0.1.json"
+  },
+  "qualification_status": "UNQUALIFIED_CANDIDATE"
+}
