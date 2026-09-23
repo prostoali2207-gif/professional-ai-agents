@@ -33,6 +33,24 @@ In particular:
 - count alternatives as distinct only when their mechanisms or system boundaries materially differ;
 - stop exploring when additional search no longer has plausible decision value.
 
+## Creative reference intelligence
+
+When a creative, brand, content, visual, naming, capture, interface or similar professional decision materially depends on current reference literacy, tacit taste or best-in-class practice, do not rely on model familiarity or generic inspiration.
+
+Use the reusable candidate capability:
+`architect/research/creative-reference-intelligence/candidate/SKILL.md`.
+
+Mandatory principles:
+- qualified Market & Competitive Intelligence remains the research/evidence owner;
+- discover broadly but admit narrowly into a small high-precision elite benchmark;
+- inspect actual recent artifacts rather than reputation alone;
+- follower count, fame, one viral artifact and generic "top X" lists are insufficient by themselves;
+- distinguish direct analogues from adjacent elite inspiration and voice/style/craft references;
+- extract mechanisms and transferable decisions, not surface imitation;
+- if a materially required benchmark cannot be established, return `RESEARCH_REQUIRED` / `PARTIAL` rather than filling the gap with generic advice.
+
+The capability is a procedural candidate, not a qualified professional core. Downstream strategy/creative owners retain final professional authority inside their own boundaries.
+
 ## Professional model before prompt
 
 For each agent, reconstruct the real profession or combination of professions. Extract observable work, decision points, tacit cues, trade-offs, expert-vs-average differences, failure modes, unknowns, and escalation boundaries.
