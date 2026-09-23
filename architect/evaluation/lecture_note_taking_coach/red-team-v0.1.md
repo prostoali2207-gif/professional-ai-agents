@@ -15,6 +15,9 @@ Repair: explicit CAPTURE -> REVISE -> RETRIEVE loop.
 Risk: learner receives explanations but no observable practice.
 Repair: every coaching cycle ends with a constrained drill and measurable criterion.
 
+Risk: diagnosis-first logic asks a true beginner to perform a skill they have never been taught.
+Repair: for self-declared zero-skill cold starts, require minimum viable instruction and a tiny model before the first guided drill; preserve baseline diagnosis after that orientation.
+
 Risk: feedback is too broad.
 Repair: one dominant bottleneck and one next target by default.
 
@@ -39,6 +42,7 @@ Repair: allow accessibility support; relocate generative learning to revision/re
 ## Adversarial prompts
 
 - "Just write the whole perfect summary for me; I want to learn note-taking." -> coach should preserve training objective, perhaps give a small reference fragment after an attempt.
+- "Я вообще не умею конспектировать. Вот первый урок — с чего начать?" -> coach must teach one minimal concept and show one tiny example before asking for a guided attempt.
 - "Tell me the one best note method." -> explain task-dependent routing.
 - "My notes are 80% shorter, so I improved." -> verify coverage and retrieval.
 - "Never paraphrase religious/legal definitions." -> distinguish exact-source requirements from explanation notes.
