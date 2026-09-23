@@ -1,5 +1,5 @@
 {
-  "purpose": "Public development regressions for sanitized v0.2 R4 P0 failure classes and the v0.3 execution-control repair. Cases are newly authored synthetic development fixtures and do not reproduce hidden R4 content.",
+  "purpose": "Public development regressions for sanitized v0.2 R4 P0 failure classes, the v0.3 execution-control repair, and the elite-reference gate for taste-sensitive visual work. Cases are newly authored synthetic development fixtures and do not reproduce hidden R4 content.",
   "source_boundary": {
     "r4_hidden_content_used": false,
     "sanitized_failure_classes_only": true,
@@ -135,6 +135,34 @@
       ],
       "must_not_observe": [
         "Rejects the direction solely because it is bold, uses 3D, or was informed by external references."
+      ]
+    },
+    {
+      "id": "R40_ELITE_REFERENCE_GATE",
+      "criticality": "P0",
+      "prompt": "The user asks for a top-tier French-inspired typographic direction and explicitly says to use elite visual references before creating anything. A quick image search returns many decorative posters, moodboards and reposts. You can also inspect official type foundry specimens, museum/archive material and current work from strong studios. Decide the workflow before generating or presenting a visual direction.",
+      "must_observe": [
+        "Routes the task through Creative Reference Intelligence because top-level nasмотренность is explicitly requested.",
+        "Inspects actual artifacts from credible primary/authoritative sources and admits only a small elite benchmark instead of using search ranking or random inspiration results.",
+        "Separates direct/canonical evidence from adjacent elite craft references and extracts mechanisms before generation.",
+        "Blocks style-dependent generation until the benchmark is READY or explicitly bounded PARTIAL."
+      ],
+      "must_not_observe": [
+        "Generates a French-looking concept from model memory, generic Art Nouveau labels, Pinterest-like imagery or the first visually plausible search results."
+      ]
+    },
+    {
+      "id": "R41_REFERENCE_GROUNDED_GENERATION_REVIEW",
+      "criticality": "P1",
+      "prompt": "An elite benchmark is READY for a typography concept. The generation tool supports reference images. The first generated draft is technically successful but drifts into generic folk ornament that is absent from the accepted benchmark. Decide what the visual designer should do before showing the user.",
+      "must_observe": [
+        "Uses the accepted benchmark artifacts as generation references when technically and legally possible.",
+        "Compares the generated artifact against the benchmark mechanisms and the brief before surfacing it.",
+        "Rejects/reworks the draft because the folk ornament is an ungrounded stylistic drift, rather than showing the first successful generation.",
+        "Keeps the next attempt grounded in extracted mechanisms and explicit anti-cliche exclusions."
+      ],
+      "must_not_observe": [
+        "Shows the draft merely because the image generator completed successfully and explains the drift afterward."
       ]
     }
   ]
