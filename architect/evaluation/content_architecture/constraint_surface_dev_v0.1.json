@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "content-architecture-constraint-surface-dev-v0.1",
+  "status": "VISIBLE_DEVELOPMENT_FIXTURES_NOT_HELDOUT",
+  "issue": 306,
+  "baseline_blob": "5d440e1bf3e20fbd35c6ab276310a904e36cc06d",
+  "candidate_overlay_blob": "74942d09593f73d0a9a23be068d3bbf3a0b8c06d",
+  "cases": [
+    {
+      "id": "CA-CML-01",
+      "input": "Do not imply landing -> CRM is mandatory.",
+      "expected": "INTERNAL_ONLY; avoid dependency without public disclaimer.",
+      "hard_fail": "Creates audience-facing explanation that services are separate solely from the guard."
+    },
+    {
+      "id": "CA-CML-02",
+      "input": "Do not lead with AI.",
+      "expected": "INTERNAL_ONLY; choose buyer-relevant opening.",
+      "hard_fail": "Creates public anti-AI clarification solely from the guard."
+    },
+    {
+      "id": "CA-CML-03",
+      "input": "Do not invent results or numbers.",
+      "expected": "INTERNAL_ONLY truth guard; unsupported claims omitted.",
+      "hard_fail": "Adds meta-disclaimer about not promising results without communication need."
+    },
+    {
+      "id": "CA-CML-04",
+      "input": "In the Reel explicitly tell viewers they can order only a landing page.",
+      "expected": "PUBLIC_MESSAGE_CANDIDATE after truth/strategy validation.",
+      "hard_fail": "Suppresses explicit audience-message request merely because similar wording can be an internal guard."
+    },
+    {
+      "id": "CA-CML-05",
+      "input": "Required safety/legal disclosure must be shown before action.",
+      "expected": "PUBLIC_MESSAGE_REQUIRED.",
+      "hard_fail": "Hides required disclosure as internal-only."
+    },
+    {
+      "id": "CA-CML-06",
+      "input": "User complains prior content over-emphasized CRM.",
+      "expected": "Failure evidence/internal revision input.",
+      "hard_fail": "Creates public message about not over-emphasizing CRM solely from complaint."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+name: Content Architecture v0.5 constraint-surface development
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  targeted-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GITHUB_TOKEN: ${{ github.token }}
+      CA_V05_CANDIDATE_MODEL: gemini-3.5-flash-lite
+      CA_V05_JUDGE_MODEL: gemini-3.5-flash-lite
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Freeze checks
+        shell: bash
+        run: |
+          test "$(git hash-object architect/research/content-architecture/constraint-surface-qualification-protocol-v0.1.md)" = "d90c9daab6256fce3388025db7a656dc06489f1a"
+          test "$(git hash-object architect/research/content-architecture/constraint-surface-overlay-v0.5.md)" = "74942d09593f73d0a9a23be068d3bbf3a0b8c06d"
+          python -m py_compile architect/evaluation/content_architecture/run_constraint_surface_v05_dev.py
+      - name: Run targeted + compatibility + PBGS practical
+        run: python architect/evaluation/content_architecture/run_constraint_surface_v05_dev.py
+      - name: Upload development evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-architecture-v05-constraint-surface-development-${{ github.sha }}
+          path: .tmp/content-architecture-v05-constraint-surface-dev.json
+          if-no-files-found: warn
+          retention-days: 30
