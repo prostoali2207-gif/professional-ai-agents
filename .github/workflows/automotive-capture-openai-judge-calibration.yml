@@ -1,0 +1,73 @@
+name: Automotive Capture OpenAI judge calibration
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/calibrate_openai_judge_v0_1.py'
+      - '.github/workflows/automotive-capture-openai-judge-calibration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      AUTOMOTIVE_CAPTURE_OPENAI_JUDGE_MODEL: gpt-5.6-terra
+      AUTOMOTIVE_CAPTURE_OPENAI_JUDGE_PACE: '3'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run budget gate
+        run: |
+          echo 'objective=validate independent semantic judge on 5 known good/bad pairs before hidden scoring'
+          echo 'generation_calls=5 OpenAI fixed'
+          echo 'candidate_calls=0'
+          echo 'heldout_calls=0'
+          echo 'release_evidence=false'
+          echo 'stop_condition=missing credential/model, runtime error, or any calibration pair misclassified'
+
+      - name: Static compile and no-generation model access
+        run: |
+          set -euo pipefail
+          python -m py_compile architect/evaluation/automotive-capture-direction/calibrate_openai_judge_v0_1.py
+          test -n "${OPENAI_API_KEY:-}" || { echo 'OPENAI_API_KEY missing; zero generation calls attempted' >&2; exit 21; }
+          python - <<'PY'
+          import json, os, urllib.request
+          req=urllib.request.Request('https://api.openai.com/v1/models',headers={'Authorization':f"Bearer {os.environ['OPENAI_API_KEY']}"})
+          with urllib.request.urlopen(req,timeout=30) as r: p=json.loads(r.read().decode())
+          ids={x.get('id') for x in p.get('data',[]) if isinstance(x,dict)}
+          if os.environ['AUTOMOTIVE_CAPTURE_OPENAI_JUDGE_MODEL'] not in ids: raise SystemExit('target OpenAI judge unavailable')
+          print('OPENAI TARGET JUDGE ACCESS PASS')
+          PY
+
+      - name: Run independent semantic judge calibration
+        env:
+          AUTOMOTIVE_CAPTURE_JUDGE_CALIBRATION_REPORT: ${{ runner.temp }}/automotive-capture-openai-judge-calibration.json
+        run: python architect/evaluation/automotive-capture-direction/calibrate_openai_judge_v0_1.py
+
+      - name: Upload sanitized calibration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-openai-judge-calibration
+          path: ${{ runner.temp }}/automotive-capture-openai-judge-calibration.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'planned_openai_calls=5'
+          echo 'candidate_calls=0'
+          echo 'heldout_calls=0'

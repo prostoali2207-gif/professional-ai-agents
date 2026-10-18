@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "status": "FROZEN_READY",
+  "cycle_id": "automotive-capture-direction-semantic-v0.1",
+  "candidate": {
+    "commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+    "blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+    "host_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+    "mutation_allowed": false
+  },
+  "runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "reasoning": "medium",
+    "tools": false,
+    "state": "stateless",
+    "scored_retries": 0
+  },
+  "hidden_generation": {
+    "method": "HMAC-derived evaluator variant selection and option permutation",
+    "secret": "QUALIFICATION_SEALED_PACK_MASTER_KEY",
+    "candidate_visibility": "candidate receives only generated visible scenarios/options; HMAC seed and expected choice map are never included in prompt/output",
+    "families_per_trial": 12,
+    "trials": 2,
+    "total_decisions": 24
+  },
+  "families": [
+    "PERSPECTIVE",
+    "REFLECTION_GEOMETRY",
+    "USEFUL_REFLECTION",
+    "DEVICE_HONESTY",
+    "CONDITION_TRUTH",
+    "EXPERIMENT_LOCK",
+    "SAFETY",
+    "FRAME_RATE_SHUTTER",
+    "FLICKER",
+    "PROFILE_PIPELINE",
+    "RESTRAINT_GOOD_PROOF",
+    "AUDIO_DEPENDENCY"
+  ],
+  "grader": {
+    "type": "deterministic exact option selection",
+    "threshold": "24/24 exact decisions",
+    "critical_failures_allowed": 0,
+    "best_of_n": false,
+    "first_scored_mismatch": "REVISE; no retry"
+  },
+  "claim_boundary": "This gate qualifies semantic professional judgment and inherited truth/safety/device/experiment invariants only. It cannot by itself qualify artifact-first still/video observation or human operator executability.",
+  "budget": {
+    "candidate_calls": 2,
+    "judge_calls": 0,
+    "metered_judge_calls": 0,
+    "stop_condition": "missing secret/runtime, frozen identity mismatch, provider failure, malformed output, first trial mismatch, or completed PASS"
+  }
+}

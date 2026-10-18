@@ -1,0 +1,96 @@
+name: Automotive Capture direct media probe
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - '.github/workflows/automotive-capture-direct-media-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Download and freeze direct licensed media
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/capture-direct
+          UA='professional-ai-agents-evaluator/1.0 (qualification artifact retrieval)'
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" \
+            'https://upload.wikimedia.org/wikipedia/commons/5/5e/1937_Buick_Limited.jpg' \
+            -o /tmp/capture-direct/still.jpg
+          curl -fL --retry 2 --retry-delay 3 -A "$UA" \
+            'https://upload.wikimedia.org/wikipedia/commons/f/f5/The_car_jumped_up_with_joy..webm' \
+            -o /tmp/capture-direct/motion.webm
+          test -s /tmp/capture-direct/still.jpg
+          test -s /tmp/capture-direct/motion.webm
+          file /tmp/capture-direct/still.jpg
+          file /tmp/capture-direct/motion.webm
+          ffprobe -v error -show_entries stream=codec_type,width,height,r_frame_rate -show_entries format=duration,size -of json /tmp/capture-direct/motion.webm > /tmp/capture-direct/video-probe.json
+          ffmpeg -loglevel error -y -i /tmp/capture-direct/still.jpg -vf 'scale=960:-2' /tmp/capture-direct/still-preview.jpg
+          dur=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 /tmp/capture-direct/motion.webm)
+          python - "$dur" <<'PY'
+          import subprocess,sys
+          d=float(sys.argv[1])
+          for i,f in enumerate((0.12,0.35,0.58,0.82),1):
+              subprocess.check_call(['ffmpeg','-loglevel','error','-y','-ss',str(max(0,d*f)),'-i','/tmp/capture-direct/motion.webm','-frames:v','1','-vf','scale=640:-2',f'/tmp/capture-direct/vf{i}.jpg'])
+          PY
+          ffmpeg -loglevel error -y \
+            -i /tmp/capture-direct/vf1.jpg -i /tmp/capture-direct/vf2.jpg -i /tmp/capture-direct/vf3.jpg -i /tmp/capture-direct/vf4.jpg \
+            -filter_complex '[0:v][1:v]hstack=inputs=2[top];[2:v][3:v]hstack=inputs=2[bottom];[top][bottom]vstack=inputs=2[out]' \
+            -map '[out]' /tmp/capture-direct/video-contact.jpg
+          python - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path('/tmp/capture-direct')
+          def sha(name): return 'sha256:'+hashlib.sha256((p/name).read_bytes()).hexdigest()
+          report={
+            'schema_version':'0.1.0',
+            'candidate_calls':0,
+            'judge_calls':0,
+            'artifacts':[
+              {
+                'id':'COMMONS_1937_BUICK_REFLECTION','kind':'image',
+                'source_page':'https://commons.wikimedia.org/wiki/File:1937_Buick_Limited.jpg',
+                'license':'CC BY 2.0; Don OBrien',
+                'download_sha256':sha('still.jpg'),'preview_sha256':sha('still-preview.jpg'),
+                'bytes':(p/'still.jpg').stat().st_size
+              },
+              {
+                'id':'COMMONS_CAR_JUMP_MOTION','kind':'video',
+                'source_page':'https://commons.wikimedia.org/wiki/File:The_car_jumped_up_with_joy..webm',
+                'license':'Public domain per Commons file page',
+                'download_sha256':sha('motion.webm'),'contact_sheet_sha256':sha('video-contact.jpg'),
+                'bytes':(p/'motion.webm').stat().st_size,
+                'probe':json.loads((p/'video-probe.json').read_text())
+              }
+            ]
+          }
+          (p/'manifest.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps({'status':'PASS','artifacts':[(x['id'],x['bytes']) for x in report['artifacts']]}))
+          PY
+
+      - name: Upload frozen evaluator media
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-direct-media-probe
+          path: /tmp/capture-direct/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'candidate_calls=0'
+          echo 'judge_calls=0'
+          echo 'purpose=evaluator media freeze only'

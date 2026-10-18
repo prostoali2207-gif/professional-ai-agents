@@ -1,0 +1,43 @@
+name: Automotive Capture public artifact probe
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/probe_public_artifacts_v0_1.py'
+      - '.github/workflows/automotive-capture-public-artifact-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install evaluator media tool
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Evaluator-only media acquisition
+        run: |
+          python -m py_compile architect/evaluation/automotive-capture-direction/probe_public_artifacts_v0_1.py
+          python architect/evaluation/automotive-capture-direction/probe_public_artifacts_v0_1.py
+      - name: Upload evaluator media evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-public-artifact-probe
+          path: /tmp/automotive-capture-artifacts/
+          retention-days: 14
+          if-no-files-found: error
+      - name: Accounting
+        run: |
+          echo 'candidate_calls=0'
+          echo 'judge_calls=0'
+          echo 'purpose=evaluator-only artifact acquisition and contact-sheet inspection'

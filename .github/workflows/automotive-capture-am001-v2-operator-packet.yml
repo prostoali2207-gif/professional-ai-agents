@@ -1,0 +1,100 @@
+name: Automotive Capture AM-001 v2 operator packet
+
+on:
+  push:
+    branches:
+      - agent/automotive-capture-capability-2026-09
+    paths:
+      - 'architect/evaluation/automotive-capture-direction/applied-field-task-am001-v2.json'
+      - '.github/workflows/automotive-capture-am001-v2-operator-packet.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      AUTOMOTIVE_CAPTURE_MODEL: gemini-3.5-flash-lite
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-run contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo 'stage=bounded clean human-field retry v2 operator packet'
+          echo 'candidate_calls_max=1'
+          echo 'judge_calls=0'
+          echo 'retries=0'
+          python - <<'PY'
+          import json
+          p=json.load(open('architect/evaluation/automotive-capture-direction/applied-field-task-am001-v2.json'))
+          assert p['status']=='FROZEN_READY'
+          assert p['cycle_id']=='automotive-capture-direction-human-field-am001-v2'
+          assert p['candidate_commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert p['candidate_blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          assert p['host_digest']=='sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f'
+          assert p['candidate_calls_max']==1 and p['judge_calls']==0 and p['retries']==0
+          print('V2 TASK CONTRACT PASS')
+          PY
+          python architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py --qualification-contract > "$RUNNER_TEMP/executor-contract.json"
+          test -n "${GEMINI_API_KEY:-}" || { echo 'GEMINI_API_KEY missing; zero candidate calls attempted' >&2; exit 21; }
+
+      - name: Verify model access without generation
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request
+          req=urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models',headers={'x-goog-api-key':os.environ['GEMINI_API_KEY']})
+          with urllib.request.urlopen(req,timeout=30) as r: p=json.loads(r.read().decode())
+          names={m.get('name','').split('/')[-1] for m in p.get('models',[])}
+          assert 'gemini-3.5-flash-lite' in names
+          print('MODEL ACCESS PASS')
+          PY
+
+      - name: Generate exact frozen operator packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' > "$RUNNER_TEMP/task.json"
+          import json
+          p=json.load(open('architect/evaluation/automotive-capture-direction/applied-field-task-am001-v2.json'))
+          print(json.dumps({'task':p['task']},ensure_ascii=False))
+          PY
+          python architect/evaluation/automotive-capture-direction/executor_v0_1_gemini.py \
+            < "$RUNNER_TEMP/task.json" \
+            > "$RUNNER_TEMP/am001-v2-operator-packet.json"
+          python - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'am001-v2-operator-packet.json'
+          x=json.loads(p.read_text())
+          assert x['status']=='completed'
+          assert x['candidate_identity']['candidate_commit']=='6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c'
+          assert x['candidate_identity']['candidate_blob']=='6824ba3256ab6f3b51c5596f6fd6e42e013937f7'
+          print('PACKET GENERATED; candidate_calls=1; judge_calls=0; retries=0')
+          PY
+
+      - name: Upload operator packet
+        uses: actions/upload-artifact@v4
+        with:
+          name: automotive-capture-am001-v2-operator-packet
+          path: ${{ runner.temp }}/am001-v2-operator-packet.json
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Accounting
+        if: always()
+        run: |
+          echo 'candidate_calls_max=1'
+          echo 'judge_calls=0'
+          echo 'retries=0'

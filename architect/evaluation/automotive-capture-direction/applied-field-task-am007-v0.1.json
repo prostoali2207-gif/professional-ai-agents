@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "status": "FROZEN_BEFORE_EXECUTION",
+  "purpose": "Generate the operator packet for the preregistered Auto Sales human executability field gate; this is applied integration evidence, not a change to reusable-core release scoring.",
+  "vehicle": {
+    "id": "AM-007",
+    "make": "Hyundai",
+    "model": "Tucson",
+    "model_year": 2024,
+    "color": "Black",
+    "inventory_status": "В наличии",
+    "business_source": "AM Motors — Справочник машин, read 2026-09-01"
+  },
+  "equipment_packet": {
+    "operator": "one non-professional human",
+    "device": "iPhone 15 Pro",
+    "vehicle_motion": "stationary for this test",
+    "lighting": "available light / existing location only",
+    "declared_extra_gear": [],
+    "advanced_device_controls_verified": false,
+    "rule": "Do not require an advanced iPhone mode/control unless the packet first tells the operator how to verify that it is available. Prefer a capability-safe standard-camera fallback."
+  },
+  "required_artifacts": [
+    "F1_HERO_STILL — one exterior primary-listing hero still",
+    "F2_PROOF_STILL — one exterior truth/proof still of a useful body/condition area; do not conceal material evidence",
+    "F3_BROLL_VIDEO — one short exterior B-roll clip; vehicle stationary; operator movement only if safe"
+  ],
+  "task": "Act as the exact frozen Automotive Commercial Capture Direction professional composed with the qualified Social Content Creative host. Produce the pre-capture operator packet for the applied human field gate. Write in simple Russian for a non-professional who will physically shoot the car. Do not create sales copy or commercial claims. Do not assume a defect exists. Do not ask the operator to make photographic judgments that you should make. For each of the three required artifacts, give: (1) preparation, (2) what location/background/light relation to seek before placing the car, (3) exact operator/camera position relative to the vehicle, (4) reproducible camera height and distance/framing cue understandable without a tape measure, (5) what reflections/highlights to look for on black paint and exactly what physical adjustment to make if they are bad, (6) camera/device instruction bounded by the equipment packet, (7) movement path and duration for video or STATIC for photo, (8) visible ACCEPT / RESHOOT checks the operator can inspect on the phone immediately, and (9) one feasible fallback. Start with a very short whole-car preparation checklist. Keep the packet compact enough to follow on a phone while standing beside the vehicle. No driving shots. No undeclared gimbal/CPL/tripod/lights/mic. The final line must tell the operator exactly which 3 files to upload back for critique."
+}

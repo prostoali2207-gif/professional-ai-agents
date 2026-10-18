@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "cycle_id": "automotive-capture-direction-artifact-v0.1",
+  "candidate_commit": "6e34be04f1bc6912c95e5f6c0b34d1ccf9ccf13c",
+  "candidate_blob": "6824ba3256ab6f3b51c5596f6fd6e42e013937f7",
+  "host_digest": "sha256:ce5f537d336e6a6396f47c1ae492a687c4dc4b30ade8ab37bb4abb94d6251c0f",
+  "workflow_run_id": 33503315736,
+  "workflow_head_sha": "25600fb7720c23c46e4f1ea0d90307a1b5d98037",
+  "workflow_artifact_digest": "sha256:6630e8a81050f9ed958ff473ae7b00bf87d3ef2e937fbb870521dfe6c63a4049",
+  "media_freeze_workflow_run_id": 33502896037,
+  "media_freeze_artifact_digest": "sha256:def3e3dab54226079468e4117a009e5de73fe7043bc570cd0f125cb1af469fc6",
+  "runtime": {
+    "provider": "gemini-interactions-api",
+    "model": "gemini-3.5-flash-lite",
+    "scored_retries": 0
+  },
+  "candidate_calls": 2,
+  "judge_calls": 0,
+  "decisions_observed": 12,
+  "decisions_passed": 12,
+  "critical_failures": 0,
+  "threshold": "12/12 mechanically keyed artifact decisions; first mismatch stops REVISE",
+  "verdict": "PASS",
+  "cases": {
+    "ARTIFACT_STILL_01": {
+      "decisions": 5,
+      "passed": 5,
+      "media_sha256": "sha256:5306fa2bf5e0132f4718081c6e523b2ce363ad9b86011ff5e5358bff1bd17f97",
+      "source": "Wikimedia Commons: 1937 Buick Limited.jpg; CC BY 2.0"
+    },
+    "ARTIFACT_VIDEO_01": {
+      "decisions": 7,
+      "passed": 7,
+      "media_sha256": "sha256:a9a949f5cba6968b2779391d865191a71fe7d2f358c478b83f08181c7348d7e1",
+      "source": "Wikimedia Commons: The car jumped up with joy..webm; public domain per file page"
+    }
+  },
+  "qualified_behaviors": [
+    "observation-driven still capture judgment",
+    "useful-versus-distracting reflection judgment",
+    "background and hero-function fit judgment",
+    "video product-visibility and function-fit judgment",
+    "low-light product-readability judgment",
+    "visible camera/view motion classification",
+    "safety-inference restraint from finished footage",
+    "device-agnostic equipment honesty",
+    "reshoot-priority selection"
+  ],
+  "claim_boundary": "PASS qualifies observation-driven judgment on the frozen real still/video artifacts. Applied human instruction executability and measurable reshoot improvement in the AM Motors/iPhone field setting remain an integration/practical field gate rather than reusable-core release evidence."
+}
