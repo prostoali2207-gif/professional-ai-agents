@@ -1,0 +1,39 @@
+name: Sales 0.3 preservation sanity
+
+on:
+  push:
+    branches:
+      - agent/sales-lead-conversion-core-0.3.0-2026-08-22
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run four-case preservation sanity
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SALES_MODEL: gpt-5.6-terra
+          SALES_MODEL_TIMEOUT_SECONDS: '180'
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 architect/evaluation/sales-lead-conversion/development_preservation_v0_3.py | tee sales-0.3-preservation.json
+      - name: Publish preservation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.3-preservation-sanity
+          path: sales-0.3-preservation.json
+          retention-days: 14
