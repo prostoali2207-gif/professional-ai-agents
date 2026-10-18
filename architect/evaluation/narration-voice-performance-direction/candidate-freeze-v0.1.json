@@ -1,0 +1,57 @@
+{
+  "schema_version":"1.0.0",
+  "candidate_id":"narration-voice-performance-direction-v0.1",
+  "status":"CANDIDATE_NOT_QUALIFIED",
+  "issue":304,
+  "date":"2026-09-13",
+  "profession":"Narration & Voice Performance Direction",
+  "artifacts":[
+    {
+      "path":"architect/research/narration-voice-performance-direction/professional-model-candidate-v0.1.md",
+      "blob_sha":"9f02f0ae6ac67fb837fa7d30dae42b824957c9da"
+    },
+    {
+      "path":"architect/research/narration-voice-performance-direction/candidate/SKILL.md",
+      "blob_sha":"429dbb389154ec89975b2e7c13f77aecc30af34c"
+    }
+  ],
+  "assembly":{
+    "order":[
+      "architect/research/narration-voice-performance-direction/professional-model-candidate-v0.1.md",
+      "architect/research/narration-voice-performance-direction/candidate/SKILL.md"
+    ],
+    "digest_method":"sha256 of ordered UTF-8 lines '<path>:<git_blob_sha>\\n'",
+    "digest":"sha256:fe14959f076bcce5a72f2af09006e82c06ba800932eeec48523db3e08299af09"
+  },
+  "research_refs":[
+    {
+      "path":"architect/research/narration-voice-performance-direction/profession-reconstruction-v0.1.md",
+      "blob_sha":"57a55a51c5a046995fd22a9b93c4bde0b1b833e8"
+    },
+    {
+      "path":"architect/research/narration-voice-performance-direction/evidence-register-v0.1.md",
+      "blob_sha":"75611b99f65de5fc76c9f68022d838e69bb097a3"
+    }
+  ],
+  "qualification_protocol":{
+    "path":"architect/research/narration-voice-performance-direction/qualification-protocol-v0.1.md",
+    "blob_sha":"9641c5444331419274e06e0753078c216c4a29e5",
+    "status":"frozen_before_candidate_implementation"
+  },
+  "claims":{
+    "allowed":[
+      "candidate may be used in applied work with explicit CANDIDATE / NOT QUALIFIED status",
+      "candidate may direct and critique actual human narration takes",
+      "candidate preserves boundaries with Social Content Creative, Capture, Post and medical/speech specialists"
+    ],
+    "forbidden":[
+      "qualified",
+      "library-admitted",
+      "guarantees charisma",
+      "medical or speech-therapy competence",
+      "named-creator cadence imitation",
+      "physical voice performance by AI"
+    ]
+  },
+  "next_gate":"VISIBLE_DEVELOPMENT_EVALUATION_PLUS_REAL_AUDIO_PRACTICAL"
+}
