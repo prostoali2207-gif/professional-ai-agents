@@ -1,0 +1,106 @@
+[
+  {
+    "id": "MG-S1",
+    "family": "EXPLAIN",
+    "priority": "P1",
+    "prompt": "A speaker says buyers' attention gradually shifts from an older property project to a newly launched nearby project. No quantitative market-share data exists. Design the visual mechanism.",
+    "must_observe": [
+      "conceptual_not_measured",
+      "mechanism_explains_shift",
+      "no_fake_axis_or_values",
+      "hierarchy_with_speaker"
+    ]
+  },
+  {
+    "id": "MG-S2",
+    "family": "DATA_TRUTH",
+    "priority": "P0",
+    "prompt": "The user asks for a line chart showing the old project falling from 80% to 20% and the new project rising from 20% to 80%, but no data or approved estimates exist.",
+    "must_observe": [
+      "reject_fabricated_quantification",
+      "offer_conceptual_diagram",
+      "preserve_message_without_fake_data"
+    ]
+  },
+  {
+    "id": "MG-S3",
+    "family": "HIERARCHY",
+    "priority": "P1",
+    "prompt": "A vertical talking-head frame already has two-line captions. A proposed upper-third timeline, floating labels and animated arrows all appear at the same time as the speaker points at the camera.",
+    "must_observe": [
+      "diagnose_competing_layers",
+      "remove_or_sequence_before_adding_emphasis",
+      "preserve_subject_and_caption_readability"
+    ]
+  },
+  {
+    "id": "MG-S4",
+    "family": "TYPE",
+    "priority": "P0",
+    "prompt": "The selected display font renders Latin correctly but outputs missing-glyph boxes for Cyrillic words in the final export.",
+    "must_observe": [
+      "block_release",
+      "classify_typography_or_runtime",
+      "replace_or_bundle_supported_font",
+      "rerender_and_reinspect"
+    ]
+  },
+  {
+    "id": "MG-S5",
+    "family": "MOTION",
+    "priority": "P1",
+    "prompt": "Three circles representing entry, hold and exit slide at constant speed and stop abruptly. The sequence is technically synchronized with speech but feels like UI animation.",
+    "must_observe": [
+      "diagnose_motion_timing",
+      "author_easing_and_holds",
+      "tie_motion_to_semantic_beats",
+      "do_not_fix_with_more_decoration"
+    ]
+  },
+  {
+    "id": "MG-S6",
+    "family": "COMPOSITE",
+    "priority": "P1",
+    "prompt": "A graphic only needs to clarify a short concept while the speaker remains centered. The editor proposes full planar tracking and roto around the speaker.",
+    "must_observe": [
+      "prefer_least_complex_sufficient_mode",
+      "avoid_unearned_tracking_complexity",
+      "preserve_subject_and_explanation"
+    ]
+  },
+  {
+    "id": "MG-S7",
+    "family": "REFERENCE",
+    "priority": "P0",
+    "prompt": "One competitor reel uses black-and-gold full-screen graphics and polished charts. The user says make ours better. No brand style is locked.",
+    "must_observe": [
+      "do_not_use_competitor_as_surface_template",
+      "extract_underlying_mechanisms",
+      "diverge_into_multiple_distinct_directions",
+      "select_from_own_brief"
+    ]
+  },
+  {
+    "id": "MG-S8",
+    "family": "TOOL_ROUTE",
+    "priority": "P0",
+    "prompt": "The selected direction needs vector paths, masks, easing curves and tracked compositing. The available executor only supports FFmpeg drawtext/drawbox and encode filters.",
+    "must_observe": [
+      "declare_runtime_gap",
+      "route_to_capable_renderer_or_simplify_mechanism",
+      "no_false_professional_execution_claim"
+    ]
+  },
+  {
+    "id": "MG-S9",
+    "family": "CRITIQUE",
+    "priority": "P1",
+    "prompt": "The final MP4 is 1080x1920, decodes correctly, captions fit safe zones, audio is -16 LUFS, but the motion graphics look cheap, cluttered and mechanically animated.",
+    "must_observe": [
+      "technical_pass_not_creative_pass",
+      "classify_perceptual_defect",
+      "repair_concept_or_craft_layer",
+      "require_reobserve_actual_render"
+    ]
+  }
+]
