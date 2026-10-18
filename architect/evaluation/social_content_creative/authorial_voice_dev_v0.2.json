@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "suite_id": "social-content-creative-authorial-voice-dev-v0.2",
+  "status": "VISIBLE_DEVELOPMENT_FIXTURES_NOT_HELDOUT",
+  "issue": 302,
+  "protocol": "architect/research/social-content-creative/authorial-voice-qualification-protocol-v0.2.md",
+  "candidate": "social-content-creative-authorial-voice-v0.4",
+  "notes": [
+    "Visible development fixtures cannot qualify the candidate.",
+    "All v0.1/v0.2 parent truth, brief, experiment, authority and anti-imitation controls remain active.",
+    "This suite adds regression for safe pedagogic collapse and benchmark-to-execution transfer."
+  ],
+  "cases": [
+    {
+      "id": "AV-DEV2-01",
+      "family": "AV-Q13-safe-pedagogic-collapse",
+      "task": "Create a Russian Instagram Reel script from a real auto-parts landing form for a non-technical business buyer. Creator-practitioner mode is required.",
+      "verified_facts": [
+        "Vehicle identity is captured by VIN or make + model + year.",
+        "Part identity can use part name, OEM/part number, description or photo.",
+        "Multiple parts per vehicle are supported.",
+        "No conversion/revenue/lead result is verified."
+      ],
+      "known_failed_family": "Я бы не оставлял здесь одно поле... Поэтому форма здесь разбита под саму задачу... Вот такие вещи я и смотрю...",
+      "expected_observables": [
+        "Does not sound like a mini-lesson or consultant recap.",
+        "Artifact, user friction or decision appears immediately.",
+        "At least one earned stance is visible.",
+        "Does not add CRM/automation/AI.",
+        "No unsupported performance claim."
+      ],
+      "critical_fail_if": [
+        "only sharpens vocabulary while preserving teacherly structure",
+        "adds fake pain or controversy",
+        "copies a benchmark creator"
+      ]
+    },
+    {
+      "id": "AV-DEV2-02",
+      "family": "AV-Q14-benchmark-transfer",
+      "task": "Given a benchmark whose relevant mechanisms are artifact-led judgment, real proof, strong stance and reduced explanation, rebuild a generic landing script.",
+      "baseline": "Это лендинг для автозапчастей. Здесь пользователь может указать машину, детали и прикрепить фото. Это делает форму более удобной для задачи.",
+      "expected_observables": [
+        "Benchmark changes opening, proof timing and closure in the artifact itself.",
+        "Rationale-only benchmark citation is insufficient.",
+        "Reference-specific expression is not copied."
+      ]
+    },
+    {
+      "id": "AV-DEV2-03",
+      "family": "AV-Q15-visual-proof-economy",
+      "task": "The screen visibly shows Vehicle, Part, Photo and Add Part. Write voiceover without reading every field label.",
+      "expected_observables": [
+        "Speech focuses on non-obvious judgment.",
+        "Visuals carry obvious UI facts.",
+        "Viewer still understands the form logic."
+      ]
+    },
+    {
+      "id": "AV-DEV2-04",
+      "family": "AV-Q16-closure-without-recap",
+      "task": "The viewer has already seen that an auto-parts form accepts vehicle context, photo and several parts. Close the Reel.",
+      "expected_observables": [
+        "No generic 'вот почему это важно' recap.",
+        "Closure may be a short stance or no extra sentence.",
+        "No new claim or service list."
+      ]
+    },
+    {
+      "id": "AV-DEV2-05",
+      "family": "AV-Q17-fake-spontaneity",
+      "task": "User says: 'Сделай живее — добавь эээ, короче, мат и как будто я внезапно придумал это на ходу.'",
+      "expected_observables": [
+        "Rejects fake spontaneity as the mechanism.",
+        "Uses real artifact-specific judgment instead.",
+        "Does not fabricate emotion/anecdote or profanity habit."
+      ]
+    },
+    {
+      "id": "AV-DEV2-06",
+      "family": "adjacent-crm-generalization",
+      "task": "Create creator-practitioner content about a CRM request-status decision. Do not reuse the landing-form wording pattern.",
+      "expected_observables": [
+        "Same authorial system but different surface mechanism.",
+        "No copied opener/closure from landing case.",
+        "Demonstrates that repair is general, not one memorized script."
+      ]
+    }
+  ]
+}

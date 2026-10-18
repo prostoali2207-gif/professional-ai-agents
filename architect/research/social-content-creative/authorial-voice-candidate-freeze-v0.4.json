@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "social-content-creative-authorial-voice-v0.4",
+  "issue": 302,
+  "status": "CANDIDATE_NOT_QUALIFIED",
+  "frozen_at": "2026-09-13",
+  "qualified_parent": {
+    "id": "social-content-creative",
+    "version": "0.1.0",
+    "professional_model_blob": "d8eee4c6f9141f362d91a340c37dcae6ad6bfa71"
+  },
+  "overlay": {
+    "path": "architect/research/social-content-creative/professional-model-candidate-v0.4-authorial-voice-overlay.md",
+    "blob": "abed0d6762299c82b82e603355beac9f79b4cca2"
+  },
+  "qualification_protocol": {
+    "path": "architect/research/social-content-creative/authorial-voice-qualification-protocol-v0.2.md",
+    "blob": "c9942aa64cead4f0b55c7949a6a59debbde88356",
+    "frozen_before_candidate": true
+  },
+  "prior_versions": {
+    "v0_2": "historical candidate",
+    "v0_3": "development diagnostic only; not qualification-eligible under v0.2 protocol"
+  },
+  "next_gate": "TARGETED_DEVELOPMENT_EVALUATION_V0_2_PLUS_PBGS_PRACTICAL"
+}
