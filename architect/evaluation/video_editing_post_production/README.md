@@ -4,6 +4,8 @@ Status: qualified for the exact core digest and bounded claims recorded in the q
 
 The first gate is deterministic contract validation. The semantic/practical gate must then test VE-S1..VE-S12 without exposing expected decisions to the candidate. Render-capable claims additionally require real source media, produced artifacts, metadata probes, representative-frame/audio inspection and calibrated human comparative review.
 
+For production incidents and any proposed real-media craft/execution claim, use `real-media-practical-gate.md`. That gate freezes real source media, baseline artifact(s), runtime/tool identity, artifact-first QC and calibrated human comparative review without changing the already-qualified policy boundary.
+
 Required release order:
 
 1. validate manifest, evidence links, runner syntax and frozen fixture structure with zero model calls;
@@ -16,3 +18,11 @@ Required release order:
 8. only then add a qualification record and promote catalog lifecycle for the claims actually proved.
 
 The maximum first semantic release budget is six model calls: three critical reliability batches plus three complete-suite batches. Infrastructure failure is BLOCKED, not behavioral PASS/FAIL. A polished self-report, edit plan, command log or timeline screenshot is not evidence that the exported video is correct.
+
+
+## Production regressions
+
+Real production misses discovered after export review must be retained as regression evidence.
+
+Current seed:
+- `regressions/am001-door-action-resolution-20260906.md` — catches unresolved action/payoff cuts where an initiated physical action is truncated before the viewer can register the result.
