@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "bundle_id": "social-community-listening-reputation-qualification-bundle",
+  "bundle_version": "0.1.0",
+  "status": "frozen-test-only",
+  "core_id": "social-community-listening-reputation",
+  "core_version": "0.1.0",
+  "core_digest": "sha256:cde196c827366d3fceeda96dcdc544a68edc2734c7d0d12da7339c84dcbe8409",
+  "bundle_digest": "sha256:1bd5efa0ac92761d6b53805abe6a13bdb1498bbedacdbac65a5c84380f941c1b",
+  "digest_method": "sha256 of ordered canonical lines '<path>:<Git blob SHA>\\n' for adapter.md, run-record.schema.json, then runner.py",
+  "paths": [
+    "architect/evaluation/social-community-listening-reputation/qualification-bundle/0.1.0/adapter.md",
+    "architect/evaluation/social-community-listening-reputation/qualification-bundle/0.1.0/run-record.schema.json",
+    "architect/evaluation/social-community-listening-reputation/qualification-bundle/0.1.0/runner.py"
+  ],
+  "qualification_plan": "architect/research/social-community-listening-reputation/qualification-execution-plan-v0.2.md",
+  "public_evaluation_plan": "architect/research/social-community-listening-reputation/evaluation-plan-v0.1.md",
+  "heldout_protocol": "architect/research/social-community-listening-reputation/cg-06-heldout-evaluation-protocol-v0.1.md",
+  "harness_contract": "architect/evaluation/behavioral-validation-harness.md",
+  "holdout_pattern": "post-freeze-independent",
+  "production_eligible": false,
+  "qualification_claimed": false,
+  "contamination_boundary": "After this bundle is frozen, an independent evaluator may author the decisive CG-06 fixture and grader. Candidate authors must not inspect their decisive details before scoring and must not make behavior-relevant core/bundle changes until the scored run completes.",
+  "limitations": [
+    "The bundled runner implements deterministic orchestration and observable trace capture but still requires an external JSONL candidate executor.",
+    "A valid scored run still requires sealed held-out artifacts and independent calibrated judgment grading.",
+    "PASS cannot transfer automatically to a later production or applied Skill."
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://professional-ai-agents.local/schemas/social-community-listening-reputation-qualification-run-record-0.1.0.json",
+  "title": "Social Community Listening Reputation Qualification Run Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "timestamp",
+    "candidate_commit",
+    "core_digest",
+    "bundle_digest",
+    "fixture_ref",
+    "fixture_digest",
+    "grader_ref",
+    "grader_digest",
+    "capability_profile",
+    "runtime",
+    "model_or_executor",
+    "initial_state",
+    "events",
+    "tool_trace",
+    "approval_trace",
+    "side_effect_ledger",
+    "final_state",
+    "grader_results",
+    "termination_reason",
+    "result"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "candidate_commit": {"type": "string", "pattern": "^[a-f0-9]{40}$"},
+    "core_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "bundle_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "fixture_ref": {"type": "string", "minLength": 1},
+    "fixture_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "grader_ref": {"type": "string", "minLength": 1},
+    "grader_digest": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "capability_profile": {"enum": ["full", "degraded"]},
+    "runtime": {"type": "string", "minLength": 1},
+    "model_or_executor": {"type": "string", "minLength": 1},
+    "initial_state": {"type": ["object", "array"]},
+    "events": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "tool_trace": {"type": "array", "items": {"type": "object"}},
+    "approval_trace": {"type": "array", "items": {"type": "object"}},
+    "side_effect_ledger": {"type": "array", "items": {"type": "object"}},
+    "final_state": {"type": ["object", "array"]},
+    "grader_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion_id", "severity", "grader_type", "status", "evidence_refs"],
+        "properties": {
+          "criterion_id": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["P0", "P1", "P2", "P3"]},
+          "grader_type": {"enum": ["mechanical", "environment", "independent-judgment"]},
+          "status": {"enum": ["PASS", "FAIL", "INVALID"]},
+          "evidence_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "latency_ms": {"type": "integer", "minimum": 0},
+    "retries": {"type": "integer", "minimum": 0},
+    "termination_reason": {"type": "string", "minLength": 1},
+    "contamination_status": {"enum": ["clean-declared", "suspected", "contaminated", "unknown"]},
+    "result": {"enum": ["PASS", "FAIL", "INVALID"]}
+  }
+}
