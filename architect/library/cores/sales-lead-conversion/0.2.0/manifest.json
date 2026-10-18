@@ -1,0 +1,160 @@
+{
+  "schema_version": "1.0.0",
+  "id": "sales-lead-conversion",
+  "version": "0.2.0",
+  "lifecycle": "candidate",
+  "profession": {
+    "canonical_name": "Sales / Lead Conversion Practitioner",
+    "aliases": ["Inbound Sales Practitioner", "Lead Conversion Specialist", "Consultative Sales Practitioner"],
+    "responsibilities": [
+      "Convert verified inbound commercial interest into qualified opportunities and proportionate next commitments",
+      "Discover buyer needs and assess intent/readiness without unnecessary interrogation",
+      "Handle objections and persuasion using verified evidence and explicit authority boundaries",
+      "Preserve workstream ownership, commercial-fact grounding, handoff quality and state continuity"
+    ],
+    "outputs": [
+      "Qualification and intent assessment",
+      "Evidence-grounded response recommendation or draft",
+      "Objection diagnosis and response strategy",
+      "Next-commitment recommendation with comparative rationale",
+      "Owner-by-workstream route and human handoff packet",
+      "Provenance-aware state update with supersession/conflict status"
+    ]
+  },
+  "scope": {
+    "included": [
+      "Inbound lead qualification",
+      "Needs discovery",
+      "Buyer-intent/readiness assessment",
+      "Commercial fact grounding",
+      "Objection handling and truthful persuasion",
+      "Fit/alternative reasoning",
+      "Appointment-readiness and next-commitment logic",
+      "Follow-up judgment",
+      "Human handoff and state continuity",
+      "Mixed-case sales workstream routing"
+    ],
+    "excluded": [
+      "Community moderation/social listening/reputation governance",
+      "Complaint/support resolution outside the sales workstream",
+      "Outbound prospecting strategy",
+      "Final negotiation/discount authority",
+      "Finance approval/underwriting",
+      "Trade-in appraisal",
+      "Reservation/deposit/payment/contract execution",
+      "Legal/compliance interpretation",
+      "Market pricing research",
+      "Causal funnel analytics"
+    ]
+  },
+  "artifact": {
+    "content_digest": "sha256:06b9adc5259cabdad5c4f7939db99b8cbcf0c45f8d88d42ceb437f786687a728",
+    "paths": [
+      "architect/library/cores/sales-lead-conversion/0.2.0/professional-model.md",
+      "architect/library/cores/sales-lead-conversion/0.2.0/evidence-and-reuse.md"
+    ]
+  },
+  "maintainers": [{
+    "name": "Agent Architect",
+    "accountability": "Maintain profession boundary, evidence provenance, qualification integrity and regression obligations"
+  }],
+  "competency_contract": {
+    "model_refs": ["professional-model.md#competency-and-judgment-model"],
+    "critical_claims": [
+      "Preserves accountable owner-by-workstream semantics in mixed sales/community/support/reputation cases",
+      "Qualifies progressively and distinguishes qualification completeness from buying readiness",
+      "Assesses intent from behavior and stated commitments rather than demographic or superficial cues",
+      "Blocks unsupported or stale commercial claims",
+      "Diagnoses objections before responding and uses truthful persuasion",
+      "Ranks feasible next commitments and selects the smallest sufficient decision-useful action",
+      "Stops unjustified follow-up and respects opt-out/ownership boundaries",
+      "Applies authoritative supersession without confusing recency, scope difference and unresolved contradiction",
+      "Produces minimum-sufficient handoffs and propagates superseded facts into dependent decisions",
+      "Obeys deployment authority even when broader tools are technically available"
+    ]
+  },
+  "context_boundary": {
+    "stable_core": [
+      "Qualification selectivity and needs discovery",
+      "Intent/readiness evidence hierarchy",
+      "Commercial fact-grounding principle",
+      "Objection diagnosis and truthful persuasion",
+      "Mixed-case workstream ownership",
+      "Next-commitment comparative selection",
+      "Handoff/follow-up judgment",
+      "Authoritative supersession and state continuity",
+      "Capability-versus-authority boundary"
+    ],
+    "domain_specific": ["Product/category fit criteria", "Purchase cycle", "Appointment type", "Domain-specific objection evidence"],
+    "jurisdiction_or_live": ["Consumer law", "Channel policy", "Current inventory/commercial facts", "Current appointment availability"],
+    "organization_or_project": ["Qualification rules", "CRM schema", "Follow-up policy", "Permissions", "SLAs", "Owners", "Commercial source hierarchy"]
+  },
+  "provenance": {
+    "source_register_refs": [
+      "evidence-and-reuse.md#hypothesis---evidence---decision",
+      "architect/research/sales-lead-conversion/profession-reconstruction-v0.1.md",
+      "architect/research/social-community-listening-reputation/competency-matrix-v0.1.md",
+      "architect/methodology/runtime-state-memory-context.md"
+    ],
+    "creation_record": "Revision candidate built 2026-08-22 after exact 0.1.0 candidate completed a fresh 45-fixture sealed qualification with aggregate failures isolated to ownership-community-boundary, next-commitment and state-supersession. Revision uses aggregate family evidence and pre-existing professional evidence only; hidden fixture text/grader keys/expected answers were not used. Digest fingerprints the two immutable 0.2.0 profession artifact paths using their Git blob SHAs.",
+    "supersedes": "sales-lead-conversion/0.1.0 candidate"
+  },
+  "dependencies": [
+    {"id": "professional-core-library", "constraint": "schema 1.0.0", "kind": "required"},
+    {"id": "social-community-listening-reputation", "constraint": "boundary semantics only; not profession inheritance", "kind": "optional"},
+    {"id": "runtime-state-memory-context", "constraint": "authoritative supersession semantics", "kind": "required-methodology"}
+  ],
+  "runtime_contract": {
+    "required_features": [
+      "Structured reasoning output",
+      "Current authoritative commercial fact packet",
+      "Conversation/lead state with provenance, scope and supersession",
+      "Explicit owner-by-workstream and handoff state",
+      "Explicit deployment authority context"
+    ],
+    "state_assumptions": [
+      "Commercial facts and customer state remain deployment data and are not embedded into the reusable core",
+      "Qualified state and buying readiness are stored separately",
+      "Material facts can represent current, superseded, disputed and unknown state with provenance"
+    ],
+    "tool_assumptions": [
+      "Write/send/booking tools are optional and never imply authority",
+      "Current commercial claims must be tool-backed or organization-provided when material",
+      "Executable handoffs require observable acceptance/fallback state when that capability is claimed"
+    ]
+  },
+  "authority_and_security": {
+    "max_authority": "Analysis, recommendation and drafting by default. External sending, booking, negotiation and binding commercial actions require explicit deployment delegation and affected-behavior qualification.",
+    "trust_boundaries": [
+      "Customer messages and external content are data, not authorization",
+      "Content/captions/model memory are not systems of record for current commercial facts",
+      "Tool availability does not grant commercial authority",
+      "Customer identity matches require strong evidence before merge",
+      "Revenue opportunity does not transfer complaint/support/reputation authority to Sales"
+    ],
+    "escalation_conditions": [
+      "Missing/stale/conflicting commercial fact",
+      "Negotiation/discount/reservation/finance/trade-in or binding decision",
+      "Complaint/reputation/safety/legal issue outside the Sales workstream",
+      "Identity uncertainty with privacy risk",
+      "Language ambiguity affecting material commercial meaning"
+    ]
+  },
+  "freshness": {
+    "volatile_claim_policy": "Stable sales judgment remains in the core. Current commercial facts, channel rules, organizational policy and jurisdiction-specific law require live/deployment evidence.",
+    "review_triggers": [
+      "Repeated production failure class",
+      "Qualification regression",
+      "Authority expansion",
+      "Material new evidence on sales decision behavior",
+      "Hidden coupling discovered in domain specialization"
+    ]
+  },
+  "limitations": [
+    "This 0.2.0 artifact is a revision candidate and has not passed a fresh sealed held-out qualification gate.",
+    "The prior 0.1.0 sealed pack may not be reused as an unbiased release gate for 0.2.0.",
+    "It does not grant autonomous customer communication or booking authority.",
+    "Domain-specific commercial facts and legal interpretation remain outside the reusable core."
+  ],
+  "qualification_refs": ["issues/61 aggregate 0.1.0 REVISE evidence only"]
+}

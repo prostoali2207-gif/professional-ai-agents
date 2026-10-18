@@ -1,0 +1,54 @@
+name: Sales 0.2 development regression
+
+on:
+  push:
+    branches:
+      - agent/sales-lead-conversion-core-0.2.0-2026-08-22
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  targeted-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SALES_MODEL: gpt-5.6-terra
+      SALES_MODEL_TIMEOUT_SECONDS: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify candidate digest declaration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          m=json.load(open('architect/library/cores/sales-lead-conversion/0.2.0/manifest.json'))
+          paths=m['artifact']['paths']
+          canonical=''.join(f"{p}:{subprocess.check_output(['git','rev-parse','HEAD:'+p],text=True).strip()}\n" for p in paths)
+          actual='sha256:'+hashlib.sha256(canonical.encode()).hexdigest()
+          assert actual==m['artifact']['content_digest'], (actual,m['artifact']['content_digest'])
+          print('candidate digest declaration verified',actual)
+          PY
+      - name: Run targeted public development regression
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 architect/evaluation/sales-lead-conversion/development_regression_v0_2.py | tee "$RUNNER_TEMP/sales-0.2-development.json"
+      - name: Publish development report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-0.2-development-regression-report
+          path: ${{ runner.temp }}/sales-0.2-development.json
+          retention-days: 14
