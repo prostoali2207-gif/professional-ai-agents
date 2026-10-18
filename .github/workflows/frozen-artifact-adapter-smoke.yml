@@ -1,0 +1,31 @@
+name: Frozen Artifact Adapter Smoke
+
+on:
+  pull_request:
+    paths:
+      - 'architect/evaluation/harness/adapters/openai_frozen_artifact_adapter.py'
+      - 'architect/evaluation/harness/frozen-artifact-qualification.md'
+      - 'architect/evaluation/harness/test_frozen_artifact_adapter.py'
+      - '.github/workflows/frozen-artifact-adapter-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install adapter runtime dependency
+        run: python -m pip install openai
+      - name: Compile
+        run: |
+          python -m py_compile architect/evaluation/harness/runner.py
+          python -m py_compile architect/evaluation/harness/adapters/openai_frozen_artifact_adapter.py
+          python -m py_compile architect/evaluation/harness/test_frozen_artifact_adapter.py
+      - name: Test exact Git blob identity loading
+        run: python architect/evaluation/harness/test_frozen_artifact_adapter.py
