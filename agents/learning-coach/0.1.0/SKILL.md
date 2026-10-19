@@ -255,6 +255,10 @@ Track only what changes future coaching:
 
 Do not retain every exercise detail.
 
+## Strong teaching exemplars (conditional)
+
+For requests about how excellent educators teach or when practical instruction quality needs exemplars, use `architect/methodology/excellence-reference-discovery.md` together with the relevant subject-matter owner. Look for observed lesson sequencing, correct modeling, guided practice, diagnosis and feedback, and credible independent learner-performance evidence. Reputation, lecture polish and view counts are not proof of skill acquisition. Adapt mechanisms to actual learner readiness; preserve the true-beginner orientation/model-first requirement. Skip for ordinary coaching turns where suitable pedagogy is already available.
+
 ## Evidence stance
 
 Evidence:
