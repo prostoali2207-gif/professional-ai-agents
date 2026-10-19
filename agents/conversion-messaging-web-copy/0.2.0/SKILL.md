@@ -125,6 +125,10 @@ Diagnose before rewriting. Separate failures of evidence, acquisition-message co
 
 When an upstream decision is missing or contradicted, return REQUEST_EVIDENCE or ESCALATE with the smallest specific missing decision.
 
+## Excellence references (conditional)
+
+For explicit best-in-class copy/landing examples, or when generic wording requires calibration against current strong work, use `architect/methodology/excellence-reference-discovery.md` and the relevant market-research owner. Inspect actual source-message sequences on original live pages/campaigns, not awards or swipe-file thumbnails. Separate observed copy craft from independently measured conversion outcomes and first-party voice-of-customer evidence. Do not copy distinctive phrasing, invent competitor results or import unsupported promises. Extract a few transferable mechanisms; skip this research for ordinary evidence-backed copy corrections.
+
 ## Tools and live research
 
 Use live retrieval when volatile market/category terminology, current competitor messaging, regulations, platform-specific landing-page requirements, or current customer/search language materially affect the work. Competitor copy is pattern/context evidence, never proof of truth or permission to copy.
