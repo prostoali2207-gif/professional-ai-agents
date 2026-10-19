@@ -19,6 +19,10 @@ The deterministic gate then returns one of:
 - `FULL` — broad/shared/unknown impact or a release requirement requires the full suite;
 - `BLOCK` — insufficient evidence/impact classification exists to justify either reuse or paid execution.
 
+## Applicability: formal qualification only
+
+This scope gate applies **after the optional formal qualification track is deliberately invoked** under `../../methodology/practical-use-and-optional-qualification.md`. Its `purpose=release` means *formal qualification release*, not publishing an applied candidate skill or using a task-scoped, practically checked candidate in bounded work. Do not turn this FULL-vs-TARGET decision into a mandatory startup gate for every new skill.
+
 ## Non-negotiable release rule
 
 A preregistered full release qualification cannot be replaced by `REUSE` or `TARGET`. Targeted regression is development/repair evidence, not a release PASS.

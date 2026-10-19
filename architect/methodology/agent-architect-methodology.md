@@ -317,6 +317,12 @@ Then red-team the architecture from at least:
 
 Material gaps must be repaired before release.
 
+## 18A. Practical use is the default; formal qualification is optional
+
+Apply `practical-use-and-optional-qualification.md` for the distinction between development, use, and credentialing. A role `SKILL.md` can be assembled after the profession-first pre-SKILL gate, then practically checked and used as a candidate within a documented task/authority boundary; it need not pass a separate sealed/held-out/multi-trial formal qualification to start bounded work. Preserve direct execution evidence, material adversarial checks, risk-specific safety/authority controls, targeted regression, and feedback-driven professional repair.
+
+The formal qualification track is initiated only on request or when a claimed `qualified` library/T1/contract status requires that evidence. No task-scoped practical PASS should be represented as that formal status. Any consequential autonomous authority remains gated on independently adequate risk-specific evidence, with restricted authority or professional supervision if unavailable.
+
 ## 19. Pre-SKILL gate
 
 Do not write the final role SKILL until:
@@ -333,6 +339,8 @@ Do not write the final role SKILL until:
 - red-team has been run and material findings corrected.
 
 ## Definition of done
+
+**For candidate practical use**, the chain below terminates in risk-proportionate task-scoped practical readiness; formal T1 qualification and independent expert/field trust tiers are separate optional claim paths, not implicit gates to use. Record what was checked and residual limitations.
 
 `profession mapped -> entry states/intake prerequisites mapped -> competencies/evidence mapped -> authoritative knowledge assembled -> knowledge gaps identified -> judgment/workflows/tools designed -> procedural capabilities defined -> state/memory/context defined where material -> execution-control/remediation defined where material -> security/trust boundaries defined where material -> scope/authority/governance defined -> failure modes encoded -> SKILL orchestrates the system -> competency evaluation completed -> stateful/security/control-loop tests completed where applicable -> weaknesses corrected -> practical evaluation passed -> production feedback loop defined`.
 
