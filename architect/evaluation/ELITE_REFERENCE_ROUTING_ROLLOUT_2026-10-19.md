@@ -6,13 +6,13 @@ The user requested that existing professional agents/skills use the 2026-10-19 E
 
 Source of truth: `architect/methodology/excellence-reference-discovery.md` (introduced in PR #339).
 
-Discovery inventory from the main branch of 10 owner repositories:
+Discovery inventory from the main branch of 11 owner repositories:
 - `professional-ai-agents`: **17 SKILL.md**
 - `uae-drive-suite`: **8 SKILL.md**
 - `auto-parts-landing`: **9 SKILL.md**
 - `am-motors-storefront`: **4 SKILL.md**
 - `personal-brand-growth-system`: **0 SKILL.md**, but the important root `AGENTS.md` governs professional-core routing.
-- Five other scanned repositories (`auto-sales-growth-system`, `fahm-arabic`, `bayercrm`, `crm-realty`, `doclens`, `language-studio-landing`) did not expose other applicable SKILL.md in the scanned main trees; `crm-realty` has no initialized Git tree. **Correction:** this is a list of six repositories, not five. Unindexed agents outside these repos are out of audit scope.
+- Six other scanned repositories (`auto-sales-growth-system`, `fahm-arabic`, `bayercrm`, `crm-realty`, `doclens`, `language-studio-landing`) did not expose other applicable SKILL.md in their available main trees; `crm-realty` has no initialized Git tree. Unindexed agents outside these repositories are out of audit scope.
 
 **17 practitioner SKILL.md updated across 4 repositories**; project-level routing was also updated in `AGENTS.md` and shared local discovery runbooks for the relevant projects. This does not mutate any deployed app/database/financial records.
 
