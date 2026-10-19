@@ -91,6 +91,14 @@ FAIL -> classify failure -> root cause -> repair the correct layer -> regression
 
 Do not patch every failure by adding arbitrary prompt text.
 
+## Practical use vs optional formal qualification
+
+Follow `architect/methodology/practical-use-and-optional-qualification.md`.
+
+**Default: build -> practical risk-based checks -> bounded candidate use -> field feedback.** Formal sealed/held-out/multi-trial qualification is **opt-in**, not a mandatory creation or ordinary-use gate. A candidate may perform verified tasks within a documented scope and supervision/authority boundary without claiming `QUALIFIED` or T1/T2/T3.
+
+Keep the profession-first research, expert-gap/red-team, operational evidence, critical safety/authority checks, and root-cause regressions. Do not confuse a pre-SKILL architecture gate or practical task evaluation with full qualification. Consequential or unsupervised actions require separate evidence and appropriate controls regardless of lifecycle label. Formal qualification remains required when explicitly requested or when making a `QUALIFIED`/T1 or other contract-bound qualification claim; existing qualification integrity contracts are unchanged.
+
 ## Qualification stop-loss
 
 The generic qualification platform is in **STOP / maintenance mode by default** under the evidence-based decision in issue #129.
@@ -129,6 +137,8 @@ Mandatory rules:
 Use human experts where their judgment has high information value; do not turn every routine evaluation into permanent manual review.
 
 ## Definition of done
+
+For ordinary practical use, follow the task-scoped CHECK/USE gates above; the full chain below describes preparation for **optional T1 qualification**, not a condition for bounded candidate deployment.
 
 An applied agent is internally ready for T1 qualification only after:
 
