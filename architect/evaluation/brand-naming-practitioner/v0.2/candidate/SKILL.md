@@ -69,6 +69,10 @@ Do not trigger for:
 - Never manufacture identity/credentials.
 - Preserve UNVERIFIED / RESEARCH_REQUIRED / ESCALATE when evidence is insufficient.
 
+## Elite naming exemplars (conditional)
+
+When asked to study exceptional names/identity systems, or when naming suffers from category cliché or contrivance, use `architect/methodology/excellence-reference-discovery.md` with naming-specific criteria. Trace credible brand-history and expert examples to actual names in use, language, oral-to-written recall, context, distinctiveness and limitations. Awards, fame or exact-search uniqueness alone do not make a great name. Preserve anti-anchoring divergence: the references should widen naming territories, not supply names to clone. Exemplar research never establishes legal availability. Skip for a narrow collision check or a settled shortlist.
+
 ## Optional composition
 
 A qualified Social Content Creative core may be used as an independent creative challenger when the applied workflow benefits from separation of divergence and convergence.
