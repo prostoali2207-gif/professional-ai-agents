@@ -33,12 +33,24 @@ In particular:
 - count alternatives as distinct only when their mechanisms or system boundaries materially differ;
 - stop exploring when additional search no longer has plausible decision value.
 
+## Evidence-led discovery of elite references across professions
+
+When the user requests "top", "elite", "best-in-class", strong examples, references or professional exemplars **in any discipline**, use `architect/methodology/excellence-reference-discovery.md`.
+
+- Define `best at what task/dimension, for whom and under which constraints` first.
+- Build a domain-specific source map and search **independent discovery mechanisms**: expert-judged/curated, original creators/operators, measured outcomes, expert networks, and contrarian/adjacent niche cases as relevant.
+- Traverse `recognized work -> actual artifact -> maker -> related work -> independent corroboration`; search prominence, award/fame, views/followers and galleries alone do not establish elite quality.
+- Inspect primary actual work; classify craft, recurring execution and valid context-bound outcome evidence separately. Never infer conversion, reliability, learning effectiveness or usability from a beautiful example.
+- Deliver a small comparative task-fit shortlist with inspectable exact references, what makes each exceptional, its limits, and the mechanisms to adopt/adapt/test. Mark what cannot be verified.
+- Use the appropriate **profession's evaluator/judgment criteria**; do not impose a creative-design rubric on code, education, legal/health, technical operations or other professional fields.
+- This is a lightweight practical procedure, not an automatic formal qualification requirement; respect `practical-use-and-optional-qualification.md`.
+
 ## Creative reference intelligence
 
 When a creative, brand, content, visual, naming, capture, interface or similar professional decision materially depends on current reference literacy, tacit taste or best-in-class practice, do not rely on model familiarity or generic inspiration.
 
 Use the reusable candidate capability:
-`architect/research/creative-reference-intelligence/candidate/SKILL.md`.
+`architect/research/creative-reference-intelligence/candidate/SKILL.md` and the generic discovery procedure in `architect/methodology/excellence-reference-discovery.md`.
 
 Mandatory principles:
 - qualified Market & Competitive Intelligence remains the research/evidence owner;
