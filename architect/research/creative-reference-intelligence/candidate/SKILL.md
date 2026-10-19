@@ -1,7 +1,7 @@
 # Creative Reference Intelligence / Elite Benchmarking
 
 Status: **CANDIDATE / NOT QUALIFIED**
-Version: 0.3
+Version: 0.4 (evidence-led discovery integration)
 
 ## Mission
 
@@ -15,7 +15,8 @@ Load and obey:
 1. Market & Competitive Intelligence 1.0.0 exact qualified contract for live research, evidence quality, freshness, comparability and bounded claims.
 2. `architect/research/creative-reference-intelligence/profession-and-reuse-decision-v0.1.md`.
 3. `architect/methodology/creative-profession-architecture.md` for reference literacy / anti-imitation.
-4. Current downstream professional contract that will consume the benchmark.
+4. **`architect/methodology/excellence-reference-discovery.md`** for cross-industry discovery channels, provenance graph traversal, actual-artifact inspection and evidence-labelled elite admission.
+5. Current downstream professional contract that will consume the benchmark.
 
 Use live retrieval when current practice matters.
 
@@ -56,11 +57,15 @@ Require task-relevant evidence of repeated strong current work.
 
 ### 3A. Elite admission bar
 
+First run the **source map -> provenance graph -> primary artifact inspection -> distinct evidence-class assessment** in `architect/methodology/excellence-reference-discovery.md`. Search engine rankings, listicles, generic moodboards and award galleries are **candidate generators, not elite verdicts**. Include at least one search path that is independent from the first popular list/curated gallery, and deliberately look beyond famous, dominant-language or well-funded providers where plausible.
+
+For each prospective admission distinguish **CRAFT-EXPERT**, **OUTCOME-EVIDENCED**, **REPEATED-OBSERVED**, **CONTEXTUAL-CANDIDATE**, **UNVERIFIED**. Aesthetic impact, prize recognition, reach, business outcomes and cause-and-effect success are not interchangeable. Do not rank candidates using follower/view counts, unqualified outcomes, or invented universal numeric scores.
+
+
 A “top”, “best-in-class”, or nasмотренность request is not satisfied by search-engine ordering or a list of famous names.
 
-For open visual/creative direction, use this default evidence floor unless saturation or access constraints justify a narrower set:
-- inspect at least 8 materially relevant artifacts across at least 3 credible sources;
-- admit only 3–5 references into the elite benchmark;
+For open visual/creative direction, use **8 inspected artifacts across 3 independent credible source origins as an optional initial search heuristic**, never as a mandatory quota: very narrow tasks, a unique canonical work, strong saturation evidence, restricted access, and high-value direct inspection may call for fewer or more. Do not confuse three reposts of one award with three independent origins.
+- ordinarily admit 3–5 complementary references; fewer when only fewer meet the bar;
 - require repeated strong work or a canonical artifact with authoritative provenance;
 - prefer primary/official artifact sources over reposts;
 - for current practice, require recent work where recency matters;
@@ -88,6 +93,9 @@ Do not treat an internal search, hidden moodboard, or raw image-search result se
 The handoff should include usable reference assets/links/identifiers when tooling supports them so the downstream generation step can be grounded in the accepted benchmark rather than in textual style labels alone.
 
 ### 4. Inspect artifacts, not reputation
+
+Identify the **actual credited original artifact**, not solely the case-study image. For a website inspect the live/mobile journey where available; for video actually watch the video; for a campaign separate public creative from evidenced performance. If only thumbnails or bios are accessible, leave it DISCOVERED / NOT INSPECTED and do not grant elite admission. Follow the inspection-by-claim matrix in the cross-profession discovery method.
+
 Inspect actual recent artifacts for every accepted source.
 
 For each source identify:
@@ -128,7 +136,9 @@ Return:
 - accepted DIRECT set;
 - accepted ADJACENT_ELITE set;
 - accepted VOICE_STYLE_CRAFT set if relevant;
-- sampled artifact evidence and freshness;
+- sampled original artifact links/identifiers, what was actually viewed, dates and freshness;
+- provenance / independent source origins, evidence-class labels and applicable excellence dimension;
+- accepted and rejected near-misses (when relevant), including why an apparently popular/award-winning item failed the actual job-specific bar;
 - usable reference assets/links/identifiers for downstream grounding when available;
 - generation_allowed: YES | BOUNDED | NO;
 - recurring mechanisms;
@@ -154,6 +164,10 @@ Return:
 
 FAIL if the output:
 - substitutes generic advice for a missing benchmark;
+- counts an award, directory ranking or repeated syndicated story as independent proof of overall excellence;
+- claims outcome/conversion/usability superiority from popularity, a pretty image or unrelated craft award;
+- declares elite on the basis of a gallery preview without viewing the actual work when full inspection is required;
+- uses an arbitrary fixed artifact count as a proxy for evidence quality;
 - calls sources elite based mainly on followers/popularity;
 - gives a broad random inspiration dump;
 - infers practice from reputation without inspecting work;
