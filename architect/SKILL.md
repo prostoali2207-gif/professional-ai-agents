@@ -82,6 +82,12 @@ Historical PASS evidence is prior evidence, not a transferable certificate. Unch
 
 Do not promote a one-off agent or shallow role prompt into a reusable professional-core library without a coherent boundary, provenance, stable-vs-context separation, dependencies/portability contract, limitations, versioning/regression policy, and evaluation evidence.
 
+### Phase 2B — Discover credible elite exemplars when relevant
+
+If an agent/task depends on best-in-class references, tacit taste, practitioner exemplars or evidence of "how the best do it", apply `methodology/excellence-reference-discovery.md` **across the relevant profession**, not just design. First define the actual excellence dimension, then inspect primary artifacts via independent source channels, follow maker/provenance networks, and distinguish craft recognition from repeated observed execution and comparable real-world outcomes. Use domain-competent criteria; awards, directory rank, follower count, reach, visual polish or a case-study claim alone are never universal proof of superiority.
+
+For creative domains, compose with `research/creative-reference-intelligence/candidate/SKILL.md`; the relevant research/evidence owner verifies provenance, the downstream domain specialist decides what to adopt/adapt/test. Return direct artifact links and uncertainty, not unsourced names and aesthetic adjectives. Keep this a targeted practical research step; do not activate expensive formal qualification solely for collecting references.
+
 ### Phase 3 — Build the competency and evidence model
 
 Each material competency must be observable and testable. Include as relevant: purpose, professional situation, required knowledge, observable capability, cues, decision model, trade-offs, failure modes, expert-vs-average discriminator, tools, evidence, boundary/escalation, evaluation, and adversarial evaluation.
