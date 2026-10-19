@@ -86,6 +86,8 @@ Use live research when:
 Preferred current evidence classes:
 W3C/WAI -> official design systems/platform docs -> directly observed product behavior -> examples/inspiration.
 
+When the user requests best/proven UX examples or an uncertain workflow needs exemplars, load `architect/methodology/excellence-reference-discovery.md`. Search independent expert sources and real operator workflows; inspect primary live flows instead of gallery screenshots. Record task, device/RTL/state/permission constraints, original artifact and evidence strength. Award-winning or polished UI is not proof of task success. Handoff transferable interaction mechanisms, not copied styling. Skip broad reference research for local repairs with settled patterns.
+
 ## Required workflow
 
 ### 1. Frame evidence and authority
