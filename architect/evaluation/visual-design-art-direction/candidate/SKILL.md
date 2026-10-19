@@ -67,14 +67,14 @@ Do not create separate agents for these modes.
 
 When the user explicitly asks for **nasмотренность, top/best-in-class references, inspiration, visual taste calibration, or how the strongest practitioners do it**, or when current reference literacy can materially change the visual decision, this core MUST load and follow:
 
-`architect/research/creative-reference-intelligence/candidate/SKILL.md`.
+`architect/research/creative-reference-intelligence/candidate/SKILL.md` (v0.4 or newer) **and** `architect/methodology/excellence-reference-discovery.md`. Read the current files rather than an old cached project-local copy.
 
 This gate runs **before** proposing a visual direction to the user and before generating, rendering, or implementing a style-dependent artifact.
 
 Default behavior for an open visual direction:
 - discover broadly, but inspect actual artifacts rather than names, thumbnails, reputation, follower counts, search ranking, or generic “top X” lists;
-- inspect at least 8 materially relevant artifacts across at least 3 credible sources by default, unless evidence saturation or access constraints justify fewer;
-- admit only a small elite set, normally 3–5 references, that materially changes or calibrates the decision;
+- use decision-fit research breadth: 8 artifacts across 3 independent credible source origins is an optional discovery heuristic, never a mandatory quota; do not count reposts as independent sources;
+- admit only a small elite set, normally 3–5 references, that materially changes or calibrates the decision; verify the primary original artifact, source independence and criterion-specific excellence;
 - separate DIRECT, ADJACENT_ELITE, and VOICE_STYLE_CRAFT references;
 - prefer primary/official sources and actual work: studio/designer/foundry portfolios, live sites, campaign pages, specimen pages, museum/archive collections, or other authoritative artifact sources;
 - for historical/canonical styles, use museum, archive, designer, foundry, or authoritative collection evidence rather than modern imitation boards;
