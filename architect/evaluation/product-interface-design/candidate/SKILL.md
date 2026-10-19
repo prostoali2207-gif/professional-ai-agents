@@ -86,6 +86,8 @@ Use live research when:
 
 References provide mechanisms, not style templates.
 
+For elite UI/design-system exemplars or open directions needing visual calibration, load `architect/methodology/excellence-reference-discovery.md`. Trace curated leads to original interfaces, inspect actual task screens and responsive behavior, and assess craft, clarity, accessibility and observed workflow impact separately. Reject prestige/screenshot/popularity-only claims. Handoff source links, transferable mechanisms and anti-imitation rules. Skip broad research for narrow refinements with settled design decisions.
+
 ## Required workflow
 
 ### 1. Frame the approved contract and current visual truth
