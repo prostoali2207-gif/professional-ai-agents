@@ -175,9 +175,9 @@ Do not encode `free first`, `cheap first`, or `small model first` as universal r
 
 For material runs define a compact PRE-RUN BUDGET GATE with objective, decision impact, resource estimate, known quota state, protected critical reserve, stop condition, maximum budget, and mid-run exhaustion behavior. If exact pricing, plan limits, free tiers, credits, or allowance materially affect the decision, verify them live from official/account-specific evidence and record freshness; never invent exact volatile billing values from memory.
 
-After execution perform POST-RUN ACCOUNTING: planned vs actual resources, evidence/information gained, decision effect, reusable artifacts, retries, and unexplained cost regression. Do not classify mandatory independent release evidence as waste merely because it confirms the previous decision.
+After execution perform POST-RUN ACCOUNTING: planned vs actual resources, evidence/information gained, decision effect, reusable artifacts, retries, and unexplained cost regression. Do not classify independently required evidence as waste when making a formal qualification or consequential authority claim merely because it confirms the previous decision.
 
-During repair loops prefer affected targeted regression before a full suite unless shared coupling makes broad regression plausible. Preserve preregistered full-suite release gates and protected quota for them.
+During repair loops prefer affected targeted regression before a full suite unless shared coupling makes broad regression plausible. Preserve preregistered full-suite release gates and protected quota when the optional formal qualification track or a specific release contract is invoked.
 
 ### Phase 7 — Design runtime state, memory, and execution control
 
@@ -225,8 +225,14 @@ For high-stakes roles also use `methodology/high-stakes-profession-architecture.
 
 ### Phase 10 — Build evaluation before declaring readiness
 
+**Default release mode: practical candidate use, not formal qualification.** Follow `methodology/practical-use-and-optional-qualification.md`: finish architecture, run a bounded risk-proportionate practical/adversarial check for intended tasks and authority, record observed result/limitations, then use the candidate with appropriate supervision and field feedback. Do not require generic sealed packs, repeated trials or full qualification infrastructure for ordinary task-scoped use. A narrow practical PASS is never a `QUALIFIED` or T1 claim.
+
+Enter full formal qualification only on explicit request or when the promised trust/library/contract status requires it. On that track retain all applicable frozen integrity, independent release evidence, thresholds and stop-loss rules. Irrespective of track, high-stakes/unsupervised actions require their own sufficient risk-specific evidence and safeguards.
+
+
 Use:
 
+- `methodology/practical-use-and-optional-qualification.md` to select the default practical track or optional formal qualification;
 - `methodology/evaluation-calibration.md`
 - `methodology/professional-trust-validation.md` for the separation of internal qualification, independent practitioner validation, and production-proven trust claims;
 - `methodology/eval-integrity-and-regression.md`
@@ -279,7 +285,7 @@ When STOP fires, preserve valid evidence and return `NOT_EXECUTABLE` / the prere
 
 Generic platform engineering may reopen only when concrete repository evidence satisfies at least one issue #129 reopen criterion. Professional/evaluator-specific failures remain local and do not reopen the platform by themselves.
 
-This rule limits infrastructure churn only. Never use it to skip required held-out, adversarial, stateful, rendered/practical, calibrated-judge, or domain-expert evidence, and never convert `NOT_EXECUTABLE` into PASS.
+This rule limits infrastructure churn only. On the formal qualification track, never use it to skip applicable held-out, adversarial, stateful, rendered/practical, calibrated-judge, or domain-expert evidence, and never convert `NOT_EXECUTABLE` into PASS. Outside that track, retain evidence and controls independently required by the concrete task risk and authority.
 
 ### Phase 11 — Run expert-gap discovery and red-team
 
@@ -301,7 +307,7 @@ The applied `SKILL.md` orchestrates the professional system rather than duplicat
 
 ### Phase 13 — Evaluate the assembled agent
 
-Run competency and practical evaluations.
+Run the competency and practical checks proportionate to the declared work and risk. A candidate that passes those checks may be used inside that documented boundary **without full formal qualification**. Do not elevate the check to a universal professional claim; record supervision, residual uncertainty, and feedback route.
 
 On failure:
 
@@ -313,7 +319,7 @@ Qualification infrastructure failures during this phase remain subject to `metho
 
 ### Phase 13A — Assign professional trust evidence tier
 
-After internal qualification, record the strongest trust tier actually supported under `methodology/professional-trust-validation.md`.
+When formal internal qualification is chosen and completed, record the strongest trust tier actually supported under `methodology/professional-trust-validation.md`. If it has not been completed, retain `candidate / NOT QUALIFIED` with its separate task-scoped practical check evidence; do not assign T1/T2/T3 from that check.
 
 Do not collapse these claims:
 
