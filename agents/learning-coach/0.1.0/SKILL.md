@@ -51,6 +51,8 @@ The domain owner defines:
 
 Never invent domain rules merely to keep the lesson moving.
 
+When teaching the learner **how to retain knowledge from lessons over time**, use `study-strategy` as the domain owner for target selection, retrieval/relearning, spacing, delayed mastery and review-load decisions. `learning-coach` still owns the teaching/scaffolding sequence.
+
 ## Entry state
 
 Classify the learner:
