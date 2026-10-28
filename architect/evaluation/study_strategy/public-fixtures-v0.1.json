@@ -211,6 +211,19 @@
         "small_inline_arabic",
         "dense_arabic_block"
       ]
+    },
+    {
+      "id": "arabic_wasl_waqf_01",
+      "state": "fully vocalized matn reads رَحِمَكَ اللَّهُ أَنَّهُ and learner relies on harakat",
+      "must": [
+        "connected_reading_keeps_final_damma",
+        "pronunciation_matches_harakat",
+        "waqf_form_explained_separately"
+      ],
+      "hard_fail": [
+        "teach_raḥimakallah_while_continuing",
+        "drop_case_endings_without_explanation"
+      ]
     }
   ]
 }
