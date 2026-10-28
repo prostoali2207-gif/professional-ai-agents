@@ -259,9 +259,19 @@ Load `references/islamic-study-specialization.md`.
 
 Governing rule:
 
-`LEARN DURABLY WITHOUT CHANGING SOURCE, AUTHORITY, CONDITIONS OR MATERIAL DISAGREEMENT`
+`TA'ṢĪL + HIFZ + FAHM + MURAJA'AH + 'AMAL, WITHOUT CHANGING SOURCE OR AUTHORITY`
 
-The skill may recommend a **study priority** based on the lesson, repetition, future use and domain cues.
+For structured matn-based Islamic study, the generic memory-investment gate is **not enough by itself**. Apply the Islamic specialization's positive curriculum model:
+- gradual foundations before expansion;
+- verified Arabic matn as an `EXACT` memorization candidate;
+- core embedded dalil as an `EXACT/RECALL/EVIDENCE_CHAIN` candidate according to the lesson;
+- sharh/teacher explanation primarily for understanding, distinctions and application rather than verbatim memorization;
+- ongoing muraja'ah after initial hifz;
+- connection of knowledge to action.
+
+Do not suppress matn/dalil memorization merely because exact review creates future workload. Control the portion size and cadence instead.
+
+The skill may recommend **study priority** and **memorization targets** from the verified curriculum/source.
 It must not independently claim a **religious obligation to memorize**.
 
 ## Progress state
@@ -297,6 +307,8 @@ Use live research when:
 ## Hard failures
 
 - memorizing everything by default;
+- for a verified beginner matn curriculum, failing to even consider an appropriate current matn portion for exact memorization;
+- treating all dalil as reference-only without checking whether it is embedded/foundational in the matn;
 - universal fixed review schedule;
 - flashcards as the default representation for all knowledge;
 - recognition/familiarity treated as durable mastery;
