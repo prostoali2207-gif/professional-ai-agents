@@ -111,6 +111,40 @@ PMID: 42258276.
 Use: current evidence distinguishes multiple testing effects and cautions against collapsing them into one mechanism.
 Decision impact: phrase retrieval-practice claims narrowly and avoid claiming one mechanism explains every benefit.
 
+## Islamic knowledge-acquisition evidence
+
+### I1 — Ibn Jama'ah (d. 733H), *Tadhkirat al-Sami' wa al-Mutakallim*
+Primary searchable text: Shamela, book 151180, especially p.113.
+Relevant guidance: after Qur'an, the learner memorizes a concise text in each field and studies the explanation of those memorized texts with teachers.
+Use: supports `concise matn -> memorization -> teacher-guided explanation` as a positive curriculum pattern, not merely an optional memory trick.
+
+### I2 — Ibn 'Abd al-Barr (d. 463H), *Jami' Bayan al-'Ilm wa Fadlihi*
+Primary searchable/digitized text: Shamela/Wikisource editions; chapter on ranks/stages of seeking knowledge.
+Relevant guidance includes: seeking knowledge has stages/ranks that should not be skipped; the beginning is memorizing Allah's Book and understanding it, with what assists its understanding.
+Use: supports gradual progression and joining hifz with fahm.
+
+### I3 — Bakr Abu Zayd, *Hilyat Talib al-'Ilm*
+Primary scan: publicly available Arabic editions; section `Kayfiyyat al-talab wa maratibuhu`.
+Relevant guidance: establish each field on foundations; take a concise foundational text, master it with a reliable teacher, and do not rush into long/advanced works before mastering the base.
+Use: supports `ta'sil/tadarruj + concise matn + teacher + progression`.
+
+### I4 — Muhammad ibn Salih al-'Uthaymin, official foundation materials
+Official pages include:
+- `old.binothaimeen.net/content/6089` — advises the beginner to be keen on memorizing mutun and rejects reducing knowledge to understanding alone.
+- `old.binothaimeen.net/content/1120` — begin with smaller knowledge before larger; memorize a small book and build on it; prioritize Qur'an with reading, memorization, reflection and understanding.
+- `old.binothaimeen.net/content/9405` — maintaining memorized knowledge through ta'ahud, mudhakarah with peers, and practical application.
+- `old.binothaimeen.net/content/3539` — begin with concise works and study them with a teacher.
+Use: contemporary Salafi practitioner evidence for hifz + fahm + teacher-guided gradual progression + review/action.
+
+### I5 — 'Abd al-'Aziz ibn Baz, official site lesson on *al-Usul al-Thalatha*
+Official source: `binbaz.org.sa/audios/800/` and related series.
+Relevant guidance: reports that Muhammad ibn 'Abd al-Wahhab taught these foundations to students and the public so they would study and memorize them and they would settle in their hearts.
+Use: direct domain evidence that *Three Fundamental Principles* functions as a memorized foundational text, not merely a lecture topic.
+
+### I6 — Verified Arabic text of *Thalathat al-Usul wa Adillatuha*
+Shamela book 239 records an edition published by the Saudi Ministry of Islamic Affairs (1st ed., 1421H). Ibn Baz's official lessons also quote the matn directly.
+Use: potential exact-text source for memorization. If the learner's teacher/course uses a specific edition, prefer that supplied edition to avoid wording/segmentation drift.
+
 ## Conflict / boundary notes
 
 - Retrieval practice strongly supports retention, but not every higher-order inference or transfer outcome automatically improves.
@@ -118,6 +152,9 @@ Decision impact: phrase retrieval-practice claims narrowly and avoid claiming on
 - Interleaving is conditional.
 - Self-explanation is useful for conceptual understanding but can redirect attention; it is not a universal memory drill.
 - Generation benefits do not justify generating authoritative wording from memory.
+- Generic anti-overlearning guidance must not be misapplied to erase a domain curriculum in which concise foundational matn memorization is itself a learning objective.
+- Traditional hifz guidance does not justify indiscriminate memorization of every commentary/example or uncontrolled review load.
+- For Islamic study, modern cognitive evidence should refine review/retrieval mechanics while classical/practitioner sources define the domain's curriculum roles and authority boundaries.
 
 ## Freshness
 
