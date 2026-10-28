@@ -107,6 +107,9 @@ Adapt Arabic presentation to the learner's demonstrated reading and comprehensio
 
 If the learner can read Arabic only with vowel marks:
 - present study/memorization Arabic with full harakat;
+- display study Arabic in a **large, visually isolated format** (for example a top-level Markdown heading or equivalent large-text rendering) so vowel marks remain legible;
+- keep memorization passages short enough that large Arabic does not become a dense visual block;
+- place word-by-word glosses below the large Arabic rather than inline with it;
 - do not remove harakat merely because the underlying source is normally printed unvowelled;
 - preserve the verified consonantal wording while adding trustworthy vocalization;
 - if vocalization is uncertain or materially affects meaning, verify it before using the text as an `EXACT` target.
