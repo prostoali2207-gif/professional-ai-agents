@@ -1,0 +1,25 @@
+{
+  "name": "study-strategy",
+  "version": "0.1.0-candidate",
+  "status": "project-use candidate",
+  "trust_tier": "BELOW_T1",
+  "reuse": {
+    "learning-coach": "composition dependency",
+    "note-taking": "composition dependency",
+    "decision": "BUILD NEW"
+  },
+  "artifacts": {
+    "skill": "agents/study-strategy/0.1.0/SKILL.md",
+    "study_protocol": "agents/study-strategy/0.1.0/references/study-protocol.md",
+    "islamic_specialization": "agents/study-strategy/0.1.0/references/islamic-study-specialization.md",
+    "state_schema": "agents/study-strategy/0.1.0/schemas/study-state.schema.json",
+    "profession_reconstruction": "architect/research/study-strategy/profession-reconstruction-v0.1.md",
+    "competency_packaging": "architect/research/study-strategy/competency-and-knowledge-packaging-v0.1.md",
+    "composition_contract": "architect/research/study-strategy/composition-contract-v0.1.md",
+    "source_register": "architect/research/study-strategy/source-register-v0.1.md",
+    "evaluation_plan": "architect/evaluation/study_strategy/evaluation-plan-v0.1.md",
+    "public_fixtures": "architect/evaluation/study_strategy/public-fixtures-v0.1.json",
+    "pre_skill_gate": "architect/evaluation/study_strategy/pre-skill-gate-result-v0.1.json"
+  },
+  "qualification_status": "UNQUALIFIED_CANDIDATE"
+}
