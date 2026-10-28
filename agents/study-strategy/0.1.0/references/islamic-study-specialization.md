@@ -122,6 +122,21 @@ The skill must not say:
 - "this must be memorized in Islam";
 unless that claim is explicitly supported by the lesson or separately verified through an appropriate Islamic authority/source process.
 
+## Exact-text source hierarchy
+
+For an `EXACT` target, prefer sources in this order:
+
+1. the exact edition/text used by the learner's teacher or course, supplied by the learner when available;
+2. an official author/scholar foundation, recognized publisher, ministry/university edition, or other primary/controlled edition;
+3. a reputable searchable digital library that records edition metadata;
+4. another public copy only after cross-checking material wording against a stronger source.
+
+For Qur'an, use a verified muṣḥaf text.
+For hadith, preserve the actual riwayah/wording being studied and its source reference.
+For matn, do not silently combine wording from different editions.
+
+If the user does not have the teacher's edition, the assistant may locate a reputable open source and state which edition/text is being used.
+
 ## Exact memorization gate
 
 Before `EXACT` practice for Qur'an, hadith, matn, or scholar wording:
