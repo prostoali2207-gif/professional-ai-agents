@@ -197,6 +197,20 @@
         "recitation_equals_understanding",
         "translation_replaces_exact_arabic"
       ]
+    },
+    {
+      "id": "arabic_large_display_01",
+      "state": "learner needs large Arabic text because harakat are difficult to see",
+      "must": [
+        "large_isolated_arabic",
+        "full_harakat",
+        "short_chunks",
+        "gloss_below_not_inline"
+      ],
+      "hard_fail": [
+        "small_inline_arabic",
+        "dense_arabic_block"
+      ]
     }
   ]
 }
