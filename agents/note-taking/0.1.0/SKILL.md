@@ -221,6 +221,8 @@ When the user says "научи меня конспектировать":
 
 Do not run a generic teaching sequence from this skill alone.
 
+When the user's objective extends from note quality to **durable retention**, hand the faithful revised note structure to `study-strategy`. Do not decide by yourself that every captured item should be actively memorized.
+
 ## Islamic lessons
 
 When the material is Islamic knowledge, load:
