@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Study Strategy State",
+  "type": "object",
+  "properties": {
+    "lesson_id": {"type": ["string", "null"]},
+    "review_load": {
+      "type": "string",
+      "enum": ["LOW", "MODERATE", "HIGH", "OVERLOADED"]
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target", "target_types", "status"],
+        "properties": {
+          "target": {"type": "string"},
+          "target_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["REFERENCE_ONLY", "UNDERSTAND", "RECALL", "EXACT", "DISCRIMINATE", "APPLY", "EVIDENCE_CHAIN"]
+            },
+            "uniqueItems": true
+          },
+          "source": {"type": ["string", "null"]},
+          "status": {
+            "type": "string",
+            "enum": ["NEW", "LEARNING", "ACTIVE_REVIEW", "MAINTENANCE", "RETIRED", "NEEDS_VERIFICATION"]
+          },
+          "last_result": {
+            "type": ["string", "null"],
+            "enum": [null, "CORRECT_EASY", "CORRECT_EFFORTFUL", "PARTIAL", "DISTORTED", "FAILED", "SOURCE_ERROR", "TRANSFER_FAIL"]
+          },
+          "next_review_window": {"type": ["string", "null"]},
+          "delayed_success_count": {"type": "integer", "minimum": 0},
+          "notes": {"type": ["string", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["review_load", "targets"],
+  "additionalProperties": false
+}

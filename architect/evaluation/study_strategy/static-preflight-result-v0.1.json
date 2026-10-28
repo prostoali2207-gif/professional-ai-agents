@@ -1,0 +1,20 @@
+{
+  "candidate": "study-strategy@0.1.0-candidate",
+  "date": "2026-10-28",
+  "run_type": "author-side static preflight",
+  "verdict": "PASS",
+  "checks": {
+    "target_model_present": true,
+    "adaptive_spacing_rule_present": true,
+    "review_load_control_present": true,
+    "exact_memorization_verification_gate_present": true,
+    "islamic_authority_boundary_present": true,
+    "composition_contract_present": true,
+    "state_schema_parses": true,
+    "public_fixtures_parse": true
+  },
+  "limits": [
+    "No independent held-out practical behavioral run performed.",
+    "PASS supports project-use candidate status only; not T1."
+  ]
+}
