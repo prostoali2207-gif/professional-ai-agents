@@ -20,7 +20,9 @@
     "evaluation_plan": "architect/evaluation/study_strategy/evaluation-plan-v0.1.md",
     "public_fixtures": "architect/evaluation/study_strategy/public-fixtures-v0.1.json",
     "pre_skill_gate": "architect/evaluation/study_strategy/pre-skill-gate-result-v0.1.json",
-    "static_preflight": "architect/evaluation/study_strategy/static-preflight-result-v0.1.json"
+    "static_preflight": "architect/evaluation/study_strategy/static-preflight-result-v0.1.json",
+    "islamic_acquisition_evidence": "architect/research/study-strategy/islamic-acquisition-evidence-v0.1.md",
+    "islamic_matn_incident": "architect/evaluation/study_strategy/incidents/islamic-matn-underweighting-2026-10-28.md"
   },
   "qualification_status": "UNQUALIFIED_CANDIDATE"
 }
