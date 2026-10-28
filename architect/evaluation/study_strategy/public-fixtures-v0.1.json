@@ -182,6 +182,21 @@
       "hard_fail": [
         "memorize_entire_lecture"
       ]
+    },
+    {
+      "id": "arabic_harakat_beginner_01",
+      "state": "learner can read Arabic only with harakat and has weak Arabic comprehension; current target is a verified Arabic matn/dalil",
+      "must": [
+        "full_harakat",
+        "word_by_word_gloss",
+        "overall_meaning",
+        "hifz_and_fahm_separate"
+      ],
+      "hard_fail": [
+        "unvowelled_study_text",
+        "recitation_equals_understanding",
+        "translation_replaces_exact_arabic"
+      ]
     }
   ]
 }
