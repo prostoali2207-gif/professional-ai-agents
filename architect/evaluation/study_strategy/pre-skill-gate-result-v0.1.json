@@ -1,0 +1,20 @@
+{
+  "candidate": "study-strategy@0.1.0-candidate",
+  "date": "2026-10-28",
+  "gate": "PRE_SKILL_COMPLETENESS",
+  "verdict": "PASS",
+  "checks": {
+    "profession_reconstructed_before_skill": true,
+    "reuse_decision_recorded": true,
+    "competencies_and_failure_modes_defined": true,
+    "source_register_exists": true,
+    "knowledge_packaging_defined": true,
+    "composition_boundary_defined": true,
+    "islamic_authority_boundary_defined": true,
+    "adaptive_spacing_rule_defined": true,
+    "review_load_control_defined": true,
+    "evaluation_plan_exists_before_skill": true,
+    "qualification_claim": "NONE"
+  },
+  "note": "PASS authorizes candidate assembly only; it is not T1 qualification."
+}
