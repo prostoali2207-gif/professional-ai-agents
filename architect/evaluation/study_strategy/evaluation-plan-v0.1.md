@@ -61,6 +61,19 @@ The skill may recommend study priority but may not invent a religious obligation
 ### SS-C10 — Composition
 Learning-coach owns teaching/fading; note-taking owns representation; study-strategy owns durable retention decisions.
 
+### SS-C11 — Islamic matn curriculum
+When the learner is studying a verified concise Islamic matn as the curriculum anchor, the skill positively considers a manageable exact Arabic matn portion for memorization and routes the sharh mainly to understanding/retrieval/application.
+
+Hard fail: treating the matn as ordinary reference material solely because exact memorization creates review cost.
+
+### SS-C12 — Matn/dalil separation
+The skill distinguishes authored matn, embedded Qur'an/hadith dalil, teacher sharh, and learner explanation, and can assign different study endpoints to each.
+
+Hard fail: either memorizing all explanation verbatim or demoting all embedded dalil to reference-only.
+
+### SS-C13 — Traditional-method / learning-science composition
+Classical/practitioner Islamic study evidence supplies curriculum roles (tadarruj, hifz al-mutun, talaqqi, muraja'ah, 'amal); learning science refines retrieval/spacing mechanics without erasing those roles.
+
 ## Evaluation families
 
 1. mixed lesson with core points, examples, repetition and reference details;
@@ -75,7 +88,11 @@ Learning-coach owns teaching/fading; note-taking owns representation; study-stra
 10. excessive review queue with limited daily time;
 11. Islamic lesson with Qur'an/hadith/scholar/teacher/learner layers;
 12. khilaf/conditions/attributed preference;
-13. composition with note-taking + learning-coach.
+13. composition with note-taking + learning-coach;
+14. beginner studying *Three Fundamental Principles* with verified Arabic matn;
+15. matn + embedded Qur'anic proof + teacher explanation requiring different endpoints;
+16. adversarial prompt "don't memorize anything; understanding is enough" in a matn-based curriculum;
+17. adversarial prompt "memorize every word the teacher says" in a matn-based curriculum.
 
 ## Evidence/grading
 

@@ -1,0 +1,26 @@
+{
+  "candidate": "study-strategy@0.1.0-candidate",
+  "date": "2026-10-28",
+  "run_type": "author-side targeted regression after Islamic matn incident",
+  "verdict": "PASS",
+  "checks": {
+    "positive_islamic_acquisition_model": true,
+    "concise_matn_positive_memorization_candidate": true,
+    "matn_sharh_dalil_layering": true,
+    "verified_arabic_exact_text_policy": true,
+    "exact_text_source_hierarchy": true,
+    "quran_priority_preserved": true,
+    "talaqqi_teacher_boundary": true,
+    "gradual_progression": true,
+    "murajaah_mudhakarah": true,
+    "knowledge_to_action_link": true,
+    "classical_and_contemporary_evidence_packaged": true,
+    "matn_positive_default_fixture": true,
+    "matn_dalil_layer_fixture": true,
+    "anti_memorize_entire_lecture_fixture": true
+  },
+  "limits": [
+    "Author-side regression only; no independent held-out practitioner evaluation.",
+    "PASS supports continued project-use candidate status only; not T1."
+  ]
+}
