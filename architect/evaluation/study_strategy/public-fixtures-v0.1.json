@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1",
+  "candidate": "study-strategy@0.1.0-candidate",
+  "cases": [
+    {
+      "id": "memorize_everything_trap_01",
+      "prompt": "Сделай так, чтобы я выучил наизусть вообще весь урок.",
+      "must": ["classify_targets", "protect_exactness", "control_review_cost"],
+      "hard_fail": ["all_content_exact_memorization_without_domain_reason"]
+    },
+    {
+      "id": "fixed_schedule_trap_01",
+      "prompt": "Дай лучший универсальный график повторения: 1-3-7-30?",
+      "must": ["reject_universal_optimum", "use_provisional_schedule_only_if_needed", "adapt_to_recall_and_horizon"],
+      "hard_fail": ["declare_1_3_7_30_universally_optimal"]
+    },
+    {
+      "id": "recognition_mastery_trap_01",
+      "state": "learner recognizes every answer in multiple choice immediately after study",
+      "must": ["require_free_or_cued_recall_if_recall_is_goal", "require_delayed_evidence"],
+      "hard_fail": ["declare_durable_mastery"]
+    },
+    {
+      "id": "wrong_retrieval_01",
+      "state": "learner confidently recalls a source-critical statement incorrectly",
+      "must": ["compare_with_source", "correct_before_rehearsal", "retry", "later_check"],
+      "hard_fail": ["repeat_wrong_target", "praise_confidence"]
+    },
+    {
+      "id": "conceptual_target_01",
+      "input_shape": "causal relation whose wording itself is not important",
+      "must": ["understand_or_apply_endpoint", "own_words_or_relation_reconstruction"],
+      "hard_fail": ["force_verbatim_memorization"]
+    },
+    {
+      "id": "exact_target_01",
+      "input_shape": "quotation requested for exact memorization but source wording is uncertain",
+      "must": ["verification_gate", "do_not_generate_exact_quote_from_memory"],
+      "hard_fail": ["paraphrase_as_exact"]
+    },
+    {
+      "id": "discrimination_01",
+      "input_shape": "two similar concepts with different conditions",
+      "must": ["discriminate_endpoint", "contrast_or_classification_practice"],
+      "hard_fail": ["independent_flashcards_only_without_contrast"]
+    },
+    {
+      "id": "application_01",
+      "input_shape": "rule whose future use is selecting the correct action in a case",
+      "must": ["application_task", "vary_surface_features"],
+      "hard_fail": ["definition_recall_declared_sufficient"]
+    },
+    {
+      "id": "review_load_01",
+      "state": "250 active items, 20 minutes/day, many low-value examples",
+      "must": ["triage", "merge_or_retire_low_value", "protect_foundational_targets"],
+      "hard_fail": ["add_more_cards_without_load_control"]
+    },
+    {
+      "id": "islamic_layers_01",
+      "input_shape": "Qur'an + hadith + scholar view + teacher explanation + learner reflection",
+      "must": ["preserve_source_layers", "exactness_gate", "no_religious_obligation_claim_without_source"],
+      "hard_fail": ["teacher_explanation_as_revelation", "learner_reflection_as_transmitted_knowledge"]
+    },
+    {
+      "id": "islamic_khilaf_01",
+      "input_shape": "two views, evidence, condition, teacher's attributed preference",
+      "must": ["retain_material_views", "retain_condition", "retain_attributed_preference"],
+      "hard_fail": ["flatten_to_unattributed_single_ruling"]
+    },
+    {
+      "id": "composition_01",
+      "prompt": "Научи меня самому решать, что из урока учить и как повторять.",
+      "must": ["study_strategy_domain_model", "learning_coach_owns_instruction_and_fading"],
+      "hard_fail": ["monolithic_skill_ignores_learning_coach_boundary"]
+    }
+  ]
+}
