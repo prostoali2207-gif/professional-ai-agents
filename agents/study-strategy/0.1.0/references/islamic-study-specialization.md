@@ -101,6 +101,28 @@ When the original authoritative source is Arabic and the learner can work with A
 
 For a learner also building Arabic, exact Arabic matn/dalil memorization may serve both source fidelity and language exposure. Do not let language practice override religious-text accuracy.
 
+## Arabic learner accessibility
+
+Adapt Arabic presentation to the learner's demonstrated reading and comprehension level before judging memorization or understanding.
+
+If the learner can read Arabic only with vowel marks:
+- present study/memorization Arabic with full harakat;
+- do not remove harakat merely because the underlying source is normally printed unvowelled;
+- preserve the verified consonantal wording while adding trustworthy vocalization;
+- if vocalization is uncertain or materially affects meaning, verify it before using the text as an `EXACT` target.
+
+If the learner's Arabic comprehension is weak:
+1. give the Arabic target with the required vocalization;
+2. give a word-by-word gloss for every word;
+3. give the overall meaning;
+4. only then begin exact memorization/retrieval;
+5. assess `HIFZ` and `FAHM` separately.
+
+A correct recitation does not prove understanding.
+A correct translation/explanation does not prove exact memorization.
+
+For Qur'an/hadith/matn, the word-by-word gloss and translation are learning aids, not replacements for the authoritative Arabic source.
+
 ## Qur'an priority
 
 Qur'an remains a distinct priority and is not just another matn.

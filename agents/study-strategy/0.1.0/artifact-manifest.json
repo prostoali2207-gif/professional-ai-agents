@@ -23,7 +23,8 @@
     "static_preflight": "architect/evaluation/study_strategy/static-preflight-result-v0.1.json",
     "islamic_acquisition_evidence": "architect/research/study-strategy/islamic-acquisition-evidence-v0.1.md",
     "islamic_matn_incident": "architect/evaluation/study_strategy/incidents/islamic-matn-underweighting-2026-10-28.md",
-    "islamic_acquisition_regression": "architect/evaluation/study_strategy/islamic-acquisition-regression-result-v0.1.json"
+    "islamic_acquisition_regression": "architect/evaluation/study_strategy/islamic-acquisition-regression-result-v0.1.json",
+    "arabic_learner_accessibility_regression": "architect/evaluation/study_strategy/arabic-learner-accessibility-regression-v0.1.json"
   },
   "qualification_status": "UNQUALIFIED_CANDIDATE"
 }

@@ -1,0 +1,16 @@
+{
+  "candidate": "study-strategy@0.1.0-candidate",
+  "date": "2026-10-28",
+  "run_type": "author-side targeted regression for Arabic learner accessibility",
+  "verdict": "PASS",
+  "checks": {
+    "full_harakat_for_harakat_dependent_learner": true,
+    "word_by_word_gloss": true,
+    "overall_meaning_before_memorization": true,
+    "hifz_and_fahm_separated": true,
+    "exact_arabic_not_replaced_by_translation": true
+  },
+  "limits": [
+    "Author-side regression only; not T1."
+  ]
+}
