@@ -114,6 +114,23 @@ If the learner can read Arabic only with vowel marks:
 - preserve the verified consonantal wording while adding trustworthy vocalization;
 - if vocalization is uncertain or materially affects meaning, verify it before using the text as an `EXACT` target.
 
+## Connected pronunciation and pausal forms
+
+When teaching a fully vocalized Arabic target, distinguish **connected reading (waṣl)** from **stopping (waqf)**.
+
+- In connected reading, pronounce the written final short vowel/case ending when it is present and required by the vocalized text.
+- Do not silently drop `ـُ / ـَ / ـِ` in a pronunciation aid or transliteration merely because colloquial transliteration often omits endings.
+- If the learner stops on a word, explain the pausal form separately when it differs from connected reading.
+- When the target continues syntactically, teach the connected form first unless the lesson explicitly practices waqf.
+- A pronunciation guide must match the displayed harakat.
+
+Example:
+`رَحِمَكَ اللَّهُ أَنَّهُ...`
+connected: `raḥimaka-llāhu annahu...`
+if stopping after `اللَّهُ`: `raḥimaka-llāh`.
+
+This distinction is part of `HIFZ/DABT` accuracy for a beginner who relies on harakat.
+
 If the learner's Arabic comprehension is weak:
 1. give the Arabic target with the required vocalization;
 2. give a word-by-word gloss for every word;
