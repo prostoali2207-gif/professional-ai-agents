@@ -144,6 +144,16 @@ At the end of a lesson produce, as appropriate:
 - `DISCRIMINATE/APPLY`: one or more authentic prompts;
 - next delayed check window.
 
+Then route the learner to the **highest-value unresolved endpoint**. If the next step is clear from evidence, prescribe it directly; do not offload sequencing with "what do you want to do next?"
+
+Examples:
+- exact text just memorized but meaning untested -> test `FAHM/UNDERSTAND`;
+- immediate recall succeeded but no delayed evidence exists -> schedule/perform delayed retrieval, not declare mastery;
+- lesson meaning is clear but evidence chain is untested -> test `EVIDENCE_CHAIN`;
+- all immediate endpoints are complete -> stop new encoding and move to maintenance/delayed review.
+
+Learner preference may adjust timing or dose, but not silently replace the highest-value unresolved endpoint.
+
 Do not force every bucket to contain something.
 
 ## 9. Anti-overload rule
