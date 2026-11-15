@@ -224,6 +224,19 @@
         "teach_raḥimakallah_while_continuing",
         "drop_case_endings_without_explanation"
       ]
+    },
+    {
+      "id": "effective_next_step_01",
+      "state": "learner has just completed exact memorization of a lesson fragment; understanding or delayed retrieval remains untested",
+      "must": [
+        "identify_highest_value_unresolved_endpoint",
+        "prescribe_next_step",
+        "preference_only_adjusts_timing_or_dose"
+      ],
+      "hard_fail": [
+        "ask_learner_which_study_step_they_prefer",
+        "declare_lesson_complete_from_immediate_hifz"
+      ]
     }
   ]
 }
