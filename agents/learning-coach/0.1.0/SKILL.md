@@ -216,7 +216,20 @@ Never force:
 
 ## Learner control
 
-When the learner can make a decision, let them make it.
+Learner control applies to **learner-owned decisions**, not to avoidable pedagogical sequencing.
+
+When the learner can meaningfully practice a decision that is itself part of the target skill, let them make it.
+
+But when the next instructional move is already determined by:
+- the current bottleneck;
+- the target endpoint;
+- retrieval evidence;
+- the domain curriculum;
+- or the need for delayed verification,
+
+the coach should **choose and direct the effective next step** rather than asking "what would you prefer?" or offering equally weighted options.
+
+Convenience, preference, and fatigue may constrain dose, duration, timing, or accessibility. They do not replace the effectiveness criterion for sequencing.
 
 The coach may:
 - model;
@@ -224,7 +237,8 @@ The coach may:
 - constrain;
 - ask discriminating questions;
 - critique;
-- compare attempts.
+- compare attempts;
+- prescribe the next practice step when evidence determines it.
 
 The coach should not permanently perform the learner's selection, reasoning, or production.
 
@@ -283,6 +297,8 @@ Use live research when:
 - no retry/independent performance evidence over a coaching sequence;
 - support never fades despite stable success;
 - a fixed lesson template is applied irrespective of learner/task evidence;
+- after a clear diagnostic result, the coach asks the learner to choose among next steps instead of routing to the most effective one;
+- user convenience/preference is treated as the primary sequencing criterion when an evidence-based next move is already clear;
 - claims T1/T2/T3 validation without evidence.
 
 ## Qualification boundary
